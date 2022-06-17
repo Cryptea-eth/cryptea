@@ -78,13 +78,15 @@ function Nav() {
     <div className="nav relative ml-[30px] 2sm:ml-1 z-10">
       <div className="flex flex-row justify-between items-center px-14 pt-5 2sm:px-7">
         <Link href="/" className="flex items-center justify-center">
-          <Image
-            src={logo}
-            alt="cryptea"
-            width={30}
-            className="mr-[5px] min-w-[30px]"
-          />
-          <span className="text-black text-2xl font-bold">CRYPTEA</span>
+          <div>
+            <Image
+              src={logo}
+              alt="cryptea"
+              width={30}
+              className="mr-[5px] min-w-[30px]"
+            />
+            <span className="text-black text-2xl font-bold">CRYPTEA</span>
+          </div>
         </Link>
         {/* <Link to="/" className="text-black text-2xl font-bold">
           CRYPTEA
@@ -92,7 +94,7 @@ function Nav() {
         <div className="text-black flex flex-row font-medium text-lg">
           <div
             onClick={() => {
-              document.querySelector("#about").scrollIntoView();
+              document.querySelector("#about")?.scrollIntoView()
             }}
             className="text-black pr-4"
           >

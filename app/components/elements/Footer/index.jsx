@@ -1,7 +1,7 @@
-import linked from "../../assets/img/icon0.png";
-import mess from "../../assets/img/icon1.png";
-import twitt from "../../assets/img/icon2.png";
-// import hmm from "../../assets/img/icon4.png";
+import linked from "../../../images/icon0.png";
+import Image from 'next/image'
+import mess from "../../../images/icon1.png";
+import twitt from "../../../images/icon2.png";
 import { useMoralis } from "react-moralis";
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
@@ -48,13 +48,13 @@ const Footer = () => {
           </span>
           <div className="flex items-center mb-4 justify-between mt-[3pc] w-[200px]">
             <a className="mr-[5px]" href="https://linkedin.com">
-              <img alt="linkedIn" src={linked} />
+              <Image alt="linkedIn" src={linked} />
             </a>
             <a className="mr-[5px]" href="https://messenger.com">
-              <img alt="Messenger" src={mess} />
+              <Image alt="Messenger" src={mess} />
             </a>
             <a className="mr-[5px]" href="https://twitter.com">
-              <img alt="Twitter" src={twitt} />
+              <Image alt="Twitter" src={twitt} />
             </a>
           </div>
           <h3 className="font-bold hidden 2sm:block text-[18px] mb-2">

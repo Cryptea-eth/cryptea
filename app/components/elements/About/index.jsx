@@ -1,8 +1,8 @@
-import one from "../../assets/img/one.svg";
-import two from "../../assets/img/two.svg";
-import three from "../../assets/img/three.svg";
-import circle from "../../assets/img/circle.svg";
-import Supported from "./supported";
+import one from "../../../images/one.svg";
+import two from "../../../images/two.svg";
+import three from "../../../images/three.svg";
+import circle from "../../../images/circle.svg";
+import Supported from "../Supported";
 import Image from "next/image";
 import { useMoralis } from "react-moralis";
 import { useEffect } from "react";

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import logo from "../../../images/img.svg";
-import check from "../../assets/img/tick.svg";
-import "../../App.css";
+import check from "../../../images/tick.svg";
 import { useMoralis } from "react-moralis";
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
