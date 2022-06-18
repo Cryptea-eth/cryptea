@@ -17,8 +17,8 @@ module.exports = {
     },
     extend: {
       backgroundImage: {
-        donation: "url('./app/images/donation.png')",
-        pattern: "url('./app/images/pattern.png')",
+        donation: "url('../app/images/donation.png')",
+        pattern: "url('../app/images/pattern.png')",
       },
     },
   },

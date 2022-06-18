@@ -7,8 +7,8 @@ import { MoralisProvider } from 'react-moralis'
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <MoralisProvider
-      appId={process.env.MORALIS_APPLICATION_ID || ''}
-      serverUrl={process.env.MORALIS_SERVER_ID || ''}
+      appId='HOLbs0aJ1TAL3lSC9HT35iUimn2EAOoJyGyikYBk'
+      serverUrl='https://rsa1f2e38vjg.usemoralis.com:2053/server'
     >
       <Component {...pageProps} />
     </MoralisProvider>
