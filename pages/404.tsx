@@ -1,9 +1,16 @@
 import Nav from "../app/components/elements/Nav";
 import Footer from "../app/components/elements/Footer";
 import Link from "next/link";
+import Head from 'next/head'
 const Notfound = () => {
   return (
     <div className="h-screen">
+      <Head>
+        <title>Cryptea - 404</title>
+        <meta name="description" content="Cryptea - Receive Tips on a whole new level." />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
       <Nav />
 
       <div className="w-full h-fit flex flex-col justify-items-center my-8">
