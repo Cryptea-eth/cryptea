@@ -3,11 +3,11 @@ import logo from "../../../images/img.svg";
 import check from "../../../images/tick.svg";
 import { useMoralis } from "react-moralis";
 import { useEffect } from "react";
-import { Navigate } from "react-router-dom";
-
+import { useRouter } from "next/router";
 const Hero = () => {
   const { authenticate, isAuthenticated, isAuthenticating, user, account } =
     useMoralis();
+  const router = useRouter;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -28,7 +28,7 @@ const Hero = () => {
         })
         .catch(function (error) {
           console.log(error);
-          Navigate("/");
+          router.replace("/");
         });
     } else {
       window.location.href = "/#/signup";

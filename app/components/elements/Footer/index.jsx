@@ -1,10 +1,10 @@
 import linked from "../../../images/icon0.png";
-import Image from 'next/image'
+import Image from "next/image";
 import mess from "../../../images/icon1.png";
 import twitt from "../../../images/icon2.png";
 import { useMoralis } from "react-moralis";
 import { useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { useRouter } from "next/router";
 const Footer = () => {
   const date = new Date();
   const { authenticate, isAuthenticated, isAuthenticating, user, account } =
@@ -31,7 +31,7 @@ const Footer = () => {
         })
         .catch(function (error) {
           console.log(error);
-          Navigate("/");
+          router.replace("/");
         });
     } else {
       window.location.href = "/#/signup";

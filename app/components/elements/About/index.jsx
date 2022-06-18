@@ -6,10 +6,12 @@ import Supported from "../Supported";
 import Image from "next/image";
 import { useMoralis } from "react-moralis";
 import { useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { useRouter } from "next/router";
+
 const About = () => {
   const { authenticate, isAuthenticated, isAuthenticating, user, account } =
     useMoralis();
+  const router = useRouter();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -30,7 +32,7 @@ const About = () => {
         })
         .catch(function (error) {
           console.log(error);
-          Navigate("/");
+          router.replace("/");
         });
     } else {
       window.location.href = "/#/signup";
