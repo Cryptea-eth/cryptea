@@ -18,10 +18,12 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <Nav />
-        <Hero />
-        <About />
-        <Extras />
+        <div className="app">
+          <Nav />
+          <Hero />
+          <About />
+          <Extras />
+        </div>
       </main>
 
       <footer>
