@@ -280,6 +280,17 @@
     "@emotion/weak-memoize" "^0.2.5"
     "stylis" "4.0.13"
 
+"@emotion/css@^11.7.1":
+  "integrity" "sha512-S9UjCxSrxEHawOLnWw4upTwfYKb0gVQdatHejn3W9kPyXxmKv3HmjVfJ84kDLmdX8jR20OuDQwaJ4Um24qD9vA=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/@emotion/css/-/css-11.9.0.tgz"
+  "version" "11.9.0"
+  dependencies:
+    "@emotion/babel-plugin" "^11.7.1"
+    "@emotion/cache" "^11.7.1"
+    "@emotion/serialize" "^1.0.3"
+    "@emotion/sheet" "^1.0.3"
+    "@emotion/utils" "^1.0.0"
+
 "@emotion/hash@^0.8.0":
   "integrity" "sha512-kBJtf7PH6aWwZ6fka3zQ0p6SBYzx4fl1LoZXE2RrnYST9Xljm7WfKJrU4g/Xr3Beg72MLrp1AWNUmuYJTL7Cow=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@emotion/hash/-/hash-0.8.0.tgz"
@@ -310,7 +321,7 @@
     "@emotion/weak-memoize" "^0.2.5"
     "hoist-non-react-statics" "^3.3.1"
 
-"@emotion/serialize@^1.0.2", "@emotion/serialize@^1.0.4":
+"@emotion/serialize@^1.0.2", "@emotion/serialize@^1.0.3", "@emotion/serialize@^1.0.4":
   "integrity" "sha512-1JHamSpH8PIfFwAMryO2bNka+y8+KA5yga5Ocf2d7ZEiJjb7xlLW7aknBGZqJLajuLOvJ+72vN+IBSwPlXD1Pg=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@emotion/serialize/-/serialize-1.0.4.tgz"
   "version" "1.0.4"
@@ -321,7 +332,7 @@
     "@emotion/utils" "^1.0.0"
     "csstype" "^3.0.2"
 
-"@emotion/sheet@^1.1.1":
+"@emotion/sheet@^1.0.3", "@emotion/sheet@^1.1.1":
   "integrity" "sha512-J3YPccVRMiTZxYAY0IOq3kd+hUP8idY8Kz6B/Cyo+JuXq52Ek+zbPbSQUrVQp95aJ+lsAW7DPL1P2Z+U1jGkKA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@emotion/sheet/-/sheet-1.1.1.tgz"
   "version" "1.1.1"
@@ -383,7 +394,7 @@
     "@ethereumjs/common" "^2.6.4"
     "ethereumjs-util" "^7.1.5"
 
-"@ethersproject/abi@^5.6.0", "@ethersproject/abi@5.6.0":
+"@ethersproject/abi@^5.0.1", "@ethersproject/abi@^5.6.0", "@ethersproject/abi@5.6.0":
   "integrity" "sha512-AhVByTwdXCc2YQ20v300w6KVHle9g2OFc28ZAFCPnJyEpkv1xKXjZcSTgWOlv1i+0dqlgF8RCF2Rn2KC1t+1Vg=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@ethersproject/abi/-/abi-5.6.0.tgz"
   "version" "5.6.0"
@@ -1387,6 +1398,55 @@
     "@typescript-eslint/types" "5.28.0"
     "eslint-visitor-keys" "^3.3.0"
 
+"@uauth/abstract-ui@1.1.0":
+  "integrity" "sha512-wi9Yzcrl1bhO+PUdf3M2YUQYnDtz9FPUVn76rQOwFV9w8q6Yv3iEYLLz1UDI9sGSsSPB7D0BiLNPPXq+19HcSg=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/@uauth/abstract-ui/-/abstract-ui-1.1.0.tgz"
+  "version" "1.1.0"
+
+"@uauth/common@1.1.0":
+  "integrity" "sha512-sonBgEWWyZmpk6dX+yAIYqCPag8aO7k63zqh9GfS9Q6YtX46af/F5isG77J1bH9VCJQZtyYQztRsHCamHrIcVw=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/@uauth/common/-/common-1.1.0.tgz"
+  "version" "1.1.0"
+
+"@uauth/dom-ui@1.1.0":
+  "integrity" "sha512-LCqFm0AqEIIa3JvCm0+EzFp0RneqRjsLC7BZz52FiUaddOzrVjfdijlCWXYDblNgOh0PjtJ71k1ONPT9ZMt2ow=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/@uauth/dom-ui/-/dom-ui-1.1.0.tgz"
+  "version" "1.1.0"
+  dependencies:
+    "@emotion/css" "^11.7.1"
+    "@uauth/abstract-ui" "1.1.0"
+
+"@uauth/js@1.1.0":
+  "integrity" "sha512-PGl+1h0S59QKVSfKfNRR9s0xFdmIojlL1+rKR4vXGmMGa1iUldUcBZHPlvCo6DdIfVI+Y7mOwEiYnsufKj/BPA=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/@uauth/js/-/js-1.1.0.tgz"
+  "version" "1.1.0"
+  dependencies:
+    "@uauth/abstract-ui" "1.1.0"
+    "@uauth/common" "1.1.0"
+    "@uauth/dom-ui" "1.1.0"
+    "@unstoppabledomains/resolution" "^7.0"
+    "global" "^4.4.0"
+    "jose" "^4.5.0"
+
+"@uauth/moralis@^1.0.1":
+  "integrity" "sha512-Rs8TfJOLeuUOK+eUKLm5jdy8X2vcdpuZDLtq2h8O6j1c0kIMWyB5GYp+6mNvfruf/RvEYpl26EkPzgZK2DvwlA=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/@uauth/moralis/-/moralis-1.0.1.tgz"
+  "version" "1.0.1"
+  dependencies:
+    "@uauth/js" "1.1.0"
+
+"@unstoppabledomains/resolution@^7.0":
+  "integrity" "sha512-GdXLpP+oRk4lLWMISo7g7gPyKoCONyLoQtYH6GVhXtyY9t+CeHJW2kZ/btcbXg0lmEO6PSr5yYOlDz4wRCq2RA=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/@unstoppabledomains/resolution/-/resolution-7.1.4.tgz"
+  "version" "7.1.4"
+  dependencies:
+    "@ethersproject/abi" "^5.0.1"
+    "bn.js" "^4.4.0"
+    "cross-fetch" "^3.1.4"
+    "elliptic" "^6.5.4"
+    "js-sha256" "^0.9.0"
+    "js-sha3" "^0.8.0"
+
 "@walletconnect/browser-utils@^1.7.8":
   "integrity" "sha512-iCL0XCWOZaABIc0lqA79Vyaybr3z26nt8mxiwvfrG8oaKUf5Y21Of4dj+wIXQ4Hhblre6SgDlU0Ffb39+1THOw=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@walletconnect/browser-utils/-/browser-utils-1.7.8.tgz"
@@ -1533,7 +1593,7 @@
     "js-sha3" "0.8.0"
     "query-string" "6.13.5"
 
-"@walletconnect/web3-provider@^1.7.8":
+"@walletconnect/web3-provider@^1.6", "@walletconnect/web3-provider@^1.7.8":
   "integrity" "sha512-2VxGo7KPfQTWRJ+rygt3ok/u04InkVE+H9LBIF/RMUwcwyGf2nsP3CcYZVcg3yYpacgN7bAZCersCEYwU8AeeA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@walletconnect/web3-provider/-/web3-provider-1.7.8.tgz"
   "version" "1.7.8"
@@ -2087,7 +2147,7 @@
   "resolved" "https://repo.huaweicloud.com/repository/npm/blakejs/-/blakejs-1.2.1.tgz"
   "version" "1.2.1"
 
-"bn.js@^4.11.0", "bn.js@^4.11.6", "bn.js@^4.11.8", "bn.js@4.11.8":
+"bn.js@^4.11.0", "bn.js@^4.11.6", "bn.js@^4.11.8", "bn.js@^4.4.0", "bn.js@4.11.8":
   "integrity" "sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/bn.js/-/bn.js-4.11.8.tgz"
   "version" "4.11.8"
@@ -2241,7 +2301,7 @@
     "base64-js" "^1.3.1"
     "ieee754" "^1.1.13"
 
-"buffer@~6.0.3":
+"buffer@^6.0.3", "buffer@~6.0.3":
   "integrity" "sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/buffer/-/buffer-6.0.3.tgz"
   "version" "6.0.3"
@@ -2497,6 +2557,13 @@
   dependencies:
     "node-fetch" "^2.6.7"
     "whatwg-fetch" "^2.0.4"
+
+"cross-fetch@^3.1.4":
+  "integrity" "sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/cross-fetch/-/cross-fetch-3.1.5.tgz"
+  "version" "3.1.5"
+  dependencies:
+    "node-fetch" "2.6.7"
 
 "cross-spawn@^7.0.2":
   "integrity" "sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w=="
@@ -3782,7 +3849,7 @@
     "once" "^1.3.0"
     "path-is-absolute" "^1.0.0"
 
-"global@~4.4.0":
+"global@^4.4.0", "global@~4.4.0":
   "integrity" "sha512-wv/LAoHdRE3BeTGz53FAamhGlPLhlssK45usmGFThIi4XqnBmjKQ16u+RNbP7WvigRZDxUsM0J3gcQ5yicaL0w=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/global/-/global-4.4.0.tgz"
   "version" "4.4.0"
@@ -4205,6 +4272,16 @@
     "uuid" "^8.3.2"
     "ws" "^7.4.5"
 
+"jose@^4.5.0":
+  "integrity" "sha512-+/hpTbRcCw9YC0TOfN1W47pej4a9lRmltdOVdRLz5FP5UvUq3CenhXjQK7u/8NdMIIShMXYAh9VLPhc7TjhvFw=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/jose/-/jose-4.8.1.tgz"
+  "version" "4.8.1"
+
+"js-sha256@^0.9.0":
+  "integrity" "sha512-sga3MHh9sgQN2+pJ9VYZ+1LPwXOxuBJBA5nrR5/ofPfuiJBE2hnjsaN8se8JznOmGLN2p49Pe5U/ttafcs/apA=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/js-sha256/-/js-sha256-0.9.0.tgz"
+  "version" "0.9.0"
+
 "js-sha3@^0.8.0", "js-sha3@0.8.0":
   "integrity" "sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/js-sha3/-/js-sha3-0.8.0.tgz"
@@ -4603,7 +4680,7 @@
   "resolved" "https://repo.huaweicloud.com/repository/npm/minimist/-/minimist-1.2.6.tgz"
   "version" "1.2.6"
 
-"moralis@^1.8.0", "moralis@>=1.8.0":
+"moralis@^1.5.9", "moralis@^1.8.0", "moralis@>=1.8.0":
   "integrity" "sha512-p8V5Ur4oLymweySUh+TBuYmQVDeqnNO3+Lk+VfPorGJsmbcer6xVy6MHHNinl1zhhWiCJNpc+XWot5wAcMb4QA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/moralis/-/moralis-1.8.0.tgz"
   "version" "1.8.0"
@@ -4683,7 +4760,7 @@
   "resolved" "https://repo.huaweicloud.com/repository/npm/node-addon-api/-/node-addon-api-2.0.2.tgz"
   "version" "2.0.2"
 
-"node-fetch@^2.6.0", "node-fetch@^2.6.1", "node-fetch@^2.6.7", "node-fetch@2":
+"node-fetch@^2.6.0", "node-fetch@^2.6.1", "node-fetch@^2.6.7", "node-fetch@2", "node-fetch@2.6.7":
   "integrity" "sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/node-fetch/-/node-fetch-2.6.7.tgz"
   "version" "2.6.7"
