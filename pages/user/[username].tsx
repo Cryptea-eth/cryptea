@@ -24,7 +24,7 @@ import { useMoralis, useMoralisQuery, useWeb3Transfer } from "react-moralis";
 
 import Loader from "../../app/components/elements/loader";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, HtmlHTMLAttributes } from "react";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -128,7 +128,7 @@ function User() {
   }, []);
 
   const { username: usern, description, email, img, ethAddress }: {username?: string, description?: string, email?: string, img?: string, ethAddress?: string} = userD;
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState<any>(0);
   const [amount, setAmount] = useState(0);
 
   useEffect(() => {
