@@ -14,7 +14,7 @@ const Notfound = () => {
       <Nav />
 
       <div className="w-full h-fit flex flex-col justify-items-center my-8">
-        <div className="text-black font-bold text-5xl mx-auto mt-24">
+        <div className="text-black font-bold text-4xl mx-auto mt-24">
           We think you&#39;re lost
         </div>
         <div className="text-[#F57059] font-semibold text-lg mx-auto mt-12">
