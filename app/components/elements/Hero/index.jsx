@@ -1,6 +1,6 @@
 import Image from "next/image";
-import logo from "../../../images/img.svg";
-import check from "../../../images/tick.svg";
+import logo from "../../../../public/images/img.svg";
+import check from "../../../../public/images/tick.svg";
 import { useMoralis } from "react-moralis";
 import { useEffect } from "react";
 import { useRouter } from "next/router";

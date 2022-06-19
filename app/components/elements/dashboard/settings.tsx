@@ -21,14 +21,21 @@ import {
   LinearProgress,
   Alert
 } from "@mui/material";
+import Image from 'next/image';
 
-
+interface PixelCrop {
+  x: number;
+    y: number;
+    width: number;
+    height: number;
+    unit: 'px';
+}
 
 const DashSettings = () => {
 
 
   const { Moralis, user } = useMoralis();
-  const [dp, setDp] = useState(user.get('img')); 
+  const [dp, setDp] = useState<string | undefined>(user?.get('img')); 
   const [userLink, setUserLink] = useState("");
   const [userDescription, setUserDescription] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -39,8 +46,8 @@ const DashSettings = () => {
   const [isLoading, setLoading] = useState({
     account: false, security: false, link: false, progress: [0, 0]
   });
-  const [crop, setCrop] = useState();
-  const [simg, setsImg] = useState(null);
+  const [crop, setCrop] = useState<PixelCrop>();
+  const [simg, setsImg] = useState<string | undefined>('');
   const [iimg, setIiimg] = useState({});
   const [result, setResult] = useState(null);
 
@@ -64,7 +71,7 @@ const DashSettings = () => {
 
 
 
-  const passvalid = () => {
+  const passvalid = (pass:string): boolean => {
       	let noNum = false;
         let noChar = false;
         let noSpec = false;
@@ -91,7 +98,7 @@ const DashSettings = () => {
 
 
   const submitAccount = async () => {
-      document.querySelector('#account_sett').scrollIntoView();
+      document.querySelector('#account_sett')?.scrollIntoView();
       window.scrollTo(0, 0);
       setError({
         ...error,
@@ -126,14 +133,15 @@ const DashSettings = () => {
         if(!error['account'].length){
             
         try{
-          user.set("username", userInfo);
-          user.set("email", userEmail);
-          await user.save();
+          user?.set("username", userInfo);
+          user?.set("email", userEmail);
+          await user?.save();
         
             setSuccess({...success, account: "Account Details Saved Successfully"})
             setLoading({ ...isLoading, account: false });
         } catch(err){
-            setError({ ...error, account: err.message });
+          const erro = err as Error;
+            setError({ ...error, account: erro?.message });
               setLoading({...isLoading, account: false });
         }
 
@@ -141,9 +149,11 @@ const DashSettings = () => {
     }
   }
 
-   const imgCrop = (event) => {
+   const imgCrop = (event:React.SyntheticEvent & { target: HTMLInputElement }) => {
       handleOpenM();
-     const fil = event.target.files[0];
+      
+      if(event.target.files !== null) {
+      const fil = event.target.files[0]; 
      const {type, size} = fil;
      const ee = ['image/jpeg', 'image/jpg', 'image/png'];
 
@@ -164,6 +174,7 @@ const DashSettings = () => {
      setIiimg(fil);
 
    };
+  }
 
    const makeStorageClient = async () => {
       return new Web3Storage({
@@ -171,26 +182,25 @@ const DashSettings = () => {
       });
     }
 
-     const beginUpload = async (files, type) => {
+     const beginUpload = async (files:File[], type:string) => {
        const { size: totalSize } = files[0];
   
 
-       const onRootCidReady = (cid) => {
+       const onRootCidReady = (cid:string) => {
          setError({ ...error, account: "" });
          setSuccess({ ...success, account: "Image Uploaded Successfully, might take a while to fully reflect"});         
-          const img = `https://${cid}.ipfs.dweb.link/${user.get("username")}.${type}`;
-          console.log(img)       
+          const img = `https://${cid}.ipfs.dweb.link/${user?.get("username")}.${type}`;     
         setDp(img);
-         user.set("img", img);
+         user?.set("img", img);
 
-         user.save()
+         user?.save()
          
         handleCloseM();
        };
 
        let uploaded = 0;
 
-       const onStoredChunk = (size) => {
+       const onStoredChunk = (size:number) => {
          uploaded += size;
 
          const pct = (totalSize / uploaded) * 100;
@@ -208,31 +218,34 @@ const DashSettings = () => {
 
 
      const cropImg = () => {
-       const img = document.querySelector(".img");
+       const img = document.querySelector(".img") as HTMLImageElement;
        try {
-         const canvas = document.createElement("canvas");
+         const canvas = document.createElement("canvas") as HTMLCanvasElement;
          const scaleX = img.naturalWidth / img.width;
          const scaleY = img.naturalHeight / img.height;
-         canvas.width = crop.width;
-         canvas.height = crop.height;
+         canvas.width = crop?.width === undefined ? 0 : crop?.width;
+         canvas.height = crop?.height === undefined ? 0 : crop?.height;
          const ctx = canvas.getContext("2d");
-         ctx.drawImage(
+         ctx?.drawImage(
            img,
-           crop.x * scaleX,
-           crop.y * scaleY,
-           crop.width * scaleX,
-           crop.height * scaleY,
+           (crop?.x !== undefined ? crop?.x : 0) * scaleX,
+           (crop?.y !== undefined ? crop?.y : 0) * scaleY,
+           (crop?.width !== undefined ? crop?.width : 0) * scaleX,
+           (crop?.height !== undefined ? crop?.height : 0) * scaleY,
            0,
            0,
-           crop.width,
-           crop.height
+           (crop?.width !== undefined ? crop?.width : 0),
+           (crop?.height !== undefined ? crop?.height : 0)
          );
-         const { type } = iimg;
-         const ext = type.split("/");
+         
+         const { type }:{type?:string} = iimg || {};
+         const ext = type?.split("/");
          canvas.toBlob(
            (blob) => {
-             const files = [new File([blob], `${user.get('username')}.${ext[1]}`)];
+            if(blob !== null && ext !== undefined) {
+             const files = [new File([blob], `${user?.get('username')}.${ext[1]}`)];
              beginUpload(files, ext[1]);
+            }
            },
            type,
            1
@@ -240,13 +253,14 @@ const DashSettings = () => {
    
 
        } catch (e) {
-         setError({ ...error, account: e.message });
+        const err = e as Error
+         setError({ ...error, account: err?.message });
        }
      };
 
 
   const submitLink = async () => {
-    document.querySelector("#link_sett").scrollIntoView();
+    document.querySelector("#link_sett")?.scrollIntoView();
     window.scrollTo(0, 0);
     setError({
       ...error,
@@ -280,30 +294,33 @@ const DashSettings = () => {
       if (!error["link"].length) {
         const Links = Moralis.Object.extend("link");
         const link = new Links();
-          link.set("link", userLink);
-          user.set('desc', userDescription);
+          link?.set("link", userLink);
+          user?.set('desc', userDescription);
      
         try {
-          await link.save();
-          await user.save();
+          await link?.save();
+          await user?.save();
           setSuccess({
             ...success,
             link: "Link Details Saved Successfully"
           });
           setLoading({ ...isLoading, link: false });
         } catch (err) {
-          setError({ ...error, link: err.message });
+          const erro = err as Error;
+          setError({ ...error, link: erro?.message });
           setLoading({ ...isLoading, link: false });
         }
       }
     }
   };
 
-  const {username, email, desc } = user.attributes; 
-
+ 
+  const username = user?.get('username');
+  const email = user?.get('email');
+  const desc = user?.get('desc');
 
   const submitSecure = async () => {
-    document.querySelector("#security_sett").scrollIntoView();
+    document.querySelector("#security_sett")?.scrollIntoView();
     window.scrollTo(0, 0);
     setError({
       ...error,
@@ -344,17 +361,18 @@ const DashSettings = () => {
 
       if (!error["security"].length) {
 
-        user.setPassword(pass);
+        user?.setPassword(pass);
 
         try {
-          await user.save();
+          await user?.save();
           setSuccess({
             ...success,
             security: "Security Details Saved Successfully",
           });
           setLoading({ ...isLoading, security: false });
         } catch (err) {
-          setError({ ...error, security: err.message });
+          const erro = err as Error;
+          setError({ ...error, security: erro?.message });
           setLoading({ ...isLoading, security: false });
         }
       }
@@ -418,10 +436,9 @@ const DashSettings = () => {
               setCrop(c);
             }}
           >
-            <img
-              className="img w-full m-auto !max-h-[calc(100vh-128px)] min-w-[340px]"
+            <Image className="img w-full m-auto !max-h-[calc(100vh-128px)] min-w-[340px]"
               alt="crop me"
-              src={simg}
+              src={(simg ? simg : '')}
             />
           </ReactCrop>
 
@@ -463,7 +480,7 @@ const DashSettings = () => {
             method="POST"
             action="#"
             id="account_sett"
-            entype="multipart/form-data"
+            encType="multipart/form-data"
           >
             <div className="w-full justify-center mt-4">
               <div className="flex flex-col mx-7 items-center justify-center">
@@ -496,7 +513,7 @@ const DashSettings = () => {
                         Change Username
                       </div>
                       <div className="mt-2">
-                        <div name="inputName" className="rounded-md">
+                        <div className="rounded-md">
                           <div className="flex">
                             <TextField
                               className="bg-[white]"
@@ -505,7 +522,7 @@ const DashSettings = () => {
                               fullWidth
                               placeholder={username}
                               name="username"
-                              onChange={(e) => {
+                              onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                                 setError({
                                   ...error,
                                   account: "",
@@ -523,14 +540,14 @@ const DashSettings = () => {
                         <div className="font-semibold mt-5 mb-4 text-[#777]">
                           Change Email
                         </div>
-                        <div name="inputEmail" className="rounded-md mt-2">
+                        <div className="rounded-md mt-2">
                           <div className="flex">
                             <TextField
                               className="bg-[white]"
                               label={"Email"}
                               placeholder={email}
                               value={userEmail}
-                              onChange={(e) => {
+                              onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                                 setUserEmail(e.target.value);
                                 setError({
                                   ...error,
@@ -570,15 +587,15 @@ const DashSettings = () => {
                             height: 190,
                           }}
                           className="!font-bold imm !text-[35px]"
-                          alt={user.get("username")}
+                          alt={user?.get("username")}
                         >
-                          {user.get("username").charAt(0).toUpperCase()}
+                          {user?.get("username").charAt(0).toUpperCase()}
                         </Avatar>
                       ) : (
                         <Avatar
                           src={dp}
                           sx={{ width: 190, height: 190 }}
-                          alt={user.get("username")}
+                          alt={user?.get("username")}
                         ></Avatar>
                       )}
                       <div className="mt-1">
@@ -588,14 +605,16 @@ const DashSettings = () => {
                           className="!hidden dpp"
                           style={{
                             display: "none !important",
-                            visibility: "hidden !important",
+                            visibility: "hidden",
                           }}
                           onChange={imgCrop}
                         />
 
                         <Button
                           onClick={() => {
-                            document.querySelector(".dpp").click();
+                           let element = document.querySelector(".dpp") as HTMLInputElement;
+
+                           element.click();
                           }}
                           variant="contained"
                           className="!text-sm !rounded-lg !capitalize !bg-[#F57059] !text-white !font-semibold p-[10px]"
@@ -620,7 +639,7 @@ const DashSettings = () => {
             method="POST"
             action="#"
             id="link_sett"
-            entype="multipart/form-data"
+            encType="multipart/form-data"
           >
             <div className="w-full justify-center mt-4">
               <div className="flex flex-col mx-7 items-center justify-center">
@@ -667,7 +686,7 @@ const DashSettings = () => {
                           placeholder={desc}
                           name="Link"
                           label="Link"
-                          onChange={(e) => {
+                          onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                             const lk = e.target.value;
                             setUserLink(
                               lk.replace(/[/\\.@#&?;,:"'~*^%|]/g, "")
@@ -696,7 +715,7 @@ const DashSettings = () => {
                     <div className="font-semibold mt-5 mb-4 text-[#777]">
                       Change Description
                     </div>
-                    <div name="inputDescription" className="rounded-md mt-2">
+                    <div className="rounded-md mt-2">
                       <div className="flex">
                         <TextField
                           type="textarea"
@@ -704,9 +723,8 @@ const DashSettings = () => {
                           label={"Description"}
                           placeholder="I created Ethereum"
                           value={userDescription}
-                          onChange={(e) => {
+                          onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                             setUserDescription(e.target.value);
-
                             setError({
                               ...error,
                               link: "",
@@ -749,7 +767,7 @@ const DashSettings = () => {
             method="POST"
             id="security_sett"
             action="#"
-            entype="multipart/form-data"
+            encType="multipart/form-data"
           >
             <div className="w-full justify-center mt-4">
               <div className="flex flex-col mx-7 justify-center">
@@ -797,7 +815,7 @@ const DashSettings = () => {
                         id="current-password"
                         type={currentViewpass ? "text" : "password"}
                         value={currentPass}
-                        onChange={(e) => {
+                        onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                           setCurrentPass(e.target.value);
                           setError({
                             ...error,
@@ -815,7 +833,7 @@ const DashSettings = () => {
                               onClick={() =>
                                 setCurrentViewpass(!currentViewpass)
                               }
-                              onMouseDown={(event) => {
+                              onMouseDown={(event:React.SyntheticEvent) => {
                                 event.preventDefault();
                               }}
                               edge="end"
@@ -851,7 +869,7 @@ const DashSettings = () => {
                         id="new-password"
                         type={viewpass ? "text" : "password"}
                         value={pass}
-                        onChange={(e) => {
+                        onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                           setPass(e.target.value);
                           setError({
                             ...error,
@@ -867,7 +885,7 @@ const DashSettings = () => {
                             <IconButton
                               aria-label="toggle password visibility"
                               onClick={() => setViewpass(!viewpass)}
-                              onMouseDown={(event) => {
+                              onMouseDown={(event:React.SyntheticEvent) => {
                                 event.preventDefault();
                               }}
                               edge="end"
@@ -903,7 +921,7 @@ const DashSettings = () => {
                         id="Reenter-new-password"
                         type={viewRepass ? "text" : "password"}
                         value={repass}
-                        onChange={(e) => {
+                        onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                           setRepass(e.target.value);
                           setError({
                             ...error,
@@ -919,7 +937,7 @@ const DashSettings = () => {
                             <IconButton
                               aria-label="toggle re-enter password visibility"
                               onClick={() => setViewRepass(!viewRepass)}
-                              onMouseDown={(event) => {
+                              onMouseDown={(event:React.SyntheticEvent) => {
                                 event.preventDefault();
                               }}
                               edge="end"

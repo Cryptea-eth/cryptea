@@ -1,5 +1,5 @@
-import Nav from "../app/components/elements/Nav";
-import Footer from "../app/components/elements/Footer";
+import Nav from "../../app/components/elements/Nav";
+import Footer from "../../app/components/elements/Footer";
 import Link from "next/link";
 import Head from 'next/head'
 const Notfound = () => {

@@ -1,5 +1,5 @@
 import { Box, CircularProgress } from "@mui/material";
-import logo from "../../../images/cryptea-logo.svg";
+import logo from "../../../../public/images/cryptea-logo.svg";
 import Image from 'next/image';
 const Loader = () => {
   return (

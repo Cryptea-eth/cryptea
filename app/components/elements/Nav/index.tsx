@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from 'next/image';
 import { useEffect, useRef, useState } from "react";
 import { useMoralis } from "react-moralis";
-import logo from '../../../images/cryptea-logo.svg';
+import logo from '../../../../public/images/cryptea-logo.svg';
 
 function Nav() {
   const { isAuthenticated, user, authenticate, logout, chainId, isWeb3EnableLoading, isWeb3Enabled, enableWeb3 } = useMoralis();

@@ -1,6 +1,6 @@
-import empty from "../../app/images/coming-soon.svg";
+import empty from "../../../../public/images/coming-soon.svg";
 import Image from "next/image";
-const DashPages = () => {
+const DashLinks = () => {
   return (
     <div>
       <div
@@ -31,4 +31,4 @@ const DashPages = () => {
   );
 };
 
-export default DashPages;
+export default DashLinks;

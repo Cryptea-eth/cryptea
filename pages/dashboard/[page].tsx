@@ -11,27 +11,28 @@ import {
   IoIosArrowDroprightCircle,
 } from "react-icons/io";
 import { RiSettingsLine } from "react-icons/ri";
-import logo from "../../app/images/cryptea-logo.svg";
+import logo from "../../public/images/cryptea-logo.svg";
 // import "../../assets/styles/dash.css";
 import { Avatar, Popover } from "@mui/material";
-import DashHome from "./home";
-import DashLinks from "./links";
-import DashPages from "./pages";
-import DashSettings from "./settings";
-import { NavLink, useParams } from "react-router-dom";
+import DashHome from "../../app/components/elements/dashboard/home";
+import DashLinks from "../../app/components/elements/dashboard/links";
+import DashPages from "../../app/components/elements/dashboard/pages";
+import DashSettings from "../../app/components/elements/dashboard/settings";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useMoralis } from "react-moralis";
 import Image from "next/image";
 
-const Dash = () => {
+const Dashboard = () => {
   const [isOpen, close] = useState(false);
   const [isOpen3, close3] = useState(false);
-  const { page } = useParams();
   const { user, isAuthenticated, logout } = useMoralis();
   const router = useRouter();
 
-  const dp = user.get("img");
+  const { page } = router.query;
+
+  const dp = user?.get("img");
 
   const toggle = () => {
     close(!isOpen);
@@ -41,9 +42,9 @@ const Dash = () => {
     }, 900);
   };
 
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(null);
 
-  const handleNotes = (event) => {
+  const handleNotes = (event:React.SyntheticEvent) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -69,7 +70,7 @@ const Dash = () => {
             isOpen ? "py-[1.32rem]" : "py-[1rem]"
           } border-solid innerSide border-b-[1px] flex justify-center transition-all delay-500 items-center relative`}
         >
-          <NavLink to="/" className="flex items-center justify-center">
+          <Link href="/" className="flex items-center justify-center">
             <Image
               src={logo}
               alt="cryptea"
@@ -92,7 +93,7 @@ const Dash = () => {
               className={isOpen3 ? "" : "transition-all delay-500 hidden"}
               alt="cryptea"
             /> */}
-          </NavLink>
+          </Link>
           {isOpen3 ? (
             <IoIosArrowDropleftCircle
               onClick={toggle}
@@ -131,8 +132,8 @@ const Dash = () => {
                 page === "home" || page === undefined ? active : ""
               } transition-all delay-500 bg-[#F5F8FE] py-[9px]`}
             >
-              <NavLink
-                to="/dashboard"
+              <Link
+                href="/dashboard"
                 className="text-inherit flex items-center text-[14px]"
               >
                 <BiHomeAlt
@@ -142,20 +143,19 @@ const Dash = () => {
                   } mx-[22.5px]`}
                 />{" "}
                 {isOpen3 ? "Dashboard" : ""}
-              </NavLink>
+              </Link>
             </div>
           </div>
 
           <div
             className={`rounded-[4px] overflow-hidden flex-nowrap my-1 ${
-              (page === "userpages" || page === "pages" || page === "page") !==
-              -1
+              (page === "userpages" || page === "pages" || page === "page")
                 ? active
                 : ""
             } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#F5F8FE] py-[9px]`}
           >
-            <NavLink
-              to="/dashboard/pages"
+            <Link
+              href="/dashboard/pages"
               className="text-inherit flex items-center text-[14px]"
             >
               <BiPaperPlane
@@ -165,16 +165,16 @@ const Dash = () => {
                 } mx-[22.5px]`}
               />{" "}
               {isOpen3 ? "Your Pages" : ""}
-            </NavLink>
+            </Link>
           </div>
 
           <div
             className={`rounded-[4px] overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] py-[9px] ${
-              (page === "links" || page === "link") !== -1 ? active : ""
+              (page === "links" || page === "link") ? active : ""
             }`}
           >
-            <NavLink
-              to="/dashboard/links"
+            <Link
+              href="/dashboard/links"
               className="text-inherit flex items-center text-[14px]"
             >
               <BiCreditCard
@@ -184,16 +184,16 @@ const Dash = () => {
                 } mx-[22.5px]`}
               />{" "}
               {isOpen3 ? "Payment Links" : ""}
-            </NavLink>
+            </Link>
           </div>
 
           <div
             className={`rounded-[4px] overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] hover:text-[#F57059] border-l-transparent text-[#A9A9A9] hover:bg-[#F5F8FE] py-[9px] ${
-              (page === "settings" || page === "setting") !== -1 ? active : ""
+              (page === "settings" || page === "setting") ? active : ""
             }`}
           >
-            <NavLink
-              to="/dashboard/settings"
+            <Link
+              href="/dashboard/settings"
               className="text-inherit flex items-center text-[14px]"
             >
               <RiSettingsLine
@@ -203,7 +203,7 @@ const Dash = () => {
                 } mx-[22.5px]`}
               />{" "}
               {isOpen3 ? "Settings" : ""}
-            </NavLink>
+            </Link>
           </div>
 
           <div className="rounded-[4px] overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] py-[9px]">
@@ -230,7 +230,7 @@ const Dash = () => {
       <div className="body w-full h-full">
         <div className="flex px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]">
           <div className="">
-            <h1 className="font-bold">Welcome {user.get("username")}!☕</h1>
+            <h1 className="font-bold">Welcome {user?.get("username")}!☕</h1>
             <span>Hope you are healthy and happy today..</span>
           </div>
           <div className="flex items-center">
@@ -306,11 +306,11 @@ const Dash = () => {
               <Avatar
                 src={dp}
                 sx={{ width: 40, height: 40 }}
-                alt={user.get("username")}
+                alt={user?.get("username")}
               ></Avatar>
             ) : (
-              <Avatar sx={{ bgcolor: "#F57059" }} alt={user.get("username")}>
-                {user.get("username").charAt(0).toUpperCase()}
+              <Avatar sx={{ bgcolor: "#F57059" }} alt={user?.get("username")}>
+                {user?.get("username").charAt(0).toUpperCase()}
               </Avatar>
             )}
           </div>
@@ -336,11 +336,11 @@ const Dash = () => {
             "userpages",
             "pages",
             "page",
-          ].includes(page) &&
+          ].includes(page.toString()) &&
           router.replace("/404")}
       </div>
     </div>
   );
 };
 
-export default Dash;
+export default Dashboard;

@@ -1,6 +1,6 @@
-import ether from "../../../images/ethereum.png";
-import avax from "../../../images/avax.png";
-import matic from "../../../images/polygon.png";
+import ether from "../../../../public/images/ethereum.png";
+import avax from "../../../../public/images/avax.png";
+import matic from "../../../../public/images/polygon.png";
 import Image from "next/image";
 
 const Supported = () => {

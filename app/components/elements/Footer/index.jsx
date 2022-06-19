@@ -1,7 +1,7 @@
-import linked from "../../../images/icon0.png";
+import linked from "../../../../public/images/icon0.png";
 import Image from "next/image";
-import mess from "../../../images/icon1.png";
-import twitt from "../../../images/icon2.png";
+import mess from "../../../../public/images/icon1.png";
+import twitt from "../../../../public/images/icon2.png";
 import { useMoralis } from "react-moralis";
 import { useEffect } from "react";
 import { useRouter } from "next/router";

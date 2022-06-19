@@ -1,7 +1,7 @@
-import one from "../../../images/one.svg";
-import two from "../../../images/two.svg";
-import three from "../../../images/three.svg";
-import circle from "../../../images/circle.svg";
+import one from "../../../../public/images/one.svg";
+import two from "../../../../public/images/two.svg";
+import three from "../../../../public/images/three.svg";
+import circle from "../../../../public/images/circle.svg";
 import Supported from "../Supported";
 import Image from "next/image";
 import { useMoralis } from "react-moralis";
@@ -37,7 +37,7 @@ const About = () => {
     } else {
       window.location.href = "/#/signup";
     }
-  };
+};
 
   return (
     <div className="mx-[30px] mt-24 px-14 2md:px-4 2md:mx-1" id="about">

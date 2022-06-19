@@ -2,7 +2,7 @@ import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts";
 import { useState, useEffect, Fragment } from "react";
 import { FaWallet } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
-import Loader from "../../app/components/elements/Loader";
+import Loader from "../loader";
 import Image from 'next/image';
 
 import { BsBoxArrowInDownLeft, BsArrowRight } from "react-icons/bs";
@@ -36,9 +36,9 @@ const DashHome = () => {
     chainId
   } = useMoralis();
 
-  const userAddress = user.get("ethAddress");
+  const userAddress = user?.get("ethAddress");
 
-  const BigNum = (n = 0, p) => {
+  const BigNum = (n = 0, p:number) => {
   
   const nn = String(n).split('.');
 
@@ -59,9 +59,9 @@ const DashHome = () => {
   const [loading1, setLoading1] = useState(true);
   const [loading2, setLoading2] = useState(true);
   const [wdata, setWData] = useState({});
-  const [rows, setrows] = useState({});
+  const [rows, setrows] = useState([]);
   const [nft, viewN] = useState(false);
-  const [nfts, setNfts] = useState('auto')
+  const [nfts, setNfts] = useState<number | undefined>(0)
   useEffect(() => {
 
       if (!isWeb3Enabled) {
@@ -91,6 +91,14 @@ const DashHome = () => {
               quote,
               quote_24h,
               logo_url,
+            }: {
+              balance:number,
+              contract_name:string,
+              contract_decimals: number,
+              contract_ticker_symbol: string,
+              quote: number,
+              quote_24h: number,
+              logo_url: string
             }) => {
               return {
                 name: (
@@ -146,29 +154,27 @@ const DashHome = () => {
 
   const { fetch:fetched, error, isFetching } = useWeb3Transfer({
     type: "native",
-    amount: Moralis.Units.ETH(parseFloat(amount)),
+    amount: Moralis.Units.ETH(amount),
     receiver: receiver
   });
  
-  console.log(wdata)
- 
+
   const balances = () => {
     if (!loading2) {
-      let bs = user.get("balances");
-      const { items } = wdata;
+      let bs = user?.get("balances");
+      const { items }:{items?: object[]} = wdata;
       let bss = 0;
 
-      items.forEach(({ quote, balance, contract_decimals }) => {
+      items?.forEach(({ quote = 0, balance = 0, contract_decimals = 0 }: { quote?:number, balance?: number, contract_decimals?:number }) => {
         bss += (balance / 10 ** contract_decimals) * quote;
       });
-
 
       if (!Boolean(bs)) {
         const json = [];
         json.push({ amt: 0 }, { amt: bss });
 
-        user.set("balances", JSON.stringify(json));
-        user.save();
+        user?.set("balances", JSON.stringify(json));
+        user?.save();
 
         return json;
 
@@ -177,8 +183,8 @@ const DashHome = () => {
 
         if (BigNum(bs[bs.length - 1].amt, 5) !== BigNum(bss, 5)) {
           bs.push({ amt: bss });
-          user.set("balances", JSON.stringify(bs));
-          user.save();
+          user?.set("balances", JSON.stringify(bs));
+          user?.save();
         }
 
         return bs;
@@ -189,7 +195,7 @@ const DashHome = () => {
 
 
   const balance = balances();
-  const received = Boolean(user.get('received')) ? JSON.parse(user.get('received')) : [{amt: 0}];
+  const received = Boolean(user?.get('received')) ? JSON.parse(user?.get('received')) : [{amt: 0}];
 
 
   const [previous, current] = loading2 ? [] : [
@@ -200,17 +206,16 @@ const DashHome = () => {
   const change = loading2 ? 0 : ((current - previous) / previous) * 100;
 
 
-  const [rprevious, rcurrent] = Boolean(user.get('received')) ? [
+  const [rprevious, rcurrent] = Boolean(user?.get('received')) ? [
     received[received.length - 2].amt,
     received[received.length - 1].amt,
   ] : [0, 0];
-  const rchange = Boolean(user.get('received')) ? ((rcurrent - rprevious) / rprevious) * 100 : 0;
+  const rchange = Boolean(user?.get('received')) ? ((rcurrent - rprevious) / rprevious) * 100 : 0;
   
-  
 
 
+  const columns:{id:string, label: string,minWidth:number , align?: "right" | "left", format?: <Val extends string & number>(value: Val) => (string | number) }[] = [
 
-  const columns = [
     { id: "name", label: "Token", minWidth: 170 },
     { id: "code", label: "Symbol", minWidth: 100 },
     {
@@ -218,21 +223,21 @@ const DashHome = () => {
       label: "Label Price",
       minWidth: 150,
       align: "right",
-      format: (value) => value.toLocaleString("en-US"),
+      format: (value: string) => value.toLocaleString(),
     },
     {
       id: "change",
       label: "24h change",
       minWidth: 100,
       align: "right",
-      format: (value) => value.toLocaleString("en-US"),
+      format: (value:string) => value.toLocaleString(),
     },
     {
       id: "amount",
       label: "Amount",
       minWidth: 100,
       align: "right",
-      format: (value) => value.toFixed(2),
+      format: (value:number) => value.toFixed(2),
     },
   ];
 
@@ -242,7 +247,7 @@ const DashHome = () => {
         <div className="flex items-center">
           <Avatar
             alt="BNB"
-            src={require("../../app/images/bnb.png")}
+            src={require("../../../../public/images/bnb.png")}
             sx={{ width: 24, height: 24, marginRight: "10px" }}
           />
           <span>Binance</span>
@@ -258,7 +263,7 @@ const DashHome = () => {
         <div className="flex items-center">
           <Avatar
             alt="BTC"
-            src={require("../../app/images/btc.png")}
+            src={require("../../../../public/images/btc.png")}
             sx={{ width: 24, height: 24, marginRight: "10px" }}
           />
           <span>Bitcoin</span>
@@ -274,7 +279,7 @@ const DashHome = () => {
         <div className="flex items-center">
           <Avatar
             alt="ETH"
-            src={require("../../app/images/eth.png")}
+            src={require("../../../../public/images/eth.png")}
             sx={{ width: 24, height: 24, marginRight: "10px" }}
           />
           <span>Ethereum</span>
@@ -290,7 +295,7 @@ const DashHome = () => {
         <div className="flex items-center">
           <Avatar
             alt="LUNA"
-            src={require("../../app/images/terra.png")}
+            src={require("../../../../public/images/terra.png")}
             sx={{ width: 24, height: 24, marginRight: "10px" }}
           />
           <span>Terra</span>
@@ -306,7 +311,7 @@ const DashHome = () => {
         <div className="flex items-center">
           <Avatar
             alt="Cardano"
-            src={require("../../app/images/cardano.png")}
+            src={require("../../../../public/images/cardano.png")}
             sx={{ width: 24, height: 24, marginRight: "10px" }}
           />
           <span>Cardano</span>
@@ -324,7 +329,7 @@ const DashHome = () => {
         <div className="flex items-center">
           <Avatar
             alt="NFT"
-            src={require("../../app/images/nft.png")}
+            src={require("../../../../public/images/nft.png")}
             sx={{ width: 24, height: 24, marginRight: "10px" }}
           />
           <span>NFT</span>
@@ -333,7 +338,7 @@ const DashHome = () => {
             size="small"
             onClick={() => {
               viewN(!nft);
-              const { clientWidth } = document.querySelector('.mainTable')
+              const { clientWidth = 0 }:{ clientWidth?:number } = document?.querySelector('.mainTable') || {}
 
               setNfts(clientWidth);
             }}
@@ -348,27 +353,27 @@ const DashHome = () => {
             <Avatar
               alt="one"
               sx={{ width: 30, height: 30 }}
-              src={require("../../app/images/nft.png")}
+              src={require("../../../../public/images/nft.png")}
             />
             <Avatar
               sx={{ width: 30, height: 30 }}
               alt="two"
-              src={require("../../app/images/cardano.png")}
+              src={require("../../../../public/images/cardano.png")}
             />
             <Avatar
               sx={{ width: 30, height: 30 }}
               alt="three"
-              src={require("../../app/images/terra.png")}
+              src={require("../../../../public/images/terra.png")}
             />
             <Avatar
               sx={{ width: 30, height: 30 }}
               alt="four"
-              src={require("../../app/images/bnb.png")}
+              src={require("../../../../public/images/bnb.png")}
             />
             <Avatar
               sx={{ width: 30, height: 30 }}
               alt="five"
-              src={require("../../app/images/eth.png")}
+              src={require("../../../../public/images/eth.png")}
             />
           </AvatarGroup>
         </div>
@@ -382,11 +387,11 @@ const DashHome = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (event:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = (event:any) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
@@ -427,9 +432,9 @@ const DashHome = () => {
                   fullWidth
                   type={`number`}
                   value={amount}
-                  onChange={(e) => {
+                  onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                     const val = e.target.value;
-                    setAmount(val.replace(/[^\d.]/g, ""));
+                    setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
                   }}
                   className="amount"
                   id="Amount"
@@ -440,7 +445,7 @@ const DashHome = () => {
                   label={"Account/Address"}
                   fullWidth
                   value={receiver}
-                  onChange={(e) => setReceiver(e.target.value)}
+                  onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setReceiver(e.target.value)}
                   className="account"
                   id="account"
                 />
@@ -686,13 +691,13 @@ const DashHome = () => {
                                   <div
                                     className="flex nfts cusscroller pb-[10px] w-full overflow-y-hidden overflow-x-scroll flex-nowrap mt-5"
                                     style={{
-                                      maxWidth: nfts - 50
+                                      maxWidth: nfts ? (nfts - 50) : 0
                                     }}
                                   >
                                     <div className="grid item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
                                       <Image
                                         alt="something"
-                                        src={require("../../app/images/art.png")}
+                                        src={require("../../../../public/images/art.png")}
                                         className="w-[256px] h-[210px] object-cover"
                                       />
                                       <div className="flex flex-col justify-between flex-start py-3 px-2 bg-[#f1f1f1a9]">
@@ -712,7 +717,7 @@ const DashHome = () => {
                                           <div className="flex items-center">
                                             <Avatar
                                               alt="name of something"
-                                              src={require("../../app/images/cardano.png")}
+                                              src={require("../../../../public/images/cardano.png")}
                                               sx={{
                                                 width: 15,
                                                 height: 15,
@@ -728,7 +733,7 @@ const DashHome = () => {
                                     <div className="grid item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
                                       <Image
                                         alt="something"
-                                        src={require("../../app/images/art.png")}
+                                        src={require("../../../../public/images/art.png")}
                                         className="w-[256px] h-[210px] object-cover"
                                       />
                                       <div className="flex flex-col justify-between flex-start py-3 px-2 bg-[#f1f1f1a9]">
@@ -748,7 +753,7 @@ const DashHome = () => {
                                           <div className="flex items-center">
                                             <Avatar
                                               alt="name of something"
-                                              src={require("../../app/images/cardano.png")}
+                                              src={require("../../../../public/images/cardano.png")}
                                               sx={{
                                                 width: 15,
                                                 height: 15,
@@ -764,7 +769,7 @@ const DashHome = () => {
                                     <div className="grid item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
                                       <Image
                                         alt="something"
-                                        src={require("../../app/images/art.png")}
+                                        src={require("../../../../public/images/art.png")}
                                         className="w-[256px] h-[210px] object-cover"
                                       />
                                       <div className="flex flex-col justify-between flex-start py-3 px-2 bg-[#f1f1f1a9]">
@@ -784,7 +789,7 @@ const DashHome = () => {
                                           <div className="flex items-center">
                                             <Avatar
                                               alt="name of something"
-                                              src={require("../../app/images/cardano.png")}
+                                              src={require("../../../../public/images/cardano.png")}
                                               sx={{
                                                 width: 15,
                                                 height: 15,
@@ -800,7 +805,7 @@ const DashHome = () => {
                                     <div className="grid item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
                                       <Image
                                         alt="something"
-                                        src={require("../../app/images/art.png")}
+                                        src={require("../../../../public/images/art.png")}
                                         className="w-[256px] h-[210px] object-cover"
                                       />
                                       <div className="flex flex-col justify-between flex-start py-3 px-2 bg-[#f1f1f1a9]">
@@ -820,7 +825,7 @@ const DashHome = () => {
                                           <div className="flex items-center">
                                             <Avatar
                                               alt="name of something"
-                                              src={require("../../app/images/cardano.png")}
+                                              src={require("../../../../public/images/cardano.png")}
                                               sx={{
                                                 width: 15,
                                                 height: 15,
@@ -864,7 +869,10 @@ const DashHome = () => {
           <div className="py-2">
             <TextField
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+              const val = e.target.value;
+              setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
+              }}
               label={"Amount"}
               fullWidth
               className="amount"
@@ -877,13 +885,13 @@ const DashHome = () => {
               fullWidth
               className="account"
               value={receiver}
-              onChange={(e) => setReceiver(e.target.value)}
+              onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setReceiver(e.target.value)}
               id="account"
             />
           </div>
           <div className="py-2 flex justify-center">
             <Button
-              onClick={(e) => fetched()}
+              onClick={() => fetched()}
               variant="contained"
               className="!bg-[#F57059] !py-[13px] !font-medium !capitalize"
               style={{
