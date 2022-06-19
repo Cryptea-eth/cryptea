@@ -129,10 +129,10 @@ function User() {
           }
         );
       } else {
-        window.location.href = "/#/404";
+        window.location.href = "/404";
       }
     });
-  }, []);
+  }, [Moralis.Cloud, fetch]);
 
   const { username: usern, description, email, img, ethAddress }: { username?: string, description?: string, email?: string, img?: string, ethAddress?: string } = userD;
   const [value, setValue] = useState(0);
@@ -142,7 +142,7 @@ function User() {
     if (!isWeb3Enabled) {
       enableWeb3();
     }
-  }, [])
+  }, [enableWeb3, isWeb3Enabled])
 
   const {
     fetch: fetched,
