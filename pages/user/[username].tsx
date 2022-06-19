@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import { useTheme } from "@mui/material/styles";
+import { Theme, useTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
-import "../../assets/styles/auth.css";
+// import "../../assets/styles/auth.css";
 import Image from 'next/image';
 import empty from "../../public/images/coming-soon.svg";
 import {
@@ -24,9 +24,16 @@ import { useMoralis, useMoralisQuery, useWeb3Transfer } from "react-moralis";
 
 import Loader from "../../app/components/elements/loader";
 
-import { useState, useEffect, HtmlHTMLAttributes } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 
-function TabPanel(props) {
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+
+function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
@@ -52,7 +59,7 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-function a11yProps(index) {
+function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
     "aria-controls": `simple-tabpanel-${index}`,
@@ -72,7 +79,7 @@ const MenuProps = {
 
 const names = ["Polygon", "Avalanche", "Ethereum", "Binance Smart Chain"];
 
-function getStyles(name, blockchainName, theme) {
+function getStyles(name: string, blockchainName: string | any[], theme: Theme) {
   return {
     fontWeight:
       blockchainName.indexOf(name) === -1
@@ -89,7 +96,7 @@ function User() {
 
   const [alignment, setAlignment] = useState();
 
-  const changeAlignMent = (event, newAlignment) => {
+  const changeAlignMent = (event: any, newAlignment: SetStateAction<undefined>) => {
     setAlignment(newAlignment);
   };
 
@@ -127,8 +134,8 @@ function User() {
     });
   }, []);
 
-  const { username: usern, description, email, img, ethAddress }: {username?: string, description?: string, email?: string, img?: string, ethAddress?: string} = userD;
-  const [value, setValue] = useState<any>(0);
+  const { username: usern, description, email, img, ethAddress }: { username?: string, description?: string, email?: string, img?: string, ethAddress?: string } = userD;
+  const [value, setValue] = useState(0);
   const [amount, setAmount] = useState(0);
 
   useEffect(() => {
@@ -147,11 +154,11 @@ function User() {
     receiver: ethAddress,
   });
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  const handleSelectChange = (event) => {
+  const handleSelectChange = (event: { target: { value: any; }; }) => {
     const {
       target: { value },
     } = event;
@@ -223,11 +230,7 @@ function User() {
                       }}
                     >
                       <Tabs
-                        value={value}
-                        onChange={handleChange}
-                        fullWidth={true}
-                        aria-label="payment tabs"
-                      >
+                        value={value} onChange={handleChange} aria-label="payment tabs">
                         <Tab
                           className="!font-bold !rounded-[4px] !capitalize"
                           label="Onetime😇"
@@ -281,7 +284,7 @@ function User() {
                           value={amount}
                           exclusive
                           className="w-full justify-between"
-                          onChange={(e:any) => {
+                          onChange={(e: any) => {
                             const val = e.target.value;
                             setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
                           }}
@@ -302,12 +305,12 @@ function User() {
                           label="Input Price"
                           variant="outlined"
                           value={amount}
-                          onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                          onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                             const val = e.target.value;
                             setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
                           }}
                         />
-                        
+
                         <Button
                           variant="contained"
                           className="!bg-[#F57059] !mt-4 !py-[13px] !font-medium !capitalize"
