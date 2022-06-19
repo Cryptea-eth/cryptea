@@ -2,7 +2,8 @@ import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import "../../assets/styles/auth.css";
-import empty from "../../assets/img/coming-soon.svg";
+import Image from 'next/image';
+import empty from "../../public/images/coming-soon.svg";
 import {
   OutlinedInput,
   Box,
@@ -21,7 +22,7 @@ import {
 
 import { useMoralis, useMoralisQuery, useWeb3Transfer } from "react-moralis";
 
-import Loader from "../../components/loader";
+import Loader from "../../app/components/elements/loader";
 
 import { useState, useEffect } from "react";
 
@@ -106,7 +107,7 @@ function User() {
 
   useEffect(() => {
     fetch().then((er) => {
-      if (er.length) {
+      if (er !== undefined) {
         Moralis.Cloud.run("getUser", { obj: er[0].get("user").id }).then(
           (ex) => {
             setUserD({
@@ -126,7 +127,7 @@ function User() {
     });
   }, []);
 
-  const { username: usern, description, email, img, ethAddress } = userD;
+  const { username: usern, description, email, img, ethAddress }: {username?: string, description?: string, email?: string, img?: string, ethAddress?: string} = userD;
   const [value, setValue] = useState(0);
   const [amount, setAmount] = useState(0);
 
@@ -142,7 +143,7 @@ function User() {
     isFetching,
   } = useWeb3Transfer({
     type: "native",
-    amount: Moralis.Units.ETH(parseFloat(amount)),
+    amount: Moralis.Units.ETH(amount),
     receiver: ethAddress,
   });
 
@@ -178,7 +179,7 @@ function User() {
               }}
             ></div>
             <div className="absolute border-solid border-[4px] p-1 border-[#f57059] rounded-[50%] left-0 right-0 m-auto bottom-[-29px] w-fit">
-              {!img.length ? (
+              {!img?.length ? (
                 <Avatar
                   sx={{
                     bgcolor: "#F57059",
@@ -188,7 +189,7 @@ function User() {
                   className="!font-bold !text-[35px]"
                   alt={usern}
                 >
-                  {usern.charAt(0).toUpperCase()}
+                  {usern?.charAt(0).toUpperCase()}
                 </Avatar>
               ) : (
                 <Avatar
@@ -280,9 +281,9 @@ function User() {
                           value={amount}
                           exclusive
                           className="w-full justify-between"
-                          onChange={(e) => {
+                          onChange={(e:any) => {
                             const val = e.target.value;
-                            setAmount(val.replace(/[^\d.]/g, ""));
+                            setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
                           }}
                         >
                           <ToggleButton value="0.1">0.1</ToggleButton>
@@ -301,9 +302,9 @@ function User() {
                           label="Input Price"
                           variant="outlined"
                           value={amount}
-                          onChange={(e) => {
+                          onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                             const val = e.target.value;
-                            setAmount(val.replace(/[^\d.]/g, ""));
+                            setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
                           }}
                         />
                         
@@ -337,7 +338,7 @@ function User() {
                           alignItems: "center",
                         }}
                       >
-                        <img
+                        <Image
                           src={empty}
                           className="mb-3"
                           style={{
@@ -363,7 +364,7 @@ function User() {
                           alignItems: "center",
                         }}
                       >
-                        <img
+                        <Image
                           src={empty}
                           className="mb-3"
                           style={{
