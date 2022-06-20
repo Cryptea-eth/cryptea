@@ -33,13 +33,17 @@ const Dashboard = () => {
 
   const page = router.query['page'];
 
-  const dp = user?.get("img");
-
   const [loading, isLoading] = useState<boolean>(true); 
 
-  if (page) {
+  if(!user){
+    router.replace('/login')
+  }
+
+   if (page) {
       isLoading(false)
   }
+
+  const dp = user?.get("img");
 
   const toggle = () => {
     close(!isOpen);

@@ -16,6 +16,7 @@ import logo from "../../public/images/cryptea-logo.svg";
 import { Avatar, Popover } from "@mui/material";
 import DashHome from "../../app/components/elements/dashboard/home";
 import Link from "next/link";
+import Loader from "../../app/components/elements/loader";
 import { useRouter } from "next/router";
 import { useState } from 'react';
 import { useMoralis } from "react-moralis";
@@ -28,6 +29,14 @@ const DashboardIndex = () => {
   const router = useRouter();
 
   const dp = user?.get("img");
+
+  const [loading, isLoading] = useState<Boolean>(true)
+ 
+   if(!user){
+    router.replace('/login')
+  }else{
+    isLoading(false)
+  }
 
   const toggle = () => {
     close(!isOpen);
@@ -52,7 +61,10 @@ const DashboardIndex = () => {
 
   const active = "!border-l-[3px] !border-l-[#F57059] !text-[#F57059]";
   return (
-    <div className="h-full  dash w-full bg-[#F9FAFF] flex">
+    <>
+    {loading && <Loader />}
+
+    {!loading && (<div className="h-full  dash w-full bg-[#F9FAFF] flex">
       <div
         className={`sidebar transition-all z-[100] delay-500 ${isOpen
           ? "min-w-[250px] dsm:absolute w-[250px]"
@@ -302,7 +314,8 @@ const DashboardIndex = () => {
       <DashHome />
     
       </div>
-    </div>
+    </div>)}
+    </>
   );
 };
 
