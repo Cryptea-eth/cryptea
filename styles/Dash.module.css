@@ -1,0 +1,27 @@
+body, #root, .dash, html{
+    height:100%;
+    width:100%;
+}
+
+body{
+    min-width:350px;
+}
+
+.css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
+    color: #F57059 !important;
+}
+
+.css-3bmhjh-MuiPaper-root-MuiPopover-paper{
+    min-width:320px;
+    padding:5px;
+}
+
+.css-md26zr-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #F57059 !important;
+}
+
+.css-sxh3gq-MuiAvatar-root-MuiAvatarGroup-avatar{
+    height:30px !important;
+    width:30px !important;
+    font-size:15px !important;
+}

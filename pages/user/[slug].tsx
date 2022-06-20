@@ -96,6 +96,10 @@ function User() {
 
   const username = router.query['slug'];
 
+  useEffect(() => {
+      console.log(username, router.isReady)
+
+  }, [username, router.isReady])
 
   const [alignment, setAlignment] = useState();
 
@@ -103,21 +107,23 @@ function User() {
     setAlignment(newAlignment);
   };
 
-  const { fetch:fetching } = useMoralisQuery(
-    "link",
-    (query) => query.equalTo("link", username),
-    [],
-    { autoFetch: false }
-  );
 
   const { Moralis, isWeb3Enabled, enableWeb3 } = useMoralis();
 
   const [userD, setUserD] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
+  
+  
+
   useEffect(() => {
-    if(username){
-    fetching().then((er) => {
+    if(router.isReady){
+
+  const Link = Moralis.Object.extend('link')
+  const lQ = new Moralis.Query(Link);
+  lQ.equalTo('link', username)
+
+  lQ.find().then((er) => {
         console.log(er)
       if (er !== undefined) {
         Moralis.Cloud.run("getUser", { obj: er[0]?.get("user").id }).then(
@@ -138,9 +144,14 @@ function User() {
       }
     });
   }
-  }, [Moralis.Cloud, fetching, username]);
+}, [Moralis.Cloud, Moralis.Object, Moralis.Query, router.isReady, username]);
 
-  const { username: usern, description, email, img, ethAddress } = userD;
+  const { username: usern, description, email, img, ethAddress } : {username?: string, description?: string, email?: string, img?: string|null, ethAddress?: string} = userD;
+
+  if(!userD){
+    window.location.href = "/404";
+  }
+
   const [value, setValue] = useState(0);
   const [amount, setAmount] = useState(0);
 

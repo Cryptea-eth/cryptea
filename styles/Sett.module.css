@@ -1,0 +1,3 @@
+.dashbody.sett * > *:not(span,svg,.imm,button, .MuiAlert-icon.css-1ytlwq5-MuiAlert-icon){
+    font-size:14px !important;   
+}

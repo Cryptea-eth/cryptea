@@ -12,7 +12,7 @@ import {
 } from "react-icons/io";
 import { RiSettingsLine } from "react-icons/ri";
 import logo from "../../public/images/cryptea-logo.svg";
-// import "../../assets/styles/dash.css";
+// import "../../app/styles/dash.css";
 import { Avatar, Popover } from "@mui/material";
 import DashHome from "../../app/components/elements/dashboard/home";
 import Link from "next/link";
