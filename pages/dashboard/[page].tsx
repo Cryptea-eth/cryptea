@@ -44,7 +44,7 @@ const Dashboard = () => {
 
   const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(null);
 
-  const handleNotes = (event:React.SyntheticEvent) => {
+  const handleNotes = (event: React.SyntheticEvent) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -59,40 +59,40 @@ const Dashboard = () => {
   return (
     <div className="h-full  dash w-full bg-[#F9FAFF] flex">
       <div
-        className={`sidebar transition-all z-[100] delay-500 ${
-          isOpen
-            ? "min-w-[250px] dsm:absolute w-[250px]"
-            : `w-[75px]  min-w-[75px] ${isOpen3 ? "dsm:absolute" : "relative"}`
-        } bg-white border-solid border-r-[1px] border-r-[#E3E3E3] h-[inherit]`}
+        className={`sidebar transition-all z-[100] delay-500 ${isOpen
+          ? "min-w-[250px] dsm:absolute w-[250px]"
+          : `w-[75px]  min-w-[75px] ${isOpen3 ? "dsm:absolute" : "relative"}`
+          } bg-white border-solid border-r-[1px] border-r-[#E3E3E3] h-[inherit]`}
       >
         <div
-          className={`w-full ${
-            isOpen ? "py-[1.32rem]" : "py-[1rem]"
-          } border-solid innerSide border-b-[1px] flex justify-center transition-all delay-500 items-center relative`}
+          className={`w-full ${isOpen ? "py-[1.32rem]" : "py-[1rem]"
+            } border-solid innerSide border-b-[1px] flex justify-center transition-all delay-500 items-center relative`}
         >
           <Link href="/" className="flex items-center justify-center">
-            <Image
-              src={logo}
-              alt="cryptea"
-              width={isOpen ? 30 : 40}
-              className={`mr-[5px] min-w-[${
-                isOpen ? 30 : 40
-              }px] transition-all delay-500`}
-            />
-            <span
-              className={
-                isOpen3
-                  ? "text-black text-2xl font-bold"
-                  : "transition-all delay-500 hidden"
-              }
-            >
-              CRYPTEA
-            </span>
-            {/* <img
+            <>
+              <Image
+                src={logo}
+                alt="cryptea"
+                width={isOpen ? 30 : 40}
+                height={isOpen ? 30 : 40}
+                className={`mr-[5px] min-w-[${isOpen ? 30 : 40
+                  }px] transition-all delay-500`}
+              />
+              <span
+                className={
+                  isOpen3
+                    ? "text-black text-2xl font-bold"
+                    : "transition-all delay-500 hidden"
+                }
+              >
+                CRYPTEA
+              </span>
+              {/* <img
               src={logo1}
               className={isOpen3 ? "" : "transition-all delay-500 hidden"}
               alt="cryptea"
             /> */}
+            </>
           </Link>
           {isOpen3 ? (
             <IoIosArrowDropleftCircle
@@ -122,87 +122,80 @@ const Dashboard = () => {
         </div>
 
         <div
-          className={`flex innerSide transition-all delay-500 flex-col py-3 ${
-            isOpen ? "px-[27px]" : "px-[1px]"
-          } justify-center`}
+          className={`flex innerSide transition-all delay-500 flex-col py-3 ${isOpen ? "px-[27px]" : "px-[1px]"
+            } justify-center`}
         >
           <div className={`pb-3 mb-1 border-b-[#E3E3E3] border-b-[1px]`}>
             <div
-              className={`rounded-[4px] overflow-hidden flex-nowrap transition-all delay-500 hover:border-l-[#f89e8e] hover:text-[#F57059] hover:bg-[#F5F8FE] border-solid ${
-                page === "home" || page === undefined ? active : ""
-              } transition-all delay-500 bg-[#F5F8FE] py-[9px]`}
+              className={`rounded-[4px] overflow-hidden flex-nowrap transition-all delay-500 hover:border-l-[#f89e8e] hover:text-[#F57059] hover:bg-[#F5F8FE] border-solid ${page === "home" || page === undefined ? active : ""
+                } transition-all delay-500 bg-[#F5F8FE] py-[9px]`}
             >
               <Link
                 href="/dashboard"
                 className="text-inherit flex items-center text-[14px]"
-              >
-                <BiHomeAlt
-                  size={isOpen3 ? 16.5 : 21}
-                  className={`text-inherit transition-all delay-500 ${
-                    isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
-                  } mx-[22.5px]`}
-                />{" "}
-                {isOpen3 ? "Dashboard" : ""}
+              ><>
+                  <BiHomeAlt
+                    size={isOpen3 ? 16.5 : 21}
+                    className={`text-inherit transition-all delay-500 ${isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
+                      } mx-[22.5px]`}
+                  />
+                  {isOpen3 ? "Dashboard" : ""}
+                </>
               </Link>
             </div>
           </div>
 
           <div
-            className={`rounded-[4px] overflow-hidden flex-nowrap my-1 ${
-              (page === "userpages" || page === "pages" || page === "page")
-                ? active
-                : ""
-            } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#F5F8FE] py-[9px]`}
+            className={`rounded-[4px] overflow-hidden flex-nowrap my-1 ${(page === "userpages" || page === "pages" || page === "page")
+              ? active
+              : ""
+              } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#F5F8FE] py-[9px]`}
           >
             <Link
               href="/dashboard/pages"
               className="text-inherit flex items-center text-[14px]"
-            >
-              <BiPaperPlane
-                size={isOpen3 ? 16.5 : 21}
-                className={`text-inherit transition-all delay-500 ${
-                  isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
-                } mx-[22.5px]`}
-              />{" "}
-              {isOpen3 ? "Your Pages" : ""}
+            ><>
+                <BiPaperPlane
+                  size={isOpen3 ? 16.5 : 21}
+                  className={`text-inherit transition-all delay-500 ${isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
+                    } mx-[22.5px]`}
+                />
+                {isOpen3 ? "Your Pages" : ""}</>
             </Link>
           </div>
 
           <div
-            className={`rounded-[4px] overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] py-[9px] ${
-              (page === "links" || page === "link") ? active : ""
-            }`}
+            className={`rounded-[4px] overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] py-[9px] ${(page === "links" || page === "link") ? active : ""
+              }`}
           >
             <Link
               href="/dashboard/links"
               className="text-inherit flex items-center text-[14px]"
-            >
-              <BiCreditCard
-                size={isOpen3 ? 16.5 : 21}
-                className={`text-inherit transition-all delay-500  ${
-                  isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
-                } mx-[22.5px]`}
-              />{" "}
-              {isOpen3 ? "Payment Links" : ""}
+            ><>
+                <BiCreditCard
+                  size={isOpen3 ? 16.5 : 21}
+                  className={`text-inherit transition-all delay-500  ${isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
+                    } mx-[22.5px]`}
+                />
+                {isOpen3 ? "Payment Links" : ""}</>
             </Link>
           </div>
 
           <div
-            className={`rounded-[4px] overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] hover:text-[#F57059] border-l-transparent text-[#A9A9A9] hover:bg-[#F5F8FE] py-[9px] ${
-              (page === "settings" || page === "setting") ? active : ""
-            }`}
+            className={`rounded-[4px] overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] hover:text-[#F57059] border-l-transparent text-[#A9A9A9] hover:bg-[#F5F8FE] py-[9px] ${(page === "settings" || page === "setting") ? active : ""
+              }`}
           >
             <Link
               href="/dashboard/settings"
               className="text-inherit flex items-center text-[14px]"
-            >
-              <RiSettingsLine
-                size={isOpen3 ? 16.5 : 21}
-                className={`text-inherit transition-all delay-500  ${
-                  isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
-                } mx-[22.5px]`}
-              />{" "}
-              {isOpen3 ? "Settings" : ""}
+            ><>
+                <RiSettingsLine
+                  size={isOpen3 ? 16.5 : 21}
+                  className={`text-inherit transition-all delay-500  ${isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
+                    } mx-[22.5px]`}
+                />
+                {isOpen3 ? "Settings" : ""}
+              </>
             </Link>
           </div>
 
@@ -218,9 +211,8 @@ const Dashboard = () => {
             >
               <BiLogOut
                 size={isOpen3 ? 16.5 : 21}
-                className={`text-inherit transition-all delay-500 ${
-                  isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
-                } mx-[22.5px]`}
+                className={`text-inherit transition-all delay-500 ${isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
+                  } mx-[22.5px]`}
               />{" "}
               {isOpen3 ? "Log Out" : ""}
             </div>
