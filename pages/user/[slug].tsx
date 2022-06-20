@@ -92,7 +92,10 @@ function User() {
 
   const router = useRouter();
 
-  const { username } = router.query;
+  const { slug } = router.query;
+
+  const username = router.query['slug'];
+
 
   const [alignment, setAlignment] = useState();
 
@@ -100,7 +103,7 @@ function User() {
     setAlignment(newAlignment);
   };
 
-  const { fetch } = useMoralisQuery(
+  const { fetch:fetching } = useMoralisQuery(
     "link",
     (query) => query.equalTo("link", username),
     [],
@@ -113,7 +116,9 @@ function User() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch().then((er) => {
+    if(username){
+    fetching().then((er) => {
+        console.log(er)
       if (er !== undefined) {
         Moralis.Cloud.run("getUser", { obj: er[0].get("user").id }).then(
           (ex) => {
@@ -132,7 +137,8 @@ function User() {
         window.location.href = "/404";
       }
     });
-  }, [Moralis.Cloud, fetch]);
+  }
+  }, [Moralis.Cloud, fetching, username]);
 
   const { username: usern, description, email, img, ethAddress }: { username?: string, description?: string, email?: string, img?: string, ethAddress?: string } = userD;
   const [value, setValue] = useState(0);

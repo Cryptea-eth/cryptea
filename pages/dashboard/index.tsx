@@ -15,31 +15,19 @@ import logo from "../../public/images/cryptea-logo.svg";
 // import "../../assets/styles/dash.css";
 import { Avatar, Popover } from "@mui/material";
 import DashHome from "../../app/components/elements/dashboard/home";
-import DashLinks from "../../app/components/elements/dashboard/links";
-import DashPages from "../../app/components/elements/dashboard/pages";
-import DashSettings from "../../app/components/elements/dashboard/settings";
 import Link from "next/link";
-import Loader from "../../app/components/elements/loader";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState } from 'react';
 import { useMoralis } from "react-moralis";
 import Image from "next/image";
 
-const Dashboard = () => {
+const DashboardIndex = () => {
   const [isOpen, close] = useState(false);
   const [isOpen3, close3] = useState(false);
   const { user, isAuthenticated, logout } = useMoralis();
   const router = useRouter();
 
-  const page = router.query['page'];
-
   const dp = user?.get("img");
-
-  const [loading, isLoading] = useState<boolean>(true); 
-
-  if (page) {
-      isLoading(false)
-  }
 
   const toggle = () => {
     close(!isOpen);
@@ -64,10 +52,7 @@ const Dashboard = () => {
 
   const active = "!border-l-[3px] !border-l-[#F57059] !text-[#F57059]";
   return (
-    <>
-    {loading && <Loader />}  
-    
-    {!loading && (<div className="h-full  dash w-full bg-[#F9FAFF] flex">
+    <div className="h-full  dash w-full bg-[#F9FAFF] flex">
       <div
         className={`sidebar transition-all z-[100] delay-500 ${isOpen
           ? "min-w-[250px] dsm:absolute w-[250px]"
@@ -137,7 +122,7 @@ const Dashboard = () => {
         >
           <div className={`pb-3 mb-1 border-b-[#E3E3E3] border-b-[1px]`}>
             <div
-              className={`rounded-[4px] overflow-hidden flex-nowrap transition-all delay-500 hover:border-l-[#f89e8e] hover:text-[#F57059] hover:bg-[#F5F8FE] border-solid ${page === "home" || page === undefined ? active : ""} flex items-center transition-all delay-500 bg-[#F5F8FE] py-[9px]`}
+              className={`rounded-[4px] overflow-hidden flex-nowrap transition-all delay-500 hover:border-l-[#f89e8e] hover:text-[#F57059] hover:bg-[#F5F8FE] border-solid ${active} flex items-center transition-all delay-500 bg-[#F5F8FE] py-[9px]`}
             >
               <Link
                 href="/dashboard"
@@ -155,10 +140,7 @@ const Dashboard = () => {
           </div>
 
           <div
-            className={`rounded-[4px] overflow-hidden flex-nowrap my-1 ${(page === "userpages" || page === "pages" || page === "page")
-              ? active
-              : ""
-              } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#F5F8FE] flex cursor-pointer items-center py-[9px]`}
+            className={`rounded-[4px] overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#F5F8FE] flex cursor-pointer items-center py-[9px]`}
           >
             <Link
               href="/dashboard/pages"
@@ -176,8 +158,7 @@ const Dashboard = () => {
           </div>
 
           <div
-            className={`rounded-[4px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] flex items-center py-[9px] ${(page === "links" || page === "link") ? active : ""
-              }`}
+            className={`rounded-[4px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] flex items-center py-[9px]`}
           >
             <Link
               href="/dashboard/links"
@@ -193,8 +174,7 @@ const Dashboard = () => {
           </div>
 
           <div
-            className={`rounded-[4px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] hover:text-[#F57059] border-l-transparent text-[#A9A9A9] hover:bg-[#F5F8FE] flex items-center py-[9px] ${(page === "settings" || page === "setting") ? active : ""
-              }`}
+            className={`rounded-[4px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] hover:text-[#F57059] border-l-transparent text-[#A9A9A9] hover:bg-[#F5F8FE] flex items-center py-[9px]`}
           >
             <Link
               href="/dashboard/settings"
@@ -319,33 +299,11 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {(page === "settings" || page === "setting") && <DashSettings />}
-
-        {(page === "home" || page === undefined) && <DashHome />}
-
-        {(page === "links" || page === "link") && <DashLinks />}
-
-        {(page === "userpages" || page === "pages" || page === "page") && (
-          <DashPages />
-        )}
-
-        {page !== undefined &&
-          ![
-            "settings",
-            "setting",
-            "home",
-            "links",
-            "link",
-            "userpages",
-            "pages",
-            "page",
-          ].includes(page.toString()) &&
-          
-          router.replace("/404")}
+      <DashHome />
+    
       </div>
-    </div>)}
-</>
+    </div>
   );
 };
 
-export default Dashboard;
+export default DashboardIndex;
