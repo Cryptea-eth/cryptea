@@ -30,6 +30,7 @@ const Dashboard = () => {
   const { user, isAuthenticated, logout } = useMoralis();
   const router = useRouter();
 
+  
   const { page } = router.query;
 
   const dp = user?.get("img");
@@ -127,8 +128,7 @@ const Dashboard = () => {
         >
           <div className={`pb-3 mb-1 border-b-[#E3E3E3] border-b-[1px]`}>
             <div
-              className={`rounded-[4px] overflow-hidden flex-nowrap transition-all delay-500 hover:border-l-[#f89e8e] hover:text-[#F57059] hover:bg-[#F5F8FE] border-solid ${page === "home" || page === undefined ? active : ""
-                } transition-all delay-500 bg-[#F5F8FE] py-[9px]`}
+              className={`rounded-[4px] overflow-hidden flex-nowrap transition-all delay-500 hover:border-l-[#f89e8e] hover:text-[#F57059] hover:bg-[#F5F8FE] border-solid ${page === "home" || page === undefined ? active : ""} transition-all delay-500 bg-[#F5F8FE] py-[9px]`}
             >
               <Link
                 href="/dashboard"
@@ -154,13 +154,15 @@ const Dashboard = () => {
             <Link
               href="/dashboard/pages"
               className="text-inherit flex items-center text-[14px]"
-            ><>
+            >
+              <div>
                 <BiPaperPlane
                   size={isOpen3 ? 16.5 : 21}
                   className={`text-inherit transition-all delay-500 ${isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
                     } mx-[22.5px]`}
                 />
-                {isOpen3 ? "Your Pages" : ""}</>
+                {isOpen3 ? "Your Pages" : ""}</div>
+
             </Link>
           </div>
 
