@@ -120,7 +120,7 @@ function User() {
     fetching().then((er) => {
         console.log(er)
       if (er !== undefined) {
-        Moralis.Cloud.run("getUser", { obj: er[0].get("user").id }).then(
+        Moralis.Cloud.run("getUser", { obj: er[0]?.get("user").id }).then(
           (ex) => {
             setUserD({
               description: ex[0]?.get("desc"),
@@ -140,7 +140,7 @@ function User() {
   }
   }, [Moralis.Cloud, fetching, username]);
 
-  const { username: usern, description, email, img, ethAddress }: { username?: string, description?: string, email?: string, img?: string, ethAddress?: string } = userD;
+  const { username: usern, description, email, img, ethAddress } = userD;
   const [value, setValue] = useState(0);
   const [amount, setAmount] = useState(0);
 
