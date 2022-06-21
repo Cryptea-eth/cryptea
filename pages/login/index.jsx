@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMoralis } from "react-moralis";
 import { MdVisibilityOff, MdVisibility } from "react-icons/md";
+import Head from 'next/head';
 import {
   TextField,
   Box,
@@ -92,6 +93,12 @@ const LoginForm = () => {
 
   return (
     <div>
+      <Head>
+        <title>Login | Cryptea</title>
+        <meta name="description" content={`Receive tips/donations on another level`} />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
       <Nav />
       <form
         action=""

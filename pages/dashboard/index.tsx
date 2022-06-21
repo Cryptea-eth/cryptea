@@ -18,6 +18,7 @@ import DashHome from "../../app/components/elements/dashboard/home";
 import Link from "next/link";
 import Loader from "../../app/components/elements/loader";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import { useState } from 'react';
 import { useMoralis } from "react-moralis";
 import Image from "next/image";
@@ -62,6 +63,12 @@ const DashboardIndex = () => {
   const active = "!border-l-[3px] !border-l-[#F57059] !text-[#F57059]";
   return (
     <>
+    <Head>
+        <title>{user?.get('username')} | Dashboard | Cryptea</title>
+        <meta name="description" content={`Receive tips/donations on another level`} />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
     {loading && <Loader />}
 
     {!loading && (<div className="h-full  dash w-full bg-[#F9FAFF] flex">

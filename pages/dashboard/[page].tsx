@@ -20,6 +20,7 @@ import DashPages from "../../app/components/elements/dashboard/pages";
 import DashSettings from "../../app/components/elements/dashboard/settings";
 import Link from "next/link";
 import Loader from "../../app/components/elements/loader";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useMoralis } from "react-moralis";
@@ -69,6 +70,14 @@ const Dashboard = () => {
   const active = "!border-l-[3px] !border-l-[#F57059] !text-[#F57059]";
   return (
     <>
+
+    <Head>
+        <title>{page} | Dashboard | Cryptea</title>
+        <meta name="description" content={`Receive tips/donations on another level`} />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+
     {loading && <Loader />}  
     
     {!loading && (<div className="h-full  dash w-full bg-[#F9FAFF] flex">

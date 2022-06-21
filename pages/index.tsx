@@ -6,7 +6,6 @@ import About from '../app/components/elements/About'
 import Extras from '../app/components/elements/Extras'
 import Footer from '../app/components/elements/Footer'
 import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
   return (

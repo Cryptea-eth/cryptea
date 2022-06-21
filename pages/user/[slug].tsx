@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
 import { Theme, useTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
-// import "../../assets/styles/auth.css";
+// import "../../assets/styles/auth.css";;
 import Image from 'next/image';
+import Head from 'next/head';
 import empty from "../../public/images/coming-soon.svg";
 import {
   OutlinedInput,
@@ -190,6 +191,14 @@ function User() {
 
   return (
     <div>
+
+      <Head>
+        <title>{usern} | Cryptea</title>
+        <meta name="description" content={`Send tips to ${usern} quick and easy`} />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+
       {isLoading ? (
         <Loader />
       ) : (
