@@ -19,7 +19,7 @@ import Link from "next/link";
 import Loader from "../../app/components/elements/loader";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMoralis } from "react-moralis";
 import Image from "next/image";
 
@@ -33,11 +33,15 @@ const DashboardIndex = () => {
 
   const [loading, isLoading] = useState<Boolean>(true)
  
-   if(!user){
+  useEffect(() => {
+
+  if(!user){
     window.location.href = '/login';
   }else{
     isLoading(false)
-  }
+  } 
+  
+  }, [user, isLoading])
 
   const toggle = () => {
     close(!isOpen);

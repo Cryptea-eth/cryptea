@@ -37,6 +37,7 @@ const Dashboard = () => {
   const [loading, isLoading] = useState<boolean>(true); 
 
   if(!user){
+    // router.replace('/login')
     window.location.href = '/login';
   }
 
