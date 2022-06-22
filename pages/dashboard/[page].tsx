@@ -38,7 +38,7 @@ const Dashboard = () => {
 
   useEffect(() => {
   if(!user){
-    window.location.href = '/login';
+    // window.location.href = '/login';
   }
 
    if (page) {
@@ -234,14 +234,14 @@ const Dashboard = () => {
                 if (isAuthenticated) {
                   logout();
                 }
-                router.replace("/");
+                router.push("/");
               }}
             >
               <BiLogOut
                 size={isOpen3 ? 16.5 : 21}
                 className={`text-inherit cursor-pointer transition-all delay-500 ${isOpen3 ? "min-w-[16.5px]" : "min-w-[21px]"
                   } mx-[22.5px]`}
-              />{" "}
+              />
               {isOpen3 ? "Log Out" : ""}
             </div>
           </div>
@@ -330,7 +330,7 @@ const Dashboard = () => {
               ></Avatar>
             ) : (
               <Avatar sx={{ bgcolor: "#F57059" }} alt={user?.get("username")}>
-                {user?.get("username").charAt(0).toUpperCase()}
+                {user?.get("username")?.charAt(0).toUpperCase()}
               </Avatar>
             )}
           </div>
