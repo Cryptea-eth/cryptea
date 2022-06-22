@@ -36,14 +36,17 @@ const Dashboard = () => {
 
   const [loading, isLoading] = useState<boolean>(true); 
 
+  useEffect(() => {
   if(!user){
-    // router.replace('/login')
     window.location.href = '/login';
   }
 
    if (page) {
       isLoading(false)
   }
+  
+  }, [user, isLoading, page])
+
 
   const dp = user?.get("img");
 
