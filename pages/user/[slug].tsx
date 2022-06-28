@@ -93,12 +93,11 @@ function User() {
 
   const router = useRouter();
 
-  const { slug } = router.query;
 
-  const username = router.query['slug'];
+  let username = router.query['slug'];
 
+  
   useEffect(() => {
-      console.log(username, router.isReady)
 
   }, [username, router.isReady])
 
@@ -122,7 +121,7 @@ function User() {
 
   const Link = Moralis.Object.extend('link')
   const lQ = new Moralis.Query(Link);
-  lQ.equalTo('link', username)
+  lQ.equalTo('link', String(username).toLowerCase())
 
   lQ.find().then((er) => {
         console.log(er)
