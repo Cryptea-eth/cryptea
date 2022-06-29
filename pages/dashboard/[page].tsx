@@ -59,7 +59,7 @@ const Dashboard = () => {
     <>
 
     <Head>
-        <title>{page} | Dashboard | Cryptea</title>
+        <title>{(String(page).charAt(0)).toUpperCase() + String(page).substring(1)} | Dashboard | Cryptea</title>
         <meta name="description" content={`Receive tips/donations on another level`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -68,7 +68,7 @@ const Dashboard = () => {
     {loading && <Loader />}  
     
     {!loading && (<div className="h-full  dash w-full bg-[#F9FAFF] flex">
-      
+
       <Sidebar page={page}/>
 
       <div className="body w-full h-full">
