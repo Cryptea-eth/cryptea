@@ -78,7 +78,6 @@ const DashHome = () => {
       .then((data) => {
         setWData(data.data);
         setLoading2(false);
-
         const { items } = data.data;
 
         setrows(
