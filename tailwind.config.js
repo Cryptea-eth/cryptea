@@ -12,6 +12,7 @@ module.exports = {
   ],
   theme: {
     screens: {
+      "4sm": {min: "1240px"},
       "3sm": { max: "1025px" },
       "2sm": { max: "975px" },
       usm: { max: "940px" },

@@ -16,18 +16,18 @@
 
 
 body::-webkit-scrollbar,
-.cusscroller::-webkit-scrollbar {
+.cusscroller::-webkit-scrollbar, div .walletconnect-qrcode__base::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 body::-webkit-scrollbar-track,
-.cusscroller::-webkit-scrollbar-track {
+.cusscroller::-webkit-scrollbar-track, div .walletconnect-qrcode__base::-webkit-scrollbar-track {
   background: transparent;
 }
 
 body::-webkit-scrollbar-thumb,
-.cusscroller::-webkit-scrollbar-thumb {
+.cusscroller::-webkit-scrollbar-thumb, div .walletconnect-qrcode__base::-webkit-scrollbar-thumb {
   background-color: rgb(219, 219, 219);
   border-radius: 20px;
 }
@@ -47,6 +47,20 @@ body::-webkit-scrollbar-thumb,
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+div .walletconnect-qrcode__text{
+  font-size:16px;
+}
+
+div .walletconnect-modal__base{
+  max-width:400px;
+  top:55%;
+}
+
+div .walletconnect-qrcode__base{
+  overflow-y:scroll;
+  overflow-x:hidden;
 }
 
 .App-link {

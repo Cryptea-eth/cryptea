@@ -1,15 +1,8 @@
 import {
-  BiHomeAlt,
-  BiPaperPlane,
-  BiCreditCard,
-  BiLogOut,
   // BiSearch,
   BiBell,
 } from "react-icons/bi";
-import {
-  IoIosArrowDropleftCircle,
-  IoIosArrowDroprightCircle,
-} from "react-icons/io";
+
 import { RiSettingsLine } from "react-icons/ri";
 import logo from "../../public/images/cryptea-logo.svg";
 // import "../../app/styles/dash.css";
@@ -65,7 +58,6 @@ const DashboardIndex = () => {
   const nopen = Boolean(anchorEl);
   const id = nopen ? "Your Notifications" : undefined;
 
-  const active = "!border-l-[3px] !border-l-[#F57059] !text-[#F57059]";
   return (
     <>
     <Head>

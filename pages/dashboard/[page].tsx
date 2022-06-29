@@ -20,7 +20,7 @@ import Image from "next/image";
 
 const Dashboard = () => {
 
-  const { user, isAuthenticated, logout } = useMoralis();
+  const { user } = useMoralis();
   const router = useRouter();
 
   const page = router.query['page'];

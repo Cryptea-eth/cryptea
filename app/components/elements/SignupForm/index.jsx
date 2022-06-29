@@ -85,7 +85,7 @@ const SignupForm = () => {
           .then(function (user) {
             if (user.get("email") !== undefined) {
               if (user.get("email").length) {
-                window.location.href = "/#/dashboard";
+                window.location.href = "/dashboard";
               }
             }
           })
@@ -119,7 +119,7 @@ const SignupForm = () => {
           return;
         }
 
-        window.location.href = "/#/dashboard";
+        window.location.href = "/dashboard";
       } else {
         setError("Logout of your current wallet to sign up");
         setLoading(false);
@@ -140,11 +140,8 @@ const SignupForm = () => {
       <div className="w-full flex justify-center mt-8">
         <div className="flex flex-col w-[900px] mx-7 items-center justify-center">
           <div className="flex flex-row border-b border-[#F57059] justify-start w-full">
-            <div className="text-[#F57059] flex items-center justify-between font-semibold py-4 w-full">
+            <div className="text-[#F57059] flex font-semibold py-4 w-full">
               <span className="text-xl">Signup</span>
-              <Link href="\login" className="ml-2">
-                I have an account
-              </Link>
             </div>
           </div>
           {isLoading && (

@@ -9,7 +9,7 @@ import { useMoralis } from "react-moralis";
 
  import {
   IoIosArrowDropleftCircle,
-  IoIosArrowDroprightCircle,
+  IoIosArrowDroprightCircle
 } from "react-icons/io";
 
 import Image from "next/image";

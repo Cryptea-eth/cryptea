@@ -22,9 +22,10 @@ const Notfound = () => {
         </div>
         <div className="mx-auto mt-8">
           <Link href="/">
+            <a>
             <button className="ml-2 hover:bg-[#ff320e] transition-all delay-500 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4 mx-auto">
               Take Me Home
-            </button>
+            </button></a>
           </Link>
         </div>
       </div>

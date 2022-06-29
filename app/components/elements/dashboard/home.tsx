@@ -4,7 +4,6 @@ import { FaWallet } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import Loader from "../loader";
 import Image from 'next/image';
-
 import { BsBoxArrowInDownLeft, BsArrowRight } from "react-icons/bs";
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
 import {
@@ -52,7 +51,6 @@ const DashHome = () => {
         return n;
     }
 }
-
 
   const [amount, setAmount] = useState(0);
   const [receiver, setReceiver] = useState("");
@@ -903,6 +901,7 @@ const DashHome = () => {
           </div>
         </div>
       </div></Fragment>)}
+
     </div>
   );
 };
