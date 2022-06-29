@@ -123,9 +123,14 @@ const DashLinks = () => {
                             </div>
                           </div>
 
-                          <div className="w-full px-10 pt-5">
+                          <div className="w-full px-10 py-5">
                             <div className="flex items-center ssm:flex-wrap">
                               <TextField id="outlined-basic" label="Title" variant="outlined" name="title" fullWidth />
+                            </div>
+                          </div>
+                          <div className="w-full px-10 py-5">
+                            <div className="flex items-center ssm:flex-wrap">
+                              <TextField id="amount" label="Amount" variant="outlined" name="amount" type="number" fullWidth />
                             </div>
                           </div>
                           <div className="w-full px-10 py-5">
@@ -179,11 +184,17 @@ const DashLinks = () => {
                             </div>
                           </div>
 
-                          <div className="w-full px-10 pt-5">
+                          <div className="w-full px-10 py-5">
                             <div className="flex items-center ssm:flex-wrap">
                               <TextField id="outlined-basic" label="Title" variant="outlined" name="title" fullWidth />
                             </div>
                           </div>
+                          <div className="w-full px-10 py-5">
+                            <div className="flex items-center ssm:flex-wrap">
+                              <TextField id="amount" label="Amount" variant="outlined" name="amount" type="number" fullWidth />
+                            </div>
+                          </div>
+
                           <div className="w-full px-10 py-5">
                             <div className="flex items-center ssm:flex-wrap">
                               <TextField id="description" label="Description" variant="outlined" name="description" fullWidth />
