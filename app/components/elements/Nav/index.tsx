@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from 'next/image';
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import logo from '../../../../public/images/cryptea-logo.svg';
 
@@ -56,7 +56,6 @@ function Nav() {
         });
     }
   };
-
 
   const logOut = async (redirect = false) => {
     if (isAuthenticated) {
@@ -125,10 +124,10 @@ function Nav() {
                           <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
                             <h3 className="text-3xl font-semibold">Connect Wallet</h3>
                             <button
-                              className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                              className="p-1 ml-auto bg-transparent border-0 text-black float-right text-4xl leading-none font-semibold outline-none focus:outline-none"
                               onClick={() => setShowModal(false)}
                             >
-                              <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                              <span className="bg-transparent text-black h-6 w-6 text-4xl block outline-none focus:outline-none">
                                 ×
                               </span>
                             </button>
@@ -146,8 +145,7 @@ function Nav() {
                               className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4 mx-2"
                             >
                               WalletConnect
-                            </button>
-
+                              </button>
                           </div>
                           {/*footer*/}
                           <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
