@@ -183,9 +183,7 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
             <div
               className="text-inherit flex items-center text-[14px]"
               onClick={async () => {
-                if (isAuthenticated) {
                   logout();
-                }
                 router.push("/");
               }}
             >

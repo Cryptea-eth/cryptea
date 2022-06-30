@@ -20,26 +20,42 @@ import Sidebar from "../../app/components/elements/dashboard/sidebar";
 const DashboardIndex = () => {
   const [isOpen, close] = useState(false);
   const [isOpen3, close3] = useState(false);
-  const { user, isAuthenticated, logout, isWeb3Enabled, enableWeb3 } =
-    useMoralis();
+  const {
+    user,
+    isAuthenticated,
+    isInitialized,
+    logout,
+    isWeb3Enabled,
+    enableWeb3,
+  } = useMoralis();
   const router = useRouter();
 
   const dp = user?.get("img");
 
   const [loading, isLoading] = useState<Boolean>(true)
  
-  useEffect(() => {
 
+
+  useEffect(() => {
     if (!isWeb3Enabled) {
       enableWeb3();
     }
 
-    if (!user) {
-      //  window.location.href = "/";
-    } else {
-      isLoading(false);
-    }
-  }, [user, isLoading]);
+    if (isInitialized) {
+        if(!isAuthenticated){
+           window.location.href = "/";
+        } else {
+           isLoading(false);
+        }
+      }
+  }, [
+    user,
+    isLoading,
+    enableWeb3,
+    isAuthenticated,
+    isWeb3Enabled,
+    isInitialized
+  ]);
 
   const toggle = () => {
     close(!isOpen);

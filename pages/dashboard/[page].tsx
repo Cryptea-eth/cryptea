@@ -20,24 +20,26 @@ import Image from "next/image";
 
 const Dashboard = () => {
 
-  const { user, isAuthenticated } = useMoralis();
+  const { user, isAuthenticated, isInitialized, isWeb3Enabled, enableWeb3 } = useMoralis();
   const router = useRouter();
 
   const page = router.query['page'];
 
   const [loading, isLoading] = useState<boolean>(true); 
+  
 
   useEffect(() => {
-    if (!user) {
-      
-      window.location.href = "/";
+    
+    if (isInitialized) {
+      if (!isAuthenticated) {
+        window.location.href = "/";
+      } else if(page && isAuthenticated) {
+        isLoading(false);
+      }
 
-    }
-
-    if (page) {
-      isLoading(false);
-    }
-  }, [user, isLoading, page]);
+    }    
+    
+  }, [user, isLoading, page, isAuthenticated, isWeb3Enabled, isInitialized]);
 
 
   const dp = user?.get("img");

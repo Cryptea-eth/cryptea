@@ -13,6 +13,7 @@ function Nav() {
   const {
     isAuthenticated,
     user,
+    isInitialized,
     authenticate,
     logout,
     isWeb3Enabled,
@@ -56,18 +57,22 @@ function Nav() {
 
 
   const login = async () => {
+    updAuthError('');
     if (!isAuthenticated) {
+      setSupport(false)
       await authenticate({ signingMessage: "Welcome to Cryptea" })
         .then(function (user) {
           if (supported.includes(chainId ? Number(chainId) : 137)) {
+      
           if (user!.get("email") === undefined) {
             window.location.href = "/signup";
+            console.log(isInitialized);
           } else {
             if (!user!.get("email").length) {
               window.location.href = "/signup";
+              console.log(isInitialized);
             } else {
               window.location.href = "/dashboard";
-              
             }
           }
         }else{
@@ -87,7 +92,9 @@ function Nav() {
   }
 
   const walletconnect = async () => {
+    updAuthError("");
     if (!isAuthenticated) {
+      setSupport(false);
       await authenticate({
         signingMessage: "Welcome to Cryptea",
         provider: "walletConnect",
