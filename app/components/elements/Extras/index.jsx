@@ -1,35 +1,9 @@
-import { useMoralis } from "react-moralis";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useContext } from 'react';
+import { HomeContextSet } from '../../../contexts/HomeContext';
+
 const Extras = () => {
-  const { authenticate, isAuthenticated, isAuthenticating, user, account } =
-    useMoralis();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      console.log("Logged in user:", user.get("ethAddress"));
-    } else {
-      console.log("Not logged in");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
-
-  const login = async () => {
-    if (!isAuthenticated) {
-      await authenticate({ signingMessage: "Welcome to Cryptea" })
-        .then(function (user) {
-          window.location.href = "/signup";
-          console.log("logged in user:", user);
-          console.log(user.get("ethAddress"));
-        })
-        .catch(function (error) {
-          console.log(error);
-router.replace("/");        });
-    } else {
-      window.location.href = "/signup";
-    }
-  };
+  const useUpdateWalletModal = useContext(HomeContextSet);
 
   return (
     <div className="mt-40 mb-10 h-[660px] mmd:h-fit w-full bg-cover bg-no-repeat flex justify-center items-center relative">
@@ -61,7 +35,7 @@ router.replace("/");        });
         </span>
 
         <button
-          onClick={login}
+          onClick={useUpdateWalletModal}
           className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet

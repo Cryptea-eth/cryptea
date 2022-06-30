@@ -1,39 +1,11 @@
 import Image from "next/image";
+import { useContext } from "react";
 import logo from "../../../../public/images/img.svg";
 import check from "../../../../public/images/tick.svg";
-import { useMoralis } from "react-moralis";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { HomeContextSet } from '../../../contexts/HomeContext';
 const Hero = () => {
-  const { authenticate, isAuthenticated, isAuthenticating, user, account } =
-    useMoralis();
-  const router = useRouter;
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      console.log("Logged in user:", user.get("ethAddress"));
-    } else {
-      console.log("Not logged in");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
-
-  const login = async () => {
-    if (!isAuthenticated) {
-      await authenticate({ signingMessage: "Welcome to Cryptea" })
-        .then(function (user) {
-          window.location.href = "/signup";
-          console.log("logged in user:", user);
-          console.log(user.get("ethAddress"));
-        })
-        .catch(function (error) {
-          console.log(error);
-          router.replace("/");
-        });
-    } else {
-      window.location.href = "/signup";
-    }
-  };
+  const useUpdateWalletModal = useContext(HomeContextSet)
 
   return (
     <div className="app">
@@ -70,7 +42,7 @@ const Hero = () => {
             </div>
             <div className="flex justify-center">
               <button
-                onClick={login}
+                onClick={useUpdateWalletModal}
                 className="text-sm rounded-lg bg-[#1B1C31] mt-6 mx-auto justify-self-center place-self-center object-center text-white font-semibold py-4 px-8"
               >
                 Connect Wallet

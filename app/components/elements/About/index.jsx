@@ -4,40 +4,13 @@ import three from "../../../../public/images/three.svg";
 import circle from "../../../../public/images/circle.svg";
 import Supported from "../Supported";
 import Image from "next/image";
-import { useMoralis } from "react-moralis";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { HomeContextSet } from '../../../contexts/HomeContext';
+import { useContext } from "react";
 
 const About = () => {
-  const { authenticate, isAuthenticated, isAuthenticating, user, account } =
-    useMoralis();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      console.log("Logged in user:", user.get("ethAddress"));
-    } else {
-      console.log("Not logged in");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
+  const useUpdateWalletModal = useContext(HomeContextSet);
 
-  const login = async () => {
-    if (!isAuthenticated) {
-      await authenticate({ signingMessage: "Welcome to Cryptea" })
-        .then(function (user) {
-          window.location.href = "/signup";
-          console.log("logged in user:", user);
-          console.log(user.get("ethAddress"));
-        })
-        .catch(function (error) {
-          console.log(error);
-          router.replace("/");
-        });
-    } else {
-      window.location.href = "/signup";
-    }
-};
 
   return (
     <div className="mx-[30px] mt-24 px-14 2md:px-4 2md:mx-1" id="about">
@@ -54,14 +27,14 @@ const About = () => {
         </span>
 
         <button
-          onClick={login}
+          onClick={useUpdateWalletModal}
           className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet
         </button>
       </div>
 
-      <div className="w-[calc(100% - 6rem)] md:mt-[10pc] md:flex-wrap sm:w-full sm:ml-0 relative justify-around flex items-center 2sm:overflow-hidden mt-[19rem] ml-24">
+      <div className="w-[calc(100% - 6rem)] md:mt-[10pc] md:flex-wrap sm:w-full sm:ml-0 relative justify-around flex items-center mt-[19rem] ml-24">
         <div className="w-[232px] md:min-w-[232px] mmd:w-full md:mr-4 relative">
           <Image
             src={one}
@@ -100,11 +73,13 @@ const About = () => {
             your fans.
           </span>
         </div>
+        <div className="!absolute !-right-[5.406rem] !bottom-0 !z-[-1] !w-[290px]">
+          
         <Image
           src={circle}
           alt="for you"
-          className="absolute right-[-5.406rem] bottom-0 z-[-1] w-[290px]"
         />
+      </div>
       </div>
 
       <div className="rounded-[14px] mt-[6rem] bg-contain h-[386px] bg-no-repeat m-auto max-w-[800px] bg-donation bg-[rgba(0,0,0,0.5)] bg-blend-color flex flex-col justify-center items-center">
@@ -117,7 +92,7 @@ const About = () => {
         </span>
 
         <button
-          onClick={login}
+          onClick={useUpdateWalletModal}
           className="text-sm mmd:mt-10 hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-20 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet

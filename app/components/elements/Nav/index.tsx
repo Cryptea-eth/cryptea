@@ -1,15 +1,18 @@
 import Link from "next/link";
 import Image from 'next/image';
-import { useEffect, useState } from "react";
+import { useEffect, useContext } from "react";
 import { useMoralis } from "react-moralis";
 import logo from '../../../../public/images/cryptea-logo.svg';
-
+import { HomeContext, HomeContextSet } from '../../../contexts/HomeContext'
 import meta from '../../../../public/images/metamask.png';
 import wallcon from '../../../../public/images/walletconnect.png';
 
 function Nav() {
   const { isAuthenticated, user, authenticate, logout, chainId, isWeb3EnableLoading, isWeb3Enabled, enableWeb3 } = useMoralis();
-  const [showModal, setShowModal] = useState(false);
+  
+  const showModal = useContext(HomeContext);
+
+  const useUpdateWalletModal = useContext(HomeContextSet);  
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -60,10 +63,9 @@ function Nav() {
     }
   };
 
-  const logOut = async (redirect = false) => {
+  const logOut = async () => {
     if (isAuthenticated) {
       logout();
-
     }
   };
 
@@ -101,7 +103,7 @@ function Nav() {
           </Link>
         </div>
 
-          {showModal! ? (
+          {showModal ? (
                     <div className="justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur fixed inset-0 z-50 outline-none focus:outline-none">
 
                       <div className="relative max-w-[1200px] mmd:w-[90%] w-[60%] min-w-[340px]">
@@ -159,7 +161,7 @@ function Nav() {
                             <button
                               className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                               type="button"
-                              onClick={() => setShowModal(false)}
+                              onClick={useUpdateWalletModal}
                             >
                               Close
                             </button>
@@ -185,7 +187,7 @@ function Nav() {
                 <button
                   className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4 mx-2"
                   type="button"
-                  onClick={() => setShowModal(true)}
+                  onClick={useUpdateWalletModal}
                 >
                     Connect Wallet
                 </button>
