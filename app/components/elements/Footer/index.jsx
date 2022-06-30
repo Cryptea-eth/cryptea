@@ -2,41 +2,12 @@ import linked from "../../../../public/images/icon0.png";
 import Image from "next/image";
 import mess from "../../../../public/images/icon1.png";
 import twitt from "../../../../public/images/icon2.png";
-import { useMoralis } from "react-moralis";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { HomeContextSet } from '../../../contexts/HomeContext';
+import { useContext } from "react";
 const Footer = () => {
   const date = new Date();
-  const { authenticate, isAuthenticated, isAuthenticating, user, account } =
-    useMoralis();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      console.log("Logged in user:", user.get("ethAddress"));
-      console.log(user);
-    } else {
-      console.log("Not logged in");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
-
-  const login = async () => {
-    if (!isAuthenticated) {
-      await authenticate({ signingMessage: "Welcome to Cryptea" })
-        .then(function (user) {
-          window.location.href = "/signup";
-          console.log("logged in user:", user);
-
-          console.log(user.get("ethAddress"));
-        })
-        .catch(function (error) {
-          console.log(error);
-          router.replace("/");
-        });
-    } else {
-      window.location.href = "/signup";
-    }
-  };
+  const useUpdateWalletModal = useContext(HomeContextSet);
 
   return (
     <div>
@@ -63,7 +34,7 @@ const Footer = () => {
           <div className="hidden 2sm:flex items-center justify-between w-[200px]">
             <div className="mr-[5px] block">
               <button
-                onClick={login}
+                onClick={useUpdateWalletModal}
                 className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
               >
                 Connect Wallet
@@ -108,7 +79,7 @@ const Footer = () => {
           <div className="flex items-center justify-between w-[200px]">
             <div className="mr-[5px]">
               <button
-                onClick={login}
+                onClick={useUpdateWalletModal}
                 className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
               >
                 Connect Wallet

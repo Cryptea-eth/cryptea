@@ -12,18 +12,18 @@ const Supported = () => {
 
       <div className="flex 3sm:w-full ssm:flex-wrap items-center justify-between w-[60%]">
         <div className="flex justify-between items-center">
-          <Image src={ether} alt="ethereum" className="mr-[10px]" />
-          <span className="text-[#64607D] font-bold">Ethereum</span>
+          <Image src={ether} alt="ethereum" width={48} />
+          <span className="text-[#64607D] ml-[10px] font-bold">Ethereum</span>
         </div>
 
         <div className="flex justify-between items-center">
-          <Image src={matic} alt="polygon" className="mr-[10px]" />
-          <span className="text-[#64607D] font-bold">Polygon</span>
+          <Image src={matic} alt="polygon" />
+          <span className="text-[#64607D] ml-[10px] font-bold">Polygon</span>
         </div>
 
         <div className="flex justify-between items-center">
-          <Image src={avax} alt="avalanche" className="mr-[10px]" />
-          <span className="text-[#64607D] font-bold">Avalanche</span>
+          <Image src={avax} alt="avalanche" />
+          <span className="text-[#64607D] ml-[10px] font-bold">Avalanche</span>
         </div>
       </div>
     </div>
