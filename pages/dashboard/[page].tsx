@@ -20,7 +20,7 @@ import Image from "next/image";
 
 const Dashboard = () => {
 
-  const { user } = useMoralis();
+  const { user, isAuthenticated } = useMoralis();
   const router = useRouter();
 
   const page = router.query['page'];
@@ -28,15 +28,16 @@ const Dashboard = () => {
   const [loading, isLoading] = useState<boolean>(true); 
 
   useEffect(() => {
-  if(!user){
-    // window.location.href = '/login';
-  }
+    if (!user) {
+      
+      window.location.href = "/";
 
-   if (page) {
-      isLoading(false)
-  }
-  
-  }, [user, isLoading, page])
+    }
+
+    if (page) {
+      isLoading(false);
+    }
+  }, [user, isLoading, page]);
 
 
   const dp = user?.get("img");

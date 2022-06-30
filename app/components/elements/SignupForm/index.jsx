@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useMoralis } from "react-moralis";
-import { MdVisibilityOff, MdVisibility, MdInfo } from "react-icons/md";
+import { MdInfo } from "react-icons/md";
 import {
   Button,
   Link,
@@ -23,8 +23,7 @@ const SignupForm = () => {
     Moralis,
     isWeb3Enabled,
     enableWeb3,
-    chainId,
-    isWeb3EnableLoading,
+    chainId
   } = useMoralis();
 
   useEffect(() => {
@@ -48,19 +47,14 @@ const SignupForm = () => {
   const [userDescription, setUserDescription] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userInfo, setuserInfo] = useState("");
-  const [pass, setPass] = useState("");
-  const [repass, setRepass] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const [viewpass, setViewpass] = useState(false);
-  const [viewRepass, setViewRepass] = useState(false);
 
   const submitForm = async () => {
     window.scrollTo(0, 0);
     setLoading(true);
     let more = true;
-    [userDescription, userEmail, userInfo, pass, repass].forEach((val) => {
+    [userDescription, userEmail, userInfo].forEach((val) => {
       if (!val.length) {
         setError("Data Incomplete, Please required fields should be field");
         setLoading(false);
@@ -68,16 +62,6 @@ const SignupForm = () => {
         return;
       }
     });
-
-    if (more) {
-      if (pass.length < 6) {
-        setError("Minimum of 6 characters required for password");
-        setLoading(false);
-      } else if (pass !== repass) {
-        setError("Please Reenter the correct password");
-        setLoading(false);
-      }
-    }
 
     if (!error.length) {
       if (!isAuthenticated) {
@@ -100,7 +84,6 @@ const SignupForm = () => {
       if (user.get("email") === undefined) {
         user.set("username", userInfo);
         user.set("desc", userDescription);
-        user.setPassword(pass);
         user.set("email", userEmail);
 
         const Links = Moralis.Object.extend("link");
@@ -202,87 +185,6 @@ const SignupForm = () => {
                 </div>
               </div>
 
-              <div className="rounded-md mt-8">
-                <div className="flex">
-                  <FormControl
-                    sx={{
-                      width: "100%",
-                    }}
-                    variant="outlined"
-                  >
-                    <InputLabel htmlFor="password">Password</InputLabel>
-                    <OutlinedInput
-                      id="password"
-                      type={viewpass ? "text" : "password"}
-                      value={pass}
-                      onChange={(e) => {
-                        setPass(e.target.value);
-                        setError("");
-                      }}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={() => setViewpass(!viewpass)}
-                            onMouseDown={(event) => {
-                              event.preventDefault();
-                            }}
-                            edge="end"
-                          >
-                            {viewpass ? <MdVisibilityOff /> : <MdVisibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                      label="Password"
-                      placeholder="******"
-                    />
-                  </FormControl>
-                </div>
-              </div>
-
-              <div className="rounded-md mt-8">
-                <div className="flex">
-                  <FormControl
-                    sx={{
-                      width: "100%",
-                    }}
-                    variant="outlined"
-                  >
-                    <InputLabel htmlFor="Reenter-password">
-                      Re-enter Password
-                    </InputLabel>
-                    <OutlinedInput
-                      id="Reenter-password"
-                      type={viewRepass ? "text" : "password"}
-                      value={repass}
-                      onChange={(e) => {
-                        setRepass(e.target.value);
-                        setError("");
-                      }}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle re-enter password visibility"
-                            onClick={() => setViewRepass(!viewRepass)}
-                            onMouseDown={(event) => {
-                              event.preventDefault();
-                            }}
-                            edge="end"
-                          >
-                            {viewRepass ? (
-                              <MdVisibilityOff />
-                            ) : (
-                              <MdVisibility />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                      label="Re-enter Password"
-                      placeholder="******"
-                    />
-                  </FormControl>
-                </div>
-              </div>
             </div>
           </div>
           <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">

@@ -20,7 +20,8 @@ import Sidebar from "../../app/components/elements/dashboard/sidebar";
 const DashboardIndex = () => {
   const [isOpen, close] = useState(false);
   const [isOpen3, close3] = useState(false);
-  const { user, isAuthenticated, logout } = useMoralis();
+  const { user, isAuthenticated, logout, isWeb3Enabled, enableWeb3 } =
+    useMoralis();
   const router = useRouter();
 
   const dp = user?.get("img");
@@ -29,13 +30,16 @@ const DashboardIndex = () => {
  
   useEffect(() => {
 
-  if(!user){
-    // window.location.href = '/login';
-  }else{
-    isLoading(false)
-  } 
-  
-  }, [user, isLoading])
+    if (!isWeb3Enabled) {
+      enableWeb3();
+    }
+
+    if (!user) {
+      //  window.location.href = "/";
+    } else {
+      isLoading(false);
+    }
+  }, [user, isLoading]);
 
   const toggle = () => {
     close(!isOpen);
@@ -60,24 +64,33 @@ const DashboardIndex = () => {
 
   return (
     <>
-    <Head>
-        <title>{user?.get('username')} | Dashboard | Cryptea</title>
-        <meta name="description" content={`Receive tips/donations on another level`} />
+      <Head>
+        <title>
+          {user?.get("username") ? user?.get("username")+' | ' : ""} Dashboard |
+          Cryptea
+        </title>
+        <meta
+          name="description"
+          content={`Receive tips/donations on another level`}
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-    {loading && <Loader />}
+      {loading && <Loader />}
 
-    {!loading && (<div className="h-full  dash w-full bg-[#F9FAFF] flex">
-      <Sidebar page={'home'}/>
-      <div className="body w-full h-full">
-        <div className="flex px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]">
-          <div className="">
-            <h1 className="font-bold">Welcome {user?.get("username")}!☕</h1>
-            <span>Hope you are healthy and happy today..</span>
-          </div>
-          <div className="flex items-center">
-            {/* <form
+      {!loading && (
+        <div className="h-full  dash w-full bg-[#F9FAFF] flex">
+          <Sidebar page={"home"} />
+          <div className="body w-full h-full">
+            <div className="flex px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]">
+              <div className="">
+                <h1 className="font-bold">
+                  Welcome {user?.get("username")}!☕
+                </h1>
+                <span>Hope you are healthy and happy today..</span>
+              </div>
+              <div className="flex items-center">
+                {/* <form
               className="relative min-w-[260px] mr-[10px] flex items-center"
               method="get"
               action=""
@@ -95,74 +108,77 @@ const DashboardIndex = () => {
               />
             </form> */}
 
-            <div className="h-full w-[20px] mx-2">
-              <BiBell
-                size={23}
-                aria-describedby={id}
-                onClick={handleNotes}
-                className="cursor-pointer"
-                color="#000"
-              />
-              <Popover
-                id={id}
-                open={nopen}
-                anchorEl={anchorEl}
-                onClose={notesClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-              >
-                <div className="py-3 px-2 bg-pattern">
-                  <div className="flex flex-col">
-                    <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
-                      <div className="img">
-                        <Avatar>U</Avatar>
-                      </div>
-                      <div className="font-medium text-base">
-                        You received 0.1ETH from 0xabc
-                      </div>
-                    </div>
+                <div className="h-full w-[20px] mx-2">
+                  <BiBell
+                    size={23}
+                    aria-describedby={id}
+                    onClick={handleNotes}
+                    className="cursor-pointer"
+                    color="#000"
+                  />
+                  <Popover
+                    id={id}
+                    open={nopen}
+                    anchorEl={anchorEl}
+                    onClose={notesClose}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                  >
+                    <div className="py-3 px-2 bg-pattern">
+                      <div className="flex flex-col">
+                        <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
+                          <div className="img">
+                            <Avatar>U</Avatar>
+                          </div>
+                          <div className="font-medium text-base">
+                            You received 0.1ETH from 0xabc
+                          </div>
+                        </div>
 
-                    <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
-                      <div className="img">
-                        <Avatar>J</Avatar>
-                      </div>
-                      <div className="font-medium text-base">
-                        You received 0.1ETH from joel.eth
-                      </div>
-                    </div>
+                        <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
+                          <div className="img">
+                            <Avatar>J</Avatar>
+                          </div>
+                          <div className="font-medium text-base">
+                            You received 0.1ETH from joel.eth
+                          </div>
+                        </div>
 
-                    <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
-                      <div className="img">
-                        <Avatar>L</Avatar>
-                      </div>
-                      <div className="font-medium text-base">
-                        You received 0.1ETH from lucid.eth
+                        <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
+                          <div className="img">
+                            <Avatar>L</Avatar>
+                          </div>
+                          <div className="font-medium text-base">
+                            You received 0.1ETH from lucid.eth
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Popover>
                 </div>
-              </Popover>
+                {Boolean(dp) ? (
+                  <Avatar
+                    src={dp}
+                    sx={{ width: 40, height: 40 }}
+                    alt={user?.get("username")}
+                  ></Avatar>
+                ) : (
+                  <Avatar
+                    sx={{ bgcolor: "#F57059" }}
+                    alt={user?.get("username")}
+                  >
+                    {user?.get("username")?.charAt(0).toUpperCase()}
+                  </Avatar>
+                )}
+              </div>
             </div>
-            {Boolean(dp) ? (
-              <Avatar
-                src={dp}
-                sx={{ width: 40, height: 40 }}
-                alt={user?.get("username")}
-              ></Avatar>
-            ) : (
-              <Avatar sx={{ bgcolor: "#F57059" }} alt={user?.get("username")}>
-                {user?.get("username")?.charAt(0).toUpperCase()}
-              </Avatar>
-            )}
+
+            <DashHome />
           </div>
         </div>
-
-      <DashHome />
-    
-      </div>
-    </div>)}
+      )}
     </>
   );
 };

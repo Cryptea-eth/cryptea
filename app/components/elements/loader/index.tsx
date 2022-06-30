@@ -5,8 +5,13 @@ const Loader = () => {
   return (
     <div className="h-screen flex flex-col justify-center items-center w-full">
       <div className="flex items-center justify-center">
-        <Image src={logo} alt="cryptea" width={35} height={35} className="mr-[5px]" />
-        <div className="text-black text-2xl font-bold">CRYPTEA</div>
+        <Image
+          src={logo}
+          alt="cryptea"
+          width={35}
+          height={35}
+        />
+        <div className="text-black text-xl ml-[5px] font-bold">CRYPTEA</div>
         {/* <img src={logo1} alt="cryptea" width={100} /> */}
       </div>
       <Box
