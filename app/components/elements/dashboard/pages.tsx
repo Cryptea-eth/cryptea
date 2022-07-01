@@ -1,8 +1,10 @@
 import empty from "../../../../public/images/coming-soon.svg";
 import Image from "next/image";
+
 const DashPages = () => {
+
   return (
-    <div>
+    <div className="pt-[75px]">
       <div
         className="empty"
         style={{
@@ -17,9 +19,7 @@ const DashPages = () => {
         <Image
           src={empty}
           className="mb-3"
-          style={{
-            width: 300,
-          }}
+          width={300}
           alt="Would Be Released soon"
         />
 

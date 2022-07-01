@@ -287,7 +287,7 @@ const DashSettings = () => {
 
 
   return (
-    <div className="2sm:pr-1 sett dashbody cusscroller overflow-y-scroll overflow-x-hidden px-5 pb-5 h-[calc(100%-75px)]">
+    <div className="2sm:pr-1 pt-[75px] sett dashbody cusscroller overflow-y-scroll overflow-x-hidden px-5 pb-5 h-[calc(100%-75px)]">
       <Modal
         open={openM}
         onClose={handleCloseM}

@@ -9,30 +9,32 @@ import { HomeProvider } from '../app/contexts/HomeContext'
 
 const Home: NextPage = () => {
   return (
-    <HomeProvider>
-    <div>
-      <Head>
-        <title>Cryptea</title>
-        <meta name="description" content="Receive tips/donations on another level" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <HomeProvider>
+        <div>
+          <Head>
+            <title>Cryptea</title>
+            <meta
+              name="description"
+              content="Receive tips/donations on another level"
+            />
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
 
-      <main>
-        <div className="app">
-          <Nav />
-          <Hero />
-          <About />
-          <Extras />
+          <main>
+            <div className="app">
+              <Nav />
+              <Hero />
+              <About />
+              <Extras />
+            </div>
+          </main>
+
+          <footer>
+            <Footer />
+          </footer>
         </div>
-      </main>
-
-      <footer>
-        <Footer />
-
-      </footer>
-    </div>
-    </HomeProvider>
-  )
+      </HomeProvider>
+  );
 }
 
 export default Home

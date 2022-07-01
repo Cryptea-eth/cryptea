@@ -409,7 +409,7 @@ const DashHome = () => {
   const handleClose = () => setOpen(false);
 
   return (
-    <div className="dashbody h-[calc(100%-75px)] 2sm:pr-1 flex px-5 pb-5">
+    <div className="dashbody h-[calc(100%-75px)] pt-[75px] 2sm:pr-1 flex px-5 pb-5">
       {(loading1 || loading2) && <Loader />}
 
       {(!loading1 && !loading2) && (<Fragment><div>

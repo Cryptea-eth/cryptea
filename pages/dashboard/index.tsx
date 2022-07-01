@@ -12,14 +12,14 @@ import Link from "next/link";
 import Loader from "../../app/components/elements/loader";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { useState, useEffect } from 'react';
+import { DashContext, dash } from "../../app/contexts/GenContext";
+import { useState, useEffect, useContext } from 'react';
 import { useMoralis } from "react-moralis";
 import Image from "next/image";
 import Sidebar from "../../app/components/elements/dashboard/sidebar";
 
 const DashboardIndex = () => {
-  const [isOpen, close] = useState(false);
-  const [isOpen3, close3] = useState(false);
+
   const {
     user,
     isAuthenticated,
@@ -29,6 +29,8 @@ const DashboardIndex = () => {
     enableWeb3,
   } = useMoralis();
   const router = useRouter();
+
+  const { sidebar }: dash = useContext(DashContext);
 
   const dp = user?.get("img");
 
@@ -57,13 +59,6 @@ const DashboardIndex = () => {
     isInitialized
   ]);
 
-  const toggle = () => {
-    close(!isOpen);
-
-    setTimeout(() => {
-      close3(!isOpen3);
-    }, 900);
-  };
 
   const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(null);
 
@@ -82,8 +77,8 @@ const DashboardIndex = () => {
     <>
       <Head>
         <title>
-          {user?.get("username") ? user?.get("username")+' | ' : ""} Dashboard |
-          Cryptea
+          {user?.get("username") ? user?.get("username") + " | " : ""} Dashboard
+          | Cryptea
         </title>
         <meta
           name="description"
@@ -95,10 +90,19 @@ const DashboardIndex = () => {
       {loading && <Loader />}
 
       {!loading && (
-        <div className="h-full  dash w-full bg-[#F9FAFF] flex">
+        <div className="h-full transition-all delay-500 dash w-full bg-[#F9FAFF] flex">
           <Sidebar page={"home"} />
-          <div className="body w-full h-full">
-            <div className="flex px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]">
+          <div
+            className={`body transition-all delay-500 ${
+              sidebar?.openPage ? "pl-[247px]" : "pl-[77px]"
+            } w-full h-full`}
+          >
+            <div
+              style={{
+                width: `calc(100% - ${sidebar?.openPage ? "247px" : "77px"})`,
+              }}
+              className="flex z-10 px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
+            >
               <div className="">
                 <h1 className="font-bold">
                   Welcome {user?.get("username")}!☕
