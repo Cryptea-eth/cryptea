@@ -40,10 +40,9 @@ export const GenProvider = ({children}: {children: JSX.Element }) => {
                     open: isOpen,
                     openDelay: isOpen3,
                     openPage: isOpen2
-                }
+                },
             }}>
                 {children}
-                
-            </DashContext.Provider>
+            </ DashContext.Provider>
         )
-}
+      };

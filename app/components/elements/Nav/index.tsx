@@ -232,15 +232,12 @@ function Nav() {
           <div>
             {isAuthenticated! ? (
                 <button
-                  onClick={logout}
+                  onClick={() => {
+                    window.location.href = '/dashboard';
+                  }}
                   className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4"
                 >
-                  {user!.get("ethAddress").substring(0, 5) +
-                    "...." +
-                    user!
-                      .get("ethAddress")
-                      .substring(user!.get("ethAddress").length - 5)}
-                  {""}
+                  Dashboard
                 </button>
             ) : (
               <div>

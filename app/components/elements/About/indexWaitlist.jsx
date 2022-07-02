@@ -90,14 +90,15 @@ const AboutWaitlist = () => {
         <div className="mx-[10px]">
           <div className="w-full mt-4 flex">
             <div className="mr-2 w-full">
-              <label className="block text-white text-sm font-medium mb-2"> Email
-                address </label>
+              <label className="block text-white text-sm font-medium mb-2"> Name </label>
               <input className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#ff320e]" id="username" type="text" placeholder="Wagmi" />
             </div>
+
             <div className="ml-2 w-full">
-              <label className="block text-white text-sm font-medium mb-2"> Password </label>
+              <label className="block text-white text-sm font-medium mb-2"> Email Address </label>
               <input className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#ff320e]" id="email" type="email" placeholder="hello@cryptea.me" />
             </div>
+
           </div>
         </div>
 
