@@ -5,10 +5,30 @@ import circle from "../../../../public/images/circle.svg";
 import Supported from "../Supported";
 import Image from "next/image";
 import { HomeContextSet } from "../../../contexts/HomeContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { LinearProgress, Box } from "@mui/material";
+
 
 const AboutWaitlist = () => {
   const useUpdateWalletModal = useContext(HomeContextSet);
+
+  const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+
+  const [loading, setLoading] = useState(false)
+
+  const addToWait = () => {
+    setLoading(true)
+    let go = true;
+    [email, name].forEach(v => {
+        if (!v.length) {
+          setError('All fields must be filled')
+          go = false;
+          return
+        }
+    })
+}
 
   return (
     <div className="mx-[30px] mt-24 px-14 2md:px-4 2md:mx-1" id="about">
@@ -76,7 +96,10 @@ const AboutWaitlist = () => {
         </div>
       </div>
 
-      <div className="rounded-[14px] mt-[6rem] bg-contain h-[386px] bg-no-repeat m-auto max-w-[800px] bg-donation bg-[rgba(0,0,0,0.5)] bg-blend-color flex flex-col justify-center items-center">
+      <div
+        className="rounded-[14px] mt-[6rem] bg-contain h-[386px] bg-no-repeat m-auto max-w-[800px] bg-donation bg-[rgba(0,0,0,0.75)]  bg-blend-overlay flex flex-col justify-center items-center"
+        id="waitlist"
+      >
         <h1 className="text-white font-bold text-center mx-auto w-[85%] text-[44px] mb-0 mt-[8px] mmd:text-[30px]">
           {/* Receive donations on another level */}
           Join our waitlist
@@ -88,22 +111,65 @@ const AboutWaitlist = () => {
         </span>
 
         <div className="mx-[10px]">
+          {loading && (
+            <Box className="text-[#F57059]" sx={{ width: "100%" }}>
+              <LinearProgress color="inherit" />
+            </Box>
+          )}
+          {Boolean(error.length) && (
+            <div className="rounded-md w-full p-2 bg-[#ff3535] my-2 text-white">
+              {error}
+            </div>
+          )}
+
           <div className="w-full mt-4 flex">
             <div className="mr-2 w-full">
-              <label className="block text-white text-sm font-medium mb-2"> Name </label>
-              <input className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#ff320e]" id="username" type="text" placeholder="Wagmi" />
+              <label className="block text-white text-sm font-medium mb-2">
+                {" "}
+                Name{" "}
+              </label>
+              <input
+                className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#ff320e]"
+                id="username"
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setError("");
+                }}
+                type="text"
+                placeholder="Wagmi"
+              />
             </div>
 
             <div className="ml-2 w-full">
-              <label className="block text-white text-sm font-medium mb-2"> Email Address </label>
-              <input className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#ff320e]" id="email" type="email" placeholder="hello@cryptea.me" />
+              <label className="block text-white text-sm font-medium mb-2">
+                {" "}
+                Email Address{" "}
+              </label>
+              <input
+                className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#ff320e]"
+                id="email"
+                type="email"
+                onChange={(e) => {
+                  let val = e.target.value;
+                  if (
+                    val.match(
+                      /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/
+                    ) != null
+                  ) {
+                    setEmail(val);
+                    setError("");
+                  } else {
+                    setError("Your email seems incorrect");
+                  }
+                }}
+                placeholder="hello@cryptea.me"
+              />
             </div>
-
           </div>
         </div>
 
         <button
-          onClick={useUpdateWalletModal}
+          onClick={addToWait}
           className="text-sm mmd:mt-5 hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-5 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Submit

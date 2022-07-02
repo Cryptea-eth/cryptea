@@ -41,7 +41,7 @@ const SignupForm = () => {
     }
   }, [enableWeb3, isWeb3Enabled]);
 
-  console.log(chainId);
+
 
   const [userLink, setUserLink] = useState("");
   const [userDescription, setUserDescription] = useState("");

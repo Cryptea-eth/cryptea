@@ -42,7 +42,7 @@ const HeroWaitlist = () => {
             <div className="flex justify-center">
               <button
                 onClick={() => {
-                  document.querySelector('#about').scrollIntoView();
+                  document.querySelector("#waitlist").scrollIntoView();
                 }}
                 className="text-sm rounded-lg bg-[#1B1C31] mt-6 mx-auto justify-self-center place-self-center object-center text-white font-semibold py-4 px-8"
               >
