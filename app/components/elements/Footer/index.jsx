@@ -4,6 +4,7 @@ import mess from "../../../../public/images/icon1.png";
 import twitt from "../../../../public/images/icon2.png";
 import { HomeContextSet } from '../../../contexts/HomeContext';
 import { useContext } from "react";
+import LogoSpace from "../logo";
 const Footer = () => {
   const date = new Date();
 
@@ -13,7 +14,10 @@ const Footer = () => {
     <div>
       <div className="flex mx-[70px] md:mx-5 mmd:mx-[10px] border-solid border-b-[#E5E5EA] border-b-[1px] w-auto p-5 justify-between pb-12">
         <div className="w-[220px]">
-          <h3 className="font-bold text-[18px] mb-2">Cryptea</h3>
+          <LogoSpace style={{
+            marginBottom: 8
+          }}/>
+
           <span className="text-[#757095] ">
             Receive tips while you sip tea. Directly, and securely.
           </span>
@@ -24,7 +28,7 @@ const Footer = () => {
             <a className="mr-[5px]" href="https://messenger.com">
               <Image alt="Messenger" src={mess} />
             </a>
-            <a className="mr-[5px]" href="https://twitter.com">
+            <a className="mr-[5px]" href="https://twitter.com/UseCryptea">
               <Image alt="Twitter" src={twitt} />
             </a>
           </div>

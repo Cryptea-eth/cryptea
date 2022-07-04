@@ -2,11 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useContext, useState } from "react";
 import { useMoralis } from "react-moralis";
-import logo from "../../../../public/images/cryptea-logo.svg";
 import { HomeContext, HomeContextSet } from "../../../contexts/HomeContext";
 import meta from "../../../../public/images/metamask.png";
 import wallcon from "../../../../public/images/walletconnect.png";
 import { useRouter } from "next/router";
+import LogoSpace from "../logo";
 
 function Nav() {
   const router = useRouter();
@@ -125,23 +125,7 @@ function Nav() {
   return (
     <div className="nav relative ml-[30px] 2sm:ml-1 z-10">
       <div className="flex flex-row justify-between items-center px-14 pt-5 2sm:px-7">
-        <Link href="/">
-          <a className="flex flex-row items-center justify-center">
-            <Image
-              src={logo}
-              alt="cryptea"
-              width={30}
-              height={30}
-              className="min-w-[30px]"
-            />
-            <span className="text-black text-xl ml-[5px] font-[600]">
-              CRYPTEA
-            </span>
-          </a>
-        </Link>
-        {/* <Link to="/" className="text-black text-2xl font-bold">
-          CRYPTEA
-        </Link> */}
+        <LogoSpace />
         <div className="text-black flex flex-row font-medium text-lg">
           <div
             onClick={() => {
@@ -163,16 +147,7 @@ function Nav() {
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-center justify-center py-5 border-solid rounded-t">
-                  <Image
-                    src={logo}
-                    alt="cryptea"
-                    width={30}
-                    height={30}
-                    className="min-w-[30px]"
-                  />
-                  <span className="text-black text-xl ml-[5px] font-[600]">
-                    CRYPTEA
-                  </span>
+                  <LogoSpace />
                 </div>
 
                 <div className="flex items-center justify-center pb-2 pt-3 border-solid rounded-t">
@@ -231,14 +206,14 @@ function Nav() {
         <div className="right mmd:hidden">
           <div>
             {isAuthenticated! ? (
-                <button
-                  onClick={() => {
-                    window.location.href = '/dashboard';
-                  }}
-                  className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4"
-                >
-                  Dashboard
-                </button>
+              <button
+                onClick={() => {
+                  window.location.href = "/dashboard";
+                }}
+                className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4"
+              >
+                Dashboard
+              </button>
             ) : (
               <div>
                 <button

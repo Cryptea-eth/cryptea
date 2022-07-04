@@ -7,12 +7,14 @@ import Image from "next/image";
 import { HomeContextSet } from "../../../contexts/HomeContext";
 import { useContext, useState } from "react";
 import { LinearProgress, Box } from "@mui/material";
+import axios from "axios";
 
 
 const AboutWaitlist = () => {
   const useUpdateWalletModal = useContext(HomeContextSet);
 
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState("");
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
@@ -20,6 +22,8 @@ const AboutWaitlist = () => {
 
   const addToWait = () => {
     setLoading(true)
+    setError('');
+    setSuccess('');
     let go = true;
     [email, name].forEach(v => {
         if (!v.length) {
@@ -28,6 +32,22 @@ const AboutWaitlist = () => {
           return
         }
     })
+
+    if (go) {
+      axios.post('https://cryptea.com/register', {
+        name, email
+      }).then(d => {
+         const {status, error} = d.data
+         setLoading(false)
+         if (error) {
+            setError(status)
+         }else{
+            setSuccess("You have successfully been added to the waitinglist, and would be notified when we launch")
+         }
+
+      });
+
+    }
 }
 
   return (
@@ -122,10 +142,16 @@ const AboutWaitlist = () => {
             </div>
           )}
 
+          {Boolean(success.length) && (
+            <div className="rounded-md w-full p-2 bg-[#44b900] my-2 text-white">
+              {success}
+            </div>
+          )}
+
           <div className="w-full mt-4 flex">
             <div className="mr-2 w-full">
               <label className="block text-white text-sm font-medium mb-2">
-                {" "}
+               
                 Name{" "}
               </label>
               <input
@@ -134,6 +160,7 @@ const AboutWaitlist = () => {
                 onChange={(e) => {
                   setName(e.target.value);
                   setError("");
+                  setSuccess("");
                 }}
                 type="text"
                 placeholder="Wagmi"
@@ -161,6 +188,8 @@ const AboutWaitlist = () => {
                   } else {
                     setError("Your email seems incorrect");
                   }
+
+                   setSuccess("");
                 }}
                 placeholder="hello@cryptea.me"
               />
