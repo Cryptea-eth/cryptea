@@ -34,7 +34,7 @@ const AboutWaitlist = () => {
     })
 
     if (go) {
-      axios.post('https://cryptea.com/register', {
+      axios.post('https://cryptea.com/waitlist', {
         name, email
       }).then(d => {
          const {status, error} = d.data
