@@ -4,7 +4,6 @@ import {
 } from "react-icons/bi";
 
 import { RiSettingsLine } from "react-icons/ri";
-import logo from "../../public/images/cryptea-logo.svg";
 // import "../../app/styles/dash.css";
 import { Avatar, Popover } from "@mui/material";
 import DashHome from "../../app/components/elements/dashboard/home";
@@ -15,7 +14,6 @@ import Head from "next/head";
 import { DashContext, dash } from "../../app/contexts/GenContext";
 import { useState, useEffect, useContext } from 'react';
 import { useMoralis } from "react-moralis";
-import Image from "next/image";
 import Sidebar from "../../app/components/elements/dashboard/sidebar";
 
 const DashboardIndex = () => {
@@ -24,7 +22,6 @@ const DashboardIndex = () => {
     user,
     isAuthenticated,
     isInitialized,
-    logout,
     isWeb3Enabled,
     enableWeb3,
   } = useMoralis();
@@ -96,7 +93,13 @@ const DashboardIndex = () => {
             } w-full h-full 2sm:!pl-[77px]`}
           >
             <div
-              className="flex z-10 px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
+              style={{
+                width: sidebar?.openPage
+                  ? "calc(100% - 247px)"
+                  : "calc(100% - 77px)",
+                right: 0,
+              }}
+              className="flex transition-all delay-500 z-10 fixed px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
             >
               <div className="">
                 <h1 className="font-bold">

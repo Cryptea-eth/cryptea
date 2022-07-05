@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useRouter } from 'next/router'; 
 import { RiSettingsLine } from "react-icons/ri";
 import logo from "../../../../public/images/cryptea-logo.svg";
+import logo2 from "../../../../public/images/cryptea.png";
 import { useContext } from 'react';
 
 
@@ -65,11 +66,9 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
                   sidebar?.open ? 30 : 40
                 }px] transition-all delay-500`}
               />
-              <span
-                className={text}
-              >
-                CRYPTEA
-              </span>
+              <div className={text}>
+                <Image src={logo2} alt="cryptea" className="min-w-[30px]" />
+              </div>
               {/* <img
               src={logo1}
               className={sidebar?.openDelay ? "" : "transition-all delay-500 hidden"}

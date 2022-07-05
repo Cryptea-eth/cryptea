@@ -91,7 +91,13 @@ const Dashboard = () => {
             } w-full h-full 2sm:!pl-[77px]`}
           >
             <div
-              className={`flex z-10 px-[20px] fixed py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]`}
+              style={{
+                width: sidebar?.openPage
+                  ? "calc(100% - 247px)"
+                  : "calc(100% - 77px)",
+                right: 0,
+              }}
+              className={`flex transition-all delay-500 z-10 px-[20px] fixed py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]`}
             >
               <div className="">
                 <h1 className="font-bold">
