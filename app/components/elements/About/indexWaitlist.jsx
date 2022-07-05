@@ -34,7 +34,7 @@ const AboutWaitlist = () => {
     })
 
     if (go) {
-      axios.post('https://cryptea.com/waitlist', {
+      axios.post('https://cryptea.me/waitlist/index', {
         name, email
       }).then(d => {
          const {status, error} = d.data
@@ -43,8 +43,16 @@ const AboutWaitlist = () => {
             setError(status)
          }else{
             setSuccess("You have successfully been added to the waitinglist, and would be notified when we launch")
+             setName("");
+             setEmail("");
          }
-
+      }).catch(e => {
+          if(e.message.length){
+            setError('something went wrong please try again')
+            setName('');
+            setEmail(''); 
+            setLoading(false)
+          }
       });
 
     }
