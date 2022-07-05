@@ -34,9 +34,7 @@ const DashboardIndex = () => {
 
   const dp = user?.get("img");
 
-  const [loading, isLoading] = useState<Boolean>(true)
- 
-
+  const [loading, isLoading] = useState<Boolean>(true);
 
   useEffect(() => {
     if (!isWeb3Enabled) {

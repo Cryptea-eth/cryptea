@@ -3,7 +3,7 @@ import logo from "../../../../public/images/cryptea-logo.svg";
 import Image from 'next/image';
 const Loader = () => {
   return (
-    <div className="h-screen flex flex-col justify-center items-center w-full">
+    <div className="h-full left-0 bg-white top-0 z-[100] fixed flex flex-col justify-center items-center w-full">
       <div className="flex items-center justify-center">
         <Image
           src={logo}
