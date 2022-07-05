@@ -514,7 +514,7 @@ const DashHome = () => {
           </linearGradient>
         </svg>
         <div className="w-full flex overflow-y-hidden overflow-x-scroll pb-[11px] cusscroller">
-          <div className="flex flex-col mr-7 justify-center">
+          <div className="flex flex-col mr-7 justify-center relative">
             <div className="w-[227px] relative p-3 bg-[#F57059] rounded-[4px] flex justify-between flex-col h-[138px]">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
@@ -556,17 +556,6 @@ const DashHome = () => {
                 </span>
               </div>
             </div>
-            <Button
-              variant="contained"
-              className="!bg-[#F57059] !hidden !mt-4 2sm:!block !py-[8px] absolute !font-medium !capitalize"
-              style={{
-                fontFamily: "inherit",
-              }}
-              fullWidth
-              onClick={handleOpen}
-            >
-              Transfer
-            </Button>
           </div>
 
           <div className="w-[227px] p-3 bg-transparent border-solid border-[1px] rounded-[4px] flex justify-between flex-col h-[138px]">
@@ -610,7 +599,20 @@ const DashHome = () => {
               </span>
             </div>
           </div>
-        </div>
+          </div>
+          <div className="">
+            <Button
+              variant="contained"
+              className="!bg-[#F57059] !hidden !mt-4 2sm:!block !py-[8px] max-w-[520px] m-auto !font-medium !capitalize"
+              style={{
+                fontFamily: "inherit",
+              }}
+              fullWidth
+              onClick={handleOpen}
+            >
+              Transfer
+            </Button>
+          </div>
 
         <div className="bg-white mt-6 p-3 border-solid border-[1px] border-[#e3e3e3]">
           <div className="py-[10px]">
