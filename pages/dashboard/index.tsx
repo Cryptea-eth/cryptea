@@ -95,12 +95,9 @@ const DashboardIndex = () => {
           <div
             className={`body transition-all delay-500 ${
               sidebar?.openPage ? "pl-[247px]" : "pl-[77px]"
-            } w-full h-full`}
+            } w-full h-full 2sm:!pl-[77px]`}
           >
             <div
-              style={{
-                width: `calc(100% - ${sidebar?.openPage ? "247px" : "77px"})`,
-              }}
               className="flex z-10 px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
             >
               <div className="">
