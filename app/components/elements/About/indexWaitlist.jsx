@@ -38,7 +38,7 @@ const AboutWaitlist = () => {
         name, email
       }).then(d => {
          const {status, error} = d.data
-         setLoading(false)
+        setLoading(false)
          if (error) {
             setError(status)
          }else{
