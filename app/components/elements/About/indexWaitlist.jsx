@@ -34,11 +34,11 @@ const AboutWaitlist = () => {
     })
 
     if (go) {
-      axios.post('https://cryptea.com/waitlist', {
+      axios.post('https://cryptea.me/waitlist', {
         name, email
       }).then(d => {
          const {status, error} = d.data
-         setLoading(false)
+        setLoading(false)
          if (error) {
             setError(status)
          }else{
