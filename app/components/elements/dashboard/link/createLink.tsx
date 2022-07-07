@@ -5,9 +5,8 @@ import {
   Tabs,
   Tab,
   Button,
-  Typography,
 } from "@mui/material";
-import { MdInfo, MdAddLink } from "react-icons/md";
+import { MdInfo, MdAddLink, MdInsertLink, MdPayment, MdPayments } from "react-icons/md";
 import LogoSpace from "../../logo";
 import { useState } from "react";
 
@@ -31,7 +30,7 @@ export const NewLink = () =>{
         >
           {value === index && (
             <Box sx={{ p: 3 }}>
-              <Typography>{children}</Typography>
+              <div>{children}</div>
             </Box>
           )}
         </div>
@@ -62,8 +61,8 @@ export const NewLink = () =>{
                 }}
               />
 
-              <h2 className="font-[900] text-[30px] mt-0 mx-auto mb-5">
-                Create A Link
+              <h2 className="font-[900] text-[30px] mt-0 flex items-center mx-auto mb-5">
+                <MdAddLink size={32} className="mr-1" /> Create A Link
               </h2>
 
               <div className="relative 2mmd:px-0 p-6 flex-auto">
@@ -74,8 +73,18 @@ export const NewLink = () =>{
                       onChange={handleChange}
                       aria-label="basic tabs"
                     >
-                      <Tab label="One Time Payments" {...a11yProps(0)} />
-                      <Tab label="Subscriptions" {...a11yProps(1)} />
+                      <Tab
+                        iconPosition="start"
+                        icon={<MdPayment size={17} />}
+                        label="One Time Payments"
+                        {...a11yProps(0)}
+                      />
+                      <Tab
+                        iconPosition="start"
+                        icon={<MdPayments size={17} />}
+                        label="Subscriptions"
+                        {...a11yProps(1)}
+                      />
                     </Tabs>
                   </Box>
                   <TabPanel value={value} index={0}>
@@ -141,7 +150,7 @@ export const NewLink = () =>{
                         </div>
                       </div>
 
-                      <div className="w-full p-10">
+                      <div className="w-full sm:px-2 p-10">
                         <div className="flex items-center ssm:flex-wrap">
                           <TextField
                             label={"Enter Link Slug"}
@@ -170,6 +179,7 @@ export const NewLink = () =>{
                           <span className="mr-2 text-sm">
                             These are your new subscription details
                           </span>
+                          <MdInfo size={20} color="#fff" />
                         </div>
                       </div>
 
@@ -223,7 +233,7 @@ export const NewLink = () =>{
                         </div>
                       </div>
 
-                      <div className="w-full p-10">
+                      <div className="w-full sm:px-2 p-10">
                         <div className="flex items-center ssm:flex-wrap">
                           <TextField
                             label={"Enter Subscription Link Slug"}
@@ -243,6 +253,10 @@ export const NewLink = () =>{
                     </div>
                   </TabPanel>
                 </Box>
+
+                <Button className="py-3 font-bold px-6 !capitalize flex items-center text-white bg-[#121212] transition-all delay-500 hover:bg-[#000] m-auto rounded-lg">
+                  <MdInsertLink size={25} className="mr-1" /> Create Link
+                </Button>
               </div>
             </div>
           </div>

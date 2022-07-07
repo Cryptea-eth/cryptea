@@ -78,12 +78,9 @@ const DashLinks = () => {
             You have no links yet, Click the button below to create links
           </span>
         </div>
-        <Link href="create">
+        <Link href="links/new">
           <a>
-            <Button
-              onClick={() => setShowLinkModal(true)}
-              className="py-2 font-bold px-5 !capitalize flex items-center text-white bg-[#F57059] transition-all delay-500 hover:bg-[#e6533a] rounded-lg"
-            >
+            <Button className="py-2 font-bold px-5 !capitalize flex items-center text-white bg-[#F57059] transition-all delay-500 hover:bg-[#e6533a] rounded-lg">
               <MdAddLink size={25} className="mr-1" /> Create Link
             </Button>
           </a>
@@ -185,7 +182,7 @@ const DashLinks = () => {
                             </div>
                           </div>
 
-                          <div className="w-full p-10">
+                          <div className="w-full sm:px-2 p-10">
                             <div className="flex items-center ssm:flex-wrap">
                               <TextField
                                 label={"Enter Link Slug"}
@@ -267,7 +264,7 @@ const DashLinks = () => {
                             </div>
                           </div>
 
-                          <div className="w-full p-10">
+                          <div className="w-full sm:px-2 p-10">
                             <div className="flex items-center ssm:flex-wrap">
                               <TextField
                                 label={"Enter Subscription Link Slug"}
