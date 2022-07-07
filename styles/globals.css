@@ -4,9 +4,11 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
 
+
 .App {
   text-align: center;
 }
+
 
 
 .App-logo {
@@ -14,6 +16,9 @@
   pointer-events: none;
 }
 
+body *:not(i, svg){
+    font-family: 'Manrope', sans-serif;
+}
 
 body::-webkit-scrollbar,
 .cusscroller::-webkit-scrollbar, div .walletconnect-qrcode__base::-webkit-scrollbar {
