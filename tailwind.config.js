@@ -22,6 +22,7 @@ module.exports = {
       md: { max: "699px" },
       mmd: { max: "659px" },
       "2md": { max: "510px" },
+      "2mmd": {max: "550px"},
       "2usm": { max: "505px" },
       "3md": { max: "403px" },
     },
@@ -29,7 +30,12 @@ module.exports = {
       backgroundImage: {
         donation: "url('../public/images/donation.png')",
         pattern: "url('../public/images/pattern.png')",
+        pattern2: "url('../public/images/pattern2.png')",
+        pattern3: "radial-gradient(#F28585, transparent)"
       },
+      backgroundSize: {
+        patternsize: "160px"
+      }
     },
   },
   plugins: [],

@@ -7,9 +7,28 @@
     color:#F57059 !important;
 }
 
+.linkadd .css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected, .linkadd .css-1c2i806-MuiFormLabel-root-MuiInputLabel-root.Mui-focused{
+    color: #121212 !important; 
+}
+
+.linkadd .css-1a1fmpi-MuiInputBase-root-MuiInput-root:after{
+    border-bottom:2px solid #ff9090;
+}
+
 .css-1aquho2-MuiTabs-indicator, .css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected{
     background-color:#f5705924 !important;
 }
+
+.linkadd .css-1aquho2-MuiTabs-indicator, .linkadd 
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected{
+    background-color:#3d3d3d24 !important;
+}
+
+.linkadd .css-1h9z7r5-MuiButtonBase-root-MuiTab-root{
+    font-weight:700;
+}
+
+
 .css-1gsv261{
     border:none !important;
 }

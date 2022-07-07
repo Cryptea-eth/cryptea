@@ -9,15 +9,13 @@
   text-align: center;
 }
 
-
-
 .App-logo {
   height: 120vmin;
   pointer-events: none;
 }
 
 body *:not(i, svg){
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Manrope', sans-serif !important;
 }
 
 body::-webkit-scrollbar,

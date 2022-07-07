@@ -1,8 +1,9 @@
 import empty from "../../../../public/images/coming-soon.svg";
 import Image from "next/image";
 import { useState } from "react";
-import { Tabs, TextField, Tab, Typography, Box } from '@mui/material';
-import { MdInfo } from 'react-icons/md';
+import { Tabs, TextField, Tab, Typography, Box, Button } from '@mui/material';
+import { MdAddLink, MdInfo } from 'react-icons/md';
+import Link from "next/link";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -60,40 +61,45 @@ const DashLinks = () => {
         }}
       >
         <div className="h-[393px] flex">
-        <Image
-          src={empty}
-          className="mb-3"
-          width={300}
-          height={300}
-          alt="No links yet"
-        /></div>
-
-        <div className="mt-2 text-[20px] font-semibold">
-          You have no links yet
+          <Image
+            src={empty}
+            className="mb-3"
+            width={300}
+            height={300}
+            alt="No links yet"
+          />
         </div>
-        <button onClick={() => setShowLinkModal(true)}
-          className="py-4 px-10 text-white bg-[#F57059] rounded-lg">New Link</button>
-        {/* <Image
-          src={empty}
-          className="mb-3"
-          style={{
-            width: 300,
-          }}
-          alt="Would Be Released soon"
-        />
 
-        <h2 className="mt-2 text-[22px] font-bold">
-          This Feature would be released soon, we are working on it
-        </h2> */}
+        <div className="mt-2 mb-3">
+          <h2 className="text-[22px] text-center font-bold">
+            Hmm, its empty here
+          </h2>
+          <span className="mt-2 text-[17px]">
+            You have no links yet, Click the button below to create links
+          </span>
+        </div>
+        <Link href="create">
+          <a>
+            <Button
+              onClick={() => setShowLinkModal(true)}
+              className="py-2 font-bold px-5 !capitalize flex items-center text-white bg-[#F57059] transition-all delay-500 hover:bg-[#e6533a] rounded-lg"
+            >
+              <MdAddLink size={25} className="mr-1" /> Create Link
+            </Button>
+          </a>
+        </Link>
+
         {showLinkModal! ? (
           <>
-            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="justify-center cusscroller items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
               <div className="relative w-auto my-6 mx-auto max-w-3xl">
                 {/*content*/}
                 <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                   {/*header*/}
                   <div className="flex items-start justify-between p-5 border-b border-solid border-[#F57059] rounded-t">
-                    <h3 className="text-2xl font-semibold text-black">Create New Link</h3>
+                    <h3 className="text-2xl font-semibold text-black">
+                      Create New Link
+                    </h3>
                     <button
                       className="p-1 ml-auto bg-transparent border-0 text-black float-right text-4xl leading-none font-semibold outline-none focus:outline-none"
                       onClick={() => setShowLinkModal(false)}
@@ -105,9 +111,13 @@ const DashLinks = () => {
                   </div>
                   {/*body*/}
                   <div className="relative p-6 flex-auto">
-                    <Box sx={{ width: '100%' }}>
-                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                    <Box sx={{ width: "100%" }}>
+                      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                        <Tabs
+                          value={value}
+                          onChange={handleChange}
+                          aria-label="basic tabs example"
+                        >
                           <Tab label="One Time Payments" {...a11yProps(0)} />
                           <Tab label="Subscriptions" {...a11yProps(1)} />
                         </Tabs>
@@ -116,7 +126,9 @@ const DashLinks = () => {
                         Create a New One Time Link
                         <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">
                           <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#F57059] text-white">
-                            <span className="uppercase font-semibold mr-3">Link Details</span>
+                            <span className="uppercase font-semibold mr-3">
+                              Link Details
+                            </span>
                             <div className="flex items-center">
                               <span className="mr-2 text-sm">
                                 These are your new link details
@@ -126,25 +138,44 @@ const DashLinks = () => {
 
                           <div className="w-full px-10 py-5">
                             <div className="flex items-center ssm:flex-wrap">
-                              <TextField id="outlined-basic" label="Title" variant="outlined" name="title" fullWidth />
+                              <TextField
+                                id="outlined-basic"
+                                label="Title"
+                                variant="outlined"
+                                name="title"
+                                fullWidth
+                              />
                             </div>
                           </div>
                           <div className="w-full px-10 py-5">
                             <div className="flex items-center ssm:flex-wrap">
-                              <TextField id="amount" label="Amount" variant="outlined" name="amount" type="number" fullWidth />
+                              <TextField
+                                id="amount"
+                                label="Amount"
+                                variant="outlined"
+                                name="amount"
+                                type="number"
+                                fullWidth
+                              />
                             </div>
                           </div>
                           <div className="w-full px-10 py-5">
                             <div className="flex items-center ssm:flex-wrap">
-                              <TextField id="description" label="Description" variant="outlined" name="description" fullWidth />
+                              <TextField
+                                id="description"
+                                label="Description"
+                                variant="outlined"
+                                name="description"
+                                fullWidth
+                              />
                             </div>
                           </div>
-
                         </div>
-
                         <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">
                           <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#F57059] text-white">
-                            <span className="uppercase font-semibold mr-3">Link Slug</span>
+                            <span className="uppercase font-semibold mr-3">
+                              Link Slug
+                            </span>
                             <div className="flex items-center">
                               <span className="mr-2 text-sm">
                                 This is your new Link page:
@@ -171,13 +202,14 @@ const DashLinks = () => {
                             </div>
                           </div>
                         </div>
-
                       </TabPanel>
                       <TabPanel value={value} index={1}>
                         Create a New Subscription
                         <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">
                           <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#F57059] text-white">
-                            <span className="uppercase font-semibold mr-3">Subscription Details</span>
+                            <span className="uppercase font-semibold mr-3">
+                              Subscription Details
+                            </span>
                             <div className="flex items-center">
                               <span className="mr-2 text-sm">
                                 These are your new subscription details
@@ -187,26 +219,45 @@ const DashLinks = () => {
 
                           <div className="w-full px-10 py-5">
                             <div className="flex items-center ssm:flex-wrap">
-                              <TextField id="outlined-basic" label="Title" variant="outlined" name="title" fullWidth />
+                              <TextField
+                                id="outlined-basic"
+                                label="Title"
+                                variant="outlined"
+                                name="title"
+                                fullWidth
+                              />
                             </div>
                           </div>
                           <div className="w-full px-10 py-5">
                             <div className="flex items-center ssm:flex-wrap">
-                              <TextField id="amount" label="Amount" variant="outlined" name="amount" type="number" fullWidth />
+                              <TextField
+                                id="amount"
+                                label="Amount"
+                                variant="outlined"
+                                name="amount"
+                                type="number"
+                                fullWidth
+                              />
                             </div>
                           </div>
 
                           <div className="w-full px-10 py-5">
                             <div className="flex items-center ssm:flex-wrap">
-                              <TextField id="description" label="Description" variant="outlined" name="description" fullWidth />
+                              <TextField
+                                id="description"
+                                label="Description"
+                                variant="outlined"
+                                name="description"
+                                fullWidth
+                              />
                             </div>
                           </div>
-
                         </div>
-
                         <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">
                           <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#F57059] text-white">
-                            <span className="uppercase font-semibold mr-3">Link Slug</span>
+                            <span className="uppercase font-semibold mr-3">
+                              Link Slug
+                            </span>
                             <div className="flex items-center">
                               <span className="mr-2 text-sm">
                                 This is your new Link page:
