@@ -59,14 +59,15 @@ const DashLinks = () => {
           alignItems: "center",
         }}
       >
+        <div className="h-[393px] flex">
         <Image
           src={empty}
           className="mb-3"
-          style={{
-            width: 300,
-          }}
+          width={300}
+          height={300}
           alt="No links yet"
-        />
+        /></div>
+
         <div className="mt-2 text-[20px] font-semibold">
           You have no links yet
         </div>

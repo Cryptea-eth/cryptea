@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 import { useMoralis, useWeb3Transfer } from "react-moralis";
 import { data } from "autoprefixer";
+import axios from "axios";
 
 const DashHome = () => {
   const {
@@ -67,17 +68,20 @@ const DashHome = () => {
          setLoading1(false)
       }else{
         setLoading1(false)
-      
+    
+      axios.get(
+        `https://api.covalenthq.com/v1/${Number(
+          chainId
+        )}/address/${userAddress}/balances_v2/?quote-currency=USD&format=JSON&nft=true&no-nft-fetch=false&key=ckey_d8fd93851d6a4d57bdcf14a337d`
+      )
+      .then(d => {
 
-    fetch(
-      `https://api.covalenthq.com/v1/${Number(chainId)}/address/${userAddress}/balances_v2/?quote-currency=USD&format=JSON&nft=true&no-nft-fetch=false&key=ckey_d8fd93851d6a4d57bdcf14a337d`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setWData(data.data);
+        const { data } = d.data;
+
+        setWData(data);
         setLoading2(false);
-        
-        const { items } = data.data;
+
+        const { items } = data;
 
         setrows(
           items.map(
@@ -125,13 +129,14 @@ const DashHome = () => {
                     }}
                     className={`flex items-center justify-end`}
                   >
-                    {quote_24h !== null
+                    {Boolean(quote_24h)
                       ? (((quote - quote_24h) / quote_24h) * 100 > 0
                           ? "+"
                           : "") +
                         BigNum(((quote - quote_24h) / quote_24h) * 100, 2) +
                         "%"
                       : "0%"}
+
                   </div>
                 ),
                 amount:
