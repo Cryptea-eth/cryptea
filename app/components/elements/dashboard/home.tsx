@@ -700,7 +700,7 @@ const DashHome = () => {
                                       maxWidth: nfts ? (nfts - 50) : 0
                                     }}
                                   >
-                                    <div className="grid item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
+                                    <div className="gridx item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
                                       <Image
                                         alt="something"
                                         src={require("../../../../public/images/art.png")}
@@ -736,7 +736,7 @@ const DashHome = () => {
                                       </div>
                                     </div>
 
-                                    <div className="grid item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
+                                    <div className="gridx item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
                                       <Image
                                         alt="something"
                                         src={require("../../../../public/images/art.png")}
@@ -772,7 +772,7 @@ const DashHome = () => {
                                       </div>
                                     </div>
 
-                                    <div className="grid item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
+                                    <div className="gridx item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
                                       <Image
                                         alt="something"
                                         src={require("../../../../public/images/art.png")}
@@ -808,7 +808,7 @@ const DashHome = () => {
                                       </div>
                                     </div>
 
-                                    <div className="grid item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
+                                    <div className="gridx item-center min-w-[256px] w-[256px] rounded-[16px] mr-3 overflow-hidden">
                                       <Image
                                         alt="something"
                                         src={require("../../../../public/images/art.png")}

@@ -1,4 +1,4 @@
-import { NewLink } from "../../../app/components/elements/dashboard/link/createLink";
+import NewLink from "../../../app/components/elements/dashboard/link/createLink";
 
 const createLink = () => {
     return (

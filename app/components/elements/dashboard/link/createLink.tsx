@@ -8,14 +8,17 @@ import {
   Button,
   AlertTitle
 } from "@mui/material";
-import { MdInfo, MdAddLink, MdInsertLink, MdPayment, MdPayments } from "react-icons/md";
+import { MdInfo, MdAddLink, MdInsertLink } from "react-icons/md";
+import { GiTwoCoins } from "react-icons/gi";
+import { FaCoins } from "react-icons/fa";
 import LogoSpace from "../../logo";
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import Loader from "../../loader";
 
 
-export const NewLink = () =>{
+const NewLink = () => {
+
     interface TabPanelProps {
       children?: React.ReactNode;
       index: number;
@@ -77,7 +80,6 @@ export const NewLink = () =>{
       slug: Strings
     }
     
-
     const { isAuthenticated, isInitialized, Moralis, user } = useMoralis();
 
     const [loadpage, isloadPage] = useState<boolean>(true);
@@ -194,6 +196,7 @@ export const NewLink = () =>{
                 return;
             } 
             
+
             if (/[!@#$%^`&*=?>+<\\\'\"]/g.test(data.slug[index])) {
                 const xe = { ...error.slug };
                 xe[index] = "Slug can only contain special character like ~, -, _";
@@ -211,7 +214,7 @@ export const NewLink = () =>{
            mQ.equalTo("link", (data.slug[index]).toLowerCase());
 
             mQ.find().then(async ld => {
-                if (ld === undefined) {
+                if (!ld.length) {
                   link?.set("link", data.slug[index].toLowerCase());
                   link?.set("amount", data.amount[index]);
                   link?.set("desc", data.desc[index]);
@@ -267,13 +270,13 @@ export const NewLink = () =>{
                         >
                           <Tab
                             iconPosition="start"
-                            icon={<MdPayment size={17} />}
+                            icon={<GiTwoCoins size={17} />}
                             label="One Time Payments"
                             {...a11yProps(0)}
                           />
                           <Tab
                             iconPosition="start"
-                            icon={<MdPayments size={17} />}
+                            icon={<FaCoins size={17} />}
                             label="Subscriptions"
                             {...a11yProps(1)}
                           />
@@ -669,4 +672,8 @@ export const NewLink = () =>{
           </>
         );
 }
+
+
+export default NewLink;
+
 

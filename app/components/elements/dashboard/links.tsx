@@ -1,9 +1,14 @@
 import empty from "../../../../public/images/coming-soon.svg";
 import Image from "next/image";
-import { useState } from "react";
-import { Tabs, TextField, Tab, Typography, Box, Button } from '@mui/material';
-import { MdAddLink, MdInfo } from 'react-icons/md';
+import { useEffect, useState } from "react";
+import {Typography, Box, Button, Avatar, IconButton, Modal } from '@mui/material';
+import { MdAddLink, MdDeleteOutline, MdInfo } from 'react-icons/md';
 import Link from "next/link";
+import { useMoralis } from "react-moralis";
+import Loader from "../loader";
+import { RiDeleteBin2Line, RiPagesLine } from "react-icons/ri";
+import { BsArrowRight } from "react-icons/bs";
+import { IoMdClose } from "react-icons/io";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -38,268 +43,221 @@ function a11yProps(index: number) {
   };
 }
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  minWidth: 300,
+  width: "50%",
+  maxWidth: 600,
+  p: 4
+};
+
 const DashLinks = () => {
-  const [showLinkModal, setShowLinkModal] = useState(false);
-  const [value, setValue] = useState(0);
+  const [showLinkModal, setShowLinkModal] = useState<string>("hello");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
+  const [isLoading, loading] = useState<boolean>(true);
+
+  const { user, Moralis, isInitialized, isAuthenticated } = useMoralis();
+
+  const [links, addLinks] = useState<any>([]);
+  
+    useEffect(() => {
+      if (isInitialized) {
+        if (!isAuthenticated) {
+          window.location.href = "/";
+        }
+      }
+
+      const Link = Moralis.Object.extend("link");
+      
+      const mlink = new Moralis.Query(Link);
+      mlink.equalTo("user", user);
+
+       mlink.find().then((e) => {
+         addLinks(e);
+         loading(false);
+        });
+
+    }, [isAuthenticated, isInitialized, Moralis.Object, Moralis.Query, user]);
 
 
+      const handleClose = () => setShowLinkModal("");
+
+      console.log(links);
   return (
-    <div className="pt-[75px]">
-      <div
-        className="empty"
-        style={{
-          display: "flex",
-          width: "100%",
-          height: "fit-content",
-          justifyContent: "center",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
+    <div className="pt-[75px] px-5 bg-white">
+      {isLoading && <Loader />}
+
+      <Modal
+        open={Boolean(showLinkModal.length)}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
-        <div className="h-[393px] flex">
-          <Image
-            src={empty}
-            className="mb-3"
-            width={300}
-            height={300}
-            alt="No links yet"
-          />
-        </div>
+        <Box sx={style}>
+          <div className="px-4 pt-3 pb-5 bg-white">
+            <div className="flex items-center justify-center">
+              <Avatar
+                sx={{
+                  width: 90,
+                  height: 90,
+                  backgroundColor: "#F57059",
+                }}
+              >
+                {(
+                  showLinkModal.charAt(0) + showLinkModal.charAt(1)
+                ).toUpperCase()}
+              </Avatar>
+            </div>
+            <h2 className="text-[18px] font-bold text-bold pb-[10px]">
+              <RiDeleteBin2Line size={18} /> Are You Sure You Want To Delete
+              This Link?
+            </h2>
 
-        <div className="mt-2 mb-3">
-          <h2 className="text-[22px] text-center font-bold">
-            Hmm, its empty here
-          </h2>
-          <span className="mt-2 text-[17px]">
-            You have no links yet, Click the button below to create links
-          </span>
+            <span>Note that this action is irreversible...</span>
+
+            <div className="py-2 flex justify-center">
+              <Button
+                variant="contained"
+                className="!bg-[#F57059] !mr-2 !py-[13px] !font-medium !capitalize"
+                fullWidth
+              >
+                Yes <MdDeleteOutline className="ml-3 font-medium" size={18} />
+              </Button>
+
+              <Button
+                onClick={handleClose}
+                variant="contained"
+                className="!bg-[#F57059] max-w-[100px] !ml-2 !py-[13px] !font-medium !capitalize"
+                fullWidth
+              >
+                No
+                <IoMdClose className="ml-3 font-medium" size={18} />
+              </Button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+
+      {!Boolean(links.length) && !isLoading && (
+        <div
+          className="empty"
+          style={{
+            display: "flex",
+            width: "100%",
+            height: "fit-content",
+            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <div className="h-[393px] flex">
+            <Image
+              src={empty}
+              className="mb-3"
+              width={300}
+              height={300}
+              alt="No links yet"
+            />
+          </div>
+
+          <div className="mt-2 mb-3">
+            <h2 className="text-[22px] text-center font-bold">
+              Hmm, its empty here
+            </h2>
+            <span className="mt-2 text-[17px] block w-full text-center">
+              You have no links yet, Click the button below to create links
+            </span>
+          </div>
+          <Link href="links/new">
+            <a>
+              <Button className="py-2 font-bold px-5 !capitalize flex items-center text-white bg-[#F57059] transition-all delay-500 hover:bg-[#e6533a] rounded-lg">
+                <MdAddLink size={25} className="mr-1" /> Create Link
+              </Button>
+            </a>
+          </Link>
         </div>
-        <Link href="links/new">
-          <a>
-            <Button className="py-2 font-bold px-5 !capitalize flex items-center text-white bg-[#F57059] transition-all delay-500 hover:bg-[#e6533a] rounded-lg">
-              <MdAddLink size={25} className="mr-1" /> Create Link
+      )}
+
+      {Boolean(links.length) && !isLoading && (
+        <>
+          <h2 className="font-bold text-[20px] mt-6 mb-3">Active Links</h2>
+          <div
+            style={{
+              gridTemplateColumns: "repeat(auto-fill, minmax(290px, 1fr))",
+            }}
+            className="grid gap-2 grid-flow-dense"
+          >
+            <Button className="w-full border-2 hover:text-white text-[#F57059] border-[#f5705982] bg-transparent hover:bg-[#f5705982] border-solid p-4 rounded-md">
+              <Link href="/links/new">
+                <a className="flex-col w-full h-full flex justify-center items-center">
+                  <MdAddLink size={50} className="mb-3" />
+
+                  <h2 className="font-bold">Create Link</h2>
+                </a>
+              </Link>
             </Button>
-          </a>
-        </Link>
 
-        {showLinkModal! ? (
-          <>
-            <div className="justify-center cusscroller items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-              <div className="relative w-auto my-6 mx-auto max-w-3xl">
-                {/*content*/}
-                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                  {/*header*/}
-                  <div className="flex items-start justify-between p-5 border-b border-solid border-[#F57059] rounded-t">
-                    <h3 className="text-2xl font-semibold text-black">
-                      Create New Link
+            {links.map(({ attributes }: any, i: number) => (
+              <div
+                key={i}
+                className="w-full cursor-default border-2 border-[#f5705982] border-solid p-4 rounded-md"
+              >
+                <div className="flex items-start">
+                  <Avatar
+                    sx={{
+                      width: 60,
+                      height: 60,
+                      backgroundColor: "#F57059",
+                      marginRight: "10px",
+                    }}
+                    variant="rounded"
+                  >
+                    {(
+                      String(attributes.link).charAt(0) +
+                      String(attributes.link).charAt(1)
+                    ).toUpperCase()}
+                  </Avatar>
+
+                  <div className="w-[calc(100%-70px)]">
+                    <h3 className="truncate text-[17px] mb-[10px] font-bold text-[#242424]">
+                      {attributes.link}
                     </h3>
-                    <button
-                      className="p-1 ml-auto bg-transparent border-0 text-black float-right text-4xl leading-none font-semibold outline-none focus:outline-none"
-                      onClick={() => setShowLinkModal(false)}
-                    >
-                      <span className="bg-transparent text-black h-6 w-6 text-4xl block outline-none focus:outline-none">
-                        ×
-                      </span>
-                    </button>
+
+                    <span className="truncate block w-full text-[#6d6d6d]">
+                      {attributes.desc ? attributes.desc : ""}
+                    </span>
                   </div>
-                  {/*body*/}
-                  <div className="relative p-6 flex-auto">
-                    <Box sx={{ width: "100%" }}>
-                      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                        <Tabs
-                          value={value}
-                          onChange={handleChange}
-                          aria-label="basic tabs example"
-                        >
-                          <Tab label="One Time Payments" {...a11yProps(0)} />
-                          <Tab label="Subscriptions" {...a11yProps(1)} />
-                        </Tabs>
-                      </Box>
-                      <TabPanel value={value} index={0}>
-                        Create a New One Time Link
-                        <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">
-                          <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#F57059] text-white">
-                            <span className="uppercase font-semibold mr-3">
-                              Link Details
-                            </span>
-                            <div className="flex items-center">
-                              <span className="mr-2 text-sm">
-                                These are your new link details
-                              </span>
-                            </div>
-                          </div>
+                </div>
 
-                          <div className="w-full px-10 py-5">
-                            <div className="flex items-center ssm:flex-wrap">
-                              <TextField
-                                id="outlined-basic"
-                                label="Title"
-                                variant="outlined"
-                                name="title"
-                                fullWidth
-                              />
-                            </div>
-                          </div>
-                          <div className="w-full px-10 py-5">
-                            <div className="flex items-center ssm:flex-wrap">
-                              <TextField
-                                id="amount"
-                                label="Amount"
-                                variant="outlined"
-                                name="amount"
-                                type="number"
-                                fullWidth
-                              />
-                            </div>
-                          </div>
-                          <div className="w-full px-10 py-5">
-                            <div className="flex items-center ssm:flex-wrap">
-                              <TextField
-                                id="description"
-                                label="Description"
-                                variant="outlined"
-                                name="description"
-                                fullWidth
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">
-                          <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#F57059] text-white">
-                            <span className="uppercase font-semibold mr-3">
-                              Link Slug
-                            </span>
-                            <div className="flex items-center">
-                              <span className="mr-2 text-sm">
-                                This is your new Link page:
-                                {/* `https://cryptea.com/{$username}/{$link}` */}
-                              </span>
-                              <MdInfo size={20} color="#fff" />
-                            </div>
-                          </div>
+                <div className="flex mt-4 justify-between items-center w-full">
+                  <Link href={`/user/${attributes.link.toLowerCase()}`}>
+                    <a>
+                      <Button className="py-2 font-bold px-4 !capitalize flex items-center text-white hover:!bg-[#ff8c78b8] bg-[#f36e57b8] transition-all delay-500 rounded-lg">
+                        <RiPagesLine size={19} className="mr-1" /> View Page
+                      </Button>
+                    </a>
+                  </Link>
 
-                          <div className="w-full sm:px-2 p-10">
-                            <div className="flex items-center ssm:flex-wrap">
-                              <TextField
-                                label={"Enter Link Slug"}
-                                placeholder="wagmi"
-                                // value={userLink}
-                                // onChange={(e) => {
-                                //   const lk = e.target.value;
-                                //   setUserLink(lk.replace(/[/\\.@#&?;:"'~,*^%|]/g, ""));
-                                //   setError("");
-                                // }}
-                                name="link"
-                                fullWidth
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </TabPanel>
-                      <TabPanel value={value} index={1}>
-                        Create a New Subscription
-                        <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">
-                          <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#F57059] text-white">
-                            <span className="uppercase font-semibold mr-3">
-                              Subscription Details
-                            </span>
-                            <div className="flex items-center">
-                              <span className="mr-2 text-sm">
-                                These are your new subscription details
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="w-full px-10 py-5">
-                            <div className="flex items-center ssm:flex-wrap">
-                              <TextField
-                                id="outlined-basic"
-                                label="Title"
-                                variant="outlined"
-                                name="title"
-                                fullWidth
-                              />
-                            </div>
-                          </div>
-                          <div className="w-full px-10 py-5">
-                            <div className="flex items-center ssm:flex-wrap">
-                              <TextField
-                                id="amount"
-                                label="Amount"
-                                variant="outlined"
-                                name="amount"
-                                type="number"
-                                fullWidth
-                              />
-                            </div>
-                          </div>
-
-                          <div className="w-full px-10 py-5">
-                            <div className="flex items-center ssm:flex-wrap">
-                              <TextField
-                                id="description"
-                                label="Description"
-                                variant="outlined"
-                                name="description"
-                                fullWidth
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">
-                          <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#F57059] text-white">
-                            <span className="uppercase font-semibold mr-3">
-                              Link Slug
-                            </span>
-                            <div className="flex items-center">
-                              <span className="mr-2 text-sm">
-                                This is your new Link page:
-                                {/* `https://cryptea.com/{$username}/{$link}` */}
-                              </span>
-                              <MdInfo size={20} color="#fff" />
-                            </div>
-                          </div>
-
-                          <div className="w-full sm:px-2 p-10">
-                            <div className="flex items-center ssm:flex-wrap">
-                              <TextField
-                                label={"Enter Subscription Link Slug"}
-                                placeholder="wagmi"
-                                // value={userLink}
-                                // onChange={(e) => {
-                                //   const lk = e.target.value;
-                                //   setUserLink(lk.replace(/[/\\.@#&?;:"'~,*^%|]/g, ""));
-                                //   setError("");
-                                // }}
-                                name="link"
-                                fullWidth
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </TabPanel>
-                    </Box>
-                  </div>
-                  {/*footer*/}
-                  <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
-                    <button
-                      className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                      type="button"
-                      onClick={() => setShowLinkModal(false)}
+                  <div onClick={() => setShowLinkModal(attributes.link)}>
+                    <IconButton
+                      color="inherit"
+                      size={"large"}
+                      sx={{
+                        color: "#f36e57b8",
+                      }}
                     >
-                      Close
-                    </button>
+                      <MdDeleteOutline size={20} />
+                    </IconButton>
                   </div>
                 </div>
               </div>
-            </div>
-          </>
-        ) : null}
-      </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };
