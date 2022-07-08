@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import Image from 'next/image';
 import Head from 'next/head';
 import empty from "../../public/images/coming-soon.svg";
+import { FaInstagram, FaFacebook, FaTwitter, FaLinkedinIn, FaLink } from 'react-icons/fa';
+import Link from 'next/link'
 import {
   OutlinedInput,
   Box,
@@ -96,7 +98,7 @@ function User() {
 
   let username = router.query['slug'];
 
-  
+
   useEffect(() => {
 
   }, [username, router.isReady])
@@ -113,42 +115,42 @@ function User() {
   const [userD, setUserD] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  
-  
+
+
 
   useEffect(() => {
-    if(router.isReady){
+    if (router.isReady) {
 
-  const Link = Moralis.Object.extend('link')
-  const lQ = new Moralis.Query(Link);
-  lQ.equalTo('link', String(username).toLowerCase())
+      const Link = Moralis.Object.extend('link')
+      const lQ = new Moralis.Query(Link);
+      lQ.equalTo('link', String(username).toLowerCase())
 
-  lQ.find().then((er) => {
+      lQ.find().then((er) => {
         console.log(er)
-      if (er !== undefined) {
-        Moralis.Cloud.run("getUser", { obj: er[0]?.get("user").id }).then(
-          (ex) => {
-            setUserD({
-              description: ex[0]?.get("desc"),
-              username: ex[0]?.get("username"),
-              email: ex[0]?.get("email"),
-              ethAddress: ex[0]?.get("ethAddress"),
-              img: ex[0]?.get("img") === undefined ? "" : ex[0]?.get("img"),
-            });
+        if (er !== undefined) {
+          Moralis.Cloud.run("getUser", { obj: er[0]?.get("user").id }).then(
+            (ex) => {
+              setUserD({
+                description: ex[0]?.get("desc"),
+                username: ex[0]?.get("username"),
+                email: ex[0]?.get("email"),
+                ethAddress: ex[0]?.get("ethAddress"),
+                img: ex[0]?.get("img") === undefined ? "" : ex[0]?.get("img"),
+              });
 
-            setIsLoading(false);
-          }
-        );
-      } else {
-        window.location.href = "/404";
-      }
-    });
-  }
-}, [Moralis.Cloud, Moralis.Object, Moralis.Query, router.isReady, username]);
+              setIsLoading(false);
+            }
+          );
+        } else {
+          window.location.href = "/404";
+        }
+      });
+    }
+  }, [Moralis.Cloud, Moralis.Object, Moralis.Query, router.isReady, username]);
 
-  const { username: usern, description, email, img, ethAddress } : {username?: string, description?: string, email?: string, img?: string|null, ethAddress?: string} = userD;
+  const { username: usern, description, email, img, ethAddress }: { username?: string, description?: string, email?: string, img?: string | null, ethAddress?: string } = userD;
 
-  if(!userD){
+  if (!userD) {
     window.location.href = "/404";
   }
 
@@ -234,11 +236,45 @@ function User() {
           </div>
           <div className="flex flex-row usm:flex-col">
             <div className="w-3/5 usm:mb-4 usm:w-full px-8">
-              <div className="title text-2xl font-semibold mt-8">
-                Send some tea money to {usern}
+              <div className="text-4xl font-semibold mt-8">
+                {usern} is {description}
               </div>
-              <div className="text-[18px] font-medium mt-5 text-[#838383]">
+              <div className="text-[#838383] text-lg mt-5">
                 {description}
+              </div>
+              <div className="flex justify-between text-[#838383] 3sm:px-16 4sm:px-16">
+                <div className="socials ig">
+                  <Link href='#'>
+                      <FaInstagram size={30} color="#F57059"
+                    />
+                  </Link>
+                </div>
+                <div className="socials twitter">
+                  <Link href='https://twitter.com/adetemi03'>
+                      <FaTwitter color="#F57059"
+                      size={30}
+                      className="" />
+                  </Link>
+                </div>
+                <div className="socials facebook">
+                  <Link href='#'>
+                      <FaFacebook size={30} color="#F57059"
+                    />
+                  </Link>
+                </div>
+                <div className="socials linkedin">
+                  <Link href='#'>
+                      <FaLinkedinIn size={30} color="#F57059"
+                    />
+                  </Link>
+                </div>
+
+              </div>
+
+              <div className="links mt-5">
+                <div className="bg-[#f5705924] text-[#F57059] font-bold rounded-full p-4">
+                  Support Lucid&#39;s Business
+                </div>
               </div>
             </div>
             <div className="w-2/5 2usm:w-full usm:w-[85%] usm:m-auto min-w-[340px] px-6 my-8 justify-items-center">
