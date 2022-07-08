@@ -7,8 +7,7 @@ import Link from "next/link";
 import { useMoralis } from "react-moralis";
 import Loader from "../loader";
 import { RiDeleteBin2Line, RiPagesLine } from "react-icons/ri";
-import { BsArrowRight } from "react-icons/bs";
-import { IoMdClose } from "react-icons/io";
+import { BiCheck } from "react-icons/bi";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -49,13 +48,15 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   minWidth: 300,
-  width: "50%",
-  maxWidth: 600,
+  width: "70%",
+  maxWidth: 800,
+  borderRadius: 6,
+  outline: "none",
   p: 4
 };
 
 const DashLinks = () => {
-  const [showLinkModal, setShowLinkModal] = useState<string>("hello");
+  const [showLinkModal, setShowLinkModal] = useState<string>("");
 
   const [isLoading, loading] = useState<boolean>(true);
 
@@ -83,9 +84,29 @@ const DashLinks = () => {
     }, [isAuthenticated, isInitialized, Moralis.Object, Moralis.Query, user]);
 
 
+      const deleteLink = async () => {
+          Moralis.Cloud.run("deleteLink", { link: (showLinkModal).toLowerCase() })
+            .then((exx) => {
+              setShowLinkModal("");
+              loading(true);
+
+              const Link = Moralis.Object.extend("link");
+
+              const mlink = new Moralis.Query(Link);
+              mlink.equalTo("user", user);
+
+              mlink.find().then((e) => {
+                addLinks(e);
+                loading(false);
+              });
+            })
+            .catch((ee) => {
+              console.log(ee);
+            });
+      }
+
       const handleClose = () => setShowLinkModal("");
 
-      console.log(links);
   return (
     <div className="pt-[75px] px-5 bg-white">
       {isLoading && <Loader />}
@@ -97,44 +118,38 @@ const DashLinks = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div className="px-4 pt-3 pb-5 bg-white">
-            <div className="flex items-center justify-center">
-              <Avatar
-                sx={{
-                  width: 90,
-                  height: 90,
-                  backgroundColor: "#F57059",
-                }}
-              >
-                {(
-                  showLinkModal.charAt(0) + showLinkModal.charAt(1)
-                ).toUpperCase()}
-              </Avatar>
+          <div className="px-4 w-full items-center flex flex-col pt-[4rem] pb-5 bg-white">
+            <div className="flex items-center absolute left-0 right-0 m-auto -top-[10px] text-white rounded-[50%] h-[90px] w-[90px] bg-[#aaa] justify-center">
+              <MdDeleteOutline size={40} />
             </div>
-            <h2 className="text-[18px] font-bold text-bold pb-[10px]">
-              <RiDeleteBin2Line size={18} /> Are You Sure You Want To Delete
-              This Link?
+
+            <h2 className="text-[18px] flex items-start font-bold text-bold pb-[10px]">
+              Are You Sure You Want To Delete This Link?
             </h2>
 
             <span>Note that this action is irreversible...</span>
 
-            <div className="py-2 flex justify-center">
+            <div className="py-2 mt-3 flex justify-center">
               <Button
                 variant="contained"
-                className="!bg-[#F57059] !mr-2 !py-[13px] !font-medium !capitalize"
+                className="!bg-[#aaa] !mr-2 !py-[13px] !font-medium !capitalize"
                 fullWidth
+                onClick={deleteLink}
               >
-                Yes <MdDeleteOutline className="ml-3 font-medium" size={18} />
+                <>
+                  Yes{" "}
+                  <RiDeleteBin2Line className="ml-3 font-medium" size={18} />
+                </>
               </Button>
 
               <Button
                 onClick={handleClose}
                 variant="contained"
-                className="!bg-[#F57059] max-w-[100px] !ml-2 !py-[13px] !font-medium !capitalize"
+                className="!bg-[#F57059] !ml-2 !py-[13px] !font-medium !capitalize"
                 fullWidth
               >
                 No
-                <IoMdClose className="ml-3 font-medium" size={18} />
+                <BiCheck className="ml-3 font-medium" size={18} />
               </Button>
             </div>
           </div>
@@ -171,7 +186,7 @@ const DashLinks = () => {
               You have no links yet, Click the button below to create links
             </span>
           </div>
-          <Link href="links/new">
+          <Link href="/dashboard/links/new">
             <a>
               <Button className="py-2 font-bold px-5 !capitalize flex items-center text-white bg-[#F57059] transition-all delay-500 hover:bg-[#e6533a] rounded-lg">
                 <MdAddLink size={25} className="mr-1" /> Create Link
@@ -191,7 +206,7 @@ const DashLinks = () => {
             className="grid gap-2 grid-flow-dense"
           >
             <Button className="w-full border-2 hover:text-white text-[#F57059] border-[#f5705982] bg-transparent hover:bg-[#f5705982] border-solid p-4 rounded-md">
-              <Link href="/links/new">
+              <Link href="/dashboard/links/new">
                 <a className="flex-col w-full h-full flex justify-center items-center">
                   <MdAddLink size={50} className="mb-3" />
 
