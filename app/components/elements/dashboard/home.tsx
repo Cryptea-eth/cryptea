@@ -61,6 +61,7 @@ const DashHome = () => {
   const [rows, setrows] = useState([]);
   const [nft, viewN] = useState(false);
   const [nfts, setNfts] = useState<number | undefined>(0)
+
   useEffect(() => {
 
       if (!isWeb3Enabled) {

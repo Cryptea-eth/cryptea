@@ -270,6 +270,7 @@ const DashSettings = () => {
             ...success,
             link: "Link Details Saved Successfully"
           });
+          
           setLoading({ ...isLoading, link: false });
         } catch (err) {
           const erro = err as Error;
@@ -627,7 +628,7 @@ const DashSettings = () => {
                           type="textarea"
                           className="bg-[white]"
                           label={"Description"}
-                          placeholder="I created Ethereum"
+                          placeholder={desc}
                           value={userDescription}
                           onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                             setUserDescription(e.target.value);

@@ -38,13 +38,13 @@ const DashboardIndex = () => {
       enableWeb3();
     }
 
-    if (isInitialized) {
-        if(!isAuthenticated){
-           window.location.href = "/";
-        } else {
-           isLoading(false);
-        }
+  if (isInitialized) {
+      if(!isAuthenticated){
+          window.location.href = "/";
+      } else {
+          isLoading(false);
       }
+    }
   }, [
     user,
     isLoading,

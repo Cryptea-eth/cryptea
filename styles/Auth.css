@@ -11,7 +11,7 @@
     color: #121212 !important; 
 }
 
-.linkadd .css-1a1fmpi-MuiInputBase-root-MuiInput-root:after{
+.linkadd .css-1a1fmpi-MuiInputBase-root-MuiInput-root:after, .linkadd .css-g9cew8-MuiInputBase-root-MuiInput-root:after{
     border-bottom:2px solid #ff9090;
 }
 
@@ -24,10 +24,13 @@
     background-color:#3d3d3d24 !important;
 }
 
+.linkadd .css-h0q0iv-MuiButtonBase-root-MuiTab-root{
+    min-height:50px;
+}
+
 .linkadd .css-1h9z7r5-MuiButtonBase-root-MuiTab-root, .linkadd .css-h0q0iv-MuiButtonBase-root-MuiTab-root.Mui-selected{
     font-weight:700;
 }
-
 
 .css-1gsv261{
     border:none !important;
