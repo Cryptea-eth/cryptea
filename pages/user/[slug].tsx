@@ -239,36 +239,27 @@ function User() {
               <div className="text-4xl font-semibold mt-8">
                 {usern} is {description}
               </div>
-              <div className="text-[#838383] text-lg mt-5">
+              <div className="text-[#838383] text-lg mt-8">
                 {description}
               </div>
-              <div className="flex justify-between text-[#838383] 3sm:px-16 4sm:px-16">
-                <div className="socials ig">
+              <div className="flex justify-between text-[#838383] 3sm:px-16 4sm:px-16 mt-6">
                   <Link href='#'>
                       <FaInstagram size={30} color="#F57059"
                     />
                   </Link>
-                </div>
-                <div className="socials twitter">
                   <Link href='https://twitter.com/adetemi03'>
                       <FaTwitter color="#F57059"
                       size={30}
                       className="" />
                   </Link>
-                </div>
-                <div className="socials facebook">
                   <Link href='#'>
                       <FaFacebook size={30} color="#F57059"
                     />
                   </Link>
-                </div>
-                <div className="socials linkedin">
                   <Link href='#'>
                       <FaLinkedinIn size={30} color="#F57059"
                     />
                   </Link>
-                </div>
-
               </div>
 
               <div className="links mt-5">
