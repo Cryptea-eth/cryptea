@@ -49,8 +49,6 @@ const AboutWaitlist = () => {
       }).catch(e => {
           if(e.message.length){
             setError('something went wrong please try again')
-            setName('');
-            setEmail(''); 
             setLoading(false)
           }
       });
@@ -165,6 +163,7 @@ const AboutWaitlist = () => {
               <input
                 className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#ff320e]"
                 id="username"
+                value={name}
                 onChange={(e) => {
                   setName(e.target.value);
                   setError("");
@@ -183,6 +182,7 @@ const AboutWaitlist = () => {
               <input
                 className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#ff320e]"
                 id="email"
+                value={email}
                 type="email"
                 onChange={(e) => {
                   let val = e.target.value;
