@@ -17,7 +17,6 @@ import {
   Tabs,
   Tab,
   ToggleButton,
-  Typography,
   FormControl,
   Select,
   ToggleButtonGroup,
@@ -186,7 +185,8 @@ function User() {
         gasLimit,
       })
       .then((init: any) => {
-        console.log(init);
+        console.log(init)
+        setTransferSuccess(true);
       })
       .catch((err: any) => {
         const error = err as Error;
