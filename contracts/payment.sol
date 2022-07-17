@@ -3,9 +3,8 @@ pragma solidity ^0.8.7;
 import 'hardhat/console.sol';
 
 contract Payment{
-
-        event TransferReceived(address _to, address _from, uint _amount);
-        event TransferSent(address _from, address _desAddr , uint _amount, uint _balance);
+        event TransferReceived(address indexed _to, address indexed _from, uint indexed _amount);
+        event TransferSent(address indexed _from, address indexed _desAddr , uint indexed _amount);
 
         address public owner;
         uint public balance;
@@ -21,14 +20,22 @@ contract Payment{
               wallet[owner] = 0;
         }
 
+        modifier onlyOwners {
+             require(owner == msg.sender, "Only owners please");
+             _;
+        }
+
         function sendToken (address to) external payable {
             wallet[to] = msg.value;
             contractBalance = address(this).balance;
+            
             emit TransferReceived(to, msg.sender, msg.value);
         }
 
         receive () external payable {
+            wallet[owner] = msg.value;
 
+            emit TransferReceived(contractAddress, msg.sender, msg.value);
         }
 
         function transferToken (address payable to) external {
@@ -46,12 +53,10 @@ contract Payment{
 
             wallet[owner] += percent;
 
-            emit TransferSent(msg.sender, to, amount, balance);
+            emit TransferSent(msg.sender, to, amount);
         }
 
-        function withdraw () public {
-            require(owner == msg.sender, "Only owners please");
-            
+        function withdraw () public onlyOwners {   
             payable(owner).transfer(wallet[owner]);
         }
 }

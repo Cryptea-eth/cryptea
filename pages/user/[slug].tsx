@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import Image from 'next/image';
 import Head from 'next/head';
 import empty from "../../public/images/coming-soon.svg";
+import web3 from 'web3';
+import PAYMENT from '../../artifacts/contracts/payment.sol/Payment.json';
 import { FaInstagram, FaFacebook, FaTwitter, FaLinkedinIn, FaLink } from 'react-icons/fa';
 import Link from 'next/link'
 import {
@@ -23,7 +25,7 @@ import {
   Button
 } from "@mui/material";
 
-import { useMoralis, useMoralisQuery, useWeb3Transfer } from "react-moralis";
+import { useMoralis } from "react-moralis";
 
 import Loader from "../../app/components/elements/loader";
 
@@ -49,7 +51,7 @@ function TabPanel(props: TabPanelProps) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </Box>
       )}
     </div>
@@ -110,13 +112,90 @@ function User() {
   };
 
 
-  const { Moralis, isWeb3Enabled, enableWeb3 } = useMoralis();
+  const { Moralis, isWeb3Enabled, enableWeb3, logout, authenticate, isAuthenticated, isAuthenticating } = useMoralis();
 
   const [userD, setUserD] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [ loadingText, setLoadingText ] = useState<any>('')
+  const [ transferSuccess, setTransferSuccess] = useState<boolean>(false);
+  const [transferFail, setTransferFail] = useState<boolean>(false);
+    const getPrice = async (price: number) => {
+      setLoadingText("Loading Price data...");
+      const e = await Moralis.Web3API.token.getTokenPrice({
+        address: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0", //matic public address
+      });
+ 
+      const priceCurrency = parseFloat(e.usdPrice.toFixed(2));
+
+      const final = price / priceCurrency;
+
+      return (final).toFixed(6);
+  };
 
 
+  const initMain = async (price: number) => {
+    setAuth(false);
+    setLoadingText("Initializing Payment")
+    await beginPayment(price);
+  } 
 
+  const beginPayment = async (price: number) => {
+
+    const provider: any = Moralis.provider;
+    setLoadingText("Connecting to wallet/Awaiting signature")
+    let from = '';
+    try{
+     const senx = await authenticate({ signingMessage: `Tipping ${usern} with crypto` })
+     from = senx?.get("ethAddress");
+    } catch(e) {
+        console.log(e)
+
+        return;
+    }
+    setLoadingText("Pending...");
+
+    const initWeb3 = new web3(provider);
+
+    const abi: any = PAYMENT.abi;
+
+    const initContract = new initWeb3.eth.Contract(
+    abi,
+    "0x15C4C2f2b7274BE746C6e5Ca4A0b7A164B87D7b9" // contract address
+    );
+
+
+    const ether = await getPrice(price);
+    // const nonce = await initWeb3.eth.getTransactionCount(
+    //   "0x88BA009d29e28378A0542832Da35aABf262045c9"
+    // );
+    console.log(ether);
+
+    const gasPx = await initWeb3.eth.getGasPrice()
+    const gasLimit = (await initWeb3.eth.getBlock("latest")).gasLimit;
+
+    const gasPrice = parseFloat(gasPx);
+    
+    setLoadingText("Awaiting payment confirmation");
+
+    initContract.methods
+      .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4") //receiver
+      .send({
+        from,
+        value: initWeb3.utils.toWei(ether, "ether"),
+        gasPrice,
+        gasLimit,
+      })
+      .then((init: any) => {
+        console.log(init);
+      })
+      .catch((err: any) => {
+        const error = err as Error;
+        if (error.message.length) {
+          setTransferFail(true);
+        }
+      }); 
+
+  }
 
   useEffect(() => {
     if (router.isReady) {
@@ -154,24 +233,24 @@ function User() {
     window.location.href = "/404";
   }
 
-  const [value, setValue] = useState(0);
-  const [amount, setAmount] = useState(0);
+  const [value, setValue] = useState<number>(0);
+  const [amount, setAmount] = useState<number>(0);
+
+  const [auth, setAuth] = useState<boolean>(true)
 
   useEffect(() => {
-    if (!isWeb3Enabled) {
-      enableWeb3();
+    if (!isAuthenticated && !auth) {
+        if (!isWeb3Enabled) {
+          enableWeb3();
+        }
+    }else{
+      if(!isWeb3Enabled){
+          enableWeb3();   
+      }
     }
-  }, [enableWeb3, isWeb3Enabled])
 
-  const {
-    fetch: fetched,
-    error,
-    isFetching,
-  } = useWeb3Transfer({
-    type: "native",
-    amount: Moralis.Units.ETH(amount),
-    receiver: ethAddress,
-  });
+  }, [enableWeb3, isWeb3Enabled, isAuthenticated, auth]);
+
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -192,13 +271,14 @@ function User() {
 
   return (
     <div>
-
       <Head>
         <title>{usern} | Cryptea</title>
-        <meta name="description" content={`Send tips to ${usern} quick and easy`} />
+        <meta
+          name="description"
+          content={`Send tips to ${usern} quick and easy`}
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
 
       {isLoading ? (
         <Loader />
@@ -239,41 +319,46 @@ function User() {
               <div className="text-4xl font-semibold mt-8">
                 {usern} is {description}
               </div>
-              <div className="text-[#838383] text-lg mt-8">
-                {description}
-              </div>
+              <div className="text-[#838383] text-lg mt-8">{description}</div>
               <div className="flex justify-between text-[#838383] 3sm:px-16 4sm:px-16 mt-6">
-                  <Link href='#'>
-                      <FaInstagram size={30} color="#F57059"
-                    />
-                  </Link>
-                  <Link href='https://twitter.com/adetemi03'>
-                      <FaTwitter color="#F57059"
-                      size={30}
-                      className="" />
-                  </Link>
-                  <Link href='#'>
-                      <FaFacebook size={30} color="#F57059"
-                    />
-                  </Link>
-                  <Link href='#'>
-                      <FaLinkedinIn size={30} color="#F57059"
-                    />
-                  </Link>
+                <Link href="#">
+                  <FaInstagram size={30} color="#F57059" />
+                </Link>
+                <Link href="">
+                  <FaTwitter color="#F57059" size={30} className="" />
+                </Link>
+                <Link href="#">
+                  <FaFacebook size={30} color="#F57059" />
+                </Link>
+                <Link href="#">
+                  <FaLinkedinIn size={30} color="#F57059" />
+                </Link>
               </div>
 
               <div className="links mt-5">
                 <div className="bg-[#f5705924] text-[#F57059] font-bold rounded-full p-4">
-                  Support Lucid&#39;s Business
+                  Support {usern}&#39;s Work
                 </div>
               </div>
             </div>
-            <div className="w-2/5 2usm:w-full usm:w-[85%] usm:m-auto min-w-[340px] px-6 my-8 justify-items-center">
+            <div className="w-2/5 2usm:w-full relative usm:w-[85%] usm:m-auto min-w-[340px] px-6 my-8 justify-items-center">
+              {Boolean(loadingText) && !transferFail && !transferSuccess && (
+                <Loader
+                  sx={{
+                    backgroundColor: "rgba(255,255,255,.6)",
+                    backdropFilter: "blur(5px)",
+                  }}
+                  fixed={false}
+                  text={loadingText}
+                  incLogo={false}
+                />
+              )}
+
               <div className="rounded-lg bg-white shadow-lg shadow-[#cccccc]">
-                <div className="border-b py-[14px] px-[17px] text-lg font-semibold">
+                <div className="border-b py-[14px] px-[17px] text-xl font-bold">
                   Send Payment
                 </div>
-                <div className="form pt-4">
+                <div className="form relative pt-4">
                   <Box sx={{ width: "100%" }}>
                     <Box
                       sx={{
@@ -282,7 +367,10 @@ function User() {
                       }}
                     >
                       <Tabs
-                        value={value} onChange={handleChange} aria-label="payment tabs">
+                        value={value}
+                        onChange={handleChange}
+                        aria-label="payment tabs"
+                      >
                         <Tab
                           className="!font-bold !rounded-[4px] !capitalize"
                           label="Onetime😇"
@@ -300,9 +388,78 @@ function User() {
                         />
                       </Tabs>
                     </Box>
+                    {transferFail && (
+                      <div className="rounded-md w-[95%] font-bold mt-2 mx-auto p-3 bg-[#ff8f33] text-white">
+                        Something went wrong with the transaction, please try
+                        again
+                      </div>
+                    )}
+
+                    {transferSuccess && (
+                      <div className="h-full backdrop-blur-[3px] absolute left-0 bg-[rgba(255,255,255,.6)] top-0 z-[100] flex flex-col justify-center items-center w-full">
+                        <div className="animation-ctn">
+                          <div className="icon icon--order-success svg">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="154px"
+                              height="154px"
+                            >
+                              <g fill="none" stroke="#F57059" strokeWidth="2">
+                                <circle
+                                  cx="77"
+                                  cy="77"
+                                  r="72"
+                                  style={{
+                                    strokeDasharray: "480px, 480px",
+                                    strokeDashoffset: "960px",
+                                  }}
+                                ></circle>
+                                <circle
+                                  id="colored"
+                                  fill="#F57059"
+                                  cx="77"
+                                  cy="77"
+                                  r="72"
+                                  style={{
+                                    strokeDasharray: "480px, 480px",
+                                    strokeDashoffset: "960px",
+                                  }}
+                                ></circle>
+                                <polyline
+                                  className="st0"
+                                  stroke="#fff"
+                                  strokeWidth="10"
+                                  points="43.5,77.8 63.7,97.9 112.2,49.4 "
+                                  style={{
+                                    strokeDasharray: "100px, 100px",
+                                    strokeDashoffset: "200px",
+                                  }}
+                                />
+                              </g>
+                            </svg>
+                          </div>
+                        </div>
+
+                        <h2 className="text-[#f57059] text-[15px] font-bold">
+                          {usern} has been tipped successfully
+                        </h2>
+
+                        <Button
+                          variant="contained"
+                          className="!bg-[#F57059] !mt-4 !py-[5px] !font-medium !capitalize mx-auto"
+                          style={{
+                            fontFamily: "inherit",
+                          }}
+                          onClick={() => setTransferSuccess(false)}
+                        >
+                          Done
+                        </Button>
+                      </div>
+                    )}
+
                     <TabPanel value={value} index={0}>
                       <FormControl fullWidth>
-                        <Select
+                        {/* <Select
                           disabled
                           displayEmpty
                           value={blockchainName}
@@ -328,9 +485,9 @@ function User() {
                               {name}
                             </MenuItem>
                           ))}
-                        </Select>
+                        </Select> */}
 
-                        <div className="py-3 font-bold">Amount</div>
+                        <div className="py-3 font-bold">Amount (USD)</div>
 
                         <ToggleButtonGroup
                           value={amount}
@@ -357,7 +514,11 @@ function User() {
                           label="Input Price"
                           variant="outlined"
                           value={amount}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                          onChange={(
+                            e: React.ChangeEvent<
+                              HTMLInputElement | HTMLTextAreaElement
+                            >
+                          ) => {
                             const val = e.target.value;
                             setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
                           }}
@@ -370,11 +531,8 @@ function User() {
                             fontFamily: "inherit",
                           }}
                           onClick={() => {
-                            fetched().then(f => {
-                              console.log(f)
-                            })
+                            initMain(amount);
                           }}
-                          disabled={isFetching}
                           fullWidth
                         >
                           Send
@@ -433,7 +591,7 @@ function User() {
                         </h2>
                       </div>
                     </TabPanel>
-                  </Box>{" "}
+                  </Box>
                 </div>
               </div>
             </div>
