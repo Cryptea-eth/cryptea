@@ -118,6 +118,7 @@ function User() {
   const [ loadingText, setLoadingText ] = useState<any>('')
   const [ transferSuccess, setTransferSuccess] = useState<boolean>(false);
   const [transferFail, setTransferFail] = useState<boolean>(false);
+  const [failMessage, setFailMessage] = useState<string>('');
     const getPrice = async (price: number) => {
       setLoadingText("Loading Price data...");
       const e = await Moralis.Web3API.token.getTokenPrice({
@@ -135,7 +136,11 @@ function User() {
   const initMain = async (price: number) => {
     setAuth(false);
     setLoadingText("Initializing Payment")
-    await beginPayment(price);
+    try {
+        await beginPayment(price);
+    } catch (x) {
+        console.log(x)
+    }
   } 
 
   const beginPayment = async (price: number) => {
@@ -170,7 +175,10 @@ function User() {
     console.log(ether);
 
     const gasPx = await initWeb3.eth.getGasPrice()
-    const gasLimit = (await initWeb3.eth.getBlock("latest")).gasLimit;
+    const gasLx = await initWeb3.eth.getBlock("latest");
+    const gasLimit = gasLx.gasLimit;
+
+    console.log(gasLx)
 
     const gasPrice = parseFloat(gasPx);
     
@@ -181,8 +189,8 @@ function User() {
       .send({
         from,
         value: initWeb3.utils.toWei(ether, "ether"),
-        gasPrice,
         gasLimit,
+        gasPrice
       })
       .then((init: any) => {
         console.log(init)
@@ -194,7 +202,6 @@ function User() {
           setTransferFail(true);
         }
       }); 
-
   }
 
   useEffect(() => {
@@ -234,7 +241,7 @@ function User() {
   }
 
   const [value, setValue] = useState<number>(0);
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>('');
 
   const [auth, setAuth] = useState<boolean>(true)
 
@@ -388,10 +395,11 @@ function User() {
                         />
                       </Tabs>
                     </Box>
-                    {transferFail && (
+                    {(transferFail || Boolean(failMessage)) && (
                       <div className="rounded-md w-[95%] font-bold mt-2 mx-auto p-3 bg-[#ff8f33] text-white">
-                        Something went wrong with the transaction, please try
-                        again
+                        {failMessage.length
+                          ? failMessage
+                          : "Something went wrong with the transaction, please try again"}
                       </div>
                     )}
 
@@ -494,8 +502,9 @@ function User() {
                           exclusive
                           className="w-full justify-between"
                           onChange={(e: any) => {
+                            setTransferFail(false);
                             const val = e.target.value;
-                            setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
+                            setAmount(val.replace(/[^\d.]/g, ""));
                           }}
                         >
                           <ToggleButton value="0.1">0.1</ToggleButton>
@@ -519,8 +528,9 @@ function User() {
                               HTMLInputElement | HTMLTextAreaElement
                             >
                           ) => {
+                            setTransferFail(false);
                             const val = e.target.value;
-                            setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
+                            setAmount(val.replace(/[^\d.]/g, ""));
                           }}
                         />
 
@@ -531,7 +541,14 @@ function User() {
                             fontFamily: "inherit",
                           }}
                           onClick={() => {
-                            initMain(amount);
+                            setFailMessage("");
+                            setTransferFail(false);
+                            // initMain(0.001);
+                            if (parseFloat(amount)) {
+                              initMain(parseFloat(amount));
+                            } else {
+                              setFailMessage("The amount set is invalid");
+                            }
                           }}
                           fullWidth
                         >
