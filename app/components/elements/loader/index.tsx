@@ -34,7 +34,6 @@ const Loader = ({
         sx={{ display: "flex" }}
       >
         <CircularProgress
-          disableShrink={true}
           size={text ? 80 : 60}
           color="inherit"
         />

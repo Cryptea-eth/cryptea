@@ -7,11 +7,9 @@ contract Payment{
         event TransferSent(address indexed _from, address indexed _desAddr , uint indexed _amount);
 
         address public owner;
-        uint public balance;
+        uint256 public contractBalance;
 
         address public contractAddress = address(this);
-
-        uint256 public contractBalance;
 
         mapping(address => uint256) public wallet;  
 

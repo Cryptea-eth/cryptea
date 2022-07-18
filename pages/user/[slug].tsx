@@ -152,8 +152,8 @@ function User() {
      const senx = await authenticate({ signingMessage: `Tipping ${usern} with crypto` })
      from = senx?.get("ethAddress");
     } catch(e) {
-        console.log(e)
-
+        setTransferFail(true);
+        
         return;
     }
     setLoadingText("Pending...");
@@ -163,8 +163,8 @@ function User() {
     const abi: any = PAYMENT.abi;
 
     const initContract = new initWeb3.eth.Contract(
-    abi,
-    "0x15C4C2f2b7274BE746C6e5Ca4A0b7A164B87D7b9" // contract address
+      abi,
+      "0xa6aE0280a3eE37975586211d18578D232A1B98c5" // contract address
     );
 
 
@@ -189,8 +189,9 @@ function User() {
       .send({
         from,
         value: initWeb3.utils.toWei(ether, "ether"),
-        gasLimit,
-        gasPrice
+        gas: null,
+        gasLimit: null,
+        maxGasPrice: null
       })
       .then((init: any) => {
         console.log(init)
