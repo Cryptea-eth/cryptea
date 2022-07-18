@@ -463,7 +463,7 @@ function User() {
                           {usern} has been tipped successfully
                         </h2>
 
-                        <Link href={`https://mumbai.polygonscan.com/tx/${hash}`}>
+                        <Link target={"_blank"} href={`https://mumbai.polygonscan.com/tx/${hash}`}>
                             <a className="text-[#5a5a5a] cursor-pointer mb-1 font-normal">View transaction on polygonscan</a>
                         </Link>
                         
