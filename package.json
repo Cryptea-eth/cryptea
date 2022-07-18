@@ -11,7 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@mui/material": "^5.4.1",
+    "@mui/material": "5.4.1",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@walletconnect/web3-provider": "^1.7.8",
     "@web3auth/web3auth": "^1.0.1",
