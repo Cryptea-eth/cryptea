@@ -116,7 +116,7 @@ function User() {
   const [userD, setUserD] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [ loadingText, setLoadingText ] = useState<any>('')
-  const [ transferSuccess, setTransferSuccess] = useState<boolean>(true);
+  const [ transferSuccess, setTransferSuccess] = useState<boolean>(false);
   const [transferFail, setTransferFail] = useState<boolean>(false);
   const [failMessage, setFailMessage] = useState<string>('');
   const [hash, setHash] = useState<string>('');
