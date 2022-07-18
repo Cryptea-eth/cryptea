@@ -116,9 +116,10 @@ function User() {
   const [userD, setUserD] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [ loadingText, setLoadingText ] = useState<any>('')
-  const [ transferSuccess, setTransferSuccess] = useState<boolean>(false);
+  const [ transferSuccess, setTransferSuccess] = useState<boolean>(true);
   const [transferFail, setTransferFail] = useState<boolean>(false);
   const [failMessage, setFailMessage] = useState<string>('');
+  const [hash, setHash] = useState<string>('');
     const getPrice = async (price: number) => {
       setLoadingText("Loading Price data...");
       const e = await Moralis.Web3API.token.getTokenPrice({
@@ -152,6 +153,7 @@ function User() {
      const senx = await authenticate({ signingMessage: `Tipping ${usern} with crypto` })
      from = senx?.get("ethAddress");
     } catch(e) {
+
         setTransferFail(true);
         
         return;
@@ -175,13 +177,19 @@ function User() {
     console.log(ether);
 
     const gasPx = await initWeb3.eth.getGasPrice()
-    const gasLx = await initWeb3.eth.getBlock("latest");
-    const gasLimit = gasLx.gasLimit;
+    // const gasLx = await initWeb3.eth.getBlock("latest");
+    // // const gasLimit = gasLx.gasLimit;
 
-    console.log(gasLx)
-
+    // console.log(gasLx)
+    let gas = 0;
     const gasPrice = parseFloat(gasPx);
-    
+     await initContract.methods
+        .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4")
+        .estimateGas({}, function(error:any, gasAmount:number) {
+            gas = gasAmount;
+        });
+
+
     setLoadingText("Awaiting payment confirmation");
 
     initContract.methods
@@ -189,12 +197,14 @@ function User() {
       .send({
         from,
         value: initWeb3.utils.toWei(ether, "ether"),
+        gasPrice,
         gas: null,
         gasLimit: null,
-        maxGasPrice: null
+        maxGasPrice: null,
       })
       .then((init: any) => {
-        console.log(init)
+        console.log(init);
+        setHash(init.transactionHash);
         setTransferSuccess(true);
       })
       .catch((err: any) => {
@@ -449,9 +459,14 @@ function User() {
                           </div>
                         </div>
 
-                        <h2 className="text-[#f57059] text-[15px] font-bold">
+                        <h2 className="text-[#f57059] mb-2 text-[15px] font-bold">
                           {usern} has been tipped successfully
                         </h2>
+
+                        <Link href={`https://mumbai.polygonscan.com/tx/${hash}`}>
+                            <a className="text-[#5a5a5a] cursor-pointer mb-1 font-normal">View transaction on polygonscan</a>
+                        </Link>
+                        
 
                         <Button
                           variant="contained"
@@ -459,7 +474,13 @@ function User() {
                           style={{
                             fontFamily: "inherit",
                           }}
-                          onClick={() => setTransferSuccess(false)}
+                          onClick={() => {
+                            setTransferSuccess(false);
+                            setFailMessage("");
+                            setHash("");
+                            setLoadingText("");
+                            setTransferFail(false);
+                          }}
                         >
                           Done
                         </Button>
@@ -544,7 +565,7 @@ function User() {
                           onClick={() => {
                             setFailMessage("");
                             setTransferFail(false);
-                            // initMain(0.001);
+                            setHash("");
                             if (parseFloat(amount)) {
                               initMain(parseFloat(amount));
                             } else {
