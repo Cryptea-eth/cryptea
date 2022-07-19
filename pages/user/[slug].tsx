@@ -116,7 +116,7 @@ function User() {
   const [userD, setUserD] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [ loadingText, setLoadingText ] = useState<any>('')
-  const [ transferSuccess, setTransferSuccess] = useState<boolean>(false);
+  const [ transferSuccess, setTransferSuccess] = useState<boolean>(true);
   const [transferFail, setTransferFail] = useState<boolean>(false);
   const [failMessage, setFailMessage] = useState<string>('');
   const [hash, setHash] = useState<string>('');
@@ -463,8 +463,8 @@ function User() {
                           {usern} has been tipped successfully
                         </h2>
 
-                        <Link target={"_blank"} href={`https://mumbai.polygonscan.com/tx/${hash}`}>
-                            <a className="text-[#5a5a5a] cursor-pointer mb-1 font-normal">View transaction on polygonscan</a>
+                        <Link href={`https://mumbai.polygonscan.com/tx/${hash}`}>
+                            <a target={"_blank"} className="text-[#5a5a5a] cursor-pointer mb-1 font-normal">View transaction on polygonscan</a>
                         </Link>
                         
 
