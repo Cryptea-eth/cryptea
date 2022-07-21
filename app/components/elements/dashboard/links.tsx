@@ -1,8 +1,8 @@
 import empty from "../../../../public/images/coming-soon.svg";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import {Typography, Box, Button, Avatar, IconButton, Modal } from '@mui/material';
-import { MdAddLink, MdDeleteOutline, MdInfo } from 'react-icons/md';
+import { Typography, Box, Button, Avatar, IconButton, Modal } from '@mui/material';
+import { MdAddLink, MdDeleteOutline, MdInfo, MdModeEditOutline } from 'react-icons/md';
 import Link from "next/link";
 import { useMoralis } from "react-moralis";
 import Loader from "../loader";
@@ -63,52 +63,52 @@ const DashLinks = () => {
   const { user, Moralis, isInitialized, isAuthenticated } = useMoralis();
 
   const [links, addLinks] = useState<any>([]);
-  
-    useEffect(() => {
-      if (isInitialized) {
-        if (!isAuthenticated) {
-          window.location.href = "/";
-        }
+
+  useEffect(() => {
+    if (isInitialized) {
+      if (!isAuthenticated) {
+        window.location.href = "/";
       }
+    }
 
-      const Link = Moralis.Object.extend("link");
-      
-      const mlink = new Moralis.Query(Link);
-      mlink.equalTo("user", user);
+    const Link = Moralis.Object.extend("link");
 
-       mlink.find().then((e) => {
-         addLinks(e);
-         loading(false);
+    const mlink = new Moralis.Query(Link);
+    mlink.equalTo("user", user);
+
+    mlink.find().then((e) => {
+      addLinks(e);
+      loading(false);
+    });
+
+  }, [isAuthenticated, isInitialized, Moralis.Object, Moralis.Query, user]);
+
+
+  const deleteLink = async () => {
+    Moralis.Cloud.run("deleteLink", { link: (showLinkModal).toLowerCase() })
+      .then((exx) => {
+        setShowLinkModal("");
+        loading(true);
+
+        const Link = Moralis.Object.extend("link");
+
+        const mlink = new Moralis.Query(Link);
+        mlink.equalTo("user", user);
+
+        mlink.find().then((e) => {
+          addLinks(e);
+          loading(false);
         });
+      })
+      .catch((ee) => {
+        console.log(ee);
+      });
+  }
 
-    }, [isAuthenticated, isInitialized, Moralis.Object, Moralis.Query, user]);
-
-
-      const deleteLink = async () => {
-          Moralis.Cloud.run("deleteLink", { link: (showLinkModal).toLowerCase() })
-            .then((exx) => {
-              setShowLinkModal("");
-              loading(true);
-
-              const Link = Moralis.Object.extend("link");
-
-              const mlink = new Moralis.Query(Link);
-              mlink.equalTo("user", user);
-
-              mlink.find().then((e) => {
-                addLinks(e);
-                loading(false);
-              });
-            })
-            .catch((ee) => {
-              console.log(ee);
-            });
-      }
-
-      const handleClose = () => setShowLinkModal("");
+  const handleClose = () => setShowLinkModal("");
 
   return (
-    <div className="pt-[75px] px-5 bg-white">
+    <div className="pt-[75px] px-5">
       {isLoading && <Loader />}
 
       <Modal
@@ -118,7 +118,7 @@ const DashLinks = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div className="px-4 w-full items-center flex flex-col pt-[4rem] pb-5 bg-white">
+          <div className="px-4 w-full items-center flex flex-col pt-[4rem] pb-5">
             <div className="flex items-center absolute left-0 right-0 m-auto -top-[10px] text-white rounded-[50%] h-[90px] w-[90px] bg-[#aaa] justify-center">
               <MdDeleteOutline size={40} />
             </div>
@@ -248,14 +248,19 @@ const DashLinks = () => {
                 </div>
 
                 <div className="flex mt-4 justify-between items-center w-full">
-                  <Link href={`/user/${attributes.link.toLowerCase()}`}>
+                  <a target="_blank" href={`/user/${attributes.link.toLowerCase()}`} rel="noreferrer">
                     <a>
                       <Button className="py-2 font-bold px-4 !capitalize flex items-center text-white hover:!bg-[#ff8c78b8] bg-[#f36e57b8] transition-all delay-500 rounded-lg">
                         <RiPagesLine size={19} className="mr-1" /> View Page
                       </Button>
                     </a>
-                  </Link>
+                  </a>
 
+                  <div>
+                    <IconButton color='inherit' size={'large'} sx={{ color: "#f36e57b8" }}>
+                      <MdModeEditOutline size={20}></MdModeEditOutline>
+                    </IconButton>
+                  </div>
                   <div onClick={() => setShowLinkModal(attributes.link)}>
                     <IconButton
                       color="inherit"
