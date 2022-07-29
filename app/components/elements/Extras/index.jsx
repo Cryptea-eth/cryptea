@@ -23,7 +23,7 @@ const Extras = () => {
       </div>
       <div className="text-center w-[300px]">
         <span className="uppercase text-[#F57059] font-semibold text-[14px]">
-          receive tips easily
+          receive payments globally
         </span>
 
         <h1 className="text-black w-fit mb-4 font-bold text-[29px] mt-1">
@@ -31,7 +31,7 @@ const Extras = () => {
         </h1>
 
         <span className="block mb-3 text-[#64607D]">
-          And receive tips while you sip tea
+          And receive payments globally, with ease
         </span>
 
         <button

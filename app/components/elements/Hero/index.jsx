@@ -29,16 +29,14 @@ const Hero = () => {
       <div className="flex overflow-hidden flex-row justify-between mmd:ml-0 relative ml-[30px] z-2">
         <div className="sm:mx-auto w-1/2 2md:pl-5 pl-12 3sm:w-[85%] 2md:w-full mt-20">
           <div className="text-black font-semibold text-lg">
-            Bridging the Web3 gap
+            Bridging the Web3 payment gap
           </div>
           <div className="text-black mmd:text-[2rem] font-bold text-[3rem] mb-14 mt-[8px]">
-            Give Tips directly from your wallet
+            The Crypto Payment Infrastructure
           </div>
           <div className="w-[73%] 2md:w-[92%]">
             <div className="text-[#757095] font-normal text-[17px] mt-6">
-              Tipping to your favourite creators now easier than ever. Tip
-              anonymously with crypto, or pay with cards (coming soon). All with
-              your decentralized wallet.
+              Cryptea is a payment infrastructure for businesses built on a public blockchain. Our APIs make it easy for any online business to accept cryptocurrency payments, and we&#39;re helping businesses everywhere use this new technology.
             </div>
             <div className="flex justify-center">
               <button
@@ -51,10 +49,10 @@ const Hero = () => {
             <div className="flex sm:justify-center mt-16">
               <Image src={check} className="mr-1" alt="yes" />
 
-              <span className="text-[#757095] mr-2">Instant Payment</span>
+              <span className="text-[#757095] ml-1 mr-2">Instant Payment</span>
 
               <Image src={check} className="mr-1" alt="yes" />
-              <span className="text-[#757095]">Wallet To Wallet</span>
+              <span className="text-[#757095] ml-1">Wallet To Wallet</span>
             </div>
           </div>
         </div>

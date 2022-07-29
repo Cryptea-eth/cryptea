@@ -14,16 +14,15 @@ const About = () => {
 
   return (
     <div className="mx-[30px] mt-24 px-14 2md:px-4 2md:mx-1" id="about">
-      <div className="w-[320px]">
+      <div className="w-[350px]">
         <span className="uppercase text-[#F57059] font-semibold text-[14px]">
-          receive tips daily
+          receive payments globally
         </span>
         <h1 className="text-black w-fit font-bold text-[29px] my-1">
-          We have an easy signup process
+          Accept Crypto Globally
         </h1>
         <span className="text-[#64607D] font-normal block text-[17px] mt-[10px]">
-          As we are based on Web3, we provide the simplest way to receive
-          payments from your fans, without needing to compromise your data
+          We allow businesses to accept cryptocurrency payments globally. We&#39;re helping online merchants around the world accept cryptocurrency as easily as they accept credit cards or PayPal today.
         </span>
 
         <button
@@ -74,21 +73,21 @@ const About = () => {
           </span>
         </div>
         <div className="!absolute !-right-[5.406rem] !bottom-0 !z-[-1] !w-[290px]">
-          
-        <Image
-          src={circle}
-          alt="for you"
-        />
-      </div>
+
+          <Image
+            src={circle}
+            alt="for you"
+          />
+        </div>
       </div>
 
       <div className="rounded-[14px] mt-[6rem] bg-cover h-[386px] bg-no-repeat m-auto max-w-[800px] bg-donation bg-[rgba(0,0,0,0.5)] bg-blend-color flex flex-col justify-center items-center">
         <h1 className="text-white font-bold text-center mx-auto w-[85%] text-[44px] mb-0 mt-[8px] mmd:text-[30px]">
-          Receive donations on another level
+          Receive payments on a global scale
         </h1>
 
         <span className="text-white mx-[10px] block text-[20px]">
-          Secure Donations and payments in one platform.
+          Secure subscriptions and payments in one platform/API.
         </span>
 
         <button
