@@ -5,7 +5,7 @@ import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { IoMdClose } from 'react-icons/io';
 import { useMoralis } from "react-moralis";
-import { Web3Storage } from "web3.storage";
+import { makeStorageClient } from "../../functions/clients";
 import { MdVisibilityOff, MdVisibility } from "react-icons/md";
 import {
   Button,
@@ -142,11 +142,6 @@ const DashSettings = () => {
    };
   }
 
-   const makeStorageClient = async () => {
-      return new Web3Storage({
-        token: await Moralis.Cloud.run("getWeb3StorageKey"),
-      });
-    }
 
      const beginUpload = async (files:File[], type:string) => {
        const { size: totalSize } = files[0];
@@ -156,7 +151,7 @@ const DashSettings = () => {
          setError({ ...error, account: "" });
          setSuccess({ ...success, account: "Image Uploaded Successfully, might take a while to fully reflect"});         
           const img = `https://${cid}.ipfs.dweb.link/${user?.get("username")}.${type}`;     
-        setDp(img);
+         setDp(img);
          user?.set("img", img);
 
          user?.save()
@@ -177,7 +172,9 @@ const DashSettings = () => {
 
        };
 
-       const client = await makeStorageClient();
+       const client = makeStorageClient(
+         await Moralis.Cloud.run("getWeb3StorageKey")
+       );
 
        return client.put(files, { onRootCidReady, onStoredChunk });
      }; 

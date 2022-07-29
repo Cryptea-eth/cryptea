@@ -9,10 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@alch/alchemy-web3": "^1.4.6",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@mui/material": "5.4.1",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@openzeppelin/contracts": "^4.7.2",
     "@walletconnect/web3-provider": "^1.7.8",
     "@web3auth/web3auth": "^1.0.1",
     "axios": "^0.27.2",
@@ -21,6 +23,7 @@
     "magic-sdk": "^8.1.1",
     "moralis": "^1.8.0",
     "next": "12.1.6",
+    "nft.storage": "^7.0.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-icons": "^4.4.0",

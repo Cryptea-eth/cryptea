@@ -1,12 +1,13 @@
 import PropTypes from "prop-types";
 import { Theme, useTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
-// import "../../assets/styles/auth.css";;
 import Image from 'next/image';
 import Head from 'next/head';
-import empty from "../../public/images/coming-soon.svg";
 import web3 from 'web3';
+import bigimg from '../../public/images/logobig.png';
 import PAYMENT from '../../artifacts/contracts/payment.sol/Payment.json';
+import SUBSCRIPTION from "../../artifacts/contracts/subscription.sol/Subscription.json";
+import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 import { FaInstagram, FaFacebook, FaTwitter, FaLinkedinIn, FaLink } from 'react-icons/fa';
 import Link from 'next/link'
 import {
@@ -29,6 +30,12 @@ import { useMoralis } from "react-moralis";
 import Loader from "../../app/components/elements/loader";
 
 import { useState, useEffect, SetStateAction } from "react";
+import { makeNFTClient } from "../../app/components/functions/clients";
+
+const contractAddress: { subscribe: string; onetime: string } = {
+  subscribe: "",
+  onetime: "0xa6aE0280a3eE37975586211d18578D232A1B98c5",
+};
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -111,15 +118,19 @@ function User() {
   };
 
 
-  const { Moralis, isWeb3Enabled, enableWeb3, logout, authenticate, isAuthenticated, isAuthenticating } = useMoralis();
+  const { Moralis, isWeb3Enabled, enableWeb3, authenticate, isAuthenticated } = useMoralis();
 
   const [userD, setUserD] = useState({});
+  const [pemail, setPemail] = useState<string>("");
+  const [name, setName] = useState<string>("")
   const [isLoading, setIsLoading] = useState(true);
   const [ loadingText, setLoadingText ] = useState<any>('')
   const [ transferSuccess, setTransferSuccess] = useState<boolean>(false);
   const [transferFail, setTransferFail] = useState<boolean>(false);
   const [failMessage, setFailMessage] = useState<string>('');
   const [hash, setHash] = useState<string>('');
+  const [interval, setTinterval] = useState<string>("daily");
+
     const getPrice = async (price: number) => {
       setLoadingText("Loading Price data...");
       const e = await Moralis.Web3API.token.getTokenPrice({
@@ -134,86 +145,17 @@ function User() {
   };
 
 
-  const initMain = async (price: number) => {
+  const initMain = async (price: number, type: 'subscription' | 'onetime' = 'onetime') => {
     setAuth(false);
     setLoadingText("Initializing Payment")
     try {
-        await beginPayment(price);
+        await beginPayment(price, type);
     } catch (x) {
         console.log(x)
     }
   } 
 
-  const beginPayment = async (price: number) => {
 
-    const provider: any = Moralis.provider;
-    setLoadingText("Connecting to wallet/Awaiting signature")
-    let from = '';
-    try{
-     const senx = await authenticate({ signingMessage: `Tipping ${usern} with crypto` })
-     from = senx?.get("ethAddress");
-    } catch(e) {
-
-        setTransferFail(true);
-        
-        return;
-    }
-    setLoadingText("Pending...");
-
-    const initWeb3 = new web3(provider);
-
-    const abi: any = PAYMENT.abi;
-
-    const initContract = new initWeb3.eth.Contract(
-      abi,
-      "0xa6aE0280a3eE37975586211d18578D232A1B98c5" // contract address
-    );
-
-
-    const ether = await getPrice(price);
-    // const nonce = await initWeb3.eth.getTransactionCount(
-    //   "0x88BA009d29e28378A0542832Da35aABf262045c9"
-    // );
-    console.log(ether);
-
-    const gasPx = await initWeb3.eth.getGasPrice()
-    // const gasLx = await initWeb3.eth.getBlock("latest");
-    // // const gasLimit = gasLx.gasLimit;
-
-    // console.log(gasLx)
-    let gas = 0;
-    const gasPrice = parseFloat(gasPx);
-     await initContract.methods
-        .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4")
-        .estimateGas({}, function(error:any, gasAmount:number) {
-            gas = gasAmount;
-        });
-
-
-    setLoadingText("Awaiting payment confirmation");
-
-    initContract.methods
-      .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4") //receiver
-      .send({
-        from,
-        value: initWeb3.utils.toWei(ether, "ether"),
-        gasPrice,
-        gas: null,
-        gasLimit: null,
-        maxGasPrice: null,
-      })
-      .then((init: any) => {
-        console.log(init);
-        setHash(init.transactionHash);
-        setTransferSuccess(true);
-      })
-      .catch((err: any) => {
-        const error = err as Error;
-        if (error.message.length) {
-          setTransferFail(true);
-        }
-      }); 
-  }
 
   useEffect(() => {
     if (router.isReady) {
@@ -250,6 +192,219 @@ function User() {
   if (!userD) {
     window.location.href = "/404";
   }
+
+  const provider: any = Moralis.provider;
+
+
+  let nft: any = "";
+
+  const generateNftData = async (
+    name: string,
+    owner: string,
+    duration: number,
+    desc?: string,
+  ) => {
+    const nfx = makeNFTClient(await Moralis.Cloud.run("getNFTStorageKey"));
+
+    const date = new Date();
+    
+    const load: string = img?.length ? img : bigimg.src;
+
+    await fetch(load).then(async (x) => {
+      nft = await nfx.store({
+        image: new File([await x.blob()], "clover.png", {
+          type: "image/png",
+        }),
+        name,
+        description: `${
+          desc === undefined ? `Subscription to ${name}${name.indexOf("'s") == -1 ? "'s" : ""} content` : desc
+        }`,
+        attributes: [
+          {
+            owner,
+            created: Math.floor(date.getTime() / 1000),
+          },
+          {
+            expiry: Math.floor(date.getTime() / 1000) + duration,
+          },
+        ],
+      });
+    });
+    return nft.url;
+  };
+
+  const mintNFT = async (tokenURI: string, receiver: string) => {
+    const web3 = createAlchemyWeb3(process.env.MATIC_LINK || "");
+    const abi:any = SUBSCRIPTION.abi;
+    const nftContract = new web3.eth.Contract(abi, contractAddress['subscribe']);
+    console.log(receiver);
+    try {
+      const nonce = await web3.eth.getTransactionCount(
+        process.env.PUBLIC_KEY || "",
+        "latest"
+      ); //get latest nonce
+      //the transaction
+      const tx = {
+        from: process.env.PUBLIC_KEY,
+        to: contractAddress['subscribe'],
+        nonce,
+        gas: 500000,
+        data: nftContract.methods.mintTokens(receiver, tokenURI).encodeABI(),
+      };
+
+      const signPromise = await web3.eth.accounts.signTransaction(
+        tx,
+        process.env.MATIC_PRIVATE_KEY || ""
+      );
+
+      const receipt = await web3.eth.sendSignedTransaction(
+        signPromise.rawTransaction || ""
+      );
+
+      return "continue";
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+
+
+  const message: { [index: string]: string } = {
+    subscription: `Subscription To ${usern} content`,
+    onetime: `Tipping ${usern} with crypto`,
+  };
+
+  const mainIx = (inter:string) => {
+      const date = new Date();
+
+      if(inter == 'monthly'){
+
+        const datex:number = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate(); 
+
+        return datex * 86400;
+
+      }else if(inter == 'yearly'){
+  
+        const year = date.getFullYear();
+
+        return year % 4 ? 31536000 : 31622400; 
+
+      }else if(inter == 'daily'){ 
+
+        return 86400;
+
+      }else if (inter == 'weekly') {
+          return 604800;
+      }
+
+      return 0
+  }
+
+  const beginPayment = async (
+    price: number,
+    type: "subscription" | "onetime" = "onetime"
+  ) => {
+    setLoadingText("Connecting to wallet/Awaiting signature");
+    let from = "";
+    try {
+      const senx = await authenticate({ signingMessage: message[type] });
+      from = senx?.get("ethAddress");
+    } catch (e) {
+      setTransferFail(true);
+
+      return;
+    }
+    setLoadingText("Pending...");
+
+    const initWeb3 = new web3(provider);
+
+    const ether = await getPrice(price);
+
+    const gasPx = await initWeb3.eth.getGasPrice();
+
+    let gas = 0;
+    const gasPrice = parseFloat(gasPx);
+    if(type == "subscription"){
+      const abi: any = SUBSCRIPTION.abi;
+
+      const initSubsx = new initWeb3.eth.Contract(abi, contractAddress['subscribe']);
+      
+      
+      setLoadingText("Awaiting payment confirmation");
+
+
+      initSubsx.methods
+        .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4") //receiver
+        .send({
+          from,
+          value: initWeb3.utils.toWei(ether, "ether"),
+          gasPrice,
+          gas: null,
+          gasLimit: null,
+          maxGasPrice: null,
+        })
+        .then(async (init: any) => {
+          console.log(init);
+          
+          setHash(init.transactionHash);
+          const suser:string = usern === undefined ? '' : usern;
+          const seth: string = ethAddress === undefined ? "" : ethAddress;
+
+
+
+          const nft = await generateNftData(suser, seth, mainIx(interval));
+          await mintNFT(nft, from);
+
+          setTransferSuccess(true);
+
+        })
+        .catch((err: any) => {
+          const error = err as Error;
+          if (error.message.length) {
+            setTransferFail(true);
+          }
+        });
+      
+
+    }else if (type == "onetime") {
+      const abi: any = PAYMENT.abi;
+
+      const initContract = new initWeb3.eth.Contract(
+        abi,
+        contractAddress['onetime']
+      );
+
+      await initContract.methods
+        .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4")
+        .estimateGas({}, function (error: any, gasAmount: number) {
+          gas = gasAmount;
+        });
+
+      setLoadingText("Awaiting payment confirmation");
+
+      initContract.methods
+        .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4") //receiver
+        .send({
+          from,
+          value: initWeb3.utils.toWei(ether, "ether"),
+          gasPrice,
+          gas: null,
+          gasLimit: null,
+          maxGasPrice: null,
+        })
+        .then((init: any) => {
+          console.log(init);
+          setHash(init.transactionHash);
+          setTransferSuccess(true);
+        })
+        .catch((err: any) => {
+          const error = err as Error;
+          if (error.message.length) {
+            setTransferFail(true);
+          }
+        });
+    }
+  };
 
   const [value, setValue] = useState<number>(0);
   const [amount, setAmount] = useState<string>('');
@@ -342,7 +497,7 @@ function User() {
                 <Link href="#">
                   <FaInstagram size={30} color="#F57059" />
                 </Link>
-                <Link href="">
+                <Link href="#">
                   <FaTwitter color="#F57059" size={30} className="" />
                 </Link>
                 <Link href="#">
@@ -396,13 +551,8 @@ function User() {
                         />
                         <Tab
                           className="!font-bold !rounded-[4px] !capitalize"
-                          label="Monthly😍"
+                          label="Subscription😍"
                           {...a11yProps(1)}
-                        />
-                        <Tab
-                          className="!font-bold !rounded-[4px] !capitalize"
-                          label="Annually🙏"
-                          {...a11yProps(2)}
                         />
                       </Tabs>
                     </Box>
@@ -463,10 +613,16 @@ function User() {
                           {usern} has been tipped successfully
                         </h2>
 
-                        <Link href={`https://mumbai.polygonscan.com/tx/${hash}`}>
-                            <a target={"_blank"} className="text-[#5a5a5a] cursor-pointer mb-1 font-normal">View transaction on polygonscan</a>
+                        <Link
+                          href={`https://mumbai.polygonscan.com/tx/${hash}`}
+                        >
+                          <a
+                            target={"_blank"}
+                            className="text-[#5a5a5a] cursor-pointer mb-1 font-normal"
+                          >
+                            View transaction on polygonscan
+                          </a>
                         </Link>
-                        
 
                         <Button
                           variant="contained"
@@ -542,8 +698,8 @@ function User() {
                         <TextField
                           fullWidth
                           id="outlined-basic"
-                          label="Input Price"
                           variant="outlined"
+                          placeholder="USD"
                           value={amount}
                           onChange={(
                             e: React.ChangeEvent<
@@ -579,56 +735,131 @@ function User() {
                       </FormControl>
                     </TabPanel>
                     <TabPanel value={value} index={1}>
-                      <div
-                        className="empty"
-                        style={{
-                          display: "flex",
-                          width: "100%",
-                          height: "fit-content",
-                          justifyContent: "center",
-                          flexDirection: "column",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Image
-                          src={empty}
-                          className="mb-3"
-                          style={{
-                            width: "300px",
+
+                        
+
+                      <FormControl fullWidth>
+                        <ToggleButtonGroup
+                          value={interval}
+                          exclusive
+                          className="w-full justify-between"
+                          onChange={(e: any) => {
+                            setTransferFail(false);
+                            const val = e.target.value;
+                            setTinterval(val);
                           }}
-                          alt="Would Be Released soon"
+                        >
+                          <ToggleButton
+                            className="capitalize font-bold"
+                            value="daily"
+                          >
+                            Daily
+                          </ToggleButton>
+                          
+                          <ToggleButton
+                            className="capitalize font-bold"
+                            value="weekly"
+                          >
+                            Weekly
+                          </ToggleButton>
+                          <ToggleButton
+                            className="capitalize font-bold"
+                            value="monthly"
+                          >
+                            Monthly
+                          </ToggleButton>
+                          
+                          <ToggleButton
+                            className="capitalize font-bold"
+                            value="yearly"
+                          >
+                            Yearly
+                          </ToggleButton>
+
+                        </ToggleButtonGroup>
+
+                        <div className="py-3 font-bold">Email</div>
+
+                        <TextField
+                          fullWidth
+                          id="outlined-basic"
+                          placeholder={"Email"}
+                          variant="outlined"
+                          helperText="This is just to send a reminder when your subscription expires"
+                          value={pemail}
+                          onChange={(
+                            e: React.ChangeEvent<
+                              HTMLInputElement | HTMLTextAreaElement
+                            >
+                          ) => {
+                            setTransferFail(false);
+                            const val = e.target.value;
+                            setPemail(val);
+                          }}
                         />
 
-                        <h2 className="mt-2 font-bold">
-                          This Feature would be released soon
-                        </h2>
-                      </div>
-                    </TabPanel>
-                    <TabPanel value={value} index={2}>
-                      <div
-                        className="empty"
-                        style={{
-                          display: "flex",
-                          width: "100%",
-                          height: "fit-content",
-                          justifyContent: "center",
-                          flexDirection: "column",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Image
-                          src={empty}
-                          className="mb-3"
-                          style={{
-                            width: "300px",
+                        <div className="my-2">
+                          <div className="py-3 font-bold">Amount (USD)</div>
+
+                          <ToggleButtonGroup
+                            value={amount}
+                            exclusive
+                            className="w-full justify-between"
+                            onChange={(e: any) => {
+                              setTransferFail(false);
+                              const val = e.target.value;
+                              setAmount(val.replace(/[^\d.]/g, ""));
+                            }}
+                          >
+                            <ToggleButton value="0.1">0.1</ToggleButton>
+                            <ToggleButton value="1">1</ToggleButton>
+                            <ToggleButton value="10">10</ToggleButton>
+                            <ToggleButton value="50">50</ToggleButton>
+                            <ToggleButton value="100">100</ToggleButton>
+                          </ToggleButtonGroup>
+                        </div>
+
+                        <div className="py-3 font-bold">
+                          Or input Amount manually
+                        </div>
+                        <TextField
+                          fullWidth
+                          id="outlined-basic"
+                          variant="outlined"
+                          placeholder="USD"
+                          value={amount}
+                          onChange={(
+                            e: React.ChangeEvent<
+                              HTMLInputElement | HTMLTextAreaElement
+                            >
+                          ) => {
+                            setTransferFail(false);
+                            const val = e.target.value;
+                            setAmount(val.replace(/[^\d.]/g, ""));
                           }}
-                          alt="Would Be Released soon"
                         />
 
-                        <h2 className="mt-2 font-bold">
-                          This Feature would be released soon
-                        </h2>
-                      </div>
+                        <Button
+                          variant="contained"
+                          className="!bg-[#F57059] !mt-4 !py-[13px] !font-medium !capitalize"
+                          style={{
+                            fontFamily: "inherit",
+                          }}
+                          onClick={() => {
+                            setFailMessage("");
+                            setTransferFail(false);
+                            setHash("");
+                            if (parseFloat(amount)) {
+                              initMain(parseFloat(amount), "subscription");
+                            } else {
+                              setFailMessage("The amount set is invalid");
+                            }
+                          }}
+                          fullWidth
+                        >
+                          Send
+                        </Button>
+                      </FormControl>
                     </TabPanel>
                   </Box>
                 </div>
