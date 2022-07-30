@@ -208,16 +208,23 @@ function User() {
 
     const date = new Date();
     
+    const exdate = new Date(date.getTime() + (duration * 1000));
+
     const load: string = img?.length ? img : bigimg.src;
 
     await fetch(load).then(async (x) => {
+      const blb = await x.blob();
       nft = await nfx.store({
-        image: new File([await x.blob()], "clover.png", {
-          type: "image/png",
+        image: new File([blb], `${usern}`, {
+          type: blb.type,
         }),
         name,
         description: `${
-          desc === undefined ? `Subscription to ${name}${name.indexOf("'s") == -1 ? "'s" : ""} content` : desc
+          desc === undefined
+            ? `Subscription to ${name}${
+                name.indexOf("'s") == -1 ? "'s" : ""
+              } content`
+            : desc
         }`,
         attributes: [
           {
@@ -225,7 +232,8 @@ function User() {
             created: Math.floor(date.getTime() / 1000),
           },
           {
-            expiry: Math.floor(date.getTime() / 1000) + duration,
+            expirySeconds: Math.floor(date.getTime() / 1000) + duration,
+            expiry: exdate.toDateString(),
           },
         ],
       });
@@ -240,14 +248,16 @@ function User() {
     console.log(receiver);
     try {
       const gasPrice = await web3.eth.getGasPrice();
-      
+
       const tx = {
         from: receiver,
-        to: contractAddress['subscribe'],
+        to: contractAddress["subscribe"],
         value,
         gasPrice,
         gas: null,
-        data: nftContract.methods.mintTokens(receiver, to, value, tokenURI).encodeABI(),
+        data: nftContract.methods
+          .mintTokens(receiver, to, value, tokenURI)
+          .encodeABI(),
       };
 
      const ee = await nftContract.methods.mintTokens(receiver, to, value, tokenURI).send(tx);
