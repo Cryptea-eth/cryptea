@@ -114,9 +114,11 @@ function EditPage() {
 
   const [userD, setUserD] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-
-
-
+  const [showMain, setShowMain] = useState(true)
+  const [showTitle, setShowTitle] = useState(false)
+  const [showDescription, setShowDescription] = useState(false)
+  const [showSocials, setShowSocials] = useState(false)
+  const [showButton, setShowButton] = useState(false)
 
   useEffect(() => {
     if (router.isReady) {
@@ -421,28 +423,158 @@ function EditPage() {
             </div>
           </div>
 
-            <div className="w-[25%] h-screen bg-[white] border-l-2 border-[#f57059]">
+          <div className="w-[25%] h-screen bg-[white] border-l-2 border-[#f57059]">
+            {showMain ? (<div>
               <div className="flex flex-row w-full bg-[#f5705924] py-4">
-                <div className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></div>
+                <div onClick={() => {window.location.href="/dashboard/pages"}} className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></div>
                 <div className="text-[#F57059] font-bold text-2xl w-3/4">Select Component</div>
               </div>
               <div className="components mx-2 mt-4">
-                <div className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-4">
+                <button className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-2 w-full"
+                  onClick={() => {
+                    setShowTitle(true)
+                    setShowMain(false)
+                    setShowDescription(false)
+                    setShowSocials(false)
+                    setShowButton(false)
+                  }}>
                   Title
-                </div>
+                </button>
 
-                <div className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-4">
+                <button className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-2 w-full"
+                  onClick={() => {
+                    setShowTitle(false)
+                    setShowMain(false)
+                    setShowDescription(false)
+                    setShowSocials(true)
+                    setShowButton(false)
+                  }}>
                   Social Links
-                </div>
+                </button>
 
-                <div className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-4">
+                <button className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-2 w-full"
+                  onClick={() => {
+                    setShowTitle(false)
+                    setShowMain(false)
+                    setShowDescription(true)
+                    setShowSocials(false)
+                    setShowButton(false)
+                  }}>
                   Description
-                </div>
+                </button>
 
-                <div className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-4">
+                <button className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-2 w-full"
+                  onClick={() => {
+                    setShowTitle(false)
+                    setShowMain(false)
+                    setShowDescription(false)
+                    setShowSocials(false)
+                    setShowButton(true)
+                  }}>
                   Button
+                </button>
+              </div>
+            </div>) : null}
+
+            {showTitle ? (
+              <div className="w-full">
+                <div className="flex flex-row w-full bg-[#f5705924] py-4 mb-5">
+                  <button onClick={() => {
+                    setShowTitle(false)
+                    setShowMain(true)
+                    setShowDescription(false)
+                    setShowSocials(false)
+                    setShowButton(false)
+                  }} className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></button>
+                  <div className="text-[#F57059] font-bold text-2xl w-3/4">Title</div>
+                  </div>
+                  <div className="">
+                    <input type="text" />
+                  </div>
+                <div className="w-full px-3">
+                  <button className="py-3 bg-[#f5705924] text-[#f57059] w-full" onClick={() => {
+                    setShowTitle(false)
+                    setShowMain(true)
+                    setShowDescription(false)
+                    setShowSocials(false)
+                    setShowButton(false)
+                  }}>Back</button>
+                  <button className="py-3 bg-[#f57059] text-white w-full my-3">Save</button>
                 </div>
               </div>
+            ) : null}
+            {showButton ? (
+              <div><div className="flex flex-row w-full bg-[#f5705924] py-4 mb-5">
+                <button onClick={() => {
+                  setShowTitle(false)
+                  setShowMain(true)
+                  setShowDescription(false)
+                  setShowSocials(false)
+                  setShowButton(false)
+                }} className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></button>
+                <div className="text-[#F57059] font-bold text-2xl w-3/4">Buttons</div>
+              </div>
+                <div className="w-full px-3">
+                  <button className="py-3 bg-[#f5705924] text-[#f57059] w-full" onClick={() => {
+                    setShowTitle(false)
+                    setShowMain(true)
+                    setShowDescription(false)
+                    setShowSocials(false)
+                    setShowButton(false)
+                  }}>Back</button>
+                  <button className="py-3 bg-[#f57059] text-white w-full my-3">Save</button>
+                </div>
+              </div>
+            ) : null}
+            {showSocials ? (
+              <div><div className="flex flex-row w-full bg-[#f5705924] py-4 mb-5">
+                <button onClick={() => {
+                  setShowTitle(false)
+                  setShowMain(true)
+                  setShowDescription(false)
+                  setShowSocials(false)
+                  setShowButton(false)
+                }} className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></button>
+                <div className="text-[#F57059] font-bold text-2xl w-3/4">Social Links</div>
+              </div>
+                <div className="w-full px-3">
+                  <button className="py-3 bg-[#f5705924] text-[#f57059] w-full" onClick={() => {
+                    setShowTitle(false)
+                    setShowMain(true)
+                    setShowDescription(false)
+                    setShowSocials(false)
+                    setShowButton(false)
+                  }}>Back</button>
+                  <button className="py-3 bg-[#f57059] text-white w-full my-3">Save</button>
+                </div>
+              </div>
+            ) : null}
+            {showDescription ? (
+              <div><div className="flex flex-row w-full bg-[#f5705924] py-4 mb-5">
+                <button onClick={() => {
+                  setShowTitle(false)
+                  setShowMain(true)
+                  setShowDescription(false)
+                  setShowSocials(false)
+                  setShowButton(false)
+                }} className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></button>
+                <div className="text-[#F57059] font-bold text-2xl w-3/4">Description</div>
+                </div>
+                  <div className="w-full px-3 my-5">
+                    <textarea className="w-full h-[100px] text-lg border-[#f5705924] border-2 rounded-sm focus:border-[#f57059] focus:border-2" value={description} />
+                  </div>
+                <div className="w-full px-3">
+                  <button className="py-3 bg-[#f5705924] text-[#f57059] w-full" onClick={() => {
+                    setShowTitle(false)
+                    setShowMain(true)
+                    setShowDescription(false)
+                    setShowSocials(false)
+                    setShowButton(false)
+                  }}>Back</button>
+                  <button className="py-3 bg-[#f57059] text-white w-full my-3">Save</button>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       )}
