@@ -33,7 +33,7 @@ import { useState, useEffect, SetStateAction } from "react";
 import { makeNFTClient } from "../../app/components/functions/clients";
 
 const contractAddress: { subscribe: string; onetime: string } = {
-  subscribe: "",
+  subscribe: "0xfaf92e3AFcC7cA3C3a6ec35A16122eb1d7ab678d",
   onetime: "0xa6aE0280a3eE37975586211d18578D232A1B98c5",
 };
 
@@ -233,33 +233,49 @@ function User() {
     return nft.url;
   };
 
-  const mintNFT = async (tokenURI: string, receiver: string) => {
+  const beginSubscription = async (tokenURI: string, receiver: string, to: string, value:string | number) => {
     const web3 = createAlchemyWeb3(process.env.MATIC_LINK || "");
     const abi:any = SUBSCRIPTION.abi;
     const nftContract = new web3.eth.Contract(abi, contractAddress['subscribe']);
     console.log(receiver);
     try {
-      const nonce = await web3.eth.getTransactionCount(
-        process.env.PUBLIC_KEY || "",
-        "latest"
-      ); //get latest nonce
-      //the transaction
+      const gasPrice = await web3.eth.getGasPrice();
+      
       const tx = {
-        from: process.env.PUBLIC_KEY,
+        from: receiver,
         to: contractAddress['subscribe'],
-        nonce,
-        gas: 500000,
-        data: nftContract.methods.mintTokens(receiver, tokenURI).encodeABI(),
+        value,
+        gasPrice,
+        gas: null,
+        data: nftContract.methods.mintTokens(receiver, to, value, tokenURI).encodeABI(),
       };
 
-      const signPromise = await web3.eth.accounts.signTransaction(
-        tx,
-        process.env.MATIC_PRIVATE_KEY || ""
-      );
+     const ee = await nftContract.methods.mintTokens(receiver, to, value, tokenURI).send(tx);
 
-      const receipt = await web3.eth.sendSignedTransaction(
-        signPromise.rawTransaction || ""
-      );
+     console.log(ee)
+
+    //   const nonce = await web3.eth.getTransactionCount(
+    //     process.env.PUBLIC_KEY || "",
+    //     "latest"
+    //   ); //get latest nonce
+    //   //the transaction
+    //   const tx = {
+    //     from: receiver,
+    //     to: contractAddress['subscribe'],
+    //     value,
+    //     nonce,
+    //     gas: 500000,
+    //     data: nftContract.methods.mintTokens(receiver, to, value, tokenURI).encodeABI(),
+    //   };
+
+    //   const signPromise = await web3.eth.accounts.signTransaction(
+    //     tx,
+    //     process.env.MATIC_PRIVATE_KEY || ""
+    //   );
+
+    //   const receipt = await web3.eth.sendSignedTransaction(
+    //     signPromise.rawTransaction || ""
+    //   );
 
       return "continue";
     } catch (err) {
@@ -332,39 +348,27 @@ function User() {
       
       setLoadingText("Awaiting payment confirmation");
 
+  
+      const suser: string = usern === undefined ? "" : usern;
+      const seth: string = ethAddress === undefined ? "" : ethAddress;
 
-      initSubsx.methods
-        .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4") //receiver
-        .send({
-          from,
-          value: initWeb3.utils.toWei(ether, "ether"),
-          gasPrice,
-          gas: null,
-          gasLimit: null,
-          maxGasPrice: null,
-        })
-        .then(async (init: any) => {
-          console.log(init);
-          
-          setHash(init.transactionHash);
-          const suser:string = usern === undefined ? '' : usern;
-          const seth: string = ethAddress === undefined ? "" : ethAddress;
+      const nft = await generateNftData(
+        suser,
+        seth,
+        mainIx(interval)
+      );
+      try{
 
+      await beginSubscription(
+        nft,
+        from,
+        "0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4", //receiver
+        initWeb3.utils.toWei(ether, "ether")
+      );
 
-
-          const nft = await generateNftData(suser, seth, mainIx(interval));
-          await mintNFT(nft, from);
-
-          setTransferSuccess(true);
-
-        })
-        .catch((err: any) => {
-          const error = err as Error;
-          if (error.message.length) {
-            setTransferFail(true);
-          }
-        });
-      
+      }catch(err){
+        console.log(err)
+      }
 
     }else if (type == "onetime") {
       const abi: any = PAYMENT.abi;
@@ -850,7 +854,7 @@ function User() {
                             setTransferFail(false);
                             setHash("");
                             if (parseFloat(amount)) {
-                              initMain(parseFloat(amount), "subscription");
+                              initMain(0.01, "subscription");
                             } else {
                               setFailMessage("The amount set is invalid");
                             }
