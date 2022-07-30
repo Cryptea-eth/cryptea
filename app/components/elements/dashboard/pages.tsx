@@ -115,11 +115,11 @@ const DashPages = () => {
                     </a>
                   </a>
 
-                  <div>
+                  <a href={`/dashboard/pages/${attributes.link.toLowerCase()}`} rel="noreferrer">
                     <IconButton color='inherit' size={'large'} sx={{ color: "#f36e57b8" }}>
                       <MdModeEditOutline size={20}></MdModeEditOutline>
                     </IconButton>
-                  </div>
+                  </a>
                 </div>
               </div>
             ))
