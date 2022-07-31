@@ -180,7 +180,9 @@ function User() {
                 email: ex[0]?.get("email"),
                 ethAddress: ex[0]?.get("ethAddress"),
                 img: er[0]?.get('img') !== undefined ? er[0]?.get('img') : (ex[0]?.get("img") === undefined ? "" : ex[0]?.get("img")),
-                id: er[0].id
+                id: er[0].id,
+                onetime: er[0].get('onetime'),
+                subscribers: er[0].get('subscribers') 
               });
 
             setIsLoading(false);
@@ -196,7 +198,7 @@ function User() {
   }
   }, [Moralis.Cloud, Moralis.Object, Moralis.Query, router.isReady, username]);
 
-  const { username: usern, description, email, img, ethAddress, id: linkId }: { username?: string, description?: string, email?: string, img?: string | null, ethAddress?: string, id?: string } = userD;
+  const { username: usern, description, email, img, ethAddress, id: linkId, onetime, subscribers }: { username?: string, description?: string, email?: string, img?: string | null, ethAddress?: string, id?: string, onetime?: string, subscribers ?: string} = userD;
    const [subCheck, setSubCheck] = useState<boolean>(true);
   if (!userD) {
     window.location.href = "/404";
@@ -238,15 +240,12 @@ function User() {
         attributes: [
           {
             owner,
+            id: linkId,
             created: date.toDateString(),
           },
           {
             expiry: exdate.toDateString(),
-            expirySeconds: Math.floor(date.getTime() / 1000) + duration,
-          },
-          {
-            id: linkId,
-            link: ''
+            expirySeconds: exdate.getTime(),
           },
         ],
       });
@@ -330,6 +329,7 @@ function User() {
       setTransferFail(true);
 
       return;
+
     }
     setLoadingText("Pending...");
 
@@ -339,11 +339,10 @@ function User() {
 
     const gasPx = await initWeb3.eth.getGasPrice();
 
-    let gas = 0;
-
     const gasPrice = parseFloat(gasPx);
     if(type == "subscription"){
       if (subCheck) {
+         setLoadingText("Checking Wallet...");
         const subdata = await axios.get(
           `https://api.covalenthq.com/v1/${Number(
             chainId
@@ -363,12 +362,17 @@ function User() {
                 nft_data.forEach((add: any) => {
                   const { attributes } = add["external_data"];
 
-                  if (attributes[2].id == linkId) {
+                  if (attributes[0].id == linkId) {
                     const { expiry, expirySeconds } = attributes[1];
 
-                    const date = new Date().getTime() / 1000;
+                    const date = new Date();
+                    const expDate = new Date(expirySeconds);
+                    
+                    const extSecs = Date.parse(`${expDate.getFullYear()}-${expDate.getMonth() + 1}-${expDate.getDate()}`);
 
-                    if (date < expirySeconds) {
+                    const curSecs = Date.parse(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+
+                    if ((date.getTime() <= expirySeconds && extSecs != curSecs)) {
                       eSubs.push(expiry);
                     }
                   }
@@ -407,7 +411,20 @@ function User() {
         initWeb3.utils.toWei(ether, "ether")
       );
 
-      //start here
+      const remind = subscribers === undefined ? [] : JSON.parse(subscribers);
+      const date = new Date().getTime();
+       if (linkHook !== undefined) {
+          remind.push({
+            mail: email,
+            remind: date + (mainIx(interval) * 1000),
+            address: from,
+            amount: price,
+          })
+         
+         linkHook[0].set("subscribers", JSON.stringify(remind));
+         await linkHook[0].save();
+         console.log("done");
+       } 
 
       
       setTransferSuccess(true);
@@ -424,12 +441,6 @@ function User() {
         contractAddress['onetime']
       );
 
-      await initContract.methods
-        .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4")
-        .estimateGas({}, function (error: any, gasAmount: number) {
-          gas = gasAmount;
-        });
-
       setLoadingText("Awaiting payment confirmation");
 
       initContract.methods
@@ -442,9 +453,24 @@ function User() {
           gasLimit: null,
           maxGasPrice: null,
         })
-        .then((init: any) => {
+        .then(async (init: any) => {
           console.log(init);
           setHash(init.transactionHash);
+
+          const payers = onetime === undefined ? [] : JSON.parse(onetime);
+
+          if (linkHook !== undefined) {
+            payers.push({
+              address: from,
+              amount: price,
+            });
+
+            linkHook[0].set("onetime", JSON.stringify(payers));
+
+            await linkHook[0].save();
+
+          }
+
           setTransferSuccess(true);
         })
         .catch((err: any) => {
@@ -469,7 +495,7 @@ function User() {
     if (parseFloat(amount)) {
       if (pemail.length) {
         setESubscription([]);
-        initMain(0.01, "subscription");
+        initMain(parseFloat(amount), "subscription");
       } else {
         setFailMessage("Your email is required");
       }
@@ -885,6 +911,9 @@ function User() {
                           </TabPanel>
                           <TabPanel value={value} index={1}>
                             <FormControl fullWidth>
+                              <div className="py-3 font-bold">
+                                Subscription Duration
+                              </div>
                               <ToggleButtonGroup
                                 value={interval}
                                 exclusive
@@ -1004,6 +1033,7 @@ function User() {
                               >
                                 Subscribe
                               </Button>
+
                             </FormControl>
                           </TabPanel>
                         </Box>
