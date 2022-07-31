@@ -8,9 +8,9 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract Subscription is ERC721URIStorage{
          using Counters for Counters.Counter;
          Counters.Counter private tokenCounter;
-         uint256 totalSupply = 100000000;
+         uint256 public totalSupply = 100000000;
          uint256 wallet;
-         uint256 percent = 3;
+         uint256 public percent = 3;
          address owner;
 
         event TransferReceived(address indexed _to, address indexed _from, uint indexed _amount);

@@ -35,6 +35,10 @@ module.exports = {
     polygon: {
       url: process.env.MATIC_LINK,
       accounts: [process.env.MATIC_PRIVATE_KEY]
+    },  
+    rinkeby: {
+        url: process.env.RINK_LINK,
+        accounts: [process.env.RINKEBY_KEY]
     }
   }
 };

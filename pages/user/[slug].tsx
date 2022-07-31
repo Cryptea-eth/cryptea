@@ -33,7 +33,8 @@ import { useState, useEffect, SetStateAction } from "react";
 import { makeNFTClient } from "../../app/components/functions/clients";
 
 const contractAddress: { subscribe: string; onetime: string } = {
-  subscribe: "0xfaf92e3AFcC7cA3C3a6ec35A16122eb1d7ab678d",
+  // subscribe: "0xfaf92e3AFcC7cA3C3a6ec35A16122eb1d7ab678d",
+  subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940",
   onetime: "0xa6aE0280a3eE37975586211d18578D232A1B98c5",
 };
 
@@ -232,8 +233,8 @@ function User() {
             created: Math.floor(date.getTime() / 1000),
           },
           {
-            expirySeconds: Math.floor(date.getTime() / 1000) + duration,
             expiry: exdate.toDateString(),
+            expirySeconds: Math.floor(date.getTime() / 1000) + duration
           },
         ],
       });
@@ -242,54 +243,27 @@ function User() {
   };
 
   const beginSubscription = async (tokenURI: string, receiver: string, to: string, value:string | number) => {
-    const web3 = createAlchemyWeb3(process.env.MATIC_LINK || "");
+    const web3x = new web3(provider);
     const abi:any = SUBSCRIPTION.abi;
-    const nftContract = new web3.eth.Contract(abi, contractAddress['subscribe']);
-    console.log(receiver);
+    const nftContract = new web3x.eth.Contract(abi, contractAddress['subscribe']);
+    
     try {
-      const gasPrice = await web3.eth.getGasPrice();
+      const gasPrice = await web3x.eth.getGasPrice();
 
       const tx = {
         from: receiver,
-        to: contractAddress["subscribe"],
         value,
         gasPrice,
-        gas: null,
-        data: nftContract.methods
-          .mintTokens(receiver, to, value, tokenURI)
-          .encodeABI(),
       };
 
-     const ee = await nftContract.methods.mintTokens(receiver, to, value, tokenURI).send(tx);
+     const trx = await nftContract.methods.mintTokens(receiver, to, value, '').send(tx);
+     
+     console.log(trx, 'here');
+     setHash(trx["transactionHash"]);
 
-     console.log(ee)
-
-    //   const nonce = await web3.eth.getTransactionCount(
-    //     process.env.PUBLIC_KEY || "",
-    //     "latest"
-    //   ); //get latest nonce
-    //   //the transaction
-    //   const tx = {
-    //     from: receiver,
-    //     to: contractAddress['subscribe'],
-    //     value,
-    //     nonce,
-    //     gas: 500000,
-    //     data: nftContract.methods.mintTokens(receiver, to, value, tokenURI).encodeABI(),
-    //   };
-
-    //   const signPromise = await web3.eth.accounts.signTransaction(
-    //     tx,
-    //     process.env.MATIC_PRIVATE_KEY || ""
-    //   );
-
-    //   const receipt = await web3.eth.sendSignedTransaction(
-    //     signPromise.rawTransaction || ""
-    //   );
-
-      return "continue";
     } catch (err) {
       console.log(err);
+      setTransferFail(true); 
     }
   };
 
@@ -362,19 +336,21 @@ function User() {
       const suser: string = usern === undefined ? "" : usern;
       const seth: string = ethAddress === undefined ? "" : ethAddress;
 
-      const nft = await generateNftData(
-        suser,
-        seth,
-        mainIx(interval)
-      );
+      // const nft = await generateNftData(
+      //   suser,
+      //   seth,
+      //   mainIx(interval)
+      // );
       try{
 
       await beginSubscription(
-        nft,
+        '',
         from,
-        "0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4", //receiver
+        "0x88BA009d29e28378A0542832Da35aABf262045c9", //receiver
         initWeb3.utils.toWei(ether, "ether")
       );
+
+      setTransferSuccess(true);
 
       }catch(err){
         console.log(err)
@@ -808,7 +784,9 @@ function User() {
                           ) => {
                             setTransferFail(false);
                             const val = e.target.value;
+                            
                             setPemail(val);
+
                           }}
                         />
 
