@@ -1,13 +1,16 @@
 import Nav from "../../app/components/elements/Nav";
-import Footer from "../../app/components/elements/Footer";
 import Link from "next/link";
 import Head from 'next/head'
+import { Button } from "@mui/material";
 const Notfound = () => {
   return (
     <div className="h-screen">
       <Head>
         <title>Cryptea - 404</title>
-        <meta name="description" content="Cryptea - Receive Tips on a whole new level." />
+        <meta
+          name="description"
+          content="Cryptea - Receive Tips on a whole new level."
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -22,14 +25,14 @@ const Notfound = () => {
         </div>
         <div className="mx-auto mt-8">
           <Link href="/">
-            <a>
-            <button className="ml-2 hover:bg-[#ff320e] transition-all delay-500 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4 mx-auto">
-              Take Me Home
-            </button></a>
+            <a className="text-center mt-3">
+              <Button className="ml-2 hover:bg-[#ff320e] transition-all delay-500 text-sm !capitalize rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4 mx-auto">
+                Refresh Page
+              </Button>
+            </a>
           </Link>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
