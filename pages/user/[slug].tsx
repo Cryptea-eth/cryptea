@@ -35,8 +35,8 @@ import Moralis from "moralis/types";
 import axios from "axios";
 
 const contractAddress: { subscribe: string; onetime: string } = {
-  // subscribe: "0xfaf92e3AFcC7cA3C3a6ec35A16122eb1d7ab678d",
-  subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940",
+  subscribe: "0xfaf92e3AFcC7cA3C3a6ec35A16122eb1d7ab678d",
+  // subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940",
   onetime: "0xa6aE0280a3eE37975586211d18578D232A1B98c5",
 };
 
@@ -415,10 +415,12 @@ function User() {
       const date = new Date().getTime();
        if (linkHook !== undefined) {
           remind.push({
-            mail: email,
+            mail: pemail,
+            date,
             remind: date + (mainIx(interval) * 1000),
             address: from,
             amount: price,
+            renewal: interval,
           })
          
          linkHook[0].set("subscribers", JSON.stringify(remind));
@@ -461,6 +463,7 @@ function User() {
 
           if (linkHook !== undefined) {
             payers.push({
+              date: new Date().getTime(),
               address: from,
               amount: price,
             });
@@ -492,10 +495,21 @@ function User() {
     setFailMessage("");
     setTransferFail(false);
     setHash("");
+    
     if (parseFloat(amount)) {
       if (pemail.length) {
-        setESubscription([]);
-        initMain(parseFloat(amount), "subscription");
+        if (
+          /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/.test(
+            pemail
+          )
+        ) {
+          setESubscription([]);
+          initMain(parseFloat(amount), "subscription");
+        } else {
+          setFailMessage(
+            "Your email is incorrect, please check it and try again"
+          );
+        }
       } else {
         setFailMessage("Your email is required");
       }
@@ -968,13 +982,8 @@ function User() {
                                 ) => {
                                   setTransferFail(false);
                                   const val = e.target.value;
-
-                                  if (
-                                    /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/.test(
-                                      val
-                                    )
-                                  )
-                                    setPemail(val);
+                                  setPemail(val);
+                                    
                                 }}
                               />
 
