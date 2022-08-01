@@ -35,8 +35,8 @@ import Moralis from "moralis/types";
 import axios from "axios";
 
 const contractAddress: { subscribe: string; onetime: string } = {
-  subscribe: "0xfaf92e3AFcC7cA3C3a6ec35A16122eb1d7ab678d",
-  // subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940",
+  // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457",
+  subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940",
   onetime: "0xa6aE0280a3eE37975586211d18578D232A1B98c5",
 };
 
@@ -267,6 +267,7 @@ function User() {
       };
 
      setLoadingText("Transferring Tokens...");
+
      const trx = await nftContract.methods
        .mintTokens(receiver, to, value, tokenURI)
        .send(tx);
@@ -341,7 +342,7 @@ function User() {
 
     const gasPrice = parseFloat(gasPx);
     if(type == "subscription"){
-      if (subCheck) {
+      if (!subCheck) {
          setLoadingText("Checking Wallet...");
         const subdata = await axios.get(
           `https://api.covalenthq.com/v1/${Number(
