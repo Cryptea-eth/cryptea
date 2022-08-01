@@ -30,7 +30,7 @@
     "react-image-crop": "^10.0.1",
     "react-moralis": "^1.4.0",
     "react-router-dom": "^6.3.0",
-    "recharts": "^2.1.9",
+    "recharts": "2.1.9",
     "web3": "^1.7.4",
     "web3.storage": "^4.2.0"
   },

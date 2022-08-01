@@ -36,7 +36,7 @@ const Hero = () => {
           </div>
           <div className="w-[73%] 2md:w-[92%]">
             <div className="text-[#757095] font-normal text-[17px] mt-6">
-              Cryptea is a payment infrastructure for businesses built on a public blockchain. Our APIs make it easy for any online business to accept cryptocurrency payments, and we&#39;re helping businesses everywhere use this new technology.
+              Cryptea is a payment infrastructure for businesses built on the blockchain. Our APIs and Product make it easy for any online business to accept cryptocurrency payments globally.
             </div>
             <div className="flex justify-center">
               <button
