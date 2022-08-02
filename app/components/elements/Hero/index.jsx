@@ -65,7 +65,7 @@ const Hero = () => {
           <Image
             src={desktop3}
             className="w-auto"
-            alt="Showing 5 cryptocurrencies"
+            alt="Cryptea"
           />
         </div>
       </div>
