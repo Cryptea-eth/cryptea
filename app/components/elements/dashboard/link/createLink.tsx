@@ -243,8 +243,8 @@ const NewLink = () => {
       {loadpage && <Loader />}
 
       {!loadpage && (
-        <div className="w-screen linkadd sm:px-2 px-10 flex justify-center items-center bg-pattern3 h-fit">
-          <div className="w-full flex justify-center flex-col h-full backdrop-blur-[12px]">
+        <div className="w-screen linkadd sm:px-2 px-10 flex justify-center items-center bg-pattern2 h-fit">
+          <div className="w-full flex justify-center flex-col h-full backdrop-blur-[2px]">
             <LogoSpace
               style={{
                 marginBottom: 20,
@@ -252,7 +252,7 @@ const NewLink = () => {
               }}
             />
 
-            <h2 className="font-[900] text-[30px] mt-0 flex items-center mx-auto mb-5">
+            <h2 className="font-[900] text-[#f57059] text-[30px] mt-0 flex items-center mx-auto mb-5">
               <MdAddLink size={32} className="mr-1" /> Create A Link
             </h2>
 
@@ -303,8 +303,8 @@ const NewLink = () => {
 
                 <TabPanel value={value} index={0}>
                   <div className="mt-8 w-full overflow-hidden">
-                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#121212] text-white">
-                      <span className="uppercase font-semibold mr-3">
+                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
+                      <span className="uppercase font-bold mr-3">
                         Link Details
                       </span>
                       <div className="flex items-center">
@@ -386,8 +386,8 @@ const NewLink = () => {
 
 
                   <div className="mt-8 w-full overflow-hidden">
-                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#121212] text-white">
-                      <span className="uppercase font-semibold mr-3">
+                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
+                      <span className="uppercase font-bold mr-3">
                         Amount
                       </span>
                       <div className="flex items-center">
@@ -435,23 +435,23 @@ const NewLink = () => {
                     <div className="w-full s:px-2 p-10">
                       <div className="flex items-center ssm:flex-wrap">
                         <div className="w-full">
-                            <FormLabel id="demo-row-radio-buttons-group-label">Choose Amount Type</FormLabel>
-                            <RadioGroup
-                              row
-                              aria-labelledby="demo-row-radio-buttons-group-label"
-                              name="row-radio-buttons-group"
-                            >
-                              <FormControlLabel value="fixed" control={<Radio />} label="Fixed" />
-                              <FormControlLabel value="variable" control={<Radio />} label="Variable" />
-                            </RadioGroup>
+                          <FormLabel id="demo-row-radio-buttons-group-label">Choose Amount Type</FormLabel>
+                          <RadioGroup
+                            row
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="row-radio-buttons-group"
+                          >
+                            <FormControlLabel value="fixed" control={<Radio />} label="Fixed" />
+                            <FormControlLabel value="variable" control={<Radio />} label="Variable" />
+                          </RadioGroup>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="mt-8 w-full overflow-hidden">
-                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#121212] text-white">
-                      <span className="uppercase font-semibold mr-3">
+                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
+                      <span className="uppercase font-bold mr-3">
                         Link Slug
                       </span>
                       <div className="flex items-center">
@@ -510,8 +510,8 @@ const NewLink = () => {
                 </TabPanel>
                 <TabPanel value={value} index={1}>
                   <div className="mt-8 w-full overflow-hidden">
-                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#121212] text-white">
-                      <span className="uppercase font-semibold mr-3">
+                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
+                      <span className="uppercase font-bold mr-3">
                         Subscription Details
                       </span>
                       <div className="flex items-center">
@@ -554,6 +554,54 @@ const NewLink = () => {
                         />
                       </div>
                     </div>
+
+                    <div className="w-full sm:px-2 px-10 py-5">
+                      <div className="flex items-center ssm:flex-wrap">
+                        <TextField
+                          id="description"
+                          label="Description"
+                          variant="standard"
+                          value={data["desc"]["sub"]}
+                          name="description"
+                          helperText={error["desc"]["sub"]}
+                          onChange={(
+                            e: React.ChangeEvent<
+                              HTMLInputElement | HTMLTextAreaElement
+                            >
+                          ) => {
+                            init({
+                              desc: {
+                                sub: "",
+                                onetime: "",
+                              },
+                            });
+                            udata({
+                              ...data,
+                              desc: {
+                                ...data["desc"],
+                                sub: e.target.value,
+                              },
+                            });
+                          }}
+                          fullWidth
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 w-full overflow-hidden">
+                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
+                      <span className="uppercase font-bold mr-3">
+                        Amount
+                      </span>
+                      <div className="flex items-center">
+                        <span className="mr-2 text-sm">
+                          Set your Payment Amount
+                        </span>
+                        <MdInfo size={20} color="#fff" />
+                      </div>
+                    </div>
+
                     <div className="w-full sm:px-2 px-10 py-5">
                       <div className="flex items-center ssm:flex-wrap">
                         <TextField
@@ -589,42 +637,11 @@ const NewLink = () => {
                       </div>
                     </div>
 
-                    <div className="w-full sm:px-2 px-10 py-5">
-                      <div className="flex items-center ssm:flex-wrap">
-                        <TextField
-                          id="description"
-                          label="Description"
-                          variant="standard"
-                          value={data["desc"]["sub"]}
-                          name="description"
-                          helperText={error["desc"]["sub"]}
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            init({
-                              desc: {
-                                sub: "",
-                                onetime: "",
-                              },
-                            });
-                            udata({
-                              ...data,
-                              desc: {
-                                ...data["desc"],
-                                sub: e.target.value,
-                              },
-                            });
-                          }}
-                          fullWidth
-                        />
-                      </div>
-                    </div>
                   </div>
+
                   <div className="mt-8 w-full overflow-hidden">
-                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#121212] text-white">
-                      <span className="uppercase font-semibold mr-3">
+                    <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
+                      <span className="uppercase font-bold mr-3">
                         Link Slug
                       </span>
                       <div className="flex items-center">
@@ -685,7 +702,7 @@ const NewLink = () => {
 
               <Button
                 onClick={saveLink}
-                className="py-3 font-bold px-6 !capitalize flex items-center text-white bg-[#121212] transition-all delay-500 hover:bg-[#000] m-auto rounded-lg"
+                className="py-3 font-bold px-6 !capitalize flex items-center text-white bg-[#f57059] transition-all delay-500 hover:bg-[#fb4d2e] m-auto rounded-lg"
               >
                 <MdInsertLink size={25} className="mr-1" /> Create Link
               </Button>
