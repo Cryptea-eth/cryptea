@@ -82,7 +82,7 @@ const Dashboard = () => {
       {loading && <Loader />}
 
       {!loading && (
-        <div className="h-full dash w-full bg-[#F9FAFF] flex">
+        <div className="h-full dash w-full bg-white flex">
           <Sidebar page={page} />
 
           <div

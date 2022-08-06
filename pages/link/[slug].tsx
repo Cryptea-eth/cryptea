@@ -192,13 +192,14 @@ function User() {
 
   return (
     <div>
-
       <Head>
         <title>{usern} | Cryptea</title>
-        <meta name="description" content={`Send tips to ${usern} quick and easy`} />
+        <meta
+          name="description"
+          content={`Send tips to ${usern} quick and easy`}
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
 
       {isLoading ? (
         <Loader />
@@ -239,9 +240,7 @@ function User() {
               <div className="text-4xl font-semibold mt-8">
                 {usern} is {description}
               </div>
-              <div className="text-[#838383] text-lg mt-8">
-                {description}
-              </div>
+              <div className="text-[#838383] text-lg mt-8">{description}</div>
               <div className="links mt-5">
                 <div className="bg-[#f5705924] text-[#F57059] font-bold rounded-full p-4">
                   Support Lucid&#39;s Business
@@ -262,7 +261,10 @@ function User() {
                       }}
                     >
                       <Tabs
-                        value={value} onChange={handleChange} aria-label="payment tabs">
+                        value={value}
+                        onChange={handleChange}
+                        aria-label="payment tabs"
+                      >
                         <Tab
                           className="!font-bold !rounded-[4px] !capitalize"
                           label="Onetime😇"
@@ -336,8 +338,20 @@ function User() {
                           id="outlined-basic"
                           label="Input Price"
                           variant="outlined"
+                          sx={{
+                            "& .Mui-focused.MuiFormLabel-root": {
+                              color: "#f57059",
+                            },
+                            "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: `#f57059 !important`,
+                            },
+                          }}
                           value={amount}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                          onChange={(
+                            e: React.ChangeEvent<
+                              HTMLInputElement | HTMLTextAreaElement
+                            >
+                          ) => {
                             const val = e.target.value;
                             setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
                           }}
@@ -350,9 +364,9 @@ function User() {
                             fontFamily: "inherit",
                           }}
                           onClick={() => {
-                            fetched().then(f => {
-                              console.log(f)
-                            })
+                            fetched().then((f) => {
+                              console.log(f);
+                            });
                           }}
                           disabled={isFetching}
                           fullWidth

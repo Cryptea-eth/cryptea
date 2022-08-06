@@ -1,12 +1,3 @@
-
-.css-md26zr-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline, .css-8ewcdo-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline, .css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline, .css-1q6at85-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: #F57059 !important;
-}
-
-.css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected{
-    color:#F57059 !important;
-}
-
 .linkadd .css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected, .linkadd .css-1c2i806-MuiFormLabel-root-MuiInputLabel-root.Mui-focused, .linkadd .css-h0q0iv-MuiButtonBase-root-MuiTab-root.Mui-selected{
     color: #121212 !important; 
 }
@@ -37,11 +28,6 @@
 }
 .css-heg063-MuiTabs-flexContainer{
     justify-content:space-around;
-}
-
-.css-ueukts-MuiButtonBase-root-MuiToggleButton-root.Mui-selected{
-    color:#fff !important;
-    background-color:#F57059 !important;
 }
 
 .css-1gjgmky-MuiToggleButtonGroup-root .MuiToggleButtonGroup-grouped{
@@ -284,9 +270,10 @@ html {
 
 body {
     min-height: 100vh;
+    overflow-x:hidden;
     justify-content: center;
     align-items: center;
-    background: #F6F8FF;
+    background: #fff;
 }
 
 body .button {

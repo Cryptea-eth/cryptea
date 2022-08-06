@@ -13,11 +13,12 @@ const main = async () => {
 
         const results = await reminder.find();
         console.log(results)
+        
         if(results.length){
         for (i = 0; i < results.length; i++) {
             const subs = JSON.parse(results[i]);
             for (ii = 0; ii < subs.length; ii++) {
-                const { remind, address, renewal, amount } = subs[ii];
+                const { remind, mail, renewal, amount } = subs[ii];
                 const exp = new Date(remind);
                 const cdat = new Date();
 
@@ -26,15 +27,14 @@ const main = async () => {
 
                 if (parseCdat == parseExp) {
                     
-                    await axios.post('', {
-                        data: {
-                            link: results[i].get('link'),
-                            address,
+                    await axios.post('https://cryptea.me/expire', {
+                            link: results[i].get('link'),     
+                            mail,
                             renewal, 
-                            amount
-                        }
+                            amount,
+                            full_link: '',
+                            expiry: remind
                     });   
-
                 }
             }
         }

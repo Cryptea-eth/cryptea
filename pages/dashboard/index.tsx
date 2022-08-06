@@ -85,7 +85,7 @@ const DashboardIndex = () => {
       {loading && <Loader />}
 
       {!loading && (
-        <div className="h-full transition-all delay-500 dash w-full bg-[#F9FAFF] flex">
+        <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
           <Sidebar page={"home"} />
           <div
             className={`body transition-all delay-500 ${

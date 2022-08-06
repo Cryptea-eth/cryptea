@@ -1,585 +1,1341 @@
-import PropTypes from "prop-types";
-import { Theme, useTheme } from "@mui/material/styles";
-import { useRouter } from "next/router";
-// import "../../assets/styles/auth.css";;
-import Image from 'next/image';
 import Head from 'next/head';
-import empty from "../../../public/images/coming-soon.svg";
-import { FaInstagram, FaFacebook, FaTwitter, FaLinkedinIn, FaLink, FaAngleLeft } from 'react-icons/fa';
-import Link from 'next/link'
-import {
-  OutlinedInput,
-  Box,
-  MenuItem,
-  Avatar,
-  Tabs,
-  Tab,
-  ToggleButton,
-  Typography,
-  FormControl,
-  Select,
-  ToggleButtonGroup,
-  TextField,
-  Button
-} from "@mui/material";
-
-import { useMoralis, useMoralisQuery, useWeb3Transfer } from "react-moralis";
-
-import Loader from "../../../app/components/elements/loader";
-
-import { useState, useEffect, SetStateAction } from "react";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import { TextField, IconButton, Button, Slider, Switch } from "@mui/material";
+import { useRouter } from 'next/router';
+import { FiAlignCenter, FiAlignJustify, FiAlignLeft, FiAlignRight } from "react-icons/fi";
+import Color from "@uiw/react-color-colorful";
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import validator from 'validator';
+import Origin from '../../../app/templates/origin';
+import style from "../../../styles/custom.module.css";
+import { data, rules } from '../../../app/templates/origin/data'
+import { RiDeleteBin5Line } from 'react-icons/ri';
 
 
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+let editable: string[] = [];
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
+ for (let aa in rules) {
+    if(aa != 'body'){
+    editable.push(aa);
+    }
+ }
 
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
+const EditPage = () => {
 
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
-const names = ["Polygon", "Avalanche", "Ethereum", "Binance Smart Chain"];
-
-function getStyles(name: string, blockchainName: string | any[], theme: Theme) {
-  return {
-    fontWeight:
-      blockchainName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
-
-function EditPage() {
+  const [getRules, setPart] = useState<string>("");
+  const [showMain, setShowMain] = useState(true)
+  const [viewColor, setViewColor] = useState<string>("");
+  const [update, updateMe] = useState<any>('')
 
   const router = useRouter();
 
+  const usern = router.query['slug'];
 
-  let username = router.query['slug'];
+   useEffect(() => {
+    
+   }, [usern, router.isReady]);
 
-
-  useEffect(() => {
-
-  }, [username, router.isReady])
-
-  const [alignment, setAlignment] = useState();
-
-  const changeAlignMent = (event: any, newAlignment: SetStateAction<undefined>) => {
-    setAlignment(newAlignment);
-  };
-
-
-  const { Moralis, isWeb3Enabled, enableWeb3 } = useMoralis();
-
-  const [userD, setUserD] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [showMain, setShowMain] = useState(true)
-  const [showTitle, setShowTitle] = useState(false)
-  const [showDescription, setShowDescription] = useState(false)
-  const [showSocials, setShowSocials] = useState(false)
-  const [showButton, setShowButton] = useState(false)
-
-  useEffect(() => {
-    if (router.isReady) {
-
-      const Link = Moralis.Object.extend('link')
-      const lQ = new Moralis.Query(Link);
-      lQ.equalTo('link', String(username).toLowerCase())
-
-      lQ.find().then((er) => {
-        console.log(er)
-        if (er !== undefined) {
-          Moralis.Cloud.run("getUser", { obj: er[0]?.get("user").id }).then(
-            (ex) => {
-              setUserD({
-                description: ex[0]?.get("desc"),
-                username: ex[0]?.get("username"),
-                email: ex[0]?.get("email"),
-                ethAddress: ex[0]?.get("ethAddress"),
-                img: ex[0]?.get("img") === undefined ? "" : ex[0]?.get("img"),
-              });
-
-              setIsLoading(false);
-            }
-          );
-        } else {
-          window.location.href = "/404";
-        }
-      });
-    }
-  }, [Moralis.Cloud, Moralis.Object, Moralis.Query, router.isReady, username]);
-
-  const { username: usern, description, email, img, ethAddress }: { username?: string, description?: string, email?: string, img?: string | null, ethAddress?: string } = userD;
-
-  if (!userD) {
-    window.location.href = "/404";
-  }
-
-  const [value, setValue] = useState(0);
-  const [amount, setAmount] = useState(0);
-
-  useEffect(() => {
-    if (!isWeb3Enabled) {
-      enableWeb3();
-    }
-  }, [enableWeb3, isWeb3Enabled])
-
-  const {
-    fetch: fetched,
-    error,
-    isFetching,
-  } = useWeb3Transfer({
-    type: "native",
-    amount: Moralis.Units.ETH(amount),
-    receiver: ethAddress,
-  });
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-
-  const handleSelectChange = (event: { target: { value: any; }; }) => {
-    const {
-      target: { value },
-    } = event;
-    setBlockchainName(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
-
-  const theme = useTheme();
-  const [blockchainName, setBlockchainName] = useState([]);
-
+  
   return (
     <div>
-
       <Head>
-        <title>{usern} | Cryptea</title>
-        <meta name="description" content={`Send tips to ${usern} quick and easy`} />
+        <title>Editting {usern} | Cryptea</title>
+        <meta name="description" content={`Updating User Page Template`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <div className="flex items-start">
+        <Origin className="overflow-y-scroll cusscroller overflow-x-hidden w-[calc(100%-258px)] z-[100] fixed max-h-screen" />
 
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <div className="flex flex-row w-full">
-          <div className="w-[75%] h-full bg-white">
-            <div className="img relative h-[150px] bg-[#dfcdb3]">
-              <div
-                className="bg-repeat h-[135px] bg-[#FFEBCD] bg-pattern"
-                style={{
-                  backgroundSize: 90,
-                  backgroundBlendMode: "multiply",
-                }}
-              ></div>
-              <div className="absolute border-solid border-[4px] p-1 border-[#f57059] rounded-[50%] left-0 right-0 m-auto bottom-[-29px] w-fit">
-                {!img?.length ? (
-                  <Avatar
-                    sx={{
-                      bgcolor: "#F57059",
-                      width: 140,
-                      height: 140,
+        <div className="flex relative z-[109] left-[calc(100%-257px)] right-0 flex-row">
+          <div className="max-w-[257px] w-[257px] h-screen bg-[white]">
+            
+              <div>
+                <div className="flex flex-row w-full bg-[#bbbbbb24] py-4">
+                  <div
+                    onClick={() => {
+                      if (!getRules.length) {
+                        window.location.href = "/dashboard/pages";
+                      } else {
+                        setPart("");
+                      }
                     }}
-                    className="!font-bold !text-[35px]"
-                    alt={usern}
+                    className="w-1/4 cursor-pointer"
                   >
-                    {usern?.charAt(0).toUpperCase()}
-                  </Avatar>
-                ) : (
-                  <Avatar
-                    src={img}
-                    sx={{ width: 140, height: 140 }}
-                    alt={usern}
-                  ></Avatar>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-row usm:flex-col">
-              <div className="w-3/5 usm:mb-4 usm:w-full px-8">
-                <div className="text-4xl font-semibold mt-8">
-                  {usern} is {description}
-                </div>
-                <div className="text-[#838383] text-lg mt-8">
-                  {description}
-                </div>
-                <div className="links mt-5">
-                  <div className="bg-[#f5705924] text-[#F57059] font-bold rounded-full p-4">
-                    Support Lucid&#39;s Business
+                    <MdChevronLeft color="#838383" size={24} />
+                  </div>
+                  <div className="text-[#838383] text-[17px] font-[300] w-3/4">
+                    {getRules.length ? getRules.replace('_', ' ') : "Overview"}
                   </div>
                 </div>
-              </div>
-              <div className="w-2/5 2usm:w-full usm:w-[85%] usm:m-auto min-w-[340px] px-6 my-8 justify-items-center">
-                <div className="rounded-lg bg-white shadow-lg shadow-[#cccccc]">
-                  <div className="border-b py-[14px] px-[17px] text-lg font-semibold">
-                    Send Payment
-                  </div>
-                  <div className="form pt-4">
-                    <Box sx={{ width: "100%" }}>
-                      <Box
-                        sx={{
-                          borderBottom: 1,
-                          borderColor: "divider",
-                        }}
-                      >
-                        <Tabs
-                          value={value} onChange={handleChange} aria-label="payment tabs">
-                          <Tab
-                            className="!font-bold !rounded-[4px] !capitalize"
-                            label="Onetime😇"
-                            {...a11yProps(0)}
-                          />
-                          <Tab
-                            className="!font-bold !rounded-[4px] !capitalize"
-                            label="Monthly😍"
-                            {...a11yProps(1)}
-                          />
-                          <Tab
-                            className="!font-bold !rounded-[4px] !capitalize"
-                            label="Annually🙏"
-                            {...a11yProps(2)}
-                          />
-                        </Tabs>
-                      </Box>
-                      <TabPanel value={value} index={0}>
-                        <FormControl fullWidth>
-                          <Select
-                            disabled
-                            displayEmpty
-                            value={blockchainName}
-                            onChange={handleSelectChange}
-                            input={<OutlinedInput />}
-                            renderValue={(selected) => {
-                              if (selected.length === 0) {
-                                return <span>Select Blockchain</span>;
-                              }
+                <div className="components mt-4">
+                  {Boolean(
+                    rules[Boolean(getRules.length) ? getRules : "body"]
+                      .colorChange
+                  ) && (
+                    <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                      <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                        Text Color
+                      </span>
 
-                              return selected.join(", ");
-                            }}
-                            MenuProps={MenuProps}
-                            inputProps={{ "aria-label": "Without label" }}
-                          >
-                            <MenuItem value="">Select Blockchain</MenuItem>
-                            {names.map((name) => (
-                              <MenuItem
-                                key={name}
-                                value={name}
-                                style={getStyles(name, blockchainName, theme)}
-                              >
-                                {name}
-                              </MenuItem>
-                            ))}
-                          </Select>
+                      <div className="flex relative cursor-pointer items-center">
+                        {viewColor == "textColor" && (
+                          <Color
+                            color={rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].colorChange()}
+                            className="right-[120%] !absolute"
+                            width={100}
+                            height={100}
+                            onChange={(color) => {
+                              updateMe(color);
 
-                          <div className="py-3 font-bold">Amount</div>
-
-                          <ToggleButtonGroup
-                            value={amount}
-                            exclusive
-                            className="w-full justify-between"
-                            onChange={(e: any) => {
-                              const val = e.target.value;
-                              setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
-                            }}
-                          >
-                            <ToggleButton value="0.1">0.1</ToggleButton>
-                            <ToggleButton value="1">1</ToggleButton>
-                            <ToggleButton value="10">10</ToggleButton>
-                            <ToggleButton value="50">50</ToggleButton>
-                            <ToggleButton value="100">100</ToggleButton>
-                          </ToggleButtonGroup>
-
-                          <div className="py-3 font-bold">
-                            Or input Amount manually
-                          </div>
-                          <TextField
-                            fullWidth
-                            id="outlined-basic"
-                            label="Input Price"
-                            variant="outlined"
-                            value={amount}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-                              const val = e.target.value;
-                              setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].colorChange(color.hexa);
                             }}
                           />
-
-                          <Button
-                            variant="contained"
-                            className="!bg-[#F57059] !mt-4 !py-[13px] !font-medium !capitalize"
+                        )}
+                        <div
+                          onClick={(e: any) => {
+                            if (viewColor == "textColor") {
+                              setViewColor("");
+                            } else {
+                              setViewColor("textColor");
+                            }
+                          }}
+                          className="border w-fit h-fit p-[3px] border-solid mr-[3px] border-[#bbbbbb24]"
+                        >
+                          <div
                             style={{
-                              fontFamily: "inherit",
+                              backgroundColor:
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ].colorChange(),
+                            }}
+                            className="h-[22px] w-[22px]"
+                          ></div>
+                        </div>
+
+                        <div
+                          onClick={(e: any) => {
+                            if (viewColor == "textColor") {
+                              setViewColor("");
+                            } else {
+                              setViewColor("textColor");
+                            }
+                          }}
+                          className="text-[#9d9d9d] p-2 font-bold"
+                        >
+                          {rules[
+                            Boolean(getRules.length) ? getRules : "body"
+                          ].colorChange()}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {Boolean(
+                    rules[Boolean(getRules.length) ? getRules : "body"]
+                      .BgColorChange
+                  ) && (
+                    <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                      <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                        Background Color
+                      </span>
+
+                      <div className="flex relative cursor-pointer items-center">
+                        {viewColor == "backgroundColor" && (
+                          <Color
+                            color={rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].BgColorChange()}
+                            className="right-[120%] !absolute"
+                            width={100}
+                            height={100}
+                            onChange={(color) => {
+                              updateMe(color);
+
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].BgColorChange(color.hexa);
+                            }}
+                          />
+                        )}
+                        <div
+                          onClick={(e: any) => {
+                            if (viewColor == "backgroundColor") {
+                              setViewColor("");
+                            } else {
+                              setViewColor("backgroundColor");
+                            }
+                          }}
+                          className="border w-fit h-fit p-[3px] border-solid mr-[3px] border-[#bbbbbb24]"
+                        >
+                          <div
+                            style={{
+                              backgroundColor:
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ].BgColorChange(),
+                            }}
+                            className="h-[22px] w-[22px]"
+                          ></div>
+                        </div>
+
+                        <div
+                          onClick={(e: any) => {
+                            if (viewColor == "backgroundColor") {
+                              setViewColor("");
+                            } else {
+                              setViewColor("backgroundColor");
+                            }
+                          }}
+                          className="text-[#9d9d9d] p-2 font-bold"
+                        >
+                          {rules[
+                            Boolean(getRules.length) ? getRules : "body"
+                          ].BgColorChange()}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {Boolean(
+                    rules[Boolean(getRules.length) ? getRules : "body"]
+                      .bgBColorChange
+                  ) && (
+                    <>
+                      <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                        <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                          Background Color
+                        </span>
+
+                        <div className="flex relative cursor-pointer items-center">
+                          {viewColor == "backgroundbColor" && (
+                            <Color
+                              color={rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].bgBColorChange(1)}
+                              className="right-[120%] !absolute"
+                              width={100}
+                              height={100}
+                              onChange={(color) => {
+                                updateMe(color);
+
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ].bgBColorChange(1, {
+                                  backgroundColor: color.hexa,
+                                });
+                              }}
+                            />
+                          )}
+                          <div
+                            onClick={(e: any) => {
+                              if (viewColor == "backgroundbColor") {
+                                setViewColor("");
+                              } else {
+                                setViewColor("backgroundbColor");
+                              }
+                            }}
+                            className="border w-fit h-fit p-[3px] border-solid mr-[3px] border-[#bbbbbb24]"
+                          >
+                            <div
+                              style={{
+                                backgroundColor:
+                                  rules[
+                                    Boolean(getRules.length) ? getRules : "body"
+                                  ].bgBColorChange(1),
+                              }}
+                              className="h-[22px] w-[22px]"
+                            ></div>
+                          </div>
+
+                          <div
+                            onClick={(e: any) => {
+                              if (viewColor == "backgroundbColor") {
+                                setViewColor("");
+                              } else {
+                                setViewColor("backgroundbColor");
+                              }
+                            }}
+                            className="text-[#9d9d9d] p-2 font-bold"
+                          >
+                            {rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].bgBColorChange(1)}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                        <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                          Border Color
+                        </span>
+
+                        <div className="flex relative cursor-pointer items-center">
+                          {viewColor == "borderbackground" && (
+                            <Color
+                              color={rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].bgBColorChange(0)}
+                              className="right-[120%] !absolute"
+                              width={100}
+                              height={100}
+                              onChange={(color) => {
+                                updateMe(color);
+
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ].bgBColorChange(0, {
+                                  backgroundColor: color.hexa,
+                                });
+                              }}
+                            />
+                          )}
+                          <div
+                            onClick={(e: any) => {
+                              if (viewColor == "borderbackground") {
+                                setViewColor("");
+                              } else {
+                                setViewColor("borderbackground");
+                              }
+                            }}
+                            className="border w-fit h-fit p-[3px] border-solid mr-[3px] border-[#bbbbbb24]"
+                          >
+                            <div
+                              style={{
+                                backgroundColor:
+                                  rules[
+                                    Boolean(getRules.length) ? getRules : "body"
+                                  ].bgBColorChange(0),
+                              }}
+                              className="h-[22px] w-[22px]"
+                            ></div>
+                          </div>
+
+                          <div
+                            onClick={(e: any) => {
+                              if (viewColor == "borderbackground") {
+                                setViewColor("");
+                              } else {
+                                setViewColor("borderbackground");
+                              }
+                            }}
+                            className="text-[#9d9d9d] p-2 font-bold"
+                          >
+                            {rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].bgBColorChange(0)}
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {Boolean(
+                    rules[Boolean(getRules.length) ? getRules : "body"]
+                      .textChange
+                  ) && (
+                    <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                      <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                        Text
+                      </span>
+
+                      <TextField
+                        type="textarea"
+                        defaultValue={rules[
+                          Boolean(getRules.length) ? getRules : "body"
+                        ].textChange()}
+                        onChange={(xc: any) => {
+                          updateMe(xc.target.value);
+                          rules[
+                            Boolean(getRules.length) ? getRules : "body"
+                          ].textChange(xc.target.value);
+                        }}
+                        sx={{
+                          color: "#bbbbbbc8 !important",
+                          "& .MuiInputBase-multiline": {
+                            padding: "3px",
+                            lineHeight: "17px",
+                            borderRadius: "0px",
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#bbbbbbc8 !important",
+                            borderWidth: "1px !important",
+                          },
+                          "& .MuiInputBase-input.MuiInputBase-input": {
+                            fontSize: "13px",
+                          },
+                          "& .Mui-focused.MuiFormLabel-root": {
+                            color: "#bbbbbbc8",
+                          },
+                          "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: `#bbbbbbc8 !important`,
+                          },
+                        }}
+                        fullWidth
+                        multiline
+                      />
+                    </div>
+                  )}
+
+                  {Boolean(
+                    rules[Boolean(getRules.length) ? getRules : "body"]
+                      .sortAlignment
+                  ) && (
+                    <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                      <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                        Alignment
+                      </span>
+
+                      <div
+                        style={{
+                          gridTemplateColumns:
+                            "repeat(auto-fill, minmax(48px, 1fr))",
+                        }}
+                        className="grid w-full grid-flow-dense items-center"
+                      >
+                        <button
+                          style={{
+                            backgroundColor:
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].sortAlignment() == "right"
+                                ? "#707070"
+                                : "#9d9d9d",
+                          }}
+                          onClick={() => {
+                            updateMe('right')
+
+                            rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].sortAlignment("right");
+                          }}
+                          className="flex h-[30px] transition-all delay-300 rounded-tl-[3px] rounded-bl-[3px] hover:bg-[#707070] cursor-pointer bg-[#9d9d9d] items-center justify-center"
+                          title="Align Right"
+                        >
+                          <FiAlignRight color={"#fff"} size={19} />
+                        </button>
+
+                        <button
+                          style={{
+                            backgroundColor:
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].sortAlignment() == "center"
+                                ? "#707070"
+                                : "#9d9d9d",
+                          }}
+                          onClick={() => {
+                            updateMe('center')
+                            rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].sortAlignment("center");
+                          }}
+                          className="flex h-[30px] transition-all delay-300 hover:bg-[#707070] cursor-pointer bg-[#9d9d9d] items-center justify-center"
+                          title="Align Center"
+                        >
+                          <FiAlignCenter color={"#fff"} size={19} />
+                        </button>
+
+                        <button
+                          style={{
+                            backgroundColor:
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].sortAlignment() == "left"
+                                ? "#707070"
+                                : "#9d9d9d",
+                          }}
+                          onClick={() => {
+                            updateMe('left')
+                            rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].sortAlignment("left");
+                          }}
+                          className="flex h-[30px] transition-all delay-300 hover:bg-[#707070] cursor-pointer bg-[#9d9d9d] items-center justify-center"
+                          title="Alignt Left"
+                        >
+                          <FiAlignLeft color={"#fff"} size={19} />
+                        </button>
+
+                        <button
+                          style={{
+                            backgroundColor:
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].sortAlignment() == "justify"
+                                ? "#707070"
+                                : "#9d9d9d",
+                          }}
+                          onClick={() => {
+                            updateMe("justify");
+                            rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].sortAlignment("justify");
+                          }}
+                          className="flex h-[30px] transition-all delay-300 rounded-tr-[3px] rounded-br-[3px] hover:bg-[#707070] cursor-pointer bg-[#9d9d9d] items-center justify-center"
+                          title="Align Justify"
+                        >
+                          <FiAlignJustify color={"#fff"} size={19} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {Boolean(
+                    rules[Boolean(getRules.length) ? getRules : "body"]
+                      .imgChange
+                  ) && (
+                    <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                      <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                        Image
+                      </span>
+
+                      <div className="w-full flex flex-col">
+                        <div className="w-auto max-h-[200px] flex justify-between items-center">
+                          <div className="flex items-center">
+                            <img
+                              alt="upload image"
+                              width="30"
+                              src="https://bafybeia3s5mb7nixel6hconwjnpqrx2vyzogdwpn64pqugqupcqg2vhxae.ipfs.dweb.link/idiaghegeorge9.png"
+                            />
+
+                            <span className="text-[#979797] ml-[10px] font-bold text-[13px]">
+                              Link Image
+                            </span>
+                          </div>
+                          <input
+                            type="file"
+                            onChange={(e: any) => {
+                              console.log(e.target.files[0]);
+                            }}
+                            className="!hidden updatelink"
+                          />
+                          <Button
+                            sx={{
+                              transition: "all .5s",
+                              textTransform: "capitalize",
+                              fontSize: "13px",
+                              lineHeight: "15px",
+                              backgroundColor: "#979797 !important",
+                              padding: "4px 8px",
+                              color: "#fff",
+                              borderRadius: "0px !important",
+                              fontWeight: "semibold",
+                              ":hover": {
+                                backgroundColor: "#818181 !importan",
+                              },
                             }}
                             onClick={() => {
-                              fetched().then(f => {
-                                console.log(f)
-                              })
+                              const elem = document.querySelector(
+                                ".updateLink"
+                              ) as HTMLInputElement;
+
+                              elem.click();
                             }}
-                            disabled={isFetching}
-                            fullWidth
                           >
-                            Send
+                            update
                           </Button>
-                        </FormControl>
-                      </TabPanel>
-                      <TabPanel value={value} index={1}>
-                        <div
-                          className="empty"
-                          style={{
-                            display: "flex",
-                            width: "100%",
-                            height: "fit-content",
-                            justifyContent: "center",
-                            flexDirection: "column",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Image
-                            src={empty}
-                            className="mb-3"
-                            style={{
-                              width: "300px",
-                            }}
-                            alt="Would Be Released soon"
-                          />
-
-                          <h2 className="mt-2 font-bold">
-                            This Feature would be released soon
-                          </h2>
                         </div>
-                      </TabPanel>
-                      <TabPanel value={value} index={2}>
-                        <div
-                          className="empty"
-                          style={{
-                            display: "flex",
-                            width: "100%",
-                            height: "fit-content",
-                            justifyContent: "center",
-                            flexDirection: "column",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Image
-                            src={empty}
-                            className="mb-3"
-                            style={{
-                              width: "300px",
+                      </div>
+
+                      <div className="mt-[7px]">
+                        <span className="text-[#979797] mr-[11px] font-bold text-[13px]">
+                          border color
+                        </span>
+
+                        <div className="flex cursor-pointer items-center">
+                          {viewColor == "colorBorder" && (
+                            <Color
+                              color={
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ].imgChange().borderColor
+                              }
+                              className="right-[105%] !absolute"
+                              width={100}
+                              height={100}
+                              onChange={(color) => {
+                                updateMe(color);
+                                const dataSent =
+                                  rules[
+                                    Boolean(getRules.length) ? getRules : "body"
+                                  ];
+
+                                dataSent.imgChange({
+                                  borderColor: color.hexa,
+                                  size: dataSent.imgChange().width,
+                                  display:
+                                    dataSent.imgChange().display == "block",
+                                });
+                              }}
+                            />
+                          )}
+
+                          <div
+                            onClick={(e: any) => {
+                              if (viewColor == "colorBorder") {
+                                setViewColor("");
+                              } else {
+                                setViewColor("colorBorder");
+                              }
                             }}
-                            alt="Would Be Released soon"
-                          />
+                            className="border w-fit h-fit p-[3px] border-solid mr-[3px] border-[#bbbbbb24]"
+                          >
+                            <div
+                              style={{
+                                backgroundColor:
+                                  rules[
+                                    Boolean(getRules.length) ? getRules : "body"
+                                  ].imgChange().borderColor,
+                              }}
+                              className="h-[22px] w-[22px]"
+                            ></div>
+                          </div>
 
-                          <h2 className="mt-2 font-bold">
-                            This Feature would be released soon
-                          </h2>
+                          <div
+                            onClick={(e: any) => {
+                              if (viewColor == "colorBorder") {
+                                setViewColor("");
+                              } else {
+                                setViewColor("colorBorder");
+                              }
+                            }}
+                            className="text-[#ababab] text-[12px] p-2 font-bold"
+                          >
+                            {
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].imgChange().borderColor
+                            }
+                          </div>
                         </div>
-                      </TabPanel>
-                    </Box>{" "}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                      </div>
+                      <div className="flex mt-[7px] w-full items-center">
+                        <span className="text-[#979797] mr-[11px] font-bold text-[14px]">
+                          size
+                        </span>
 
-          <div className="w-[25%] h-screen bg-[white] border-l-2 border-[#f57059]">
-            {showMain ? (<div>
-              <div className="flex flex-row w-full bg-[#f5705924] py-4">
-                <div onClick={() => {window.location.href="/dashboard/pages"}} className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></div>
-                <div className="text-[#F57059] font-bold text-2xl w-3/4">Select Component</div>
-              </div>
-              <div className="components mx-2 mt-4">
-                <button className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-2 w-full"
-                  onClick={() => {
-                    setShowTitle(true)
-                    setShowMain(false)
-                    setShowDescription(false)
-                    setShowSocials(false)
-                    setShowButton(false)
-                  }}>
-                  Title
-                </button>
+                        <Slider
+                          min={40}
+                          size="small"
+                          max={156}
+                          value={
+                            rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].imgChange().width
+                          }
+                          onChange={(xx: any) => {
+                            const dx =
+                              rules[getRules.length ? getRules : "body"];
 
-                <button className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-2 w-full"
-                  onClick={() => {
-                    setShowTitle(false)
-                    setShowMain(false)
-                    setShowDescription(false)
-                    setShowSocials(true)
-                    setShowButton(false)
-                  }}>
-                  Social Links
-                </button>
+                            dx.imgChange({
+                              borderColor: dx.imgChange().borderColor,
+                              size: xx.target.value,
+                              display: dx.imgChange().display == "block",
+                            });
+                            updateMe(xx);
+                          }}
+                          sx={{
+                            color: "#979797",
+                            "& .MuiSlider-track, .MuiSlider-rail, .MuiSlider-thumb":
+                              {
+                                backgroundColor: "#979797",
+                              },
+                            "& .MuiSlider-thumb:hover, .MuiSlider-thumb.Mui-focusVisible":
+                              {
+                                boxShadow: "0px 0px 0px 8px rgba(0, 0, 0, 16%)",
+                              },
+                            "& .MuiSlider-thumb.Mui-active": {
+                              boxShadow: "0px 0px 0px 12px rgba(0, 0, 0, 16%)",
+                            },
+                          }}
+                          aria-label="Default"
+                          valueLabelDisplay="auto"
+                        />
+                      </div>
 
-                <button className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-2 w-full"
-                  onClick={() => {
-                    setShowTitle(false)
-                    setShowMain(false)
-                    setShowDescription(true)
-                    setShowSocials(false)
-                    setShowButton(false)
-                  }}>
-                  Description
-                </button>
+                      <div className="flex mt-[7px] w-full justify-between items-center">
+                        <span className="text-[#979797] mr-[11px] font-bold text-[14px]">
+                          Hide Image
+                        </span>
 
-                <button className="border-[#f57059] border-2 rounded-md font-semibold text-xl py-3 px-6 my-2 w-full"
-                  onClick={() => {
-                    setShowTitle(false)
-                    setShowMain(false)
-                    setShowDescription(false)
-                    setShowSocials(false)
-                    setShowButton(true)
-                  }}>
-                  Button
-                </button>
-              </div>
-            </div>) : null}
+                        <Switch
+                          sx={{
+                            "& .MuiSwitch-track, .Mui-checked+.MuiSwitch-track":
+                              {
+                                backgroundColor: "#4d4d4d !important",
+                              },
+                            "& .MuiSwitch-thumb": {
+                              boxShadow:
+                                "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important",
+                            },
+                            "& .Mui-checked": {
+                              color: "#4d4d4d !important",
+                            },
+                          }}
+                          checked={Boolean(
+                            rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].imgChange().display == "none"
+                          )}
+                          onChange={(xx) => {
+                            const exx =
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ];
+                            updateMe(exx.imgChange().display);
 
-            {showTitle ? (
-              <div className="w-full">
-                <div className="flex flex-row w-full bg-[#f5705924] py-4 mb-5">
-                  <button onClick={() => {
-                    setShowTitle(false)
-                    setShowMain(true)
-                    setShowDescription(false)
-                    setShowSocials(false)
-                    setShowButton(false)
-                  }} className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></button>
-                  <div className="text-[#F57059] font-bold text-2xl w-3/4">Title</div>
-                  </div>
-                  <div className="">
-                    <input type="text" />
-                  </div>
-                <div className="w-full px-3">
-                  <button className="py-3 bg-[#f5705924] text-[#f57059] w-full" onClick={() => {
-                    setShowTitle(false)
-                    setShowMain(true)
-                    setShowDescription(false)
-                    setShowSocials(false)
-                    setShowButton(false)
-                  }}>Back</button>
-                  <button className="py-3 bg-[#f57059] text-white w-full my-3">Save</button>
+                            exx.imgChange({
+                              borderColor: exx.imgChange().borderColor,
+                              display: !(exx.imgChange().display == "block"),
+                              size: exx.imgChange().width,
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {Boolean(
+                    rules[Boolean(getRules.length) ? getRules : "body"].height
+                  ) && (
+                    <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                      <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                        Height
+                      </span>
+
+                      <Slider
+                        min={120}
+                        size="small"
+                        max={300}
+                        value={rules[
+                          Boolean(getRules.length) ? getRules : "body"
+                        ].height()}
+                        onChange={(xx: any) => {
+                          const dx = rules[getRules.length ? getRules : "body"];
+
+                          dx.height(xx.target.value);
+
+                          updateMe(xx);
+                        }}
+                        sx={{
+                          color: "#979797",
+                          "& .MuiSlider-track, .MuiSlider-rail, .MuiSlider-thumb":
+                            {
+                              backgroundColor: "#979797",
+                            },
+                          "& .MuiSlider-thumb:hover, .MuiSlider-thumb.Mui-focusVisible":
+                            {
+                              boxShadow: "0px 0px 0px 8px rgba(0, 0, 0, 16%)",
+                            },
+                          "& .MuiSlider-thumb.Mui-active": {
+                            boxShadow: "0px 0px 0px 12px rgba(0, 0, 0, 16%)",
+                          },
+                        }}
+                        aria-label="Default"
+                        valueLabelDisplay="auto"
+                      />
+                    </div>
+                  )}
+
+                  {Boolean(
+                    rules[Boolean(getRules.length) ? getRules : "body"]
+                      .socialAdd
+                  ) && (
+                    <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                      <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                        Socials
+                      </span>
+
+                      <div className="w-full">
+                        <div className="flex w-full justify-between items-center">
+                          <span className="text-[#979797] mr-[11px] font-bold text-[14px]">
+                            Facebook
+                          </span>
+
+                          <Switch
+                            sx={{
+                              "& .MuiSwitch-track, .Mui-checked+.MuiSwitch-track":
+                                {
+                                  backgroundColor: "#4d4d4d !important",
+                                },
+                              "& .MuiSwitch-thumb": {
+                                boxShadow:
+                                  "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important",
+                              },
+                              "& .Mui-checked": {
+                                color: "#4d4d4d !important",
+                              },
+                            }}
+                            checked={
+                              !rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].socialAdd().facebook.hidden
+                            }
+                            onChange={() => {
+                              const obj =
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ];
+                              updateMe(obj.socialAdd().facebook.hidden);
+                              obj.socialAdd({
+                                facebook: {
+                                  link: obj.socialAdd().facebook.link,
+                                  hidden: !obj.socialAdd().facebook.hidden,
+                                },
+                              });
+                            }}
+                          />
+                        </div>
+
+                        <TextField
+                          type="text"
+                          defaultValue={
+                            rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].socialAdd().facebook.link
+                          }
+                          onChange={(xx: any) => {
+                            updateMe(xx.target.value);
+                            if (validator.isURL(xx.target.value)) {
+
+                              const link =
+                                xx.target.value.indexOf("https://") == "-1"
+                                  ? `https://${xx.target.value}`
+                                  : xx.target.value;
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].socialAdd({
+                                facebook: {
+                                  link,
+                                  hidden:
+                                    rules[
+                                      Boolean(getRules.length)
+                                        ? getRules
+                                        : "body"
+                                    ].socialAdd().facebook.hidden,
+                                },
+                              });
+                            }
+                          }}
+                          sx={{
+                            "& .Mui-focused.MuiFormLabel-root": {
+                              color: "#bbbbbbc8",
+                            },
+                            "& .MuiInputBase-root": {
+                              borderRadius: "0px",
+                            },
+                            "& .MuiInputBase-input": {
+                              padding: "3px",
+                              lineHeight: "17px",
+                              fontSize: "13px",
+                            },
+                            "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#bbbbbbc8 !important",
+                              borderWidth: "1px !important",
+                            },
+                          }}
+                          placeholder="profile link"
+                          fullWidth
+                        />
+                      </div>
+
+                      <div className="w-full">
+                        <div className="flex w-full justify-between items-center">
+                          <span className="text-[#979797] mr-[11px] font-bold text-[14px]">
+                            Instagram
+                          </span>
+
+                          <Switch
+                            sx={{
+                              "& .MuiSwitch-track, .Mui-checked+.MuiSwitch-track":
+                                {
+                                  backgroundColor: "#4d4d4d !important",
+                                },
+                              "& .MuiSwitch-thumb": {
+                                boxShadow:
+                                  "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important",
+                              },
+                              "& .Mui-checked": {
+                                color: "#4d4d4d !important",
+                              },
+                            }}
+                            checked={
+                              !rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].socialAdd().instagram.hidden
+                            }
+                            onChange={() => {
+                              const obj =
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ];
+                              updateMe(obj.socialAdd().instagram.hidden);
+                              obj.socialAdd({
+                                instagram: {
+                                  link: obj.socialAdd().instagram.link,
+                                  hidden: !obj.socialAdd().instagram.hidden,
+                                },
+                              });
+                            }}
+                          />
+                        </div>
+
+                        <TextField
+                          type="text"
+                          defaultValue={
+                            rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].socialAdd().instagram.link
+                          }
+                          onChange={(xx: any) => {
+                            updateMe(xx.target.value);
+                            if (validator.isURL(xx.target.value)) {
+
+                              const link = xx.target.value.indexOf("https://") == '-1' ? `https://${xx.target.value}` : xx.target.value;
+
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].socialAdd({
+                                instagram: {
+                                  link,
+                                  hidden:
+                                    rules[
+                                      Boolean(getRules.length)
+                                        ? getRules
+                                        : "body"
+                                    ].socialAdd().instagram.hidden,
+                                },
+                              });
+                            }
+                          }}
+                          sx={{
+                            "& .Mui-focused.MuiFormLabel-root": {
+                              color: "#bbbbbbc8",
+                            },
+                            "& .MuiInputBase-root": {
+                              borderRadius: "0px",
+                            },
+                            "& .MuiInputBase-input": {
+                              padding: "3px",
+                              lineHeight: "17px",
+                              fontSize: "13px",
+                            },
+                            "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#bbbbbbc8 !important",
+                              borderWidth: "1px !important",
+                            },
+                          }}
+                          fullWidth
+                          placeholder="profile link"
+                        />
+                      </div>
+
+                      <div className="w-full">
+                        <div className="flex w-full justify-between items-center">
+                          <span className="text-[#979797] mr-[11px] font-bold text-[14px]">
+                            LinkedIn
+                          </span>
+
+                          <Switch
+                            sx={{
+                              "& .MuiSwitch-track, .Mui-checked+.MuiSwitch-track":
+                                {
+                                  backgroundColor: "#4d4d4d !important",
+                                },
+                              "& .MuiSwitch-thumb": {
+                                boxShadow:
+                                  "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important",
+                              },
+                              "& .Mui-checked": {
+                                color: "#4d4d4d !important",
+                              },
+                            }}
+                            checked={
+                              !rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].socialAdd().linkedin.hidden
+                            }
+                            onChange={() => {
+                              const obj =
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ];
+                              updateMe(obj.socialAdd().linkedin.hidden);
+                              obj.socialAdd({
+                                linkedin: {
+                                  link: obj.socialAdd().linkedin.link,
+                                  hidden: !obj.socialAdd().linkedin.hidden,
+                                },
+                              });
+                            }}
+                          />
+                        </div>
+
+                        <TextField
+                          type="text"
+                          defaultValue={
+                            rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].socialAdd().linkedin.link
+                          }
+                          onChange={(xx: any) => {
+                            updateMe(xx.target.value);
+                            if (validator.isURL(xx.target.value)) {
+
+                              const link = xx.target.value.indexOf("https://") == '-1' ? `https://${xx.target.value}` : xx.target.value;
+
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].socialAdd({
+                                linkedin: {
+                                  link,
+                                  hidden:
+                                    rules[
+                                      Boolean(getRules.length)
+                                        ? getRules
+                                        : "body"
+                                    ].socialAdd().linkedin.hidden,
+                                },
+                              });
+                            }
+                          }}
+                          sx={{
+                            "& .Mui-focused.MuiFormLabel-root": {
+                              color: "#bbbbbbc8",
+                            },
+                            "& .MuiInputBase-root": {
+                              borderRadius: "0px",
+                            },
+                            "& .MuiInputBase-input": {
+                              padding: "3px",
+                              lineHeight: "17px",
+                              fontSize: "13px",
+                            },
+                            "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#bbbbbbc8 !important",
+                              borderWidth: "1px !important",
+                            },
+                          }}
+                          fullWidth
+                          placeholder="profile link"
+                        />
+                      </div>
+
+                      <div className="w-full">
+                        <div className="flex w-full justify-between items-center">
+                          <span className="text-[#979797] mr-[11px] font-bold text-[14px]">
+                            Twitter
+                          </span>
+
+                          <Switch
+                            sx={{
+                              "& .MuiSwitch-track, .Mui-checked+.MuiSwitch-track":
+                                {
+                                  backgroundColor: "#4d4d4d !important",
+                                },
+                              "& .MuiSwitch-thumb": {
+                                boxShadow:
+                                  "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important",
+                              },
+                              "& .Mui-checked": {
+                                color: "#4d4d4d !important",
+                              },
+                            }}
+                            checked={
+                              !rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].socialAdd().twitter.hidden
+                            }
+                            onChange={(vc) => {
+                              const obj =
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ];
+                              updateMe(vc);
+
+                              obj.socialAdd({
+                                twitter: {
+                                  link: obj.socialAdd().twitter.link,
+                                  hidden: !obj.socialAdd().twitter.hidden,
+                                },
+                              });
+                            }}
+                          />
+                        </div>
+
+                        <TextField
+                          type="text"
+                          defaultValue={
+                            rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].socialAdd().twitter.link
+                          }
+                          onChange={(xx: any) => {
+                            updateMe(xx.target.value);
+                            if (validator.isURL(xx.target.value)) {
+
+                              const link = xx.target.value.indexOf("https://") == '-1' ? `https://${xx.target.value}` : xx.target.value;
+
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].socialAdd({
+                                twitter: {
+                                  link,
+                                  hidden:
+                                    rules[
+                                      Boolean(getRules.length)
+                                        ? getRules
+                                        : "body"
+                                    ].socialAdd().twitter.hidden,
+                                },
+                              });
+                            }
+                          }}
+                          sx={{
+                            "& .Mui-focused.MuiFormLabel-root": {
+                              color: "#bbbbbbc8",
+                            },
+                            "& .MuiInputBase-root": {
+                              borderRadius: "0px",
+                            },
+                            "& .MuiInputBase-input": {
+                              padding: "3px",
+                              lineHeight: "17px",
+                              fontSize: "13px",
+                            },
+                            "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#bbbbbbc8 !important",
+                              borderWidth: "1px !important",
+                            },
+                          }}
+                          fullWidth
+                          placeholder="profile link"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {Boolean(
+                    rules[Boolean(getRules.length) ? getRules : "body"].hide
+                  ) && (
+                    <div className="flex w-full px-3 py-2 border-b border-solid border-[#bbbbbb24] justify-between items-center">
+                      <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                        Hide
+                      </span>
+
+                      <Switch
+                        sx={{
+                          "& .MuiSwitch-track, .Mui-checked+.MuiSwitch-track": {
+                            backgroundColor: "#4d4d4d !important",
+                          },
+                          "& .MuiSwitch-thumb": {
+                            boxShadow:
+                              "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important",
+                          },
+                          "& .Mui-checked": {
+                            color: "#4d4d4d !important",
+                          },
+                        }}
+                        checked={Boolean(
+                          rules[
+                            Boolean(getRules.length) ? getRules : "body"
+                          ].hide() == "none"
+                        )}
+                        onChange={(xx) => {
+                          const exx =
+                            rules[Boolean(getRules.length) ? getRules : "body"];
+                          updateMe(exx.hide());
+
+                          exx.hide(!(exx.hide() == "block"));
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                    <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                      Add Text
+                    </span>
+
+                    <div className="flex w-full items-center">
+                      <TextField
+                        type="textarea"
+                        sx={{
+                          "& .Mui-focused.MuiFormLabel-root": {
+                            color: "#bbbbbbc8",
+                          },
+                          "& .MuiInputBase-root": {
+                            borderRadius: "0px",
+                          },
+                          "& .MuiOutlinedInput-root": {
+                            padding: "3px",
+                          },
+                          "& .MuiInputBase-input, .MuiOutlinedInput-root": {
+                            lineHeight: "17px",
+                            fontSize: "13px",
+                          },
+                          "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#bbbbbbc8 !important",
+                            borderWidth: "1px !important",
+                          },
+                        }}
+                        fullWidth
+                        multiline
+                      />
+
+                      <IconButton
+                        className="ml-3"
+                        size="large"
+                        onClick={() => {
+                          console.log("here");
+                        }}
+                      >
+                        <RiDeleteBin5Line
+                          color="#888888"
+                          className="cursor-pointer transition-all delay-400 hover:fill-[#494949] hover:text-[#494949]"
+                          size={19}
+                        />
+                      </IconButton>
+                    </div>
+                  </div> */}
+
+                  {/* <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                    <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                      Width
+                    </span>
+
+                    <Slider
+                      min={10}
+                      size="small"
+                      max={300}
+                      defaultValue={50}
+                      sx={{
+                        color: "#979797",
+                        "& .MuiSlider-track, .MuiSlider-rail, .MuiSlider-thumb":
+                          {
+                            backgroundColor: "#979797",
+                          },
+                        "& .MuiSlider-thumb:hover, .MuiSlider-thumb.Mui-focusVisible":
+                          {
+                            boxShadow: "0px 0px 0px 8px rgba(0, 0, 0, 16%)",
+                          },
+                        "& .MuiSlider-thumb.Mui-active": {
+                          boxShadow: "0px 0px 0px 12px rgba(0, 0, 0, 16%)",
+                        },
+                      }}
+                      aria-label="Default"
+                      valueLabelDisplay="auto"
+                    />
+                  </div> */}
+
+                  {Boolean(
+                    rules[Boolean(getRules.length) ? getRules : "body"]
+                      .colorScheme
+                  ) && (
+                    <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                      <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                        Color Scheme
+                      </span>
+
+                      <div className="flex relative cursor-pointer items-center">
+                        {viewColor == "colorScheme" && (
+                          <Color
+                            color={rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].colorScheme()}
+                            className="right-[120%] !absolute"
+                            width={100}
+                            height={100}
+                            onChange={(color) => {
+                              updateMe(color);
+
+                              rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].colorScheme(color.hexa);
+                            }}
+                          />
+                        )}
+
+                        <div
+                          onClick={(e: any) => {
+                            if (viewColor == "colorScheme") {
+                              setViewColor("");
+                            } else {
+                              setViewColor("colorScheme");
+                            }
+                          }}
+                          className="border w-fit h-fit p-[3px] border-solid mr-[3px] border-[#bbbbbb24]"
+                        >
+                          <div
+                            style={{
+                              backgroundColor:
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ].colorScheme(),
+                            }}
+                            className="h-[22px] w-[22px]"
+                          ></div>
+                        </div>
+
+                        <div
+                          onClick={(e: any) => {
+                            if (viewColor == "colorScheme") {
+                              setViewColor("");
+                            } else {
+                              setViewColor("colorScheme");
+                            }
+                          }}
+                          className="text-[#9d9d9d] p-2 font-bold"
+                        >
+                          {rules[
+                            Boolean(getRules.length) ? getRules : "body"
+                          ].colorScheme()}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {!Boolean(getRules.length) && (
+                    <>
+                      {editable.map((elem: string, key: number) => (
+                        <div
+                          key={key}
+                          className="w-full py-2 border-b border-solid border-[#bbbbbb24]"
+                        >
+                          <button
+                            className={`font-semibold ${style.cus_item} cursor-pointer text-xl justify-between pl-3 pr-2 transition-all delay-350 items-center hover:bg-[#e7e7e752] py-[5px] w-full flex`}
+                            onClick={() => {
+                              setPart(elem);
+                            }}
+                          >
+                            <span className="#575757 font-[300] text-[15px]">
+                              {elem.replace('_', ' ')}
+                            </span>
+
+                            <div
+                              className={`relative ${style.cus_angle} right-[4px] transition-all delay-350 h-[30px] w-[35px] bg-[#00000014] flex items-center justify-center rounded-lg`}
+                            >
+                              <MdChevronRight color="#767676" size={18} />
+                            </div>
+                          </button>
+                        </div>
+                      ))}
+                    </>
+                  )}
                 </div>
               </div>
-            ) : null}
-            {showButton ? (
-              <div><div className="flex flex-row w-full bg-[#f5705924] py-4 mb-5">
-                <button onClick={() => {
-                  setShowTitle(false)
-                  setShowMain(true)
-                  setShowDescription(false)
-                  setShowSocials(false)
-                  setShowButton(false)
-                }} className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></button>
-                <div className="text-[#F57059] font-bold text-2xl w-3/4">Buttons</div>
-              </div>
-                <div className="w-full px-3">
-                  <button className="py-3 bg-[#f5705924] text-[#f57059] w-full" onClick={() => {
-                    setShowTitle(false)
-                    setShowMain(true)
-                    setShowDescription(false)
-                    setShowSocials(false)
-                    setShowButton(false)
-                  }}>Back</button>
-                  <button className="py-3 bg-[#f57059] text-white w-full my-3">Save</button>
-                </div>
-              </div>
-            ) : null}
-            {showSocials ? (
-              <div><div className="flex flex-row w-full bg-[#f5705924] py-4 mb-5">
-                <button onClick={() => {
-                  setShowTitle(false)
-                  setShowMain(true)
-                  setShowDescription(false)
-                  setShowSocials(false)
-                  setShowButton(false)
-                }} className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></button>
-                <div className="text-[#F57059] font-bold text-2xl w-3/4">Social Links</div>
-              </div>
-                <div className="w-full px-3">
-                  <button className="py-3 bg-[#f5705924] text-[#f57059] w-full" onClick={() => {
-                    setShowTitle(false)
-                    setShowMain(true)
-                    setShowDescription(false)
-                    setShowSocials(false)
-                    setShowButton(false)
-                  }}>Back</button>
-                  <button className="py-3 bg-[#f57059] text-white w-full my-3">Save</button>
-                </div>
-              </div>
-            ) : null}
-            {showDescription ? (
-              <div><div className="flex flex-row w-full bg-[#f5705924] py-4 mb-5">
-                <button onClick={() => {
-                  setShowTitle(false)
-                  setShowMain(true)
-                  setShowDescription(false)
-                  setShowSocials(false)
-                  setShowButton(false)
-                }} className="w-1/4"><FaAngleLeft color="#f57059" size={30} /></button>
-                <div className="text-[#F57059] font-bold text-2xl w-3/4">Description</div>
-                </div>
-                  <div className="w-full px-3 my-5">
-                    <textarea className="w-full h-[100px] text-lg border-[#f5705924] border-2 rounded-sm focus:border-[#f57059] focus:border-2" value={description} />
-                  </div>
-                <div className="w-full px-3">
-                  <button className="py-3 bg-[#f5705924] text-[#f57059] w-full" onClick={() => {
-                    setShowTitle(false)
-                    setShowMain(true)
-                    setShowDescription(false)
-                    setShowSocials(false)
-                    setShowButton(false)
-                  }}>Back</button>
-                  <button className="py-3 bg-[#f57059] text-white w-full my-3">Save</button>
-                </div>
-              </div>
-            ) : null}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
 export default EditPage;
+

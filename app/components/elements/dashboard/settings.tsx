@@ -3,9 +3,10 @@
 import { useState } from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
-import { IoMdClose } from 'react-icons/io';
+import { IoMdClose } from "react-icons/io";
 import { useMoralis } from "react-moralis";
-import { makeStorageClient } from "../../functions/clients";
+import { makeStorageClient } from "../../../functions/clients";
+
 import { MdVisibilityOff, MdVisibility } from "react-icons/md";
 import {
   Button,
@@ -19,32 +20,33 @@ import {
   Box,
   TextField,
   LinearProgress,
-  Alert
+  Alert,
 } from "@mui/material";
-import Image from 'next/image';
+import Image from "next/image";
 
 interface PixelCrop {
   x: number;
-    y: number;
-    width: number;
-    height: number;
-    unit: 'px';
+  y: number;
+  width: number;
+  height: number;
+  unit: "px";
 }
 
 const DashSettings = () => {
-
-
   const { Moralis, user } = useMoralis();
-  const [dp, setDp] = useState<string | undefined>(user?.get('img')); 
+  const [dp, setDp] = useState<string | undefined>(user?.get("img"));
   const [userLink, setUserLink] = useState("");
   const [userDescription, setUserDescription] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userInfo, setuserInfo] = useState("");
   const [isLoading, setLoading] = useState({
-    account: false, security: false, link: false, progress: [0, 0]
+    account: false,
+    security: false,
+    link: false,
+    progress: [0, 0],
   });
   const [crop, setCrop] = useState<PixelCrop>();
-  const [simg, setsImg] = useState<string | undefined>('');
+  const [simg, setsImg] = useState<string | undefined>("");
   const [iimg, setIiimg] = useState({});
   const [result, setResult] = useState(null);
 
@@ -53,185 +55,193 @@ const DashSettings = () => {
   const handleOpenM = () => setOpenM(true);
   const handleCloseM = () => setOpenM(false);
 
-
   const [error, setError] = useState({
-    account: "", security: "", link: ""
+    account: "",
+    security: "",
+    link: "",
   });
 
   const [success, setSuccess] = useState({
-    account: "", security: "", link: ""
+    account: "",
+    security: "",
+    link: "",
   });
 
-
   const submitAccount = async () => {
-      document.querySelector('#account_sett')?.scrollIntoView();
-      window.scrollTo(0, 0);
-      setError({
-        ...error,
-        account: ""
-      });
-      setSuccess({
-       ...success, account: ""
-      });
-      let more = true;
-      setLoading({...isLoading, account: true});
+    document.querySelector("#account_sett")?.scrollIntoView();
+    window.scrollTo(0, 0);
+    setError({
+      ...error,
+      account: "",
+    });
+    setSuccess({
+      ...success,
+      account: "",
+    });
+    let more = true;
+    setLoading({ ...isLoading, account: true });
 
-      [userInfo, userEmail].forEach(d => {
-          if(!d.length) {  
-              setError(
-                  {...error, account: "Data Incomplete, Please required fields should be field" }
-                );
-                
-                setLoading({...isLoading, account: false });
-                more = false;
-          }
-      });
+    [userInfo, userEmail].forEach((d) => {
+      if (!d.length) {
+        setError({
+          ...error,
+          account: "Data Incomplete, Please required fields should be field",
+        });
 
-      if (more) {
-          if (userEmail.match(/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/) === null) {
-              setError(
-                {...error, account: "Email Address Is Incorrect"}
-              );
-              setLoading({ ...isLoading, account: false });
-              
-          }
+        setLoading({ ...isLoading, account: false });
+        more = false;
+      }
+    });
 
-        if(!error['account'].length){
-            
-        try{
+    if (more) {
+      if (
+        userEmail.match(
+          /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/
+        ) === null
+      ) {
+        setError({ ...error, account: "Email Address Is Incorrect" });
+        setLoading({ ...isLoading, account: false });
+      }
+
+      if (!error["account"].length) {
+        try {
           user?.set("username", userInfo);
           user?.set("email", userEmail);
           await user?.save();
-        
-            setSuccess({...success, account: "Account Details Saved Successfully"})
-            setLoading({ ...isLoading, account: false });
-        } catch(err){
-          const erro = err as Error;
-            setError({ ...error, account: erro?.message });
-              setLoading({...isLoading, account: false });
-        }
 
+          setSuccess({
+            ...success,
+            account: "Account Details Saved Successfully",
+          });
+          setLoading({ ...isLoading, account: false });
+        } catch (err) {
+          const erro = err as Error;
+          setError({ ...error, account: erro?.message });
+          setLoading({ ...isLoading, account: false });
+        }
       }
     }
-  }
+  };
 
-   const imgCrop = (event:React.SyntheticEvent & { target: HTMLInputElement }) => {
-      handleOpenM();
-      
-      if(event.target.files !== null) {
-      const fil = event.target.files[0]; 
-     const {type, size} = fil;
-     const ee = ['image/jpeg', 'image/jpg', 'image/png'];
+  const imgCrop = (
+    event: React.SyntheticEvent & { target: HTMLInputElement }
+  ) => {
+    handleOpenM();
 
-     if(!ee.includes(type)){
-          setError({
-            ...error,
-            account: "Only JPEG, jpg, and png image types are accepted"
-          });
-          return;  
-     }
+    if (event.target.files !== null) {
+      const fil = event.target.files[0];
+      const { type, size } = fil;
+      const ee = ["image/jpeg", "image/jpg", "image/png"];
 
-     if (size > 5243880) {
-      setError({ ...error, account: "Image Size Exceeds The Limit Of 5mb" });
-       return;
-     }
+      if (!ee.includes(type)) {
+        setError({
+          ...error,
+          account: "Only JPEG, jpg, and png image types are accepted",
+        });
+        return;
+      }
 
-     setsImg(URL.createObjectURL(fil));
-     setIiimg(fil);
+      if (size > 5243880) {
+        setError({ ...error, account: "Image Size Exceeds The Limit Of 5mb" });
+        return;
+      }
 
-   };
-  }
+      setsImg(URL.createObjectURL(fil));
+      setIiimg(fil);
+    }
+  };
 
+  const beginUpload = async (files: File[], type: string) => {
+    const { size: totalSize } = files[0];
 
-     const beginUpload = async (files:File[], type:string) => {
-       const { size: totalSize } = files[0];
-  
+    const onRootCidReady = (cid: string) => {
+      setError({ ...error, account: "" });
+      setSuccess({
+        ...success,
+        account:
+          "Image Uploaded Successfully, might take a while to fully reflect",
+      });
+      const img = `https://${cid}.ipfs.dweb.link/${user?.get(
+        "username"
+      )}.${type}`;
+      setDp(img);
+      user?.set("img", img);
 
-       const onRootCidReady = (cid:string) => {
-         setError({ ...error, account: "" });
-         setSuccess({ ...success, account: "Image Uploaded Successfully, might take a while to fully reflect"});         
-          const img = `https://${cid}.ipfs.dweb.link/${user?.get("username")}.${type}`;     
-         setDp(img);
-         user?.set("img", img);
+      user?.save();
 
-         user?.save()
-         
-        handleCloseM();
-       };
+      handleCloseM();
+    };
 
-       let uploaded = 0;
+    let uploaded = 0;
 
-       const onStoredChunk = (size:number) => {
-         uploaded += size;
+    const onStoredChunk = (size: number) => {
+      uploaded += size;
 
-         const pct = (totalSize / uploaded) * 100;
+      const pct = (totalSize / uploaded) * 100;
 
-         console.log(`Uploading... ${pct.toFixed(2)}% complete`);
+      console.log(`Uploading... ${pct.toFixed(2)}% complete`);
 
-         setLoading({...isLoading, progress: [pct, uploaded]})
+      setLoading({ ...isLoading, progress: [pct, uploaded] });
+    };
 
-       };
+    const client = makeStorageClient(
+      await Moralis.Cloud.run("getWeb3StorageKey")
+    );
 
-       const client = makeStorageClient(
-         await Moralis.Cloud.run("getWeb3StorageKey")
-       );
+    return client.put(files, { onRootCidReady, onStoredChunk });
+  };
 
-       return client.put(files, { onRootCidReady, onStoredChunk });
-     }; 
+  const cropImg = () => {
+    const img = document.querySelector(".img") as HTMLImageElement;
+    try {
+      const canvas = document.createElement("canvas") as HTMLCanvasElement;
+      const scaleX = img.naturalWidth / img.width;
+      const scaleY = img.naturalHeight / img.height;
+      canvas.width = crop?.width === undefined ? 0 : crop?.width;
+      canvas.height = crop?.height === undefined ? 0 : crop?.height;
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(
+        img,
+        (crop?.x !== undefined ? crop?.x : 0) * scaleX,
+        (crop?.y !== undefined ? crop?.y : 0) * scaleY,
+        (crop?.width !== undefined ? crop?.width : 0) * scaleX,
+        (crop?.height !== undefined ? crop?.height : 0) * scaleY,
+        0,
+        0,
+        crop?.width !== undefined ? crop?.width : 0,
+        crop?.height !== undefined ? crop?.height : 0
+      );
 
-
-     const cropImg = () => {
-       const img = document.querySelector(".img") as HTMLImageElement;
-       try {
-         const canvas = document.createElement("canvas") as HTMLCanvasElement;
-         const scaleX = img.naturalWidth / img.width;
-         const scaleY = img.naturalHeight / img.height;
-         canvas.width = crop?.width === undefined ? 0 : crop?.width;
-         canvas.height = crop?.height === undefined ? 0 : crop?.height;
-         const ctx = canvas.getContext("2d");
-         ctx?.drawImage(
-           img,
-           (crop?.x !== undefined ? crop?.x : 0) * scaleX,
-           (crop?.y !== undefined ? crop?.y : 0) * scaleY,
-           (crop?.width !== undefined ? crop?.width : 0) * scaleX,
-           (crop?.height !== undefined ? crop?.height : 0) * scaleY,
-           0,
-           0,
-           (crop?.width !== undefined ? crop?.width : 0),
-           (crop?.height !== undefined ? crop?.height : 0)
-         );
-         
-         const { type }:{type?:string} = iimg || {};
-         const ext = type?.split("/");
-         canvas.toBlob(
-           (blob) => {
-            if(blob !== null && ext !== undefined) {
-             const files = [new File([blob], `${user?.get('username')}.${ext[1]}`)];
-             beginUpload(files, ext[1]);
-            }
-           },
-           type,
-           1
-         );
-   
-
-       } catch (e) {
-        const err = e as Error
-         setError({ ...error, account: err?.message });
-       }
-     };
-
+      const { type }: { type?: string } = iimg || {};
+      const ext = type?.split("/");
+      canvas.toBlob(
+        (blob) => {
+          if (blob !== null && ext !== undefined) {
+            const files = [
+              new File([blob], `${user?.get("username")}.${ext[1]}`),
+            ];
+            beginUpload(files, ext[1]);
+          }
+        },
+        type,
+        1
+      );
+    } catch (e) {
+      const err = e as Error;
+      setError({ ...error, account: err?.message });
+    }
+  };
 
   const submitLink = async () => {
     document.querySelector("#link_sett")?.scrollIntoView();
     window.scrollTo(0, 0);
     setError({
       ...error,
-      link: ""
+      link: "",
     });
     setSuccess({
       ...success,
-      link: ""
+      link: "",
     });
     let more = true;
     setLoading({ ...isLoading, link: true });
@@ -239,7 +249,7 @@ const DashSettings = () => {
       if (!d.length) {
         setError({
           ...error,
-          link: "Data Incomplete, Please required fields should be field"
+          link: "Data Incomplete, Please required fields should be field",
         });
         setLoading({ ...isLoading, link: false });
         more = false;
@@ -247,27 +257,28 @@ const DashSettings = () => {
     });
 
     if (more) {
-      if (
-        userDescription.length < 50
-      ) {
-        setError({ ...error, link: "Atleast 50 characters are required in your description" });
-        setLoading({  ...isLoading, link: false });
+      if (userDescription.length < 50) {
+        setError({
+          ...error,
+          link: "Atleast 50 characters are required in your description",
+        });
+        setLoading({ ...isLoading, link: false });
       }
 
       if (!error["link"].length) {
         const Links = Moralis.Object.extend("link");
         const link = new Links();
-          link?.set("link", userLink);
-          user?.set('desc', userDescription);
-     
+        link?.set("link", userLink);
+        user?.set("desc", userDescription);
+
         try {
           await link?.save();
           await user?.save();
           setSuccess({
             ...success,
-            link: "Link Details Saved Successfully"
+            link: "Link Details Saved Successfully",
           });
-          
+
           setLoading({ ...isLoading, link: false });
         } catch (err) {
           const erro = err as Error;
@@ -278,11 +289,9 @@ const DashSettings = () => {
     }
   };
 
- 
-  const username = user?.get('username');
-  const email = user?.get('email');
-  const desc = user?.get('desc');
-
+  const username = user?.get("username");
+  const email = user?.get("email");
+  const desc = user?.get("desc");
 
   return (
     <div className="2sm:pr-1 pt-[75px] sett dashbody cusscroller overflow-y-scroll overflow-x-hidden px-5 pb-5 h-[calc(100%-75px)]">
@@ -340,9 +349,10 @@ const DashSettings = () => {
               setCrop(c);
             }}
           >
-            <Image className="img w-full m-auto !max-h-[calc(100vh-128px)] min-w-[340px]"
+            <Image
+              className="img w-full m-auto !max-h-[calc(100vh-128px)] min-w-[340px]"
               alt="crop me"
-              src={(simg ? simg : '')}
+              src={simg ? simg : ""}
             />
           </ReactCrop>
 
@@ -422,11 +432,24 @@ const DashSettings = () => {
                             <TextField
                               className="bg-[white]"
                               label={"Username"}
+                              sx={{
+                                "& .Mui-focused.MuiFormLabel-root": {
+                                  color: "#f57059",
+                                },
+                                "& .Mui-focused .MuiOutlinedInput-notchedOutline":
+                                  {
+                                    borderColor: `#f57059 !important`,
+                                  },
+                              }}
                               value={userInfo}
                               fullWidth
                               placeholder={username}
                               name="username"
-                              onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                              onChange={(
+                                e: React.ChangeEvent<
+                                  HTMLInputElement | HTMLTextAreaElement
+                                >
+                              ) => {
                                 setError({
                                   ...error,
                                   account: "",
@@ -448,10 +471,23 @@ const DashSettings = () => {
                           <div className="flex">
                             <TextField
                               className="bg-[white]"
+                              sx={{
+                                "& .Mui-focused.MuiFormLabel-root": {
+                                  color: "#f57059",
+                                },
+                                "& .Mui-focused .MuiOutlinedInput-notchedOutline":
+                                  {
+                                    borderColor: `#f57059 !important`,
+                                  },
+                              }}
                               label={"Email"}
                               placeholder={email}
                               value={userEmail}
-                              onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                              onChange={(
+                                e: React.ChangeEvent<
+                                  HTMLInputElement | HTMLTextAreaElement
+                                >
+                              ) => {
                                 setUserEmail(e.target.value);
                                 setError({
                                   ...error,
@@ -516,9 +552,11 @@ const DashSettings = () => {
 
                         <Button
                           onClick={() => {
-                           let element = document.querySelector(".dpp") as HTMLInputElement;
+                            let element = document.querySelector(
+                              ".dpp"
+                            ) as HTMLInputElement;
 
-                           element.click();
+                            element.click();
                           }}
                           variant="contained"
                           className="!text-sm !rounded-lg !capitalize !bg-[#F57059] !text-white !font-semibold p-[10px]"
@@ -590,7 +628,11 @@ const DashSettings = () => {
                           placeholder={desc}
                           name="Link"
                           label="Link"
-                          onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                          onChange={(
+                            e: React.ChangeEvent<
+                              HTMLInputElement | HTMLTextAreaElement
+                            >
+                          ) => {
                             const lk = e.target.value;
                             setUserLink(
                               lk.replace(/[/\\.@#&?;,:"'~*^%|]/g, "")
@@ -626,8 +668,20 @@ const DashSettings = () => {
                           className="bg-[white]"
                           label={"Description"}
                           placeholder={desc}
+                          sx={{
+                            "& .Mui-focused.MuiFormLabel-root": {
+                              color: "#f57059",
+                            },
+                            "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: `#f57059 !important`,
+                            },
+                          }}
                           value={userDescription}
-                          onChange={(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                          onChange={(
+                            e: React.ChangeEvent<
+                              HTMLInputElement | HTMLTextAreaElement
+                            >
+                          ) => {
                             setUserDescription(e.target.value);
                             setError({
                               ...error,
@@ -661,7 +715,6 @@ const DashSettings = () => {
             </div>
           </form>
         </div>
-
       </div>
     </div>
   );

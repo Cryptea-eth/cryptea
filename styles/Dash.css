@@ -16,9 +16,6 @@ body{
     padding:5px;
 }
 
-.css-md26zr-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: #F57059 !important;
-}
 
 .css-sxh3gq-MuiAvatar-root-MuiAvatarGroup-avatar{
     height:30px !important;

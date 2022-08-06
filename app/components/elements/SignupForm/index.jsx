@@ -143,6 +143,14 @@ const SignupForm = () => {
                     label={"Username"}
                     value={userInfo}
                     fullWidth
+                    sx={{
+                      "& .Mui-focused.MuiFormLabel-root": {
+                        color: "#f57059",
+                      },
+                      "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: `#f57059 !important`,
+                      },
+                    }}
                     placeholder="wagmi.eth"
                     name="username"
                     onChange={(e) => {
@@ -163,6 +171,14 @@ const SignupForm = () => {
                       setUserDescription(e.target.value);
                       setError("");
                     }}
+                    sx={{
+                      "& .Mui-focused.MuiFormLabel-root": {
+                        color: "#f57059",
+                      },
+                      "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: `#f57059 !important`,
+                      },
+                    }}
                     name="desc"
                     fullWidth
                     multiline
@@ -175,6 +191,14 @@ const SignupForm = () => {
                     label={"Email"}
                     placeholder="wagmi@ngmi.eth"
                     value={userEmail}
+                    sx={{
+                      "& .Mui-focused.MuiFormLabel-root": {
+                        color: "#f57059",
+                      },
+                      "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: `#f57059 !important`,
+                      },
+                    }}
                     onChange={(e) => {
                       setUserEmail(e.target.value);
                       setError("");
@@ -184,7 +208,6 @@ const SignupForm = () => {
                   />
                 </div>
               </div>
-
             </div>
           </div>
           <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">
@@ -205,6 +228,14 @@ const SignupForm = () => {
                 <TextField
                   label={"Enter Link Slug"}
                   placeholder="wagmi"
+                  sx={{
+                    "& .Mui-focused.MuiFormLabel-root": {
+                      color: "#f57059",
+                    },
+                    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: `#f57059 !important`,
+                    },
+                  }}
                   value={userLink}
                   onChange={(e) => {
                     const lk = e.target.value;
