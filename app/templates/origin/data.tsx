@@ -43,6 +43,7 @@ data = {
     bgcolor: data.colorScheme,
     width: 140,
     height: 140,
+    src: '',
   },
   header: {
     fontSize: 36,
@@ -97,10 +98,11 @@ data = {
       link: "",
       hidden: false,
     },
-    backgroundColor: data.colorScheme
+    backgroundColor: data.colorScheme,
   },
   ...data,
 };
+
 
 const rules: { [index: string]: any } = {
   body: {
@@ -118,14 +120,20 @@ const rules: { [index: string]: any } = {
       borderColor: string;
       size: number;
       display?: boolean;
+      src?: string
     }) => {
       if (newD !== undefined) {
         data.linkImage = {
           ...data.linkImage,
           borderColor: newD.borderColor,
-          display: newD?.display ? "block" : "none",
+          display: newD?.display ? "block" : "none"
         };
-        data.image = { ...data.image, width: newD.size, height: newD.size };
+        data.image = {
+          ...data.image,
+          width: newD.size,
+          height: newD.size,
+          src: newD?.src
+        };
       } else {
         return { ...data.image, ...data.linkImage };
       }
@@ -297,5 +305,6 @@ const rules: { [index: string]: any } = {
   },
 };
 
+const template = "origins";
 
-export { data, rules };
+export { data, rules, template };

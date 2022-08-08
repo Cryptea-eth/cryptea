@@ -8933,8 +8933,10 @@
   "resolved" "https://repo.huaweicloud.com/repository/npm/mock-fs/-/mock-fs-4.14.0.tgz"
   "version" "4.14.0"
 
-"moralis@^1.8.0", "moralis@>=1.8.0":
-  "version" "1.8.1"
+"moralis@^1.11.0", "moralis@>=1.8.0":
+  "integrity" "sha512-oqoKqP47RuHq+SnztN48+YgWsKLt1YBy7IfeSBOixUW0Tzn9RQDjNKpkSBcKFttNZQ/KzCEes6TCqA9IxSoTPQ=="
+  "resolved" "https://registry.npmjs.org/moralis/-/moralis-1.11.0.tgz"
+  "version" "1.11.0"
   dependencies:
     "@babel/runtime" "7.16.7"
     "@babel/runtime-corejs3" "7.16.8"

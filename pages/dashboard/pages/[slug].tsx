@@ -1,6 +1,16 @@
 import Head from 'next/head';
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
-import { TextField, IconButton, Button, Slider, Switch } from "@mui/material";
+import {
+  TextField,
+  IconButton,
+  Button,
+  Slider,
+  Box,
+  Switch,
+  CircularProgress,
+  LinearProgress,
+  Alert,
+} from "@mui/material";
 import { useRouter } from 'next/router';
 import { FiAlignCenter, FiAlignJustify, FiAlignLeft, FiAlignRight } from "react-icons/fi";
 import Color from "@uiw/react-color-colorful";
@@ -9,8 +19,12 @@ import { useState, useEffect } from "react";
 import validator from 'validator';
 import Origin from '../../../app/templates/origin';
 import style from "../../../styles/custom.module.css";
-import { data, rules } from '../../../app/templates/origin/data'
+import { data, rules, template } from '../../../app/templates/origin/data';
 import { RiDeleteBin5Line } from 'react-icons/ri';
+import { useMoralis } from 'react-moralis';
+import ReactCrop, { PixelCrop } from 'react-image-crop';
+import "react-image-crop/dist/ReactCrop.css";
+import { makeStorageClient } from '../../../app/functions/clients';
 
 
 let editable: string[] = [];
@@ -23,10 +37,53 @@ let editable: string[] = [];
 
 const EditPage = () => {
 
+  const { Moralis, isInitialized, isAuthenticated } = useMoralis()
+  const [data, setData] = useState<any>({});
+  const [crop, setCrop] = useState<PixelCrop>({
+      width: 50,
+      unit: 'px',
+      height: 50,
+      x: 0,
+      y: 0
+  });
+  const [simg, setsImg] = useState<string | undefined>("");
+
+  useEffect(() => {
+
+      if (isInitialized) {
+        if (!isAuthenticated) {
+          // window.location.href = "/";
+        }
+      }
+
+      if(isInitialized){
+      const compTemp = Moralis.Object.extend("templates");
+      const TempQ = new Moralis.Query(compTemp);
+
+      TempQ.equalTo("name", template);
+
+      TempQ.find().then((er) => {
+
+        setData(JSON.parse(er[0].get('data')))
+
+      }).catch(ee => {
+        console.log(ee)
+      });
+      console.log('herex')
+    }else{
+      console.log('here')
+    }
+  }, [Moralis.Object, Moralis.Query, isAuthenticated, isInitialized])
+
+  const [isSaving, saveChanges] = useState<boolean>(false);
+  const [iimg, setIiimg] = useState({});
   const [getRules, setPart] = useState<string>("");
   const [showMain, setShowMain] = useState(true)
   const [viewColor, setViewColor] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const [update, updateMe] = useState<any>('')
+
+  const [isUploading, setIsUploading] = useState<number>(0);
 
   const router = useRouter();
 
@@ -37,6 +94,117 @@ const EditPage = () => {
    }, [usern, router.isReady]);
 
   
+  const imgCrop = (
+    event: React.SyntheticEvent & { target: HTMLInputElement }
+  ) => {
+    setIsUploading(0);
+    setViewColor("imgMChange");
+    if (event.target.files !== null) {
+      const fil = event.target.files[0];
+      const { type, size } = fil;
+      const ee = ["image/jpeg", "image/jpg", "image/png"];
+
+      if (!ee.includes(type)) {
+        setError("Only JPEG, jpg, and png image types are accepted");
+        return;
+      }
+
+      if (size > 5243880) {
+        setError("Image Size Exceeds The Limit Of 5mb" );
+        return;
+      }
+
+      setsImg(URL.createObjectURL(fil));
+      setIiimg(fil);
+    }
+  };
+
+  const beginUpload = async (files: File[], type: string) => {
+    const { size: totalSize } = files[0];
+
+    const onRootCidReady = (cid: string) => {
+
+      setError("")
+
+      const src = `https://${cid}.ipfs.dweb.link/${usern}.${type}`;
+      updateMe(src)
+
+      const dataSent = rules[Boolean(getRules.length) ? getRules : "body"];
+
+      dataSent.imgChange({
+        borderColor: dataSent.imgChange().borderColor,
+        size: dataSent.imgChange().width,
+        display: dataSent.imgChange().display == "block",
+        src
+      });
+
+    };
+
+    let uploaded:number = 0;
+
+    const onStoredChunk = (size: number) => {
+      uploaded += size;
+
+      const pct:number = (totalSize / uploaded) * 100;
+
+      console.log(`Uploading... ${pct.toFixed(2)}% complete`);
+
+      setIsUploading(pct);
+      if (pct > 96) {
+        setViewColor("");
+      }
+    };
+
+    const client = makeStorageClient(
+      await Moralis.Cloud.run("getWeb3StorageKey")
+    );
+
+    return client.put(files, { onRootCidReady, onStoredChunk });
+  };
+
+  const cropImg = () => {
+    const img = document.querySelector(".img_custom") as HTMLImageElement;
+
+    try {
+      const canvas = document.createElement("canvas") as HTMLCanvasElement;
+      const scaleX = img.naturalWidth / img.width;
+      const scaleY = img.naturalHeight / img.height;
+      canvas.width = crop?.width === undefined ? 0 : crop?.width;
+      canvas.height = crop?.height === undefined ? 0 : crop?.height;
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(
+        img,
+        (crop?.x !== undefined ? crop?.x : 0) * scaleX,
+        (crop?.y !== undefined ? crop?.y : 0) * scaleY,
+        (crop?.width !== undefined ? crop?.width : 0) * scaleX,
+        (crop?.height !== undefined ? crop?.height : 0) * scaleY,
+        0,
+        0,
+        crop?.width !== undefined ? crop?.width : 0,
+        crop?.height !== undefined ? crop?.height : 0
+      );
+
+      const { type }: { type?: string } = iimg || {};
+      const ext = type?.split("/");
+      canvas.toBlob(
+        (blob) => {
+          if (blob !== null && ext !== undefined) {
+            const files = [
+              new File([blob], `${usern}.${ext[1]}`),
+            ];
+            beginUpload(files, ext[1]);
+          }
+        },
+        type,
+        1
+      );
+    } catch (e) {
+      const err = e as Error;
+      setError(err?.message);
+    }
+  };
+
+
   return (
     <div>
       <Head>
@@ -50,26 +218,34 @@ const EditPage = () => {
 
         <div className="flex relative z-[109] left-[calc(100%-257px)] right-0 flex-row">
           <div className="max-w-[257px] w-[257px] h-screen bg-[white]">
-            
-              <div>
-                <div className="flex flex-row w-full bg-[#bbbbbb24] py-4">
-                  <div
-                    onClick={() => {
-                      if (!getRules.length) {
-                        window.location.href = "/dashboard/pages";
-                      } else {
-                        setPart("");
-                      }
-                    }}
-                    className="w-1/4 cursor-pointer"
-                  >
-                    <MdChevronLeft color="#838383" size={24} />
-                  </div>
-                  <div className="text-[#838383] text-[17px] font-[300] w-3/4">
-                    {getRules.length ? getRules.replace('_', ' ') : "Overview"}
-                  </div>
+            <div>
+              <div className="flex flex-row w-full bg-[#bbbbbb24] py-4">
+                <div
+                  onClick={() => {
+                    if (!getRules.length) {
+                      window.location.href = "/dashboard/pages";
+                    } else {
+                      setPart("");
+                    }
+                  }}
+                  className="w-1/4 cursor-pointer"
+                >
+                  <MdChevronLeft color="#838383" size={24} />
                 </div>
-                <div className="components mt-4">
+                <div className="text-[#838383] text-[17px] font-[300] w-3/4">
+                  {getRules.length ? getRules.replace("_", " ") : "Overview"}
+                </div>
+              </div>
+              <div className="flex flex-col justify-between">
+                <span className="text-[#8f8f8f] text-[13px] px-3">
+                  *Dont forget to save after you&apos;re done
+                </span>
+                {Boolean(error.length) && (
+                  <Alert className="w-full" severity="error">
+                    {error}
+                  </Alert>
+                )}
+                <div className="components mt-2">
                   {Boolean(
                     rules[Boolean(getRules.length) ? getRules : "body"]
                       .colorChange
@@ -86,8 +262,6 @@ const EditPage = () => {
                               Boolean(getRules.length) ? getRules : "body"
                             ].colorChange()}
                             className="right-[120%] !absolute"
-                            width={100}
-                            height={100}
                             onChange={(color) => {
                               updateMe(color);
 
@@ -152,8 +326,6 @@ const EditPage = () => {
                               Boolean(getRules.length) ? getRules : "body"
                             ].BgColorChange()}
                             className="right-[120%] !absolute"
-                            width={100}
-                            height={100}
                             onChange={(color) => {
                               updateMe(color);
 
@@ -219,8 +391,6 @@ const EditPage = () => {
                                 Boolean(getRules.length) ? getRules : "body"
                               ].bgBColorChange(1)}
                               className="right-[120%] !absolute"
-                              width={100}
-                              height={100}
                               onChange={(color) => {
                                 updateMe(color);
 
@@ -282,8 +452,6 @@ const EditPage = () => {
                                 Boolean(getRules.length) ? getRules : "body"
                               ].bgBColorChange(0)}
                               className="right-[120%] !absolute"
-                              width={100}
-                              height={100}
                               onChange={(color) => {
                                 updateMe(color);
 
@@ -408,7 +576,7 @@ const EditPage = () => {
                                 : "#9d9d9d",
                           }}
                           onClick={() => {
-                            updateMe('right')
+                            updateMe("right");
 
                             rules[
                               Boolean(getRules.length) ? getRules : "body"
@@ -430,7 +598,7 @@ const EditPage = () => {
                                 : "#9d9d9d",
                           }}
                           onClick={() => {
-                            updateMe('center')
+                            updateMe("center");
                             rules[
                               Boolean(getRules.length) ? getRules : "body"
                             ].sortAlignment("center");
@@ -451,7 +619,7 @@ const EditPage = () => {
                                 : "#9d9d9d",
                           }}
                           onClick={() => {
-                            updateMe('left')
+                            updateMe("left");
                             rules[
                               Boolean(getRules.length) ? getRules : "body"
                             ].sortAlignment("left");
@@ -498,11 +666,79 @@ const EditPage = () => {
                       <div className="w-full flex flex-col">
                         <div className="w-auto max-h-[200px] flex justify-between items-center">
                           <div className="flex items-center">
-                            <img
-                              alt="upload image"
-                              width="30"
-                              src="https://bafybeia3s5mb7nixel6hconwjnpqrx2vyzogdwpn64pqugqupcqg2vhxae.ipfs.dweb.link/idiaghegeorge9.png"
-                            />
+                            {viewColor == "imgMChange" && (
+                              <div className="right-[105%] px-[5px] pt-[5px] pb-2 rounded-[4px] absolute w-[410px] max-h-[450px] bg-[#e5e5e5c7] flex flex-col justify-between items-center">
+                                {(isUploading > 0) && (
+                                  <Box className="text-[#3a3a3a] w-full">
+                                    <LinearProgress
+                                      variant="determinate"
+                                      className="w-full"
+                                      color="inherit"
+                                      value={isUploading}
+                                    />
+                                  </Box>
+                                )}
+                                <ReactCrop
+                                  minWidth={20}
+                                  minHeight={20}
+                                  circularCrop={false}
+                                  crop={crop}
+                                  aspect={1}
+                                  onChange={(c) => {
+                                    setCrop(c);
+                                  }}
+                                >
+                                  <img
+                                    className="img_custom w-[400px] m-auto max-w-[400px]"
+                                    alt="crop me"
+                                    src={simg ? simg : ""}
+                                  />
+                                </ReactCrop>
+
+                                <div className="flex mt-2 justify-between">
+                                  <Button
+                                    variant="contained"
+                                    className="!bg-[#979797] w-fit !mr-2 !py-[3px] !font-bold !text-[13px] !capitalize"
+                                    style={{
+                                      fontFamily: "inherit",
+                                    }}
+                                    onClick={cropImg}
+                                  >
+                                    Update Image
+                                  </Button>
+
+                                  <Button
+                                    onClick={() => setViewColor("")}
+                                    variant="contained"
+                                    className="!bg-[#979797] !w-[50px] !py-[3px] !font-bold !text-[13px] !capitalize"
+                                    style={{
+                                      fontFamily: "inherit",
+                                    }}
+                                  >
+                                    Close
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                            <div className="bg-[#979797] h-fit w-fit">
+                              <img
+                                alt="upload image"
+                                width="30"
+                                src={
+                                  rules[
+                                    Boolean(getRules.length) ? getRules : "body"
+                                  ].imgChange().src.length
+                                    ? rules[
+                                        Boolean(getRules.length)
+                                          ? getRules
+                                          : "body"
+                                      ].imgChange().src
+                                    : document
+                                        .querySelector(".imgx_page img")
+                                        ?.getAttribute("src")
+                                }
+                              />
+                            </div>
 
                             <span className="text-[#979797] ml-[10px] font-bold text-[13px]">
                               Link Image
@@ -510,9 +746,8 @@ const EditPage = () => {
                           </div>
                           <input
                             type="file"
-                            onChange={(e: any) => {
-                              console.log(e.target.files[0]);
-                            }}
+                            accept="image/*"
+                            onChange={imgCrop}
                             className="!hidden updatelink"
                           />
                           <Button
@@ -530,10 +765,8 @@ const EditPage = () => {
                                 backgroundColor: "#818181 !importan",
                               },
                             }}
-                            onClick={() => {
-                              const elem = document.querySelector(
-                                ".updateLink"
-                              ) as HTMLInputElement;
+                            onClick={(eee: any) => {
+                              const elem = eee.target?.previousSibling;
 
                               elem.click();
                             }}
@@ -557,8 +790,6 @@ const EditPage = () => {
                                 ].imgChange().borderColor
                               }
                               className="right-[105%] !absolute"
-                              width={100}
-                              height={100}
                               onChange={(color) => {
                                 updateMe(color);
                                 const dataSent =
@@ -571,6 +802,7 @@ const EditPage = () => {
                                   size: dataSent.imgChange().width,
                                   display:
                                     dataSent.imgChange().display == "block",
+                                  src: data.imgChange().src,
                                 });
                               }}
                             />
@@ -637,6 +869,7 @@ const EditPage = () => {
                               borderColor: dx.imgChange().borderColor,
                               size: xx.target.value,
                               display: dx.imgChange().display == "block",
+                              src: dx.imgChange().src,
                             });
                             updateMe(xx);
                           }}
@@ -694,6 +927,7 @@ const EditPage = () => {
                               borderColor: exx.imgChange().borderColor,
                               display: !(exx.imgChange().display == "block"),
                               size: exx.imgChange().width,
+                              src: exx.imgChange().src,
                             });
                           }}
                         />
@@ -803,7 +1037,6 @@ const EditPage = () => {
                           onChange={(xx: any) => {
                             updateMe(xx.target.value);
                             if (validator.isURL(xx.target.value)) {
-
                               const link =
                                 xx.target.value.indexOf("https://") == "-1"
                                   ? `https://${xx.target.value}`
@@ -896,8 +1129,10 @@ const EditPage = () => {
                           onChange={(xx: any) => {
                             updateMe(xx.target.value);
                             if (validator.isURL(xx.target.value)) {
-
-                              const link = xx.target.value.indexOf("https://") == '-1' ? `https://${xx.target.value}` : xx.target.value;
+                              const link =
+                                xx.target.value.indexOf("https://") == "-1"
+                                  ? `https://${xx.target.value}`
+                                  : xx.target.value;
 
                               rules[
                                 Boolean(getRules.length) ? getRules : "body"
@@ -987,8 +1222,10 @@ const EditPage = () => {
                           onChange={(xx: any) => {
                             updateMe(xx.target.value);
                             if (validator.isURL(xx.target.value)) {
-
-                              const link = xx.target.value.indexOf("https://") == '-1' ? `https://${xx.target.value}` : xx.target.value;
+                              const link =
+                                xx.target.value.indexOf("https://") == "-1"
+                                  ? `https://${xx.target.value}`
+                                  : xx.target.value;
 
                               rules[
                                 Boolean(getRules.length) ? getRules : "body"
@@ -1079,8 +1316,10 @@ const EditPage = () => {
                           onChange={(xx: any) => {
                             updateMe(xx.target.value);
                             if (validator.isURL(xx.target.value)) {
-
-                              const link = xx.target.value.indexOf("https://") == '-1' ? `https://${xx.target.value}` : xx.target.value;
+                              const link =
+                                xx.target.value.indexOf("https://") == "-1"
+                                  ? `https://${xx.target.value}`
+                                  : xx.target.value;
 
                               rules[
                                 Boolean(getRules.length) ? getRules : "body"
@@ -1250,8 +1489,6 @@ const EditPage = () => {
                               Boolean(getRules.length) ? getRules : "body"
                             ].colorScheme()}
                             className="right-[120%] !absolute"
-                            width={100}
-                            height={100}
                             onChange={(color) => {
                               updateMe(color);
 
@@ -1314,8 +1551,8 @@ const EditPage = () => {
                               setPart(elem);
                             }}
                           >
-                            <span className="#575757 font-[300] text-[15px]">
-                              {elem.replace('_', ' ')}
+                            <span className="#575757 capitalize font-[300] text-[15px]">
+                              {elem.replace("_", " ")}
                             </span>
 
                             <div
@@ -1329,7 +1566,40 @@ const EditPage = () => {
                     </>
                   )}
                 </div>
+
+                <Button
+                  sx={{
+                    backgroundColor: `#6e6e6e !important`,
+                    color: `#fff !important`,
+                    fontSize: "13px",
+                    width: "fit-content",
+                    padding: "10px",
+                    fontWeight: "bold",
+                    textTransform: "capitalize",
+                    ":hover": {
+                      backgroundColor: `#4b4b4b !important`,
+                    },
+                  }}
+                  className={"!flex !items-center mx-auto !mb-1 !mt-[2pc]"}
+                >
+                  <>
+                    {isSaving ? (
+                      <>
+                        <div className="mr-3 h-[20px] text-[#fff]">
+                          <CircularProgress
+                            color={"inherit"}
+                            className="!w-[20px] !h-[20px]"
+                          />
+                        </div>
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <span>Save Changes</span>
+                    )}
+                  </>
+                </Button>
               </div>
+            </div>
           </div>
         </div>
       </div>

@@ -16,9 +16,10 @@ function Nav() {
     isInitialized,
     authenticate,
     logout,
+    Moralis,
     isWeb3Enabled,
     enableWeb3,
-    chainId
+    chainId,
   } = useMoralis();
 
   const showModal = useContext(HomeContext);
@@ -47,7 +48,7 @@ function Nav() {
 
   console.log(Number(chainId));
 
-  const supported = [137];
+  const supported = [80001, 137];
 
     const logOut = async () => {
       if (isAuthenticated) {

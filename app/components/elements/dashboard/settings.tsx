@@ -1,12 +1,9 @@
-// import "../../assets/styles/auth.css";
-// import "../../assets/styles/sett.css";
 import { useState } from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { IoMdClose } from "react-icons/io";
 import { useMoralis } from "react-moralis";
 import { makeStorageClient } from "../../../functions/clients";
-
 import { MdVisibilityOff, MdVisibility } from "react-icons/md";
 import {
   Button,
@@ -45,7 +42,13 @@ const DashSettings = () => {
     link: false,
     progress: [0, 0],
   });
-  const [crop, setCrop] = useState<PixelCrop>();
+  const [crop, setCrop] = useState<PixelCrop>({
+    width: 50,
+    unit: "px",
+    height: 50,
+    x: 0,
+    y: 0,
+  });
   const [simg, setsImg] = useState<string | undefined>("");
   const [iimg, setIiimg] = useState({});
   const [result, setResult] = useState(null);

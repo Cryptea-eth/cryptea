@@ -64,6 +64,7 @@ const Hero = () => {
         <div className="right sm:hidden w-1/2 flex justify-center">
           <Image
             src={desktop3}
+            priority
             className="w-auto"
             alt="Cryptea"
           />
