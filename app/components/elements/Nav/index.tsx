@@ -7,6 +7,7 @@ import meta from "../../../../public/images/metamask.png";
 import wallcon from "../../../../public/images/walletconnect.png";
 import { useRouter } from "next/router";
 import LogoSpace from "../logo";
+import { CircularProgress, Box } from '@mui/material';
 
 function Nav() {
   const router = useRouter();
@@ -26,6 +27,13 @@ function Nav() {
   const [authError, updAuthError] = useState<String>('');
   const [isNotSupported, setSupport] = useState<Boolean>(false);
   const useUpdateWalletModal = useContext(HomeContextSet);
+
+  const [isAuth, setIsAuth] = useState<{
+      [ix:string] : boolean
+  }>({
+      metamask: false,
+      walletconnect: false
+  });
 
   useEffect(() => {
     if (!isWeb3Enabled) {
@@ -59,12 +67,14 @@ function Nav() {
 
   const login = async () => {
     updAuthError('');
+    setIsAuth({...isAuth, metamask: true});
     if (!isAuthenticated) {
       setSupport(false)
       await authenticate({ signingMessage: "Welcome to Cryptea" })
         .then(function (user) {
+          setIsAuth({ ...isAuth, metamask: false });
           if (supported.includes(chainId ? Number(chainId) : 137)) {
-      
+            
           if (user!.get("email") === undefined) {
             window.location.href = "/signup";
             console.log(isInitialized);
@@ -83,7 +93,10 @@ function Nav() {
       })
         .catch(function (error) {
           updAuthError(error);
+          setIsAuth({ ...isAuth, metamask: false });
         });
+    }else{
+      setIsAuth({ ...isAuth, metamask: false });
     }
   };
 
@@ -94,6 +107,7 @@ function Nav() {
 
   const walletconnect = async () => {
     updAuthError("");
+    setIsAuth({ ...isAuth, walletconnect: true });
     if (!isAuthenticated) {
       setSupport(false);
       await authenticate({
@@ -101,6 +115,9 @@ function Nav() {
         provider: "walletConnect",
       })
         .then(function (user) {
+          
+          setIsAuth({ ...isAuth, walletconnect: false });
+
           if(supported.includes(chainId ? Number(chainId) : 137)){
           if (user!.get("email") === undefined) {
             window.location.href = "/signup";
@@ -118,10 +135,12 @@ function Nav() {
         })
         .catch(function (error) {
           updAuthError(error);
+          setIsAuth({ ...isAuth, walletconnect: false });
         });
+    }else {
+      setIsAuth({ ...isAuth, walletconnect: false });
     }
   };
-
 
   return (
     <div className="nav relative ml-[30px] 2sm:ml-1 z-10">
@@ -172,7 +191,17 @@ function Nav() {
                     onClick={login}
                     className="transition-all rounded-md delay-500 hover:border-[#F57059] hover:text-[#F57059] items-center text-[16px] flex justify-between border-[1px] 4sm:mr-2 text-[#575757] mb-2 w-full py-4 px-4"
                   >
-                    Metamask
+                    
+                    <div className="flex items-center">
+                      {isAuth['metamask'] && (<Box className="mr-2 h-[22px] text-[#F57059]">
+                        <CircularProgress
+                          className="!w-[22px] !h-[22px]"
+                          color="inherit"
+                        />
+                      </Box>)}
+
+                      Metamask
+                    </div>
                     <Image src={meta} alt="Metamask" width={40} height={40} />
                   </button>
                   <button
@@ -180,7 +209,16 @@ function Nav() {
                     style={{ fontFamily: "inherit" }}
                     className="transition-all rounded-md items-center delay-500 4sm:ml-2 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] flex justify-between text-[#575757] mb-2 w-full py-4 px-4"
                   >
-                    Walletconnect
+                    <div className="flex items-center">
+                      {isAuth['walletconnect'] && (<Box className="mr-2 h-[22px] text-[#F57059]">
+                        <CircularProgress
+                          className="!w-[22px] !h-[22px]"
+                          color="inherit"
+                        />
+                      </Box>)}
+                      Walletconnect
+                    </div>
+
                     <Image
                       src={wallcon}
                       alt="Wallet Connect"
