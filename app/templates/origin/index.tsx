@@ -44,13 +44,6 @@ const contractAddress: { subscribe: string; onetime: string } = {
   onetime: "0xa6aE0280a3eE37975586211d18578D232A1B98c5",
 };
 
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
@@ -390,7 +383,7 @@ const Origin = ({ className }: {className?: string}) => {
       await beginSubscription(
         nft,
         from,
-        "0x88BA009d29e28378A0542832Da35aABf262045c9", //receiver
+        ethAddress || '', //receiver
         initWeb3.utils.toWei(ether, "ether")
       );
 
@@ -428,7 +421,7 @@ const Origin = ({ className }: {className?: string}) => {
       setLoadingText("Awaiting payment confirmation");
 
       initContract.methods
-        .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4") //receiver
+        .sendToken(ethAddress || '') //receiver
         .send({
           from,
           value: initWeb3.utils.toWei(ether, "ether"),
