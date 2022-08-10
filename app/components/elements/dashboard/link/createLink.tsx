@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { MdInfo, MdAddLink, MdInsertLink, MdClose } from "react-icons/md";
 import { GiTwoCoins } from "react-icons/gi";
+ import * as Template from "../../../../templates/origin/data";
 import { FaCoins } from "react-icons/fa";
 import LogoSpace from "../../logo";
 import { useEffect, useState } from "react";
@@ -40,6 +41,14 @@ const NewLink = () => {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  
+  const templateData = {
+    name: "Origin",
+    location: ["components", "elements", "templates", "origin", "index"],
+    data: Template.data,
+  };
+
 
   interface Strings {
     [index: string]: string;
@@ -202,13 +211,12 @@ const NewLink = () => {
     const index: string = value === Type.onetime ? "onetime" : "sub";
 
     const mainData: (number | string)[] = [
-      data.amount[index],
       data.desc[index],
       data.slug[index],
       data.title[index],
     ];
 
-    const indx = ["amount", "desc", "slug", "title"];
+    const indx = ["desc", "slug", "title"];
 
     mainData.forEach((d, i) => {
       if (!Boolean(d)) {
@@ -220,7 +228,41 @@ const NewLink = () => {
       }
     });
 
+    
+
     if (!checkError()) {
+      let amount: string | number = 'variable';
+      if (data.amountType[index] == 'range') {
+          if (!Boolean(Number(data.amount[index].range[0])) || !Boolean(Number(data.amount[index].range[1]))) {
+              init({
+                amount: "Range values should not be left empty",
+              });
+              setGenError("There is an issue with your range values");
+          }else if (data.amount[index].range[0] > data.amount[index].range[1]) {
+              init({ 
+                  amount: "Range Minimum should not be greater than maximum"           
+               });  
+               setGenError("There is an issue with your range values");
+          } else if (data.amount[index].range[0] == data.amount[index].range[1]) {
+              init({
+                amount: "Range minimum and maximum should not be equal",
+              });    
+              setGenError("There is an issue with your range values");
+          }else{
+              amount = JSON.stringify(data.amount[index].range);
+          }
+
+      }else if (data.amountType[index] == 'fixed') {
+          if (!Boolean(Number(data.amount[index].value))) {
+              init({
+                amount: "Amount should not be empty",
+              });
+              setGenError("There is an issue with your amount field");
+          } else {
+              amount = Number(data.amount[index].value);
+          }
+      }
+
       if (!/[^a-z]/gi.test(data.slug[index].charAt(0))) {
         const xe = { ...error.slug };
         xe[index] = "Slug must start with an alphabet";
@@ -249,14 +291,17 @@ const NewLink = () => {
       mQ.find().then(async (ld) => {
         if (!ld.length) {
           link?.set("link", data.slug[index].toLowerCase());
-          link?.set("amount", data.amount[index]);
+          link?.set("amount", amount);
           link?.set("desc", data.desc[index]);
           link?.set("title", data.title[index]);
+          link?.set("amountMulti", JSON.stringify(data.amount.multi));
           link?.set(
             "type",
             value === Type.onetime ? "onetime" : "subscription"
           );
           link?.set("user", user);
+
+          link?.set("template_data", JSON.stringify(templateData));
 
           try {
             await link?.save();
