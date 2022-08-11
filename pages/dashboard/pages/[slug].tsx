@@ -150,7 +150,7 @@ const EditPage = () => {
       console.log(`Uploading... ${pct.toFixed(2)}% complete`);
 
       setIsUploading(pct);
-      if (pct > 96) {
+      if (pct > 98) {
         setViewColor("");
       }
     };
@@ -226,6 +226,7 @@ const EditPage = () => {
                       window.location.href = "/dashboard/pages";
                     } else {
                       setPart("");
+                      setViewColor("");
                     }
                   }}
                   className="w-1/4 cursor-pointer"

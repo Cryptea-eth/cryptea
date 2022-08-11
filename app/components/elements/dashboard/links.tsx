@@ -118,7 +118,7 @@ const DashLinks = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div className="px-4 w-full items-center flex flex-col pt-[4rem] pb-5">
+          <div className="px-4 w-full items-center bg-white flex flex-col pt-[4rem] pb-5">
             <div className="flex items-center absolute left-0 right-0 m-auto -top-[10px] text-white rounded-[50%] h-[90px] w-[90px] bg-[#aaa] justify-center">
               <MdDeleteOutline size={40} />
             </div>
@@ -205,7 +205,7 @@ const DashLinks = () => {
             }}
             className="grid gap-2 grid-flow-dense"
           >
-            <Button className="w-full border-2 hover:text-white text-[#F57059] border-[#f5705982] bg-transparent hover:bg-[#f5705982] border-solid p-4 rounded-md">
+            <Button className="w-full rounded-md border hover:text-white text-[#F57059] border-[#f5705982] bg-transparent hover:bg-[#f5705982] border-solid p-4">
               <Link href="/dashboard/links/new">
                 <a className="flex-col w-full h-full flex justify-center items-center">
                   <MdAddLink size={50} className="mb-3" />
@@ -218,13 +218,16 @@ const DashLinks = () => {
             {links.map(({ attributes }: any, i: number) => (
               <div
                 key={i}
-                className="w-full cursor-default border-2 border-[#f5705982] border-solid p-4 rounded-md"
+                className="w-full cursor-default rounded-md border border-[#f5705982] border-solid p-4"
               >
-                <div className="flex items-start">
+                
+                <div style={{
+                    alignItems: attributes.desc ? 'center' : 'start'
+                }} className="flex flex-row-reverse">
                   <Avatar
                     sx={{
-                      width: 60,
-                      height: 60,
+                      width: 80,
+                      height: 80,
                       backgroundColor: "#F57059",
                       marginRight: "10px",
                     }}
@@ -237,18 +240,23 @@ const DashLinks = () => {
                   </Avatar>
 
                   <div className="w-[calc(100%-70px)]">
-                    <h3 className="truncate text-[17px] mb-[10px] font-bold text-[#242424]">
+                    <h3 className="truncate text-[20px] mb-[10px] font-bold text-[#242424]">
                       {attributes.link}
                     </h3>
 
-                    <span className="truncate block w-full text-[#6d6d6d]">
-                      {attributes.desc ? attributes.desc : ""}
+                    <span className="block w-full text-[#6d6d6d]">
+
+                      {attributes.desc ? (attributes.desc.length > 100 ? attributes.desc.substring(0, 100)+'...' : attributes.desc) : ""}
+
                     </span>
                   </div>
                 </div>
-
                 <div className="flex mt-4 justify-between items-center w-full">
-                  <a target="_blank" href={`/user/${attributes.link.toLowerCase()}`} rel="noreferrer">
+                  <a
+                    target="_blank"
+                    href={`/user/${attributes.link.toLowerCase()}`}
+                    rel="noreferrer"
+                  >
                     <a>
                       <Button className="py-2 font-bold px-4 !capitalize flex items-center text-white hover:!bg-[#ff8c78b8] bg-[#f36e57b8] transition-all delay-500 rounded-lg">
                         <RiPagesLine size={19} className="mr-1" /> View Page
@@ -257,7 +265,11 @@ const DashLinks = () => {
                   </a>
 
                   <div>
-                    <IconButton color='inherit' size={'large'} sx={{ color: "#f36e57b8" }}>
+                    <IconButton
+                      color="inherit"
+                      size={"large"}
+                      sx={{ color: "#f36e57b8" }}
+                    >
                       <MdModeEditOutline size={20}></MdModeEditOutline>
                     </IconButton>
                   </div>

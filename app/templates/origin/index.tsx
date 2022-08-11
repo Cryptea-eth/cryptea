@@ -9,6 +9,8 @@ import bigimg from '../../../public/images/logobig.png';
 import PAYMENT from '../../../artifacts/contracts/payment.sol/Payment.json';
 import SUBSCRIPTION from "../../../artifacts/contracts/subscription.sol/Subscription.json";
 import { data } from "./data"; 
+import { createAlchemyWeb3 } from "@alch/alchemy-web3";
+import TabPanel from "../../components/elements/dashboard/link/TabPanel";
 import { FaInstagram, FaFacebook, FaTwitter, FaLinkedinIn, FaLink } from 'react-icons/fa';
 import Link from 'next/link'
 import {
@@ -37,42 +39,9 @@ import Moralis from "moralis/types";
 import axios from "axios";
 
 const contractAddress: { subscribe: string; onetime: string } = {
-  // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457",
-  subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940",
+  subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457",
+  // subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940",
   onetime: "0xa6aE0280a3eE37975586211d18578D232A1B98c5",
-};
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <div>{children}</div>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
 };
 
 function a11yProps(index: number) {
@@ -120,9 +89,16 @@ const Origin = ({ className }: {className?: string}) => {
     setAlignment(newAlignment);
   };
 
+  const {
+    Moralis,
+    isWeb3Enabled,
+    enableWeb3,
+    authenticate,
+    chainId,
+    isAuthenticated,
+  } = useMoralis();
 
-  const { Moralis, isWeb3Enabled, enableWeb3, authenticate, chainId, isAuthenticated } = useMoralis();
-
+ 
   const [userD, setUserD] = useState({});
   const [pemail, setPemail] = useState<string>("");
   const [name, setName] = useState<string>("")
@@ -160,20 +136,20 @@ const Origin = ({ className }: {className?: string}) => {
     }
   } 
 
-
   const [linkHook, setLinkHook] = useState<Moralis.Object<Moralis.Attributes>[]>(); 
 
   useEffect(() => {
     if (router.isReady) {
       const Link = Moralis.Object.extend('link')
       const lQ = new Moralis.Query(Link);
+
       lQ.equalTo('link', String(username).toLowerCase())
       
-      lQ.find().then((er) => {
+      lQ.find().then((er:any) => {
         if (er !== undefined) {
           setLinkHook(er);
           Moralis.Cloud.run("getUser", { obj: er[0]?.get("user").id }).then(
-            (ex) => {
+            (ex:any) => {
               setUserD({
                 description: ex[0]?.get("desc"),
                 username: ex[0]?.get("username"),
@@ -191,8 +167,9 @@ const Origin = ({ className }: {className?: string}) => {
       } else {
         window.location.href = "/404";
       }
-    }).catch(err => {
-        console.log(err);
+    }).catch((err:any) => {
+        const error = err as Error;
+        console.log(error)
         setIs500(true)
     })
   }
@@ -206,6 +183,7 @@ const Origin = ({ className }: {className?: string}) => {
 
   const provider: any = Moralis.provider;
 
+  console.log(provider)
 
   let nft: any = "";
 
@@ -274,15 +252,12 @@ const Origin = ({ className }: {className?: string}) => {
 
      setHash(trx["transactionHash"]);
      setSubCheck(true);
-      
 
     } catch (err) {
       console.log(err);
       setTransferFail(true); 
     }
   };
-
-
 
   const message: { [index: string]: string } = {
     subscription: `Subscription To ${usern} content`,
@@ -408,7 +383,7 @@ const Origin = ({ className }: {className?: string}) => {
       await beginSubscription(
         nft,
         from,
-        "0x88BA009d29e28378A0542832Da35aABf262045c9", //receiver
+        ethAddress || '', //receiver
         initWeb3.utils.toWei(ether, "ether")
       );
 
@@ -446,7 +421,7 @@ const Origin = ({ className }: {className?: string}) => {
       setLoadingText("Awaiting payment confirmation");
 
       initContract.methods
-        .sendToken("0xc07e4542B10D1a8a5261780a47CfE69F9fFc38A4") //receiver
+        .sendToken(ethAddress || '') //receiver
         .send({
           from,
           value: initWeb3.utils.toWei(ether, "ether"),
@@ -520,16 +495,21 @@ const Origin = ({ className }: {className?: string}) => {
 
   useEffect(() => {
     if (!isAuthenticated && !auth) {
-        if (!isWeb3Enabled) {
-          enableWeb3();
-        }
-    }else{
-      if(!isWeb3Enabled){
-          enableWeb3();   
+      if (!isWeb3Enabled) {
+        enableWeb3()
+      }
+    } else {
+      if (!isWeb3Enabled) {
+        enableWeb3()
       }
     }
-
-  }, [enableWeb3, isWeb3Enabled, isAuthenticated, auth]);
+  }, [
+    enableWeb3,
+    isWeb3Enabled,
+    isAuthenticated,
+    auth,
+    Moralis
+  ]);
 
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -627,7 +607,7 @@ const Origin = ({ className }: {className?: string}) => {
                     className="absolute border-solid linkimg p-1 m-auto w-fit"
                   >
                     {/* Image */}
-                    {!img?.length ? (
+                    {(!img?.length && !data.image.src.length) ? (
                       <Avatar
                         sx={data.image}
                         className="!font-bold !text-[35px]"
@@ -636,7 +616,7 @@ const Origin = ({ className }: {className?: string}) => {
                         {usern?.charAt(0).toUpperCase()}
                       </Avatar>
                     ) : (
-                      <Avatar src={img} sx={data.image} alt={usern}></Avatar>
+                      <Avatar className="imgx_page" src={data.image.src.length ? data.image.src : img} sx={data.image} alt={usern}></Avatar>
                     )}
                   </div>
                 </div>
