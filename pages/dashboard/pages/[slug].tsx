@@ -208,7 +208,7 @@ const EditPage = () => {
   return (
     <div>
       <Head>
-        <title>Editting {usern} | Cryptea</title>
+        <title>Editing {usern} | Cryptea</title>
         <meta name="description" content={`Updating User Page Template`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
