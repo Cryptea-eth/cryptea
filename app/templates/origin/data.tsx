@@ -110,6 +110,14 @@ const rules: { [index: string]: any } = {
       if (color !== undefined) {
         data.colorScheme = color;
         data.linkImage = { ...data.linkImage, borderColor: color };
+        data.workState = {
+          ...data.workState,
+          backgroundColor:
+            color.length > 7
+              ? color.substring(0, 7) + "23"
+              : color + "23",
+          color,
+        };
       } else {
         return data.colorScheme;
       }
@@ -134,6 +142,7 @@ const rules: { [index: string]: any } = {
           height: newD.size,
           src: newD?.src
         };
+
       } else {
         return { ...data.image, ...data.linkImage };
       }

@@ -183,8 +183,6 @@ const Origin = ({ className }: {className?: string}) => {
 
   const provider: any = Moralis.provider;
 
-  console.log(provider)
-
   let nft: any = "";
 
   const generateNftData = async (
