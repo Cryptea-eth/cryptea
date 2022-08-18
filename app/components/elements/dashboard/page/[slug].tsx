@@ -26,7 +26,7 @@ import {
 import { useMoralis, useMoralisQuery, useWeb3Transfer } from "react-moralis";
 
 import Loader from "../../loader";
-
+import dynamic from 'next/dynamic';
 import { useState, useEffect, SetStateAction } from "react";
 
 interface TabPanelProps {

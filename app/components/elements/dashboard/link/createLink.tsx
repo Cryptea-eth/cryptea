@@ -1,7 +1,7 @@
+import Head from "next/head";
 import {
   Box,
   TextField,
-  LinearProgress,
   Tabs,
   Tab,
   Alert,
@@ -10,16 +10,18 @@ import {
   FormLabel,
   ToggleButton,
   ToggleButtonGroup,
+  CircularProgress,
 } from "@mui/material";
 import { MdInfo, MdAddLink, MdInsertLink, MdClose } from "react-icons/md";
 import { GiTwoCoins } from "react-icons/gi";
- import * as Template from "../../../../templates/origin/data";
 import { FaCoins } from "react-icons/fa";
 import LogoSpace from "../../logo";
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import Loader from "../../loader";
+import dynamic from "next/dynamic";
 import TabPanel from "./TabPanel";
+import Router from "next/router";
 
 const NewLink = () => {
 
@@ -42,13 +44,18 @@ const NewLink = () => {
     setValue(newValue);
   };
 
-  
-  const templateData = {
-    name: "Origin",
-    location: ["components", "elements", "templates", "origin", "index"],
-    data: Template.data,
+  const [linkTemplate, setTemplate] = useState('origin');
+
+  const templateData:{
+    name: string,
+    data?: any
+  } = {
+    name: linkTemplate,
   };
 
+ import(`../../../../templates/${linkTemplate}/data`).then(e => {
+     templateData['data'] = e.data;
+ })
 
   interface Strings {
     [index: string]: string;
@@ -79,7 +86,6 @@ const NewLink = () => {
     desc: Strings;
     slug: Strings;
   }
-
 
 
   const { isAuthenticated, isInitialized, Moralis, user } = useMoralis();
@@ -198,6 +204,9 @@ const NewLink = () => {
 
     for (e in error) {
       const { sub, onetime } = error[String(e)];
+
+      // console.log(error, e, sub, onetime);
+
       if (sub.length || onetime.length) {
         t = true;
       }
@@ -207,7 +216,7 @@ const NewLink = () => {
 
   const saveLink = async () => {
     setLoading(true);
-    document.querySelector(".linkadd")?.scrollIntoView();
+
     const index: string = value === Type.onetime ? "onetime" : "sub";
 
     const mainData: (number | string)[] = [
@@ -234,19 +243,31 @@ const NewLink = () => {
       let amount: string | number = 'variable';
       if (data.amountType[index] == 'range') {
           if (!Boolean(Number(data.amount[index].range[0])) || !Boolean(Number(data.amount[index].range[1]))) {
+
+              const amountx:{[index:string]: string} = {};
+              amountx[index] = "Range values should not be left empty";
+
               init({
-                amount: "Range values should not be left empty",
+                amount: {...amountx}
               });
               setGenError("There is an issue with your range values");
           }else if (data.amount[index].range[0] > data.amount[index].range[1]) {
+              const amountx: { [index: string]: string } = {};
+              amountx[index] =
+                "Range Minimum should not be greater than maximum";
+
               init({ 
-                  amount: "Range Minimum should not be greater than maximum"           
+                  amount: {...amountx}           
                });  
                setGenError("There is an issue with your range values");
           } else if (data.amount[index].range[0] == data.amount[index].range[1]) {
+            const amountx: { [index: string]: string } = {};
+            amountx[index] = "Range minimum and maximum should not be equal";
+ 
               init({
-                amount: "Range minimum and maximum should not be equal",
-              });    
+                amount: {...amountx},
+              });   
+
               setGenError("There is an issue with your range values");
           }else{
               amount = JSON.stringify(data.amount[index].range);
@@ -254,8 +275,12 @@ const NewLink = () => {
 
       }else if (data.amountType[index] == 'fixed') {
           if (!Boolean(Number(data.amount[index].value))) {
+            const amountx: {[index: string]: string} = {}
+            amountx[index] = "Amount should not be empty";
               init({
-                amount: "Amount should not be empty",
+                amount: {
+                  ...amountx
+                },
               });
               setGenError("There is an issue with your amount field");
           } else {
@@ -263,11 +288,12 @@ const NewLink = () => {
           }
       }
 
-      if (!/[^a-z]/gi.test(data.slug[index].charAt(0))) {
+      if (!/[a-z]/gi.test(data.slug[index].charAt(0))) {
+
         const xe = { ...error.slug };
         xe[index] = "Slug must start with an alphabet";
         init({
-          ...error.slug,
+          slug: { ...xe }
         });
         return;
       }
@@ -276,7 +302,7 @@ const NewLink = () => {
         const xe = { ...error.slug };
         xe[index] = "Slug can only contain special character like ~, -, _";
         init({
-          ...error.slug,
+          slug: {...xe}
         });
 
         return;
@@ -305,16 +331,22 @@ const NewLink = () => {
 
           try {
             await link?.save();
-            window.location.href = "/dashboard/links";
+            
+            Router.push('/dashboard/links');
+
           } catch (e) {
             const errorObject = e as Error;
             setGenError(errorObject?.message);
             setLoading(false);
+
+            document.querySelector(".linkadd")?.scrollIntoView();
           }
       } else {
-          setGenError("Link slug has already been taken");
-          setLoading(false);
-        }
+        setGenError("Link slug has already been taken");
+        setLoading(false);
+
+        document.querySelector(".linkadd")?.scrollIntoView();
+      }
       });
     }
   };
@@ -390,7 +422,6 @@ const NewLink = () => {
           });
 
           setAmountOpt("");
-          console.log(ready)
       }
 
       if (error) {
@@ -487,6 +518,12 @@ const NewLink = () => {
 
   return (
     <>
+      <Head>
+        <title>
+          Create New Link | Receive Payments Instantly With Ease | Cryptea
+        </title>
+      </Head>
+
       {loadpage && <Loader />}
 
       {!loadpage && (
@@ -504,6 +541,12 @@ const NewLink = () => {
             </h2>
 
             <div className="relative 2mmd:px-0 p-6 flex-auto">
+              {(checkError() || Boolean(genError.length)) && (
+                <Alert className="w-full font-bold mb-2" severity="error">
+                  {genError.length ? genError : "Incorrect input data"}
+                </Alert>
+              )}
+
               <Box sx={{ width: "100%" }}>
                 <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                   <Tabs
@@ -552,30 +595,14 @@ const NewLink = () => {
                   </Tabs>
                 </Box>
 
-                {checkError() ||
-                  (Boolean(genError.length) && (
-                    <Alert className="w-full" severity="error">
-                      <AlertTitle>Error</AlertTitle>
-                      {genError.length
-                        ? genError
-                        : "Something is up with your inputted data"}
-                    </Alert>
-                  ))}
-
                 {success && (
                   <Alert className="w-full" severity="success">
                     <AlertTitle>Success</AlertTitle>
                   </Alert>
                 )}
 
-                {isLoading && (
-                  <Box className="text-[#121212]" sx={{ width: "100%" }}>
-                    <LinearProgress color="inherit" />
-                  </Box>
-                )}
-
                 <TabPanel value={value} index={0}>
-                  <div className="mt-8 w-full overflow-hidden">
+                  <div className="mt-3 w-full overflow-hidden">
                     <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
                       <span className="uppercase font-bold mr-3">
                         Link Details
@@ -657,7 +684,7 @@ const NewLink = () => {
                     </div>
                   </div>
 
-                  <div className="mt-8 w-full overflow-hidden">
+                  <div className="mt-3 w-full overflow-hidden">
                     <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
                       <span className="uppercase font-bold mr-3">Amount</span>
                       <div className="flex items-center">
@@ -668,7 +695,7 @@ const NewLink = () => {
                       </div>
                     </div>
 
-                    <div className="w-full s:px-2 p-10">
+                    <div className="w-full s:px-2 px-10 py-5">
                       <div className="flex items-center ssm:flex-wrap">
                         <div className="w-full">
                           <FormLabel
@@ -745,227 +772,230 @@ const NewLink = () => {
                       </div>
                     </div>
 
-                    {(data['amountType'].onetime == 'fixed') && <div className="w-full sm:px-2 p-10">
-                      <div className="flex items-center ssm:flex-wrap">
-                        <TextField
-                          sx={text}
-                          id="amount"
-                          value={data["amount"]["onetime"]["value"]}
-                          label="Amount"
-                          variant="standard"
-                          helperText={error["amount"]["onetime"]}
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            const val = e.target.value;
-                            init({
-                              amount: {
-                                sub: "",
-                                onetime: "",
-                              },
-                            });
-                            udata({
-                              ...data,
-                              amount: {
-                                ...data["amount"],
-                                onetime: {
-                                  ...data["amount"]["onetime"],
-                                  value: val.replace(/[^\d.]/g, ""),
-                                },
-                              },
-                            });
-                          }}
-                          name="amount"
-                          type="text"
-                          fullWidth
-                        />
-                      </div>
-                    </div>}
-
-                    {(data['amountType'].onetime == 'range') && <div className="w-full sm:px-2 p-10">
-                      <div className="flex items-center ssm:flex-wrap">
-                        <TextField
-                          sx={text}
-                          id="min"
-                          placeholder="Amount"
-                          onBlur={multiAmount}
-                          label={"Min"}
-                          value={data["amount"]["onetime"]["range"][0]}
-                          variant="standard"
-                          helperText={error["amount"]["onetime"]}
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            const val = e.target.value;
-                            init({
-                              amount: {
-                                sub: "",
-                                onetime: "",
-                              },
-                            });
-
-                            udata({
-                              ...data,
-                              amount: {
-                                ...data["amount"],
-                                onetime: {
-                                  ...data["amount"]["onetime"],
-                                  range: [
-                                    val.replace(/[^\d.]/g, ""),
-                                    data["amount"]["onetime"]['range'][1],
-                                  ],
-                                },
-                              },
-                            }); 
-
-                          }}
-                          name="max"
-                          type="text"
-                          fullWidth
-                        />
-
-                        <TextField
-                          sx={text}
-                          id="max"
-                          value={data["amount"]["onetime"]["range"][1]}
-                          variant="standard"
-                          label="Max"
-                          placeholder="Amount"
-                          helperText={error["amount"]["onetime"]}
-                          onBlur={multiAmount}
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            const val = e.target.value;
-                            init({
-                              amount: {
-                                sub: "",
-                                onetime: "",
-                              },
-                            });
-                            udata({
-                              ...data,
-                              amount: {
-                                ...data["amount"],
-                                onetime: {
-                                  ...data["amount"]["onetime"],
-                                  range: [
-                                    data["amount"]["onetime"]["range"][0],
-                                    val.replace(/[^\d.]/g, ""),
-                                  ],
-                                },
-                              },
-                            });
-
-                          }}
-                          name="max"
-                          type="text"
-                          fullWidth
-                        />
-                      </div>
-                    </div>}
-
-                    {(data['amountType'].onetime != 'fixed') && <div className="w-full s:px-2 p-10">
-                      <div className="flex items-center ssm:flex-wrap">
-                        <div className="w-full">
-                          <FormLabel
-                            sx={{
-                              fontWeight: "600",
-                              color: "#121212",
-                              display: "block",
-                              marginBottom: "10px",
-                            }}
-                            id="demo-row-radio-buttons-group-label"
-                          >
-                            Amount Options
-                          </FormLabel>
-
-                          <div className="flex cusscroller overflow-x-scroll overflow-y-hidden mb-2 items-center">
-                            {data['amount']['multi'].map(
-                              (v: string | number | undefined, i: number) => {
-                                if (v !== undefined) {
-                                  return (
-                                    <button
-                                      key={i}
-                                      className="min-w-[70px] border-solid bg-white cursor-default p-[10px] border border-[#7c7c7c] rounded-[3px] flex justify-center text-[#7c7c7c] mr-3 items-center"
-                                    >
-                                      ${v}
-                                      <MdClose
-                                        className="ml-2 cursor-pointer hover:text-[#121212]"
-                                        size={17}
-                                        onClick={() => {
-                                          const newD = data.amount.multi;
-                                          delete newD[i];
-
-                                          udata({
-                                            ...data,
-                                            amount:{
-                                              ...data.amount,
-                                              multi: newD
-                                            }
-                                          });
-
-                                        }}
-                                      />
-                                    </button>
-                                  );
-                                }
-                              }
-                            )}
-                          </div>
-
+                    {data["amountType"].onetime == "fixed" && (
+                      <div className="w-full sm:px-2 p-10">
+                        <div className="flex items-center ssm:flex-wrap">
                           <TextField
                             sx={text}
-                            id="amountOptions"
-                            value={amountOpt}
-                            helperText={error['amountMulti']['onetime']}
+                            id="amount"
+                            value={data["amount"]["onetime"]["value"]}
+                            label="Amount (USD)"
                             variant="standard"
-                            placeholder="Enter Amount"
+                            helperText={error["amount"]["onetime"]}
                             onChange={(
                               e: React.ChangeEvent<
                                 HTMLInputElement | HTMLTextAreaElement
                               >
                             ) => {
                               const val = e.target.value;
-                              const sval = val.replace(/[^\d.]/g, "");
-                              setAmountOpt(sval);
+                              init({
+                                amount: {
+                                  sub: "",
+                                  onetime: "",
+                                },
+                              });
+                              udata({
+                                ...data,
+                                amount: {
+                                  ...data["amount"],
+                                  onetime: {
+                                    ...data["amount"]["onetime"],
+                                    value: val.replace(/[^\d.]/g, ""),
+                                  },
+                                },
+                              });
                             }}
-                            onKeyUp={(e: any) => {
-                              const val = e.target.value;
-                              const sval = val.replace(/[^\d.]/g, "");
-                              setAmountOpt(sval);
-
-                              if (e.keyCode == 13 || e.which === 13) {
-                                if (amountOpt.length) {
-                                  addmultiprice(amountOpt, 'onetime');
-                                }
-                              }
-                            }}
-                            onBlur={(e: any) => {
-                              const val = e.target.value;
-                              const sval = val.replace(/[^\d.]/g, "");
-                              setAmountOpt(sval);
-
-                              if (amountOpt.length) {
-                                addmultiprice(amountOpt, 'onetime');
-                              }
-                            }}
-                            name="amountOptions"
+                            name="amount"
                             type="text"
                             fullWidth
                           />
                         </div>
                       </div>
-                    </div>}
+                    )}
+
+                    {data["amountType"].onetime == "range" && (
+                      <div className="w-full sm:px-2 p-10">
+                        <div className="flex items-center ssm:flex-wrap">
+                          <TextField
+                            sx={text}
+                            id="min"
+                            placeholder="Amount"
+                            onBlur={multiAmount}
+                            label={"Min"}
+                            value={data["amount"]["onetime"]["range"][0]}
+                            variant="standard"
+                            helperText={error["amount"]["onetime"]}
+                            onChange={(
+                              e: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) => {
+                              const val = e.target.value;
+                              init({
+                                amount: {
+                                  sub: "",
+                                  onetime: "",
+                                },
+                              });
+
+                              udata({
+                                ...data,
+                                amount: {
+                                  ...data["amount"],
+                                  onetime: {
+                                    ...data["amount"]["onetime"],
+                                    range: [
+                                      val.replace(/[^\d.]/g, ""),
+                                      data["amount"]["onetime"]["range"][1],
+                                    ],
+                                  },
+                                },
+                              });
+                            }}
+                            name="max"
+                            type="text"
+                            fullWidth
+                          />
+
+                          <TextField
+                            sx={text}
+                            id="max"
+                            value={data["amount"]["onetime"]["range"][1]}
+                            variant="standard"
+                            label="Max"
+                            placeholder="Amount"
+                            helperText={error["amount"]["onetime"]}
+                            onBlur={multiAmount}
+                            onChange={(
+                              e: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) => {
+                              const val = e.target.value;
+                              init({
+                                amount: {
+                                  sub: "",
+                                  onetime: "",
+                                },
+                              });
+                              udata({
+                                ...data,
+                                amount: {
+                                  ...data["amount"],
+                                  onetime: {
+                                    ...data["amount"]["onetime"],
+                                    range: [
+                                      data["amount"]["onetime"]["range"][0],
+                                      val.replace(/[^\d.]/g, ""),
+                                    ],
+                                  },
+                                },
+                              });
+                            }}
+                            name="max"
+                            type="text"
+                            fullWidth
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {data["amountType"].onetime != "fixed" && (
+                      <div className="w-full s:px-2 px-10 py-5">
+                        <div className="flex items-center ssm:flex-wrap">
+                          <div className="w-full">
+                            <FormLabel
+                              sx={{
+                                fontWeight: "600",
+                                color: "#121212",
+                                display: "block",
+                                marginBottom: "10px",
+                              }}
+                              id="demo-row-radio-buttons-group-label"
+                            >
+                              Amount Options
+                            </FormLabel>
+
+                            <div className="flex cusscroller overflow-x-scroll overflow-y-hidden mb-3 pb-1 items-center">
+                              {data["amount"]["multi"].map(
+                                (v: string | number | undefined, i: number) => {
+                                  if (v !== undefined) {
+                                    return (
+                                      <button
+                                        key={i}
+                                        className="min-w-[70px] border-solid bg-white cursor-default p-[10px] border border-[#7c7c7c] rounded-[3px] flex justify-center text-[#7c7c7c] mr-3 items-center"
+                                      >
+                                        ${v}
+                                        <MdClose
+                                          className="ml-2 cursor-pointer hover:text-[#121212]"
+                                          size={17}
+                                          onClick={() => {
+                                            const newD = data.amount.multi;
+                                            delete newD[i];
+
+                                            udata({
+                                              ...data,
+                                              amount: {
+                                                ...data.amount,
+                                                multi: newD,
+                                              },
+                                            });
+                                          }}
+                                        />
+                                      </button>
+                                    );
+                                  }
+                                }
+                              )}
+                            </div>
+
+                            <TextField
+                              sx={text}
+                              id="amountOptions"
+                              value={amountOpt}
+                              helperText={error["amountMulti"]["onetime"]}
+                              variant="standard"
+                              placeholder="Enter Amount"
+                              onChange={(
+                                e: React.ChangeEvent<
+                                  HTMLInputElement | HTMLTextAreaElement
+                                >
+                              ) => {
+                                const val = e.target.value;
+                                const sval = val.replace(/[^\d.]/g, "");
+                                setAmountOpt(sval);
+                              }}
+                              onKeyUp={(e: any) => {
+                                const val = e.target.value;
+                                const sval = val.replace(/[^\d.]/g, "");
+                                setAmountOpt(sval);
+
+                                if (e.keyCode == 13 || e.which === 13) {
+                                  if (amountOpt.length) {
+                                    addmultiprice(amountOpt, "onetime");
+                                  }
+                                }
+                              }}
+                              onBlur={(e: any) => {
+                                const val = e.target.value;
+                                const sval = val.replace(/[^\d.]/g, "");
+                                setAmountOpt(sval);
+
+                                if (amountOpt.length) {
+                                  addmultiprice(amountOpt, "onetime");
+                                }
+                              }}
+                              name="amountOptions"
+                              type="text"
+                              fullWidth
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="mt-8 w-full overflow-hidden">
+                  <div className="mt-3 w-full overflow-hidden">
                     <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
                       <span className="uppercase font-bold mr-3">
                         Link Slug
@@ -1026,7 +1056,7 @@ const NewLink = () => {
                   </div>
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                  <div className="mt-8 w-full overflow-hidden">
+                  <div className="mt-3 w-full overflow-hidden">
                     <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
                       <span className="uppercase font-bold mr-3">
                         Subscription Details
@@ -1108,7 +1138,7 @@ const NewLink = () => {
                     </div>
                   </div>
 
-                  <div className="mt-8 w-full overflow-hidden">
+                  <div className="mt-3 w-full overflow-hidden">
                     <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
                       <span className="uppercase font-bold mr-3">Amount</span>
                       <div className="flex items-center">
@@ -1119,7 +1149,7 @@ const NewLink = () => {
                       </div>
                     </div>
 
-                    <div className="w-full s:px-2 p-10">
+                    <div className="w-full s:px-2 px-10 py-5">
                       <div className="flex items-center ssm:flex-wrap">
                         <div className="w-full">
                           <FormLabel
@@ -1155,7 +1185,7 @@ const NewLink = () => {
                             }}
                             onChange={(e: any) => {
                               const val = e.target.value;
-                              
+
                               udata({
                                 ...data,
                                 amountType: {
@@ -1163,8 +1193,6 @@ const NewLink = () => {
                                   sub: val,
                                 },
                               });
-
-                             
                             }}
                           >
                             <ToggleButton
@@ -1199,228 +1227,230 @@ const NewLink = () => {
                       </div>
                     </div>
 
-                    {(data['amountType'].sub == 'fixed') && <div className="w-full sm:px-2 p-10">
-                      <div className="flex items-center ssm:flex-wrap">
-                        <TextField
-                          sx={text}
-                          id="amount"
-                          value={data["amount"]["sub"]["value"]}
-                          label="Amount"
-                          variant="standard"
-                          helperText={error["amount"]["sub"]}
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            const val = e.target.value;
-                            init({
-                              amount: {
-                                onetime: "",
-                                sub: "",
-                              },
-                            });
-                            udata({
-                              ...data,
-                              amount: {
-                                ...data["amount"],
-                                sub: {
-                                  ...data["amount"]["sub"],
-                                  value: val.replace(/[^\d.]/g, ""),
-                                },
-                              },
-                            });
-                          }}
-                          name="amount"
-                          type="text"
-                          fullWidth
-                        />
-                      </div>
-                    </div>}
-
-                    {(data['amountType'].sub == 'range') && <div className="w-full sm:px-2 p-10">
-                      <div className="flex items-center ssm:flex-wrap">
-                        <TextField
-                          sx={text}
-                          id="min"
-                          placeholder="Amount"
-                          onBlur={multiAmount}
-                          label={"Min"}
-                          value={data["amount"]["sub"]["range"][0]}
-                          variant="standard"
-                          helperText={error["amount"]["sub"]}
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            const val = e.target.value;
-                            init({
-                              amount: {
-                                onetime: "",
-                                sub: "",
-                              },
-                            });
-
-                            udata({
-                              ...data,
-                              amount: {
-                                ...data["amount"],
-                                sub: {
-                                  ...data["amount"]["sub"],
-                                  range: [
-                                    val.replace(/[^\d.]/g, ""),
-                                    data["amount"]["sub"]['range'][1],
-                                  ],
-                                },
-                              },
-                            });
-
-
-                          }}
-                          name="max"
-                          type="text"
-                          fullWidth
-                        />
-
-                        <TextField
-                          sx={text}
-                          id="max"
-                          value={data["amount"]["sub"]["range"][1]}
-                          variant="standard"
-                          label="Max"
-                          placeholder="Amount"
-                          helperText={error["amount"]["sub"]}
-                          onBlur={multiAmount}
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            const val = e.target.value;
-                            init({
-                              amount: {
-                                onetime: "",
-                                sub: "",
-                              },
-                            });
-                            udata({
-                              ...data,
-                              amount: {
-                                ...data["amount"],
-                                sub: {
-                                  ...data["amount"]["sub"],
-                                  range: [
-                                    data["amount"]["sub"]["range"][0],
-                                    val.replace(/[^\d.]/g, ""),
-                                  ],
-                                },
-                              },
-                            });
-
-                          }}
-                          name="max"
-                          type="text"
-                          fullWidth
-                        />
-                      </div>
-                    </div>}
-
-                    {(data['amountType'].sub != 'fixed') && <div className="w-full s:px-2 p-10">
-                      <div className="flex items-center ssm:flex-wrap">
-                        <div className="w-full">
-                          <FormLabel
-                            sx={{
-                              fontWeight: "600",
-                              color: "#121212",
-                              display: "block",
-                              marginBottom: "10px",
-                            }}
-                            id="demo-row-radio-buttons-group-label"
-                          >
-                            Amount Options
-                          </FormLabel>
-
-                          <div className="flex cusscroller overflow-x-scroll overflow-y-hidden mb-2 items-center">
-                            {data['amount']['multi'].map(
-                              (v: string | number | undefined, i: number) => {
-                                if (v !== undefined) {
-                                  return (
-                                    <button
-                                      key={i}
-                                      className="min-w-[70px] border-solid bg-white cursor-default p-[10px] border border-[#7c7c7c] rounded-[3px] flex justify-center text-[#7c7c7c] mr-3 items-center"
-                                    >
-                                      ${v}
-                                      <MdClose
-                                        className="ml-2 cursor-pointer hover:text-[#121212]"
-                                        size={17}
-                                        onClick={() => {
-                                          const newD = data.amount.multi;
-                                          delete newD[i];
-
-                                          udata({
-                                            ...data,
-                                            amount:{
-                                              ...data.amount,
-                                              multi: newD
-                                            }
-                                          });
-
-                                        }}
-                                      />
-                                    </button>
-                                  );
-                                }
-                              }
-                            )}
-                          </div>
-
+                    {data["amountType"].sub == "fixed" && (
+                      <div className="w-full sm:px-2 p-10">
+                        <div className="flex items-center ssm:flex-wrap">
                           <TextField
                             sx={text}
-                            id="amountOptions"
-                            value={amountOpt}
-                            helperText={error['amountMulti']['sub']}
+                            id="amount"
+                            value={data["amount"]["sub"]["value"]}
+                            label="Amount (USD)"
                             variant="standard"
-                            placeholder="Enter Amount"
+                            helperText={error["amount"]["sub"]}
                             onChange={(
                               e: React.ChangeEvent<
                                 HTMLInputElement | HTMLTextAreaElement
                               >
                             ) => {
                               const val = e.target.value;
-                              const sval = val.replace(/[^\d.]/g, "");
-                              setAmountOpt(sval);
+                              init({
+                                amount: {
+                                  onetime: "",
+                                  sub: "",
+                                },
+                              });
+                              udata({
+                                ...data,
+                                amount: {
+                                  ...data["amount"],
+                                  sub: {
+                                    ...data["amount"]["sub"],
+                                    value: val.replace(/[^\d.]/g, ""),
+                                  },
+                                },
+                              });
                             }}
-                            onKeyUp={(e: any) => {
-                              const val = e.target.value;
-                              const sval = val.replace(/[^\d.]/g, "");
-                              setAmountOpt(sval);
-
-                              if (e.keyCode == 13 || e.which === 13) {
-                                if (amountOpt.length) {
-                                  addmultiprice(amountOpt, 'sub');
-                                }
-                              }
-                            }}
-                            onBlur={(e: any) => {
-                              const val = e.target.value;
-                              const sval = val.replace(/[^\d.]/g, "");
-                              setAmountOpt(sval);
-
-                              if (amountOpt.length) {
-                                addmultiprice(amountOpt, 'sub');
-                              }
-                            }}
-                            name="amountOptions"
+                            name="amount"
                             type="text"
                             fullWidth
                           />
                         </div>
                       </div>
-                    </div>}
+                    )}
+
+                    {data["amountType"].sub == "range" && (
+                      <div className="w-full sm:px-2 p-10">
+                        <div className="flex items-center ssm:flex-wrap">
+                          <TextField
+                            sx={text}
+                            id="min"
+                            placeholder="Amount"
+                            onBlur={multiAmount}
+                            label={"Min"}
+                            value={data["amount"]["sub"]["range"][0]}
+                            variant="standard"
+                            helperText={error["amount"]["sub"]}
+                            onChange={(
+                              e: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) => {
+                              const val = e.target.value;
+                              init({
+                                amount: {
+                                  onetime: "",
+                                  sub: "",
+                                },
+                              });
+
+                              udata({
+                                ...data,
+                                amount: {
+                                  ...data["amount"],
+                                  sub: {
+                                    ...data["amount"]["sub"],
+                                    range: [
+                                      val.replace(/[^\d.]/g, ""),
+                                      data["amount"]["sub"]["range"][1],
+                                    ],
+                                  },
+                                },
+                              });
+                            }}
+                            name="max"
+                            type="text"
+                            fullWidth
+                          />
+
+                          <TextField
+                            sx={text}
+                            id="max"
+                            value={data["amount"]["sub"]["range"][1]}
+                            variant="standard"
+                            label="Max"
+                            placeholder="Amount"
+                            helperText={error["amount"]["sub"]}
+                            onBlur={multiAmount}
+                            onChange={(
+                              e: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) => {
+                              const val = e.target.value;
+                              init({
+                                amount: {
+                                  onetime: "",
+                                  sub: "",
+                                },
+                              });
+                              udata({
+                                ...data,
+                                amount: {
+                                  ...data["amount"],
+                                  sub: {
+                                    ...data["amount"]["sub"],
+                                    range: [
+                                      data["amount"]["sub"]["range"][0],
+                                      val.replace(/[^\d.]/g, ""),
+                                    ],
+                                  },
+                                },
+                              });
+                            }}
+                            name="max"
+                            type="text"
+                            fullWidth
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {data["amountType"].sub != "fixed" && (
+                      <div className="w-full s:px-2 px-10 py-5">
+                        <div className="flex items-center ssm:flex-wrap">
+                          <div className="w-full">
+                            <FormLabel
+                              sx={{
+                                fontWeight: "600",
+                                color: "#121212",
+                                display: "block",
+                                marginBottom: "10px",
+                              }}
+                              id="demo-row-radio-buttons-group-label"
+                            >
+                              Amount Options
+                            </FormLabel>
+
+                            <div className="flex cusscroller overflow-x-scroll overflow-y-hidden mb-2 items-center">
+                              {data["amount"]["multi"].map(
+                                (v: string | number | undefined, i: number) => {
+                                  if (v !== undefined) {
+                                    return (
+                                      <button
+                                        key={i}
+                                        className="min-w-[70px] border-solid bg-white cursor-default p-[10px] border border-[#7c7c7c] rounded-[3px] flex justify-center text-[#7c7c7c] mr-3 items-center"
+                                      >
+                                        ${v}
+                                        <MdClose
+                                          className="ml-2 min-w-[17px] cursor-pointer hover:text-[#121212]"
+                                          size={17}
+                                          onClick={() => {
+                                            const newD = data.amount.multi;
+                                            delete newD[i];
+
+                                            udata({
+                                              ...data,
+                                              amount: {
+                                                ...data.amount,
+                                                multi: newD,
+                                              },
+                                            });
+                                          }}
+                                        />
+                                      </button>
+                                    );
+                                  }
+                                }
+                              )}
+                            </div>
+
+                            <TextField
+                              sx={text}
+                              id="amountOptions"
+                              value={amountOpt}
+                              helperText={error["amountMulti"]["sub"]}
+                              variant="standard"
+                              placeholder="Enter Amount"
+                              onChange={(
+                                e: React.ChangeEvent<
+                                  HTMLInputElement | HTMLTextAreaElement
+                                >
+                              ) => {
+                                const val = e.target.value;
+                                const sval = val.replace(/[^\d.]/g, "");
+                                setAmountOpt(sval);
+                              }}
+                              onKeyUp={(e: any) => {
+                                const val = e.target.value;
+                                const sval = val.replace(/[^\d.]/g, "");
+                                setAmountOpt(sval);
+
+                                if (e.keyCode == 13 || e.which === 13) {
+                                  if (amountOpt.length) {
+                                    addmultiprice(amountOpt, "sub");
+                                  }
+                                }
+                              }}
+                              onBlur={(e: any) => {
+                                const val = e.target.value;
+                                const sval = val.replace(/[^\d.]/g, "");
+                                setAmountOpt(sval);
+
+                                if (amountOpt.length) {
+                                  addmultiprice(amountOpt, "sub");
+                                }
+                              }}
+                              name="amountOptions"
+                              type="text"
+                              fullWidth
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="mt-8 w-full overflow-hidden">
+                  <div className="mt-3 w-full overflow-hidden">
                     <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
                       <span className="uppercase font-bold mr-3">
                         Link Slug
@@ -1482,12 +1512,32 @@ const NewLink = () => {
                 </TabPanel>
               </Box>
 
-              <Button
-                onClick={saveLink}
-                className="py-3 font-bold px-6 !capitalize flex items-center text-white bg-[#f57059] transition-all delay-500 hover:bg-[#fb4d2e] m-auto rounded-lg"
-              >
-                <MdInsertLink size={25} className="mr-1" /> Create Link
-              </Button>
+              <div className="flex relative items-center">
+                {" "}
+                {isLoading && (
+                  <Button className="py-3 font-bold px-6 normal-case flex items-center text-white hover:bg-[#f57059] bg-[#f57059] m-auto rounded-lg">
+                    <CircularProgress
+                      sx={{
+                        color: "white",
+                        maxWidth: 24,
+                        maxHeight: 24,
+                        marginRight: 1,
+                      }}
+                      thickness={4.5}
+                      color="inherit"
+                    />{" "}
+                    Wait a Sec...
+                  </Button>
+                )}
+                {!isLoading && (
+                  <Button
+                    onClick={saveLink}
+                    className="py-3 font-bold px-6 !capitalize flex items-center text-white bg-[#f57059] transition-all delay-500 hover:bg-[#fb4d2e] m-auto rounded-lg"
+                  >
+                    <MdInsertLink size={25} className="mr-1" /> Create Link
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
