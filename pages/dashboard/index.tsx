@@ -176,20 +176,13 @@ const DashboardIndex = () => {
                     </div>
                   </Popover>
                 </div>
-                {Boolean(dp) ? (
-                  <Avatar
+                 <Avatar
                     src={dp}
-                    sx={{ width: 40, height: 40 }}
-                    alt={user?.get("username")}
-                  ></Avatar>
-                ) : (
-                  <Avatar
-                    sx={{ bgcolor: "#F57059" }}
+                    sx={{ width: 40, height: 40, bgcolor: "#F57059" }}
                     alt={user?.get("username")}
                   >
                     {user?.get("username")?.charAt(0).toUpperCase()}
                   </Avatar>
-                )}
               </div>
             </div>
 

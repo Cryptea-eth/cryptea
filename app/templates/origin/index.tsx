@@ -605,17 +605,9 @@ const Origin = ({ className }: {className?: string}) => {
                     className="absolute border-solid linkimg p-1 m-auto w-fit"
                   >
                     {/* Image */}
-                    {(!img?.length && !data.image.src.length) ? (
-                      <Avatar
-                        sx={data.image}
-                        className="!font-bold !text-[35px]"
-                        alt={usern}
-                      >
-                        {usern?.charAt(0).toUpperCase()}
-                      </Avatar>
-                    ) : (
-                      <Avatar className="imgx_page" src={data.image.src.length ? data.image.src : img} sx={data.image} alt={usern}></Avatar>
-                    )}
+                    
+                    <Avatar className="imgx_page !font-bold !text-[35px]" src={data.image.src.length ? data.image.src : img} sx={data.image} alt={usern}>{usern?.charAt(0).toUpperCase()}</Avatar>
+                    
                   </div>
                 </div>
                 <div className="flex flex-row usm:flex-col">

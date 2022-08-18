@@ -1,4 +1,14 @@
+import Moralis from 'moralis';
 import pattern from "../../../public/images/pattern.png";
+
+let udata: {[index: string]: any} = {
+
+};
+
+export const getData = () => {
+    
+}
+
 
 let data: {
   [index: string]: any;
@@ -101,6 +111,7 @@ data = {
     backgroundColor: data.colorScheme,
   },
   ...data,
+  ...udata
 };
 
 

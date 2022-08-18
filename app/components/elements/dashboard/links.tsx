@@ -2,12 +2,15 @@ import empty from "../../../../public/images/coming-soon.svg";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Typography, Box, Button, Avatar, IconButton, Modal } from '@mui/material';
-import { MdAddLink, MdDeleteOutline, MdInfo, MdModeEditOutline } from 'react-icons/md';
+import { MdAddLink, MdDeleteOutline, MdInfo, MdLink, MdModeEditOutline } from 'react-icons/md';
+import { FaCoins } from 'react-icons/fa'
 import Link from "next/link";
 import { useMoralis } from "react-moralis";
 import Loader from "../loader";
 import { RiDeleteBin2Line, RiPagesLine } from "react-icons/ri";
 import { BiCheck } from "react-icons/bi";
+import { BsPeopleFill } from "react-icons/bs";
+import { FiTrash2 } from "react-icons/fi";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -188,7 +191,7 @@ const DashLinks = () => {
           </div>
           <Link href="/dashboard/links/new">
             <a>
-              <Button className="py-2 font-bold px-5 !capitalize flex items-center text-white bg-[#F57059] transition-all delay-500 hover:bg-[#e6533a] rounded-lg">
+              <Button className="py-2 font-bold px-5 !capitalize flex items-center text-black bg-[#F57059] border border-solid border-[rgb(218,220,224)] transition-all delay-500 hover:text-[#f0f0f0] rounded-lg">
                 <MdAddLink size={25} className="mr-1" /> Create Link
               </Button>
             </a>
@@ -198,16 +201,16 @@ const DashLinks = () => {
 
       {Boolean(links.length) && !isLoading && (
         <>
-          <h2 className="font-bold text-[20px] mt-6 mb-3">Active Links</h2>
+          <h2 className="font-bold text-[20px] mt-6 mb-[9px]">Active Links</h2>
           <div
             style={{
-              gridTemplateColumns: "repeat(auto-fill, minmax(290px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))",
             }}
-            className="grid gap-2 grid-flow-dense"
+            className="grid gap-6 grid-flow-dense"
           >
-            <Button className="w-full rounded-md border hover:text-white text-[#F57059] border-[#f5705982] bg-transparent hover:bg-[#f5705982] border-solid p-4">
+            <Button className="w-full rounded-md hover:border-[#f5705982] hover:bg-[#f5705982] text-[#121212] bg-transparent hover:text-white border border-solid border-[rgb(218,220,224)]">
               <Link href="/dashboard/links/new">
-                <a className="flex-col w-full h-full flex justify-center items-center">
+                <a className="flex-col p-4 w-full h-full flex justify-center items-center">
                   <MdAddLink size={50} className="mb-3" />
 
                   <h2 className="font-bold">Create Link</h2>
@@ -216,42 +219,11 @@ const DashLinks = () => {
             </Button>
 
             {links.map(({ attributes }: any, i: number) => (
-              <div
-                key={i}
-                className="w-full cursor-default rounded-md border border-[#f5705982] border-solid p-4"
-              >
-                
-                <div style={{
-                    alignItems: attributes.desc ? 'center' : 'start'
-                }} className="flex flex-row-reverse">
-                  <Avatar
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      backgroundColor: "#F57059",
-                      marginRight: "10px",
-                    }}
-                    variant="rounded"
-                  >
-                    {(
-                      String(attributes.link).charAt(0) +
-                      String(attributes.link).charAt(1)
-                    ).toUpperCase()}
-                  </Avatar>
-
-                  <div className="w-[calc(100%-70px)]">
-                    <h3 className="truncate text-[20px] mb-[10px] font-bold text-[#242424]">
-                      {attributes.link}
-                    </h3>
-
-                    <span className="block w-full text-[#6d6d6d]">
-
-                      {attributes.desc ? (attributes.desc.length > 100 ? attributes.desc.substring(0, 100)+'...' : attributes.desc) : ""}
-
-                    </span>
-                  </div>
-                </div>
-                <div className="flex mt-4 justify-between items-center w-full">
+              // bg-[#efefef]
+              <Link href="/somewhere" key={i}>
+                <a>
+                  <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(240,240,240)] transition-all delay-300 cursor-pointer">
+                    {/* <div className="flex mt-4 justify-between items-center w-full">
                   <a
                     target="_blank"
                     href={`/user/${attributes.link.toLowerCase()}`}
@@ -284,8 +256,62 @@ const DashLinks = () => {
                       <MdDeleteOutline size={20} />
                     </IconButton>
                   </div>
-                </div>
-              </div>
+                </div> */}
+
+                    <div className="mb-4">
+                      <Avatar
+                        sx={{
+                          width: "100%",
+                          height: 183,
+                          margin: "auto",
+                          backgroundColor: "#f5705982",
+                        }}
+                        className="text-[50px] font-bold"
+                        variant="rounded"
+                        src={""}
+                      >
+                        {(
+                          String(attributes.link).charAt(0) +
+                          String(attributes.link).charAt(1)
+                        ).toUpperCase()}
+                      </Avatar>
+                    </div>
+
+                    <div className="flex items-center mb-[10px] justify-between">
+                      <div className="flex items-center">
+                        <div className="text-white w-[40px] h-[40px] rounded-md mr-[.75rem] flex items-center justify-center bg-[#F57059]">
+                          <MdLink size={21} />
+                        </div>
+                        <div>
+                          <h3 className="truncate text-[17px] leading-[20px] font-[900] text-[#121212]">
+                            {attributes.link}
+                          </h3>
+                          <span className="block text-[14px] leading-[1.2] truncate w-full text-[#575757]">
+                            {Boolean(attributes.desc) ? attributes.desc : "•••"}
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        onClick={(e: any) => {
+                          e.preventDefault();
+
+                          setShowLinkModal(attributes.link)
+                        }}
+                      >
+                        <IconButton
+                          color="inherit"
+                          size={"large"}
+                          sx={{
+                            color: "#F57059",
+                          }}
+                        >
+                          <FiTrash2 size={20} />
+                        </IconButton>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </Link>
             ))}
           </div>
         </>

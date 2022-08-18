@@ -522,25 +522,15 @@ const DashSettings = () => {
                       <div className="font-semibold mt-5 mb-4 text-[#777]">
                         Profile Picture
                       </div>
-                      {!Boolean(dp) ? (
+                      
                         <Avatar
-                          sx={{
-                            bgcolor: "#F57059",
-                            width: 190,
-                            height: 190,
-                          }}
+                          src={dp}
                           className="!font-bold imm !text-[35px]"
+                          sx={{ width: 190, height: 190, bgcolor: "#F57059", }}
                           alt={user?.get("username")}
                         >
                           {user?.get("username").charAt(0).toUpperCase()}
                         </Avatar>
-                      ) : (
-                        <Avatar
-                          src={dp}
-                          sx={{ width: 190, height: 190 }}
-                          alt={user?.get("username")}
-                        ></Avatar>
-                      )}
                       <div className="mt-1">
                         <input
                           type="file"
