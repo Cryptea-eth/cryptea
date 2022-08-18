@@ -6,7 +6,7 @@ let udata: {[index: string]: any} = {
 };
 
 export const getData = () => {
-    
+      
 }
 
 

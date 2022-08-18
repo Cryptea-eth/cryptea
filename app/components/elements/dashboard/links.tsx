@@ -204,7 +204,7 @@ const DashLinks = () => {
           <h2 className="font-bold text-[20px] mt-6 mb-[9px]">Active Links</h2>
           <div
             style={{
-              gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(293px, 1fr))",
             }}
             className="grid gap-6 grid-flow-dense"
           >
@@ -218,9 +218,17 @@ const DashLinks = () => {
               </Link>
             </Button>
 
-            {links.map(({ attributes }: any, i: number) => (
+            {links.map(({ attributes }: any, i: number) => {
               // bg-[#efefef]
-              <Link href="/somewhere" key={i}>
+              
+              const { template_data, link, desc } = attributes
+
+              const { image } = template_data !== undefined ? JSON.parse(template_data) : {image: undefined};
+
+              const { src } = image !== undefined ? image : {src: undefined}
+
+              
+              return (<Link href="/somewhere" key={i}>
                 <a>
                   <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(240,240,240)] transition-all delay-300 cursor-pointer">
                     {/* <div className="flex mt-4 justify-between items-center w-full">
@@ -268,11 +276,11 @@ const DashLinks = () => {
                         }}
                         className="text-[50px] font-bold"
                         variant="rounded"
-                        src={""}
+                        src={src}
                       >
                         {(
-                          String(attributes.link).charAt(0) +
-                          String(attributes.link).charAt(1)
+                          String(link).charAt(0) +
+                          String(link).charAt(1)
                         ).toUpperCase()}
                       </Avatar>
                     </div>
@@ -284,10 +292,10 @@ const DashLinks = () => {
                         </div>
                         <div>
                           <h3 className="truncate text-[17px] leading-[20px] font-[900] text-[#121212]">
-                            {attributes.link}
+                            {link}
                           </h3>
                           <span className="block text-[14px] leading-[1.2] truncate w-full text-[#575757]">
-                            {Boolean(attributes.desc) ? attributes.desc : "•••"}
+                            {Boolean(desc) ? desc : "•••"}
                           </span>
                         </div>
                       </div>
@@ -295,7 +303,7 @@ const DashLinks = () => {
                         onClick={(e: any) => {
                           e.preventDefault();
 
-                          setShowLinkModal(attributes.link)
+                          setShowLinkModal(link);
                         }}
                       >
                         <IconButton
@@ -311,8 +319,10 @@ const DashLinks = () => {
                     </div>
                   </div>
                 </a>
-              </Link>
-            ))}
+              </Link>)
+
+            }
+            )}
           </div>
         </>
       )}
