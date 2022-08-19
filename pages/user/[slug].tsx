@@ -1,7 +1,8 @@
-import Origin from "../../app/templates/origin";
+import dynamic from "next/dynamic";
 import Head from "next/head";
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useMoralis } from "react-moralis";
+import Loader from "../../app/components/elements/loader";
 const User = () => {
   
    const {
@@ -12,7 +13,16 @@ const User = () => {
      chainId,
      isAuthenticated
    } = useMoralis();
+   
 
+   const ee = "../../app/templates/origin";
+
+  const Template = dynamic(() => import(`../../app/templates/origin`),{
+    suspense: true,
+    ssr: false
+  });
+
+  
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -28,7 +38,9 @@ const User = () => {
 
   return (
       <>
-      <Origin />
+      <Suspense fallback={<Loader />}>
+        <Template />
+      </Suspense>
       </>
   )
 }

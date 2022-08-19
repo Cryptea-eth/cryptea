@@ -129,6 +129,24 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
           </div>
 
           <div
+            className={`rounded-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] flex items-center py-[9px] ${
+              page === "links" || page === "link" ? active : ""
+            }`}
+          >
+            <Link href="/dashboard/links">
+              <a className="text-inherit flex items-center text-[14px]">
+                <BiCreditCard
+                  size={sidebar?.openDelay ? 16.5 : 21}
+                  className={`text-inherit transition-all delay-400  ${
+                    sidebar?.openDelay ? "min-w-[16.5px]" : "min-w-[21px]"
+                  } mx-[22.5px]`}
+                />
+                {sidebar?.openDelay ? "Payment Links" : ""}
+              </a>
+            </Link>
+          </div>
+
+          <div
             className={`rounded-[4px]  border-l-[3px] overflow-hidden flex-nowrap my-1 ${
               page === "userpages" || page === "pages" || page === "page"
                 ? active
@@ -144,24 +162,6 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
                   } mx-[22.5px]`}
                 />
                 {sidebar?.openDelay ? "Your Pages" : ""}
-              </a>
-            </Link>
-          </div>
-
-          <div
-            className={`rounded-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] flex items-center py-[9px] ${
-              page === "links" || page === "link" ? active : ""
-            }`}
-          >
-            <Link href="/dashboard/links">
-              <a className="text-inherit flex items-center text-[14px]">
-                <BiCreditCard
-                  size={sidebar?.openDelay ? 16.5 : 21}
-                  className={`text-inherit transition-all delay-400  ${
-                    sidebar?.openDelay ? "min-w-[16.5px]" : "min-w-[21px]"
-                  } mx-[22.5px]`}
-                />
-                {sidebar?.openDelay ? "Payment Links" : ""}
               </a>
             </Link>
           </div>

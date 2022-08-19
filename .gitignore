@@ -45,6 +45,7 @@ typechain-types
 #Hardhat files
 cache
 
+.VSCodeCounter
 
 node_modules
 .env

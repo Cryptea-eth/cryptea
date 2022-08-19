@@ -99,7 +99,7 @@ const Origin = ({ className }: {className?: string}) => {
   } = useMoralis();
 
  
-  const [userD, setUserD] = useState({});
+  const [userD, setUserD] = useState<{[index: string]: any}>({});
   const [pemail, setPemail] = useState<string>("");
   const [name, setName] = useState<string>("")
   const [isLoading, setIsLoading] = useState(true);
@@ -150,6 +150,17 @@ const Origin = ({ className }: {className?: string}) => {
           setLinkHook(er);
           Moralis.Cloud.run("getUser", { obj: er[0]?.get("user").id }).then(
             (ex:any) => {
+
+              let linkAmount: string | object | undefined;
+
+              if (er[0].get("amount") !== undefined){
+                  linkAmount =
+                    er[0].get("amount") === "variable"
+                      ? "variable"
+                      : JSON.parse(er[0].get("amount"));
+               }
+
+
               setUserD({
                 description: ex[0]?.get("desc"),
                 username: ex[0]?.get("username"),
@@ -158,7 +169,10 @@ const Origin = ({ className }: {className?: string}) => {
                 img: er[0]?.get('img') !== undefined ? er[0]?.get('img') : (ex[0]?.get("img") === undefined ? "" : ex[0]?.get("img")),
                 id: er[0].id,
                 onetime: er[0].get('onetime'),
-                subscribers: er[0].get('subscribers') 
+                subscribers: er[0].get('subscribers'),
+                linktype: er[0].get('type'),
+                amountMultiple: Boolean(er[0].get('amountMulti')) ? JSON.parse(er[0].get('amountMulti')) : [],
+                linkAmount 
               });
 
             setIsLoading(false);
@@ -605,9 +619,15 @@ const Origin = ({ className }: {className?: string}) => {
                     className="absolute border-solid linkimg p-1 m-auto w-fit"
                   >
                     {/* Image */}
-                    
-                    <Avatar className="imgx_page !font-bold !text-[35px]" src={data.image.src.length ? data.image.src : img} sx={data.image} alt={usern}>{usern?.charAt(0).toUpperCase()}</Avatar>
-                    
+
+                    <Avatar
+                      className="imgx_page !font-bold !text-[35px]"
+                      src={data.image.src.length ? data.image.src : img}
+                      sx={data.image}
+                      alt={usern}
+                    >
+                      {usern?.charAt(0).toUpperCase()}
+                    </Avatar>
                   </div>
                 </div>
                 <div className="flex flex-row usm:flex-col">
@@ -714,54 +734,57 @@ const Origin = ({ className }: {className?: string}) => {
                       </div>
                       <div className="form relative pt-4">
                         <Box sx={{ width: "100%" }}>
-                          <Box
-                            sx={{
-                              borderBottom: 1,
-                              borderColor: "divider",
-                            }}
-                          >
-                            {/* body */}
-                            <Tabs
-                              value={value}
-                              onChange={handleChange}
+                          {userD?.linktype == "both" && (
+                            <Box
                               sx={{
-                                "& .MuiTabs-flexContainer": {
-                                  width: "100%",
-                                  justifyContent: "space-around",
-                                },
-                                "& .MuiTab-root.MuiButtonBase-root.Mui-selected":
-                                  {
+                                borderBottom: 1,
+                                borderColor: "divider",
+                              }}
+                            >
+                              {/* body */}
+                              <Tabs
+                                value={value}
+                                onChange={handleChange}
+                                sx={{
+                                  "& .MuiTabs-flexContainer": {
+                                    width: "100%",
+                                    justifyContent: "space-around",
+                                  },
+                                  "& .MuiTab-root.MuiButtonBase-root.Mui-selected":
+                                    {
+                                      fontWeight: "bold",
+                                      borderRadius: "4px",
+                                      color: data.colorScheme,
+                                      backgroundColor: `${data.colorScheme}23 !important`,
+                                      textTransform: "capitalize",
+                                    },
+                                  "& .MuiButtonBase-root.MuiTab-root": {
                                     fontWeight: "bold",
                                     borderRadius: "4px",
-                                    color: data.colorScheme,
-                                    backgroundColor: `${data.colorScheme}23 !important`,
                                     textTransform: "capitalize",
                                   },
-                                "& .MuiButtonBase-root.MuiTab-root": {
-                                  fontWeight: "bold",
-                                  borderRadius: "4px",
-                                  textTransform: "capitalize",
-                                },
-                                "& .MuiTabs-indicator": {
-                                  backgroundColor: `${data.colorScheme} !important`,
-                                  opacity: "0.14",
-                                },
-                              }}
-                              aria-label="payment tabs"
-                            >
-                              <Tab
-                                className="!font-bold !rounded-[4px] !capitalize"
-                                label="Onetime😇"
-                                {...a11yProps(0)}
-                              />
+                                  "& .MuiTabs-indicator": {
+                                    backgroundColor: `${data.colorScheme} !important`,
+                                    opacity: "0.14",
+                                  },
+                                }}
+                                aria-label="payment tabs"
+                              >
+                                <Tab
+                                  className="!font-bold !rounded-[4px] !capitalize"
+                                  label="Onetime😇"
+                                  {...a11yProps(0)}
+                                />
 
-                              <Tab
-                                className="!font-bold !rounded-[4px] !capitalize"
-                                label="Subscription😍"
-                                {...a11yProps(1)}
-                              />
-                            </Tabs>
-                          </Box>
+                                <Tab
+                                  className="!font-bold !rounded-[4px] !capitalize"
+                                  label="Subscription😍"
+                                  {...a11yProps(1)}
+                                />
+                              </Tabs>
+                            </Box>
+                          )}
+
                           {/* error */}
                           {(transferFail || Boolean(failMessage)) && (
                             <div
@@ -942,8 +965,10 @@ const Origin = ({ className }: {className?: string}) => {
                           )}
 
                           <TabPanel value={value} index={0}>
-                            <FormControl fullWidth>
-                              {/* <Select
+                            {(userD?.linktype == "both" ||
+                              userD?.linktype == "onetime") && (
+                              <FormControl fullWidth>
+                                {/* <Select
                           disabled
                           displayEmpty
                           value={blockchainName}
@@ -971,225 +996,134 @@ const Origin = ({ className }: {className?: string}) => {
                           ))}
                         </Select> */}
 
-                              <div className="py-3 font-bold">Amount (USD)</div>
-
-                              <ToggleButtonGroup
-                                value={amount}
-                                sx={{
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                  "& .Mui-selected": {
-                                    backgroundColor: `${data.colorScheme} !important`,
-                                    color: `${data.white} !important`,
-                                  },
-                                  "& .MuiToggleButtonGroup-grouped": {
-                                    borderRadius: "4px !important",
-                                    minWidth: 55,
-                                    border:
-                                      "1px solid rgba(0, 0, 0, 0.12) !important",
-                                  },
-                                }}
-                                exclusive
-                                className="w-full justify-between"
-                                onChange={(e: any) => {
-                                  setTransferFail(false);
-                                  const val = e.target.value;
-                                  setAmount(val.replace(/[^\d.]/g, ""));
-                                }}
-                              >
-                                <ToggleButton
-                                  sx={{
-                                    textTransform: "capitalize",
-                                    fontWeight: "bold",
-                                  }}
-                                  value="0.1"
-                                >
-                                  0.1
-                                </ToggleButton>
-                                <ToggleButton
-                                  sx={{
-                                    textTransform: "capitalize",
-                                    fontWeight: "bold",
-                                  }}
-                                  value="1"
-                                >
-                                  1
-                                </ToggleButton>
-                                <ToggleButton
-                                  sx={{
-                                    textTransform: "capitalize",
-                                    fontWeight: "bold",
-                                  }}
-                                  value="10"
-                                >
-                                  10
-                                </ToggleButton>
-                                <ToggleButton
-                                  sx={{
-                                    textTransform: "capitalize",
-                                    fontWeight: "bold",
-                                  }}
-                                  value="50"
-                                >
-                                  50
-                                </ToggleButton>
-                                <ToggleButton
-                                  sx={{
-                                    textTransform: "capitalize",
-                                    fontWeight: "bold",
-                                  }}
-                                  value="100"
-                                >
-                                  100
-                                </ToggleButton>
-                              </ToggleButtonGroup>
-
-                              <div className="py-3 font-bold">
-                                Or input Amount manually
-                              </div>
-                              <TextField
-                                fullWidth
-                                id="outlined-basic"
-                                variant="outlined"
-                                sx={{
-                                  "& .Mui-focused.MuiFormLabel-root": {
-                                    color: data.colorScheme,
-                                  },
-                                  "& .Mui-focused .MuiOutlinedInput-notchedOutline":
-                                    {
-                                      borderColor: `${data.colorScheme} !important`,
-                                    },
-                                }}
-                                placeholder="USD"
-                                value={amount}
-                                onChange={(
-                                  e: React.ChangeEvent<
-                                    HTMLInputElement | HTMLTextAreaElement
-                                  >
-                                ) => {
-                                  setTransferFail(false);
-                                  const val = e.target.value;
-                                  setAmount(val.replace(/[^\d.]/g, ""));
-                                }}
-                              />
-
-                              <Button
-                                sx={{
-                                  backgroundColor: `${data.colorScheme} !important`,
-                                }}
-                                variant="contained"
-                                className="!mt-4 !py-[13px] !font-medium !capitalize"
-                                style={{
-                                  fontFamily: "inherit",
-                                }}
-                                onClick={() => {
-                                  setFailMessage("");
-                                  setTransferFail(false);
-                                  setHash("");
-                                  if (parseFloat(amount)) {
-                                    initMain(parseFloat(amount));
-                                  } else {
-                                    setFailMessage("The amount set is invalid");
-                                  }
-                                }}
-                                fullWidth
-                              >
-                                Send
-                              </Button>
-                            </FormControl>
-                          </TabPanel>
-                          <TabPanel value={value} index={1}>
-                            <FormControl fullWidth>
-                              <div className="py-3 font-bold">
-                                Subscription Duration
-                              </div>
-                              <ToggleButtonGroup
-                                value={interval}
-                                exclusive
-                                sx={{
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                  "& .Mui-selected": {
-                                    backgroundColor: `${data.colorScheme} !important`,
-                                    color: `${data.white} !important`,
-                                  },
-                                  "& .MuiToggleButtonGroup-grouped": {
-                                    borderRadius: "4px !important",
-                                    minWidth: 55,
-                                    border:
-                                      "1px solid rgba(0, 0, 0, 0.12) !important",
-                                  },
-                                }}
-                                onChange={(e: any) => {
-                                  setTransferFail(false);
-                                  const val = e.target.value;
-                                  setTinterval(val);
-                                }}
-                              >
-                                <ToggleButton
-                                  className="capitalize font-bold"
-                                  value="daily"
-                                >
-                                  Daily
-                                </ToggleButton>
-
-                                <ToggleButton
-                                  className="capitalize font-bold"
-                                  value="weekly"
-                                >
-                                  Weekly
-                                </ToggleButton>
-                                <ToggleButton
-                                  className="capitalize font-bold"
-                                  value="monthly"
-                                >
-                                  Monthly
-                                </ToggleButton>
-
-                                <ToggleButton
-                                  className="capitalize font-bold"
-                                  value="yearly"
-                                >
-                                  Yearly
-                                </ToggleButton>
-                              </ToggleButtonGroup>
-
-                              <div className="py-3 font-bold">Email</div>
-
-                              <TextField
-                                fullWidth
-                                id="outlined-basic"
-                                placeholder={"example@cryptea.me"}
-                                variant="outlined"
-                                sx={{
-                                  "& .Mui-focused.MuiFormLabel-root": {
-                                    color: data.colorScheme,
-                                  },
-                                  "& .Mui-focused .MuiOutlinedInput-notchedOutline":
-                                    {
-                                      borderColor: `${data.colorScheme} !important`,
-                                    },
-                                }}
-                                helperText="This is just to send a reminder when your subscription expires"
-                                value={pemail}
-                                onChange={(
-                                  e: React.ChangeEvent<
-                                    HTMLInputElement | HTMLTextAreaElement
-                                  >
-                                ) => {
-                                  setTransferFail(false);
-                                  const val = e.target.value;
-                                  setPemail(val);
-                                }}
-                              />
-
-                              <div className="my-2">
                                 <div className="py-3 font-bold">
-                                  Amount (USD)
+                                  Amount (USD){" - "}
+                                  {typeof userD?.linkAmount == "number"
+                                    ? userD?.linkAmount
+                                    : ""}
                                 </div>
 
+                                {Boolean(userD?.amountMultiple.length) && (
+                                  <ToggleButtonGroup
+                                    value={amount}
+                                    sx={{
+                                      justifyContent: "space-between",
+                                      width: "100%",
+                                      "& .Mui-selected": {
+                                        backgroundColor: `${data.colorScheme} !important`,
+                                        color: `${data.white} !important`,
+                                      },
+                                      "& .MuiButtonBase-root:first-child": {
+                                        marginRight: "0px !important",
+                                        marginLeft: "0px !important",
+                                      },
+                                      "& .MuiButtonBase-root": {
+                                        marginRight: "15px !important",
+                                      },
+                                      "& .MuiToggleButtonGroup-grouped": {
+                                        borderRadius: "4px !important",
+                                        minWidth: 55,
+                                        marginLeft: 3,
+                                        border:
+                                          "1px solid rgba(0, 0, 0, 0.12) !important",
+                                      },
+                                    }}
+                                    exclusive
+                                    className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                    onChange={(e: any) => {
+                                      setTransferFail(false);
+                                      const val = e.target.value;
+                                      setAmount(val.replace(/[^\d.]/g, ""));
+                                    }}
+                                  >
+                                    {userD?.amountMultiple.map(
+                                      (amount: number, i: number) => (
+                                        <ToggleButton
+                                          key={i}
+                                          sx={{
+                                            textTransform: "capitalize",
+                                            fontWeight: "bold",
+                                          }}
+                                          value={`${amount}`}
+                                        >
+                                          {amount}
+                                        </ToggleButton>
+                                      )
+                                    )}
+                                  </ToggleButtonGroup>
+                                )}
+
+                                {Boolean(userD?.amountMultiple.length) && (
+                                  <div className="py-3 font-bold">
+                                    Or input Amount manually
+                                  </div>
+                                )}
+
+                                {typeof userD?.linkAmount != "number" && (
+                                  <TextField
+                                    fullWidth
+                                    id="outlined-basic"
+                                    variant="outlined"
+                                    sx={{
+                                      "& .Mui-focused.MuiFormLabel-root": {
+                                        color: data.colorScheme,
+                                      },
+                                      "& .Mui-focused .MuiOutlinedInput-notchedOutline":
+                                        {
+                                          borderColor: `${data.colorScheme} !important`,
+                                        },
+                                    }}
+                                    placeholder="Amount"
+                                    value={amount}
+                                    onChange={(
+                                      e: React.ChangeEvent<
+                                        HTMLInputElement | HTMLTextAreaElement
+                                      >
+                                    ) => {
+                                      setTransferFail(false);
+                                      const val = e.target.value;
+                                      setAmount(val.replace(/[^\d.]/g, ""));
+                                    }}
+                                  />
+                                )}
+
+                                <Button
+                                  sx={{
+                                    backgroundColor: `${data.colorScheme} !important`,
+                                  }}
+                                  variant="contained"
+                                  className="!mt-4 !py-[13px] !font-medium !capitalize"
+                                  style={{
+                                    fontFamily: "inherit",
+                                  }}
+                                  onClick={() => {
+                                    setFailMessage("");
+                                    setTransferFail(false);
+                                    setHash("");
+                                    if (parseFloat(amount)) {
+                                      initMain(parseFloat(amount));
+                                    } else {
+                                      setFailMessage(
+                                        "The amount set is invalid"
+                                      );
+                                    }
+                                  }}
+                                  fullWidth
+                                >
+                                  Send
+                                </Button>
+                              </FormControl>
+                            )}
+                          </TabPanel>
+                          <TabPanel value={value} index={1}>
+                            {(userD?.linktype == "sub" ||
+                              userD?.linktype == "both") && (
+                              <FormControl fullWidth>
+                                <div className="py-3 font-bold">
+                                  Subscription Duration
+                                </div>
                                 <ToggleButtonGroup
-                                  value={amount}
+                                  value={interval}
                                   exclusive
                                   sx={{
                                     justifyContent: "space-between",
@@ -1208,102 +1142,176 @@ const Origin = ({ className }: {className?: string}) => {
                                   onChange={(e: any) => {
                                     setTransferFail(false);
                                     const val = e.target.value;
-
-                                    setAmount(val.replace(/[^\d.]/g, ""));
+                                    setTinterval(val);
                                   }}
                                 >
                                   <ToggleButton
-                                    sx={{
-                                      textTransform: "capitalize",
-                                      fontWeight: "bold",
-                                    }}
-                                    value="0.1"
+                                    className="capitalize font-bold"
+                                    value="daily"
                                   >
-                                    0.1
+                                    Daily
+                                  </ToggleButton>
+
+                                  <ToggleButton
+                                    className="capitalize font-bold"
+                                    value="weekly"
+                                  >
+                                    Weekly
                                   </ToggleButton>
                                   <ToggleButton
-                                    sx={{
-                                      textTransform: "capitalize",
-                                      fontWeight: "bold",
-                                    }}
-                                    value="1"
+                                    className="capitalize font-bold"
+                                    value="monthly"
                                   >
-                                    1
+                                    Monthly
                                   </ToggleButton>
+
                                   <ToggleButton
-                                    sx={{
-                                      textTransform: "capitalize",
-                                      fontWeight: "bold",
-                                    }}
-                                    value="10"
+                                    className="capitalize font-bold"
+                                    value="yearly"
                                   >
-                                    10
-                                  </ToggleButton>
-                                  <ToggleButton
-                                    sx={{
-                                      textTransform: "capitalize",
-                                      fontWeight: "bold",
-                                    }}
-                                    value="50"
-                                  >
-                                    50
-                                  </ToggleButton>
-                                  <ToggleButton
-                                    sx={{
-                                      textTransform: "capitalize",
-                                      fontWeight: "bold",
-                                    }}
-                                    value="100"
-                                  >
-                                    100
+                                    Yearly
                                   </ToggleButton>
                                 </ToggleButtonGroup>
-                              </div>
 
-                              <div className="py-3 font-bold">
-                                Or input Amount manually
-                              </div>
-                              <TextField
-                                fullWidth
-                                id="outlined-basic"
-                                variant="outlined"
-                                sx={{
-                                  "& .Mui-focused.MuiFormLabel-root": {
-                                    color: data.colorScheme,
-                                  },
-                                  "& .Mui-focused .MuiOutlinedInput-notchedOutline":
-                                    {
-                                      borderColor: `${data.colorScheme} !important`,
+                                <div className="py-3 font-bold">Email</div>
+
+                                <TextField
+                                  fullWidth
+                                  id="outlined-basic"
+                                  placeholder={"example@cryptea.me"}
+                                  variant="outlined"
+                                  sx={{
+                                    "& .Mui-focused.MuiFormLabel-root": {
+                                      color: data.colorScheme,
                                     },
-                                }}
-                                placeholder="USD"
-                                value={amount}
-                                onChange={(
-                                  e: React.ChangeEvent<
-                                    HTMLInputElement | HTMLTextAreaElement
-                                  >
-                                ) => {
-                                  setTransferFail(false);
-                                  const val = e.target.value;
-                                  setAmount(val.replace(/[^\d.]/g, ""));
-                                }}
-                              />
+                                    "& .Mui-focused .MuiOutlinedInput-notchedOutline":
+                                      {
+                                        borderColor: `${data.colorScheme} !important`,
+                                      },
+                                  }}
+                                  helperText="This is just to send a reminder when your subscription expires"
+                                  value={pemail}
+                                  onChange={(
+                                    e: React.ChangeEvent<
+                                      HTMLInputElement | HTMLTextAreaElement
+                                    >
+                                  ) => {
+                                    setTransferFail(false);
+                                    const val = e.target.value;
+                                    setPemail(val);
+                                  }}
+                                />
 
-                              <Button
-                                variant="contained"
-                                sx={{
-                                  backgroundColor: `${data.colorScheme} !important`,
-                                }}
-                                className="!mt-4 !py-[13px] !font-medium !capitalize"
-                                style={{
-                                  fontFamily: "inherit",
-                                }}
-                                onClick={beginSub}
-                                fullWidth
-                              >
-                                Subscribe
-                              </Button>
-                            </FormControl>
+                                <div className="my-2">
+                                  <div className="py-3 font-bold">
+                                    Amount (USD){" - "}
+                                    {typeof userD?.linkAmount == "number"
+                                      ? userD?.linkAmount
+                                      : ""}
+                                  </div>
+
+                                  {Boolean(userD?.amountMultiple.length) && (
+                                    <ToggleButtonGroup
+                                      value={amount}
+                                      sx={{
+                                        justifyContent: "space-between",
+                                        width: "100%",
+                                        "& .Mui-selected": {
+                                          backgroundColor: `${data.colorScheme} !important`,
+                                          color: `${data.white} !important`,
+                                        },
+                                        "& .MuiButtonBase-root:first-child": {
+                                          marginRight: "0px !important",
+                                          marginLeft: "0px !important",
+                                        },
+                                        "& .MuiButtonBase-root": {
+                                          marginRight: "15px !important",
+                                        },
+                                        "& .MuiToggleButtonGroup-grouped": {
+                                          borderRadius: "4px !important",
+                                          minWidth: 55,
+                                          marginLeft: 3,
+                                          border:
+                                            "1px solid rgba(0, 0, 0, 0.12) !important",
+                                        },
+                                      }}
+                                      exclusive
+                                      className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                      onChange={(e: any) => {
+                                        setTransferFail(false);
+                                        const val = e.target.value;
+
+                                        setAmount(val.replace(/[^\d.]/g, ""));
+                                      }}
+                                    >
+                                      {userD?.amountMultiple.map(
+                                        (amount: number, i: number) => (
+                                          <ToggleButton
+                                            key={i}
+                                            sx={{
+                                              textTransform: "capitalize",
+                                              fontWeight: "bold",
+                                            }}
+                                            value={`${amount}`}
+                                          >
+                                            {amount}
+                                          </ToggleButton>
+                                        )
+                                      )}
+                                    </ToggleButtonGroup>
+                                  )}
+                                </div>
+
+                                {Boolean(userD?.amountMultiple.length) && (
+                                  <div className="py-3 font-bold">
+                                    Or input Amount manually
+                                  </div>
+                                )}
+
+                                {(typeof userD.linkAmount != "number") && (
+                                  <TextField
+                                    fullWidth
+                                    id="outlined-basic"
+                                    variant="outlined"
+                                    sx={{
+                                      "& .Mui-focused.MuiFormLabel-root": {
+                                        color: data.colorScheme,
+                                      },
+                                      "& .Mui-focused .MuiOutlinedInput-notchedOutline":
+                                        {
+                                          borderColor: `${data.colorScheme} !important`,
+                                        },
+                                    }}
+                                    placeholder="Amount"
+                                    value={amount}
+                                    onChange={(
+                                      e: React.ChangeEvent<
+                                        HTMLInputElement | HTMLTextAreaElement
+                                      >
+                                    ) => {
+                                      setTransferFail(false);
+                                      const val = e.target.value;
+                                      setAmount(val.replace(/[^\d.]/g, ""));
+                                    }}
+                                  />
+                                )}
+
+                                <Button
+                                  variant="contained"
+                                  sx={{
+                                    backgroundColor: `${data.colorScheme} !important`,
+                                  }}
+                                  className="!mt-4 !py-[13px] !font-medium !capitalize"
+                                  style={{
+                                    fontFamily: "inherit",
+                                  }}
+                                  onClick={beginSub}
+                                  fullWidth
+                                >
+                                  Subscribe
+                                </Button>
+                              </FormControl>
+                            )}
                           </TabPanel>
                         </Box>
                       </div>

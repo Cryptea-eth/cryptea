@@ -323,7 +323,7 @@ const NewLink = () => {
           link?.set("amountMulti", JSON.stringify(data.amount.multi));
           link?.set(
             "type",
-            value === Type.onetime ? "onetime" : "subscription"
+            value === Type.onetime ? "onetime" : "sub"
           );
           link?.set("user", user);
 
