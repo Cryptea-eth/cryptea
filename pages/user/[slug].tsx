@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import Head from "next/head";
+import Origin from "../../app/templates/origin";
 import { Suspense, useEffect } from 'react';
 import { useMoralis } from "react-moralis";
 import Loader from "../../app/components/elements/loader";
@@ -18,8 +19,7 @@ const User = () => {
    const ee = "../../app/templates/origin";
 
   const Template = dynamic(() => import(`../../app/templates/origin`),{
-    suspense: true,
-    ssr: false
+    suspense: true
   });
 
   
@@ -39,7 +39,7 @@ const User = () => {
   return (
       <>
       <Suspense fallback={<Loader />}>
-        <Template />
+        <Origin />
       </Suspense>
       </>
   )
