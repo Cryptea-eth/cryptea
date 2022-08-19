@@ -20,7 +20,7 @@ const Loader = ({
         justifyContent: text ? "space-around" : "center",
         ...sx,
       }}
-      className="h-full left-0 bg-white top-0 z-[100] flex flex-col justify-center items-center w-full"
+      className="h-full left-0 bg-white top-0 z-[10000000] flex flex-col justify-center items-center w-full"
     >
       {incLogo && (
         <div className="items-center flex justify-center">

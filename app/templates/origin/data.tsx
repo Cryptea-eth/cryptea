@@ -1,13 +1,8 @@
-import Moralis from 'moralis';
 import pattern from "../../../public/images/pattern.png";
 
 let udata: {[index: string]: any} = {
 
 };
-
-export const getData = () => {
-      
-}
 
 
 let data: {
@@ -110,8 +105,13 @@ data = {
     },
     backgroundColor: data.colorScheme,
   },
-  ...data,
-  ...udata
+  ...data
+};
+
+export const getData = async (linkData: object) => {
+
+  data = {...data, ...linkData };
+
 };
 
 
@@ -325,6 +325,5 @@ const rules: { [index: string]: any } = {
   },
 };
 
-const template = "origins";
 
-export { data, rules, template };
+export { data, rules };

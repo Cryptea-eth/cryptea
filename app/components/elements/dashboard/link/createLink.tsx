@@ -19,7 +19,6 @@ import LogoSpace from "../../logo";
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import Loader from "../../loader";
-import dynamic from "next/dynamic";
 import TabPanel from "./TabPanel";
 import Router from "next/router";
 
@@ -154,9 +153,7 @@ const NewLink = () => {
     },
   });
 
-
   const [amountOpt, setAmountOpt] = useState(''); 
-
 
   interface hmm {
     [index: string]: Strings;

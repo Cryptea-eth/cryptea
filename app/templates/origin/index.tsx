@@ -118,7 +118,7 @@ const Origin = ({ className }: {className?: string}) => {
         address: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0", //matic public address
       });
  
-      const priceCurrency = parseFloat(e.usdPrice.toFixed(2));
+      const priceCurrency = Number(e.usdPrice.toFixed(2));
 
       const final = price / priceCurrency;
 
@@ -136,6 +136,8 @@ const Origin = ({ className }: {className?: string}) => {
     }
   } 
 
+  const [amount, setAmount] = useState<string | number>("");
+
   const [linkHook, setLinkHook] = useState<Moralis.Object<Moralis.Attributes>[]>(); 
 
   useEffect(() => {
@@ -151,13 +153,17 @@ const Origin = ({ className }: {className?: string}) => {
           Moralis.Cloud.run("getUser", { obj: er[0]?.get("user").id }).then(
             (ex:any) => {
 
-              let linkAmount: string | object | undefined;
+              let linkAmount: string | object | undefined | number;
 
               if (er[0].get("amount") !== undefined){
                   linkAmount =
                     er[0].get("amount") === "variable"
                       ? "variable"
                       : JSON.parse(er[0].get("amount"));
+
+                  if(typeof linkAmount == 'number'){
+                      setAmount(linkAmount);
+                  }
                }
 
 
@@ -327,7 +333,7 @@ const Origin = ({ className }: {className?: string}) => {
 
     const gasPx = await initWeb3.eth.getGasPrice();
 
-    const gasPrice = parseFloat(gasPx);
+    const gasPrice = Number(gasPx);
     if(type == "subscription"){
       if (!subCheck) {
          setLoadingText("Checking Wallet...");
@@ -473,7 +479,6 @@ const Origin = ({ className }: {className?: string}) => {
   };
 
   const [value, setValue] = useState<number>(0);
-  const [amount, setAmount] = useState<string>('');
 
   const [auth, setAuth] = useState<boolean>(true)
 
@@ -483,7 +488,7 @@ const Origin = ({ className }: {className?: string}) => {
     setTransferFail(false);
     setHash("");
     
-    if (parseFloat(amount)) {
+    if (Number(amount)) {
       if (pemail.length) {
         if (
           /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/.test(
@@ -491,7 +496,7 @@ const Origin = ({ className }: {className?: string}) => {
           )
         ) {
           setESubscription([]);
-          initMain(parseFloat(amount), "subscription");
+          initMain(Number(amount), "subscription");
         } else {
           setFailMessage(
             "Your email is incorrect, please check it and try again"
@@ -732,7 +737,7 @@ const Origin = ({ className }: {className?: string}) => {
                       <div className="border-b py-[14px] px-[17px] text-xl font-bold">
                         Send Payment
                       </div>
-                      <div className="form relative pt-4">
+                      <div className="form relative pt-[10px]">
                         <Box sx={{ width: "100%" }}>
                           {userD?.linktype == "both" && (
                             <Box
@@ -999,11 +1004,11 @@ const Origin = ({ className }: {className?: string}) => {
                                 <div className="py-3 font-bold">
                                   Amount (USD)
                                   {typeof userD?.linkAmount == "number"
-                                    ?  ` - ${userD?.linkAmount}`
+                                    ? ` - $${userD?.linkAmount}`
                                     : ""}
                                 </div>
 
-                                {Boolean(userD?.amountMultiple.length) && (
+                                {(Boolean(userD?.amountMultiple.length) && typeof userD?.linkAmount != 'number') && (
                                   <ToggleButtonGroup
                                     value={amount}
                                     sx={{
@@ -1013,7 +1018,7 @@ const Origin = ({ className }: {className?: string}) => {
                                         backgroundColor: `${data.colorScheme} !important`,
                                         color: `${data.white} !important`,
                                       },
-                                      "& .MuiButtonBase-root:first-child": {
+                                      "& .MuiButtonBase-root:first-of-type": {
                                         marginRight: "0px !important",
                                         marginLeft: "0px !important",
                                       },
@@ -1053,7 +1058,7 @@ const Origin = ({ className }: {className?: string}) => {
                                   </ToggleButtonGroup>
                                 )}
 
-                                {Boolean(userD?.amountMultiple.length) && (
+                                {(Boolean(userD?.amountMultiple.length) && typeof userD?.linkAmount != 'number') && (
                                   <div className="py-3 font-bold">
                                     Or input Amount manually
                                   </div>
@@ -1100,8 +1105,8 @@ const Origin = ({ className }: {className?: string}) => {
                                     setFailMessage("");
                                     setTransferFail(false);
                                     setHash("");
-                                    if (parseFloat(amount)) {
-                                      initMain(parseFloat(amount));
+                                    if (Number(amount)) {
+                                      initMain(Number(amount));
                                     } else {
                                       setFailMessage(
                                         "The amount set is invalid"
@@ -1204,13 +1209,13 @@ const Origin = ({ className }: {className?: string}) => {
 
                                 <div className="my-2">
                                   <div className="py-3 font-bold">
-                                    Amount (USD){" - "}
+                                    Amount (USD)
                                     {typeof userD?.linkAmount == "number"
-                                      ? userD?.linkAmount
+                                      ? ` - $${userD?.linkAmount}`
                                       : ""}
                                   </div>
 
-                                  {Boolean(userD?.amountMultiple.length) && (
+                                  {(Boolean(userD?.amountMultiple.length) && typeof userD?.linkAmount != 'number') && (
                                     <ToggleButtonGroup
                                       value={amount}
                                       sx={{
@@ -1262,7 +1267,7 @@ const Origin = ({ className }: {className?: string}) => {
                                   )}
                                 </div>
 
-                                {Boolean(userD?.amountMultiple.length) && (
+                                {(Boolean(userD?.amountMultiple.length) && typeof userD?.linkAmount != 'number') && (
                                   <div className="py-3 font-bold">
                                     Or input Amount manually
                                   </div>
