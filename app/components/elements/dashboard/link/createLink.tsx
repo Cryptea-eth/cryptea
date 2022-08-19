@@ -314,7 +314,7 @@ const NewLink = () => {
       mQ.find().then(async (ld) => {
         if (!ld.length) {
           link?.set("link", data.slug[index].toLowerCase());
-          link?.set("amount", amount);
+          link?.set("amount", String(amount));
           link?.set("desc", data.desc[index]);
           link?.set("title", data.title[index]);
           link?.set("amountMulti", JSON.stringify(data.amount.multi));
