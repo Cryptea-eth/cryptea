@@ -27,7 +27,7 @@ const Notfound = () => {
           <Link href="/">
             <a className="text-center mt-3">
               <Button className="ml-2 hover:bg-[#ff320e] transition-all delay-500 text-sm !capitalize rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4 mx-auto">
-                Refresh Page
+                Find me
               </Button>
             </a>
           </Link>

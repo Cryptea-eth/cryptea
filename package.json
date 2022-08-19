@@ -32,7 +32,6 @@
     "react-moralis": "1.4.0",
     "react-router-dom": "^6.3.0",
     "recharts": "2.1.10",
-    "template": "file: app/templates/origin/index.tsx",
     "validator": "^13.7.0",
     "web3": "^1.7.5",
     "web3.storage": "^4.3.0"
