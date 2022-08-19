@@ -997,9 +997,9 @@ const Origin = ({ className }: {className?: string}) => {
                         </Select> */}
 
                                 <div className="py-3 font-bold">
-                                  Amount (USD){" - "}
+                                  Amount (USD)
                                   {typeof userD?.linkAmount == "number"
-                                    ? userD?.linkAmount
+                                    ?  ` - ${userD?.linkAmount}`
                                     : ""}
                                 </div>
 
@@ -1268,7 +1268,7 @@ const Origin = ({ className }: {className?: string}) => {
                                   </div>
                                 )}
 
-                                {(typeof userD.linkAmount != "number") && (
+                                {typeof userD.linkAmount != "number" && (
                                   <TextField
                                     fullWidth
                                     id="outlined-basic"

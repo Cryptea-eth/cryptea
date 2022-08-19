@@ -1,3 +1,4 @@
+
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts";
 import { useState, useEffect, Fragment } from "react";
 import { FaWallet } from "react-icons/fa";
@@ -21,7 +22,7 @@ import {
   Avatar,
   TableCell,
   TableBody,
-  TablePagination,
+  TablePagination
 } from "@mui/material";
 import { useMoralis, useWeb3Transfer } from "react-moralis";
 import { data } from "autoprefixer";
