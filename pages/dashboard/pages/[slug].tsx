@@ -168,7 +168,6 @@ useEffect(() => {
             two: false
           })
       }, 2000);
-
   }
 
 
@@ -309,7 +308,11 @@ useEffect(() => {
       </Head>
 
       {isLoading && <Loader />}
+      
       {/* // come back here */}
+      {(!isLoading && Template !== undefined) && null }
+
+      
       <div
         style={{
           left: isSaving["two"] ? "calc(100% - 353px)" : undefined,

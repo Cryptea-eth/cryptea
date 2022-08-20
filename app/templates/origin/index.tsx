@@ -8,7 +8,7 @@ import web3 from 'web3';
 import bigimg from '../../../public/images/logobig.png';
 import PAYMENT from '../../../artifacts/contracts/payment.sol/Payment.json';
 import SUBSCRIPTION from "../../../artifacts/contracts/subscription.sol/Subscription.json";
-import { data } from "./data"; 
+import * as temp_x from "./data"; 
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 import TabPanel from "../../components/elements/dashboard/link/TabPanel";
 import { FaInstagram, FaFacebook, FaTwitter, FaLinkedinIn, FaLink } from 'react-icons/fa';
@@ -37,6 +37,7 @@ import { makeNFTClient } from "../../functions/clients";
 
 import Moralis from "moralis/types";
 import axios from "axios";
+import { initD } from "../../components/elements/dashboard/linkOverview/linkData";
 
 const contractAddress: { subscribe: string; onetime: string } = {
   subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457",
@@ -98,6 +99,7 @@ const Origin = ({ className }: {className?: string}) => {
     isAuthenticated,
   } = useMoralis();
 
+  const [data, setData] = useState(temp_x.data);
  
   const [userD, setUserD] = useState<{[index: string]: any}>({});
   const [pemail, setPemail] = useState<string>("");
@@ -129,6 +131,7 @@ const Origin = ({ className }: {className?: string}) => {
   const initMain = async (price: number, type: 'subscription' | 'onetime' = 'onetime') => {
     setAuth(false);
     setLoadingText("Initializing Payment")
+
     try {
         await beginPayment(price, type);
     } catch (x) {
@@ -140,60 +143,90 @@ const Origin = ({ className }: {className?: string}) => {
 
   const [linkHook, setLinkHook] = useState<Moralis.Object<Moralis.Attributes>[]>(); 
 
-  useEffect(() => {
-    if (router.isReady) {
-      const Link = Moralis.Object.extend('link')
-      const lQ = new Moralis.Query(Link);
+  
+useEffect(() => {
 
-      lQ.equalTo('link', String(username).toLowerCase())
-      
-      lQ.find().then((er:any) => {
-        if (er !== undefined) {
-          setLinkHook(er);
-          Moralis.Cloud.run("getUser", { obj: er[0]?.get("user").id }).then(
-            (ex:any) => {
 
+    const init = async () => {
+        
+      try{
+        
+        const lQ = await initD(String(username).toLowerCase());
+
+        if (lQ !== undefined) {
+
+          setLinkHook(lQ);
+
+          if(lQ.get('template_data') !== undefined){
+
+              const { data } = JSON.parse(lQ.get('template_data'));
+
+              setData({...temp_x.data, ...data})
+
+          }
+
+          Moralis.Cloud.run("getUser", { obj: lQ.get("user").id }).then(
+            (ex: any) => {
               let linkAmount: string | object | undefined | number;
 
-              if (er[0].get("amount") !== undefined){
-                  linkAmount =
-                    er[0].get("amount") === "variable"
-                      ? "variable"
-                      : JSON.parse(er[0].get("amount"));
+              if (lQ.get("amount") !== undefined) {
+                linkAmount =
+                  lQ.get("amount") === "variable"
+                    ? "variable"
+                    : JSON.parse(lQ.get("amount"));
 
-                  if(typeof linkAmount == 'number'){
-                      setAmount(linkAmount);
-                  }
-               }
-
+                if (typeof linkAmount == "number") {
+                  setAmount(linkAmount);
+                }
+              }
 
               setUserD({
-                description: ex[0]?.get("desc"),
-                username: ex[0]?.get("username"),
+                description:
+                  lQ.get("desc") !== undefined
+                    ? lQ.get("desc")
+                    : ex[0]?.get("desc"),
+                username:
+                  lQ.get("title") !== undefined
+                    ? lQ.get("title")
+                    : ex[0]?.get("username"),
                 email: ex[0]?.get("email"),
                 ethAddress: ex[0]?.get("ethAddress"),
-                img: er[0]?.get('img') !== undefined ? er[0]?.get('img') : (ex[0]?.get("img") === undefined ? "" : ex[0]?.get("img")),
-                id: er[0].id,
-                onetime: er[0].get('onetime'),
-                subscribers: er[0].get('subscribers'),
-                linktype: er[0].get('type'),
-                amountMultiple: Boolean(er[0].get('amountMulti')) ? JSON.parse(er[0].get('amountMulti')) : [],
-                linkAmount 
+                img:
+                  lQ.get("img") !== undefined
+                    ? lQ.get("img")
+                    : ex[0]?.get("img") === undefined
+                    ? ""
+                    : ex[0]?.get("img"),
+                id: lQ.id,
+                onetime: lQ.get("onetime"),
+                subscribers: lQ.get("subscribers"),
+                linktype: lQ.get("type"),
+                amountMultiple: Boolean(lQ.get("amountMulti"))
+                  ? JSON.parse(lQ.get("amountMulti"))
+                  : [],
+                linkAmount,
               });
 
-            setIsLoading(false);
-          }
-        );
-      } else {
-        window.location.href = "/404";
-      }
-    }).catch((err:any) => {
+              setIsLoading(false);
+            }
+          );
+        } else {
+          router.push("/404");
+        }
+      }catch(err){
         const error = err as Error;
         console.log(error)
         setIs500(true)
-    })
+    }
   }
-  }, [Moralis.Cloud, Moralis.Object, Moralis.Query, router.isReady, username]);
+  
+  if(router.isReady){
+    init();
+  }
+
+  }, [Moralis.Cloud, router, username, router.isReady]);
+
+
 
   const { username: usern, description, email, img, ethAddress, id: linkId, onetime, subscribers }: { username?: string, description?: string, email?: string, img?: string | null, ethAddress?: string, id?: string, onetime?: string, subscribers ?: string} = userD;
    const [subCheck, setSubCheck] = useState<boolean>(true);
@@ -284,6 +317,7 @@ const Origin = ({ className }: {className?: string}) => {
 
   const [eSubscription, setESubscription] = useState<string[]>([]);
 
+
   const mainIx = (inter:string) => {
       const date = new Date();
 
@@ -316,15 +350,16 @@ const Origin = ({ className }: {className?: string}) => {
   ) => {
     setLoadingText("Connecting to wallet/Awaiting signature");
     let from = "";
+    
     try {
       const senx = await authenticate({ signingMessage: message[type] });
       from = senx?.get("ethAddress");
     } catch (e) {
       setTransferFail(true);
-
       return;
-
     }
+    
+    
     setLoadingText("Pending...");
     
     const initWeb3 = new web3(provider);
@@ -520,6 +555,7 @@ const Origin = ({ className }: {className?: string}) => {
         enableWeb3()
       }
     }
+
   }, [
     enableWeb3,
     isWeb3Enabled,
@@ -642,7 +678,7 @@ const Origin = ({ className }: {className?: string}) => {
                     <div style={data.header} className="mt-8 header_page">
                       {Boolean(data.header.text.length)
                         ? data.header.text
-                        : `${usern} is ${description}`}
+                        : `${usern}`}
                     </div>
 
                     {/* socials */}
@@ -711,7 +747,12 @@ const Origin = ({ className }: {className?: string}) => {
                     </div>
 
                     {/* work statement */}
-                    <div className="links mt-5 work_state_page">
+                    <div
+                      onClick={() => {
+                        getPrice(10);
+                      }}
+                      className="links mt-5 work_state_page"
+                    >
                       <div style={data.workState}>
                         {Boolean(data.workState.text.length)
                           ? data.workState.text
@@ -1008,61 +1049,63 @@ const Origin = ({ className }: {className?: string}) => {
                                     : ""}
                                 </div>
 
-                                {(Boolean(userD?.amountMultiple.length) && typeof userD?.linkAmount != 'number') && (
-                                  <ToggleButtonGroup
-                                    value={amount}
-                                    sx={{
-                                      justifyContent: "space-between",
-                                      width: "100%",
-                                      "& .Mui-selected": {
-                                        backgroundColor: `${data.colorScheme} !important`,
-                                        color: `${data.white} !important`,
-                                      },
-                                      "& .MuiButtonBase-root:first-of-type": {
-                                        marginRight: "0px !important",
-                                        marginLeft: "0px !important",
-                                      },
-                                      "& .MuiButtonBase-root": {
-                                        marginRight: "15px !important",
-                                      },
-                                      "& .MuiToggleButtonGroup-grouped": {
-                                        borderRadius: "4px !important",
-                                        minWidth: 55,
-                                        marginLeft: 3,
-                                        border:
-                                          "1px solid rgba(0, 0, 0, 0.12) !important",
-                                      },
-                                    }}
-                                    exclusive
-                                    className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                                    onChange={(e: any) => {
-                                      setTransferFail(false);
-                                      const val = e.target.value;
-                                      setAmount(val.replace(/[^\d.]/g, ""));
-                                    }}
-                                  >
-                                    {userD?.amountMultiple.map(
-                                      (amount: number, i: number) => (
-                                        <ToggleButton
-                                          key={i}
-                                          sx={{
-                                            textTransform: "capitalize",
-                                            fontWeight: "bold",
-                                          }}
-                                          value={`${amount}`}
-                                        >
-                                          {amount}
-                                        </ToggleButton>
-                                      )
-                                    )}
-                                  </ToggleButtonGroup>
-                                )}
+                                {Boolean(userD?.amountMultiple.length) &&
+                                  typeof userD?.linkAmount != "number" && (
+                                    <ToggleButtonGroup
+                                      value={amount}
+                                      sx={{
+                                        justifyContent: "space-between",
+                                        width: "100%",
+                                        "& .Mui-selected": {
+                                          backgroundColor: `${data.colorScheme} !important`,
+                                          color: `${data.white} !important`,
+                                        },
+                                        "& .MuiButtonBase-root:first-of-type": {
+                                          marginRight: "0px !important",
+                                          marginLeft: "0px !important",
+                                        },
+                                        "& .MuiButtonBase-root": {
+                                          marginRight: "15px !important",
+                                        },
+                                        "& .MuiToggleButtonGroup-grouped": {
+                                          borderRadius: "4px !important",
+                                          minWidth: 55,
+                                          marginLeft: 3,
+                                          border:
+                                            "1px solid rgba(0, 0, 0, 0.12) !important",
+                                        },
+                                      }}
+                                      exclusive
+                                      className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                      onChange={(e: any) => {
+                                        setTransferFail(false);
+                                        const val = e.target.value;
+                                        setAmount(val.replace(/[^\d.]/g, ""));
+                                      }}
+                                    >
+                                      {userD?.amountMultiple.map(
+                                        (amount: number, i: number) => (
+                                          <ToggleButton
+                                            key={i}
+                                            sx={{
+                                              textTransform: "capitalize",
+                                              fontWeight: "bold",
+                                            }}
+                                            value={`${amount}`}
+                                          >
+                                            {amount}
+                                          </ToggleButton>
+                                        )
+                                      )}
+                                    </ToggleButtonGroup>
+                                  )}
 
-                                {(Boolean(userD?.amountMultiple.length) && typeof userD?.linkAmount != 'number') && (
-                                  <div className="py-3 font-bold">
-                                    Or input Amount manually
-                                  </div>
-                                )}
+                                {Boolean(userD?.amountMultiple.length) &&
+                                  typeof userD?.linkAmount != "number" && (
+                                    <div className="py-3 font-bold">
+                                      Or input Amount manually
+                                    </div>
+                                  )}
 
                                 {typeof userD?.linkAmount != "number" && (
                                   <TextField
@@ -1215,63 +1258,66 @@ const Origin = ({ className }: {className?: string}) => {
                                       : ""}
                                   </div>
 
-                                  {(Boolean(userD?.amountMultiple.length) && typeof userD?.linkAmount != 'number') && (
-                                    <ToggleButtonGroup
-                                      value={amount}
-                                      sx={{
-                                        justifyContent: "space-between",
-                                        width: "100%",
-                                        "& .Mui-selected": {
-                                          backgroundColor: `${data.colorScheme} !important`,
-                                          color: `${data.white} !important`,
-                                        },
-                                        "& .MuiButtonBase-root:first-child": {
-                                          marginRight: "0px !important",
-                                          marginLeft: "0px !important",
-                                        },
-                                        "& .MuiButtonBase-root": {
-                                          marginRight: "15px !important",
-                                        },
-                                        "& .MuiToggleButtonGroup-grouped": {
-                                          borderRadius: "4px !important",
-                                          minWidth: 55,
-                                          marginLeft: 3,
-                                          border:
-                                            "1px solid rgba(0, 0, 0, 0.12) !important",
-                                        },
-                                      }}
-                                      exclusive
-                                      className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                                      onChange={(e: any) => {
-                                        setTransferFail(false);
-                                        const val = e.target.value;
+                                  {Boolean(userD?.amountMultiple.length) &&
+                                    typeof userD?.linkAmount != "number" && (
+                                      <ToggleButtonGroup
+                                        value={amount}
+                                        sx={{
+                                          justifyContent: "space-between",
+                                          width: "100%",
+                                          "& .Mui-selected": {
+                                            backgroundColor: `${data.colorScheme} !important`,
+                                            color: `${data.white} !important`,
+                                          },
+                                          "& .MuiButtonBase-root:first-of-type":
+                                            {
+                                              marginRight: "0px !important",
+                                              marginLeft: "0px !important",
+                                            },
+                                          "& .MuiButtonBase-root": {
+                                            marginRight: "15px !important",
+                                          },
+                                          "& .MuiToggleButtonGroup-grouped": {
+                                            borderRadius: "4px !important",
+                                            minWidth: 55,
+                                            marginLeft: 3,
+                                            border:
+                                              "1px solid rgba(0, 0, 0, 0.12) !important",
+                                          },
+                                        }}
+                                        exclusive
+                                        className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                        onChange={(e: any) => {
+                                          setTransferFail(false);
+                                          const val = e.target.value;
 
-                                        setAmount(val.replace(/[^\d.]/g, ""));
-                                      }}
-                                    >
-                                      {userD?.amountMultiple.map(
-                                        (amount: number, i: number) => (
-                                          <ToggleButton
-                                            key={i}
-                                            sx={{
-                                              textTransform: "capitalize",
-                                              fontWeight: "bold",
-                                            }}
-                                            value={`${amount}`}
-                                          >
-                                            {amount}
-                                          </ToggleButton>
-                                        )
-                                      )}
-                                    </ToggleButtonGroup>
-                                  )}
+                                          setAmount(val.replace(/[^\d.]/g, ""));
+                                        }}
+                                      >
+                                        {userD?.amountMultiple.map(
+                                          (amount: number, i: number) => (
+                                            <ToggleButton
+                                              key={i}
+                                              sx={{
+                                                textTransform: "capitalize",
+                                                fontWeight: "bold",
+                                              }}
+                                              value={`${amount}`}
+                                            >
+                                              {amount}
+                                            </ToggleButton>
+                                          )
+                                        )}
+                                      </ToggleButtonGroup>
+                                    )}
                                 </div>
 
-                                {(Boolean(userD?.amountMultiple.length) && typeof userD?.linkAmount != 'number') && (
-                                  <div className="py-3 font-bold">
-                                    Or input Amount manually
-                                  </div>
-                                )}
+                                {Boolean(userD?.amountMultiple.length) &&
+                                  typeof userD?.linkAmount != "number" && (
+                                    <div className="py-3 font-bold">
+                                      Or input Amount manually
+                                    </div>
+                                  )}
 
                                 {typeof userD.linkAmount != "number" && (
                                   <TextField
