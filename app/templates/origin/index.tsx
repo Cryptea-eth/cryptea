@@ -71,7 +71,7 @@ function getStyles(name: string, blockchainName: string | any[], theme: Theme) {
   };
 }
 
-const Origin = ({ className }: {className?: string}) => {
+const Origin = ({ className, editMode = false }: {className?: string, editMode: boolean}) => {
 
   const router = useRouter();
 
@@ -152,11 +152,11 @@ const Origin = ({ className }: {className?: string}) => {
 
           setLinkHook(lQ);
 
-          if(lQ.get('template_data') !== undefined){
+          if(lQ.get('template_data') !== undefined && !editMode){
+            
+              const { data:udata } = JSON.parse(lQ.get('template_data'));
 
-              const { data } = JSON.parse(lQ.get('template_data'));
-
-              setData({...temp_x.data, ...data})
+              setData(udata);
 
           }
 

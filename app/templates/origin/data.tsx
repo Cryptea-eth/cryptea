@@ -109,7 +109,7 @@ data = {
 };
 
 export const getData = async (linkData: object) => {
-
+  console.log('here')
   data = {...data, ...linkData };
 
 };
@@ -129,6 +129,8 @@ const rules: { [index: string]: any } = {
               : color + "23",
           color,
         };
+
+        
       } else {
         return data.colorScheme;
       }

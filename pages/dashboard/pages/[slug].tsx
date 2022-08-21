@@ -35,6 +35,8 @@ const EditPage = () => {
   const [ndata, setData] = useState<string>('');
   const [rules, setRules] = useState<any>({});
 
+
+
   const [Template, setTemplate] = useState<React.ComponentType<{
       className?: string | undefined;
     }>>();
@@ -178,6 +180,7 @@ useEffect(() => {
     one: false,
     two: false
   });
+
   const [iimg, setIiimg] = useState({});
   const [getRules, setPart] = useState<string>("");
   const [showMain, setShowMain] = useState(true)
@@ -325,7 +328,7 @@ useEffect(() => {
       {!isLoading && (
         <div className="flex items-start">
           {Template !== undefined && (
-            <Template className="overflow-y-scroll cusscroller overflow-x-hidden w-[calc(100%-258px)] z-[100] h-full fixed max-h-screen" />
+            <Template editMode={true} className="overflow-y-scroll cusscroller overflow-x-hidden w-[calc(100%-258px)] z-[100] h-full fixed max-h-screen" />
           )}
 
           <div className="flex relative z-[130] left-[calc(100%-257px)] right-0 flex-row">
