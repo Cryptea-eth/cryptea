@@ -29,20 +29,17 @@ import {
 } from "@mui/material";
 
 import { useMoralis } from "react-moralis";
-
 import Loader from "../../components/elements/loader";
-
 import { useState, useEffect, SetStateAction } from "react";
 import { makeNFTClient } from "../../functions/clients";
-
-import Moralis from "moralis/types";
 import axios from "axios";
 import { initD } from "../../components/elements/dashboard/linkOverview/linkData";
 
 const contractAddress: { subscribe: string; onetime: string } = {
-  subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457",
-  // subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940",
-  onetime: "0xa6aE0280a3eE37975586211d18578D232A1B98c5",
+  // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457", //rink
+  subscribe: "0xd328f64974b319b046cf36E41c945bb773Fed1d8",
+  // subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940", //polygon
+  onetime: "0xBE6A162578e17D02F9c5F6b2167a62c6C01070ae",
 };
 
 function a11yProps(index: number) {
@@ -131,7 +128,6 @@ const Origin = ({ className }: {className?: string}) => {
   const initMain = async (price: number, type: 'subscription' | 'onetime' = 'onetime') => {
     setAuth(false);
     setLoadingText("Initializing Payment")
-
     try {
         await beginPayment(price, type);
     } catch (x) {
@@ -141,11 +137,10 @@ const Origin = ({ className }: {className?: string}) => {
 
   const [amount, setAmount] = useState<string | number>("");
 
-  const [linkHook, setLinkHook] = useState<Moralis.Object<Moralis.Attributes>[]>(); 
+  const [linkHook, setLinkHook] = useState<any>();
 
   
-useEffect(() => {
-
+  useEffect(() => {
 
     const init = async () => {
         
@@ -229,6 +224,8 @@ useEffect(() => {
 
 
   const { username: usern, description, email, img, ethAddress, id: linkId, onetime, subscribers }: { username?: string, description?: string, email?: string, img?: string | null, ethAddress?: string, id?: string, onetime?: string, subscribers ?: string} = userD;
+
+
    const [subCheck, setSubCheck] = useState<boolean>(true);
   if (!userD) {
     window.location.href = "/404";
@@ -289,10 +286,11 @@ useEffect(() => {
     
     try {
       const gasPrice = await web3x.eth.getGasPrice();
+      
       const tx = {
         from: receiver,
         value,
-        gasPrice,
+        gasPrice
       };
 
      setLoadingText("Transferring Tokens...");
@@ -307,11 +305,12 @@ useEffect(() => {
     } catch (err) {
       console.log(err);
       setTransferFail(true); 
+      setLoadingText("");
     }
   };
 
   const message: { [index: string]: string } = {
-    subscription: `Subscription To ${usern} content`,
+    subscription: `Subscription To ${usern}`,
     onetime: `Tipping ${usern} with crypto`,
   };
 
@@ -344,6 +343,21 @@ useEffect(() => {
       return 0
   }
 
+  const reset = () => {
+    
+    setTransferSuccess(false);
+    setFailMessage("");
+    setHash("");
+    setLoadingText("");
+    setTransferFail(false);
+    setPemail('');
+    setTinterval('')
+
+    if (typeof userD.linkAmount != "number") {
+        setAmount('');
+    }
+}
+
   const beginPayment = async (
     price: number,
     type: "subscription" | "onetime" = "onetime"
@@ -352,13 +366,15 @@ useEffect(() => {
     let from = "";
     
     try {
+      
       const senx = await authenticate({ signingMessage: message[type] });
       from = senx?.get("ethAddress");
+
     } catch (e) {
       setTransferFail(true);
+      setLoadingText("");
       return;
     }
-    
     
     setLoadingText("Pending...");
     
@@ -368,7 +384,8 @@ useEffect(() => {
 
     const gasPx = await initWeb3.eth.getGasPrice();
 
-    const gasPrice = Number(gasPx);
+    const gasPrice = parseFloat(gasPx);
+
     if(type == "subscription"){
       if (!subCheck) {
          setLoadingText("Checking Wallet...");
@@ -420,11 +437,13 @@ useEffect(() => {
 
       setLoadingText("Awaiting payment confirmation");
   
+
       const suser: string = typeof username == 'string' ? username : (usern === undefined ? "" : usern);
 
       const seth: string = ethAddress === undefined ? "" : ethAddress;
 
       setLoadingText("Initializing Subscription...");
+
       const nft = await generateNftData(
         suser,
         seth,
@@ -443,6 +462,7 @@ useEffect(() => {
       const remind = subscribers === undefined ? [] : JSON.parse(subscribers);
       const date = new Date().getTime();
        if (linkHook !== undefined) {
+
           remind.push({
             mail: pemail,
             date,
@@ -452,15 +472,19 @@ useEffect(() => {
             renewal: interval,
           })
          
-         linkHook[0].set("subscribers", JSON.stringify(remind));
-         await linkHook[0].save();
+         linkHook.set("subscribers", JSON.stringify(remind));
+         await linkHook.save();
          console.log("done");
        } 
 
       setTransferSuccess(true);
 
+      setTimeout(reset, 3500)
+
       }catch(err){
         console.log(err)
+         setTransferFail(true); 
+        setLoadingText("");
       }
 
     }else if (type == "onetime") {
@@ -471,20 +495,19 @@ useEffect(() => {
         contractAddress['onetime']
       );
 
-      setLoadingText("Awaiting payment confirmation");
-
+      setLoadingText("Awaiting payment confirmation")
+      
+      
       initContract.methods
-        .sendToken(ethAddress || '') //receiver
+        .transferToken(ethAddress || '') //receiver
         .send({
           from,
           value: initWeb3.utils.toWei(ether, "ether"),
-          gasPrice,
-          gas: null,
-          gasLimit: null,
-          maxGasPrice: null,
+          gasPrice
         })
         .then(async (init: any) => {
           console.log(init);
+
           setHash(init.transactionHash);
 
           const payers = onetime === undefined ? [] : JSON.parse(onetime);
@@ -496,18 +519,23 @@ useEffect(() => {
               amount: price,
             });
 
-            linkHook[0].set("onetime", JSON.stringify(payers));
+            linkHook.set("onetime", JSON.stringify(payers));
 
-            await linkHook[0].save();
+            await linkHook.save();
 
           }
 
           setTransferSuccess(true);
+
+          setTimeout(reset, 3500);
+
         })
         .catch((err: any) => {
           const error = err as Error;
           if (error.message.length) {
             setTransferFail(true);
+            console.log(err)
+            setLoadingText("");
           }
         });
     }
@@ -597,6 +625,7 @@ useEffect(() => {
                     name="description"
                     content="Cryptea - 500 Internal Server Error"
                   />
+
                   <link rel="icon" href="/favicon.ico" />
                 </Head>
 
@@ -747,12 +776,7 @@ useEffect(() => {
                     </div>
 
                     {/* work statement */}
-                    <div
-                      onClick={() => {
-                        getPrice(10);
-                      }}
-                      className="links mt-5 work_state_page"
-                    >
+                    <div className="links mt-5 work_state_page">
                       <div style={data.workState}>
                         {Boolean(data.workState.text.length)
                           ? data.workState.text
@@ -920,7 +944,7 @@ useEffect(() => {
                           )}
                           {/* success */}
                           {transferSuccess && (
-                            <div className="h-full backdrop-blur-[3px] absolute left-0 bg-[rgba(255,255,255,.6)] top-0 z-[100] flex flex-col justify-center items-center w-full">
+                            <div className="h-full backdrop-blur-[3px] absolute left-0 bg-[rgba(255,255,255,.6)] top-0 z-[100] flex flex-col justify-evenly items-center w-full">
                               <div className="animation-ctn">
                                 <div className="icon icon--order-success svg">
                                   <svg
@@ -974,7 +998,7 @@ useEffect(() => {
                                 }}
                                 className="mb-2 text-[15px] font-bold"
                               >
-                                {usern} has been tipped successfully
+                                {!value ? `Payment was successful` : `Subscription was successful`}
                               </h2>
 
                               <Link
@@ -991,19 +1015,13 @@ useEffect(() => {
                               <Button
                                 variant="contained"
                                 sx={{
-                                  backgroundColor: data.colorScheme,
+                                  backgroundColor: `${data.colorScheme} !important`,
                                 }}
                                 className=" !mt-4 !py-[5px] !font-medium !capitalize mx-auto"
                                 style={{
                                   fontFamily: "inherit",
                                 }}
-                                onClick={() => {
-                                  setTransferSuccess(false);
-                                  setFailMessage("");
-                                  setHash("");
-                                  setLoadingText("");
-                                  setTransferFail(false);
-                                }}
+                                onClick={reset}
                               >
                                 Done
                               </Button>
@@ -1079,6 +1097,7 @@ useEffect(() => {
                                       className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
                                       onChange={(e: any) => {
                                         setTransferFail(false);
+                                        setLoadingText("");
                                         const val = e.target.value;
                                         setAmount(val.replace(/[^\d.]/g, ""));
                                       }}
@@ -1129,6 +1148,7 @@ useEffect(() => {
                                       >
                                     ) => {
                                       setTransferFail(false);
+                                      setLoadingText("");
                                       const val = e.target.value;
                                       setAmount(val.replace(/[^\d.]/g, ""));
                                     }}
@@ -1189,6 +1209,7 @@ useEffect(() => {
                                   }}
                                   onChange={(e: any) => {
                                     setTransferFail(false);
+                                    setLoadingText("");
                                     const val = e.target.value;
                                     setTinterval(val);
                                   }}
@@ -1245,6 +1266,7 @@ useEffect(() => {
                                     >
                                   ) => {
                                     setTransferFail(false);
+                                    setLoadingText("");
                                     const val = e.target.value;
                                     setPemail(val);
                                   }}
@@ -1289,6 +1311,7 @@ useEffect(() => {
                                         className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
                                         onChange={(e: any) => {
                                           setTransferFail(false);
+                                          setLoadingText("");
                                           const val = e.target.value;
 
                                           setAmount(val.replace(/[^\d.]/g, ""));
@@ -1341,6 +1364,7 @@ useEffect(() => {
                                       >
                                     ) => {
                                       setTransferFail(false);
+                                      setLoadingText("");
                                       const val = e.target.value;
                                       setAmount(val.replace(/[^\d.]/g, ""));
                                     }}

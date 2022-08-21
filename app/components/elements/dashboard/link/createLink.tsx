@@ -317,6 +317,8 @@ const NewLink = () => {
           link?.set("amount", String(amount));
           link?.set("desc", data.desc[index]);
           link?.set("title", data.title[index]);
+          link?.set("onetime", '[]');
+          link?.set("subscribers", '[]');
           link?.set("amountMulti", JSON.stringify(data.amount.multi));
           link?.set(
             "type",
