@@ -38,7 +38,8 @@ const EditPage = () => {
 
 
   const [Template, setTemplate] = useState<React.ComponentType<{
-      className?: string | undefined;
+      className?: string;
+      editMode?: boolean;
     }>>();
 
 
