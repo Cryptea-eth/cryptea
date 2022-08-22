@@ -85,11 +85,10 @@ const Dashboard = () => {
         <div className="h-full dash w-full bg-white flex">
           <Sidebar page={page} />
 
-          <div
-            className={`body transition-all delay-500 ${
+          <div className={`body transition-all delay-500 ${
               sidebar?.openPage ? "pl-[247px]" : "pl-[77px]"
-            } w-full h-full 2sm:!pl-[77px]`}
-          >
+            } w-full h-full 2sm:!pl-[77px]`}>
+
             <div
               style={{
                 width: sidebar?.openPage

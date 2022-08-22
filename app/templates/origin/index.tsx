@@ -219,7 +219,7 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
     init();
   }
 
-  }, [Moralis.Cloud, router, username, router.isReady]);
+  }, [Moralis.Cloud, router, username, router.isReady, editMode]);
 
 
 
