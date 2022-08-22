@@ -228,7 +228,7 @@ const DashLinks = () => {
               const { src } = image !== undefined ? image : {src: undefined}
 
               
-              return (<Link href={`/user/${link}`} key={i}>
+              return (<Link href={`/user/${link}/overview`} key={i}>
                 <a>
                   <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(240,240,240)] transition-all delay-300 cursor-pointer">
                     {/* <div className="flex mt-4 justify-between items-center w-full">
