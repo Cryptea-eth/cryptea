@@ -87,7 +87,7 @@ div .walletconnect-qrcode__base{
 
 /* toolti */
 
-#tooltip {
+.tooltip {
   position: absolute;
   display: none;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
@@ -101,17 +101,17 @@ div .walletconnect-qrcode__base{
   color: #fff;
 }
 
-#tooltip .tooltip-label {
+.tooltip .tooltip-label {
   padding: 6px 2px;
   color: #fff;
   font-size: 12px;
 }
 
-#tooltip .tooltip-value {
+.tooltip .tooltip-value {
   padding: 0 2px 8px 2px;
 }
 
-#tooltip .tooltip-value .color-circle {
+.tooltip .tooltip-value .color-circle {
   height: 8px;
   width: 8px;
   border-radius: 50%;
@@ -121,11 +121,11 @@ div .walletconnect-qrcode__base{
   margin-right: 4px;
 }
 
-#tooltip .tooltip-value .value {
+.tooltip .tooltip-value .value {
   font-size: 14px;
 }
 
-#tooltip::after {
+.tooltip::after {
   content: "";
   width: 10px;
   height: 10px;

@@ -151,6 +151,7 @@ const Overview = () => {
 
                           <Chart1
                             label="data"
+                            name="chart1"
                             prefix="$"
                             dataList={[
                               100, 230, 360, 230, 520, 200, 300, 400, 500, 130,
@@ -219,6 +220,7 @@ const Overview = () => {
 
                           <Chart1
                             label="data"
+                            name="chart2"
                             dataList={[
                               10, 20, 30, 23, 52, 20, 30, 40, 50, 13,
                               110, 120, 110, 200, 10, 400, 340, 40,
@@ -310,7 +312,7 @@ const Overview = () => {
                         <div className="px-6 pt-6 relative pb-3">
                           <div className="flex justify-between mb-[16px] items-center">
                             <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
-                              API
+                              SDK/APIs
                             </h2>
 
                             <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
@@ -322,7 +324,7 @@ const Overview = () => {
                         </div>
                         <Link href="/working">
                           <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
-                            Configure API
+                            Lookup SDK/API
                           </a>
                         </Link>
                       </div>

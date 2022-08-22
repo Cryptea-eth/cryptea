@@ -29,7 +29,8 @@ const Chart1 = ({
   labels,
   prefix = '',
   dataList,
-  label
+  label,
+  name
 }: {
   styles?: object;
   color?: string;
@@ -37,17 +38,15 @@ const Chart1 = ({
   dataList: (string | number)[],
   label: string,
   prefix?: string
+  name: string
 }) => {
 
   const processTooltipModel = (model: any) => {
-    const tooltip = document.getElementById("tooltip");
-
+    const tooltip = document.querySelector(`.tooltip${name}`);
 
     if (tooltip !== null) {
 
       const tooltipModel = model.tooltip;
-
-      console.log(tooltipModel.opacity);
 
       tooltip.style.display = tooltipModel.opacity ? 'block' : 'none';
       
@@ -55,10 +54,10 @@ const Chart1 = ({
       tooltip.style.left = tooltipModel.caretX + "px";
       tooltip.style.top = tooltipModel.caretY - 66 - 5 + "px";
       (
-        tooltip.querySelector(".tooltip-label") || { textContent: "" }
+        tooltip.querySelector(`.tooltip${name} .tooltip-label`) || { textContent: "" }
       ).textContent = tooltipModel.dataPoints[0].label;
       (
-        tooltip.querySelector(".tooltip-value .value") || { textContent: "" }
+        tooltip.querySelector(`.tooltip${name} .tooltip-value .value`) || { textContent: "" }
       ).textContent = prefix+tooltipModel.dataPoints[0].raw;
     }
   };
@@ -126,17 +125,6 @@ const Chart1 = ({
 //   ];
 
 
-  const onMouseover = () => {
-      console.log('eee')
-  };
-
-
-   const onMouseout = () => {
-      console.log('rr')
-   };
-
-
-
   const data = () => {
     return {
       labels,
@@ -164,13 +152,10 @@ const Chart1 = ({
 
   return (
     <>
-      <div
-        style={styles}
-        className="w-[400px] relative h-[100px]"
-      >
+      <div style={styles} className="w-[400px] relative h-[100px]">
         {" "}
         <Line options={options} data={data()} />{" "}
-        <div id="tooltip">
+        <div className={`tooltip tooltip${name}`}>
           <div className="tooltip-label"></div>
           <div className="tooltip-value">
             <span className="color-circle"></span>
