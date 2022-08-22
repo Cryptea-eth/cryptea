@@ -11,7 +11,7 @@ import {
   initD
 } from "../../../app/components/elements/dashboard/link/data";
 import Link from "next/link";
-import Chart1 from "../../../app/components/elements/Extras/Rep/chart1";
+import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
 
 const Overview = () => {
 
@@ -125,10 +125,12 @@ const Overview = () => {
                       }}
                       className="max-w-[861px] m-auto grid gap-6 grid-flow-dense"
                     >
-
-                      <div style={{
-                        gridColumn: 'span 2'
-                      }} className=" border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                      <div
+                        style={{
+                          gridColumn: "span 2",
+                        }}
+                        className=" border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
+                      >
                         <div className="px-6 pt-6 relative pb-3">
                           <div className="flex justify-between mb-[16px] items-center">
                             <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -149,14 +151,22 @@ const Overview = () => {
                             />
                           </div>
 
-                          <Chart1
-                            label="data"
+                          <LineChart
+                            label={["onetime", "subscribers"]}
                             name="chart1"
                             prefix="$"
+                            color={["#f57059", "#961d08"]}
                             dataList={[
-                              100, 230, 360, 230, 520, 200, 300, 400, 500, 130,
-                              1100, 1230, 1210, 1200, 1300, 1400, 1340, 1400,
-                              1600, 1900, 2200, 1200, 1340, 2400, 2200,
+                              [
+                                100, 230, 360, 230, 520, 200, 300, 400, 500,
+                                130, 1100, 1230, 1210, 1200, 1300, 1400, 1340,
+                                1400, 1600, 1900, 2200, 1200, 1340, 2400, 2200,
+                              ],
+                              [
+                                10, 23, 36, 23, 50, 40, 30, 30, 50, 130, 110,
+                                123, 121, 120, 130, 140, 134, 140, 1600, 1900,
+                                2200, 1200, 1340, 240, 200,
+                              ],
                             ]}
                             styles={{
                               width: "100%",
@@ -218,13 +228,15 @@ const Overview = () => {
                             />
                           </div>
 
-                          <Chart1
-                            label="data"
-                            name="chart2"
+                          <LineChart
+                            label={["data"]}
+                            name="views"
                             dataList={[
-                              10, 20, 30, 23, 52, 20, 30, 40, 50, 13,
-                              110, 120, 110, 200, 10, 400, 340, 40,
-                              10, 10, 20, 10, 10, 240, 20,
+                              [
+                                10, 20, 30, 23, 52, 20, 30, 40, 50, 13, 110,
+                                120, 110, 200, 10, 400, 340, 40, 10, 10, 20, 10,
+                                10, 240, 20,
+                              ],
                             ]}
                             styles={{
                               width: "100%",
