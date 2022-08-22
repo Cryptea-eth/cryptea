@@ -77,7 +77,7 @@ const DashboardIndex = () => {
         </title>
         <meta
           name="description"
-          content={`Receive tips/donations on another level`}
+          content={`Receive Payments Instantly With Ease`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

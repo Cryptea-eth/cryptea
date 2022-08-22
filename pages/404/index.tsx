@@ -9,7 +9,7 @@ const Notfound = () => {
         <title>Cryptea - 404</title>
         <meta
           name="description"
-          content="Cryptea - Receive Tips on a whole new level."
+          content="Cryptea - Receive Payments Instantly With Ease."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

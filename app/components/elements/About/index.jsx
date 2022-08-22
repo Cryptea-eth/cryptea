@@ -68,8 +68,7 @@ const About = () => {
           />
           <h4 className="font-bold">Receive payments</h4>
           <span className="text-[#64607D]">
-            You’re good to go. Share your payment link, and receive crypto from
-            your fans.
+            You’re good to go. Share your payment link, and receive crypto payment with ease.
           </span>
         </div>
         <div className="!absolute !-right-[5.406rem] !bottom-0 !z-[-1] !w-[290px]">

@@ -19,7 +19,7 @@ const Footer = () => {
           }}/>
 
           <span className="text-[#757095] ">
-            Receive tips while you sip tea. Directly, and securely.
+            Receive Payments Instantly With Ease.
           </span>
           <div className="flex items-center mb-4 justify-between mt-[3pc] w-[200px]">
             <a className="mr-[5px]" href="https://linkedin.com">
