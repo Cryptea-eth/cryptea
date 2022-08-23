@@ -473,7 +473,7 @@ const DashHome = () => {
                 <Button
                   onClick={handleClose}
                   variant="contained"
-                  className="!bg-[#F57059] max-w-[100px] !ml-2 !py-[13px] !font-medium !capitalize"
+                  className="!bg-[#F57059] !max-w-[100px] !ml-2 !py-[13px] !font-medium !capitalize"
                   style={{
                     fontFamily: "inherit",
                   }}
@@ -608,7 +608,7 @@ const DashHome = () => {
           <div className="">
             <Button
               variant="contained"
-              className="!bg-[#F57059] !hidden !mt-4 2sm:!block !py-[8px] max-w-[520px] m-auto !font-medium !capitalize"
+              className="!bg-[#F57059] !hidden !mt-4 2sm:!block !py-[8px] !max-w-[520px] !m-auto !font-medium !capitalize"
               style={{
                 fontFamily: "inherit",
               }}

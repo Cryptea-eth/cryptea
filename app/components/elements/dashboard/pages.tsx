@@ -109,7 +109,7 @@ const DashPages = () => {
                 <div className="flex mt-4 justify-between items-center w-full">
                   <a target="_blank" href={`/user/${attributes.link.toLowerCase()}`} rel="noreferrer">
                     <a>
-                      <Button className="py-2 font-bold px-4 !capitalize flex items-center text-white hover:!bg-[#ff8c78b8] bg-[#f36e57b8] transition-all delay-500 rounded-lg">
+                      <Button className="!py-2 !font-bold !px-4 !capitalize !flex !items-center !text-white hover:!bg-[#ff8c78b8] !bg-[#f36e57b8] !transition-all !delay-500 !rounded-lg">
                         <RiPagesLine size={19} className="mr-1" /> View Page
                       </Button>
                     </a>

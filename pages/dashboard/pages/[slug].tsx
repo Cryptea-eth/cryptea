@@ -820,7 +820,7 @@ useEffect(() => {
                                   <div className="flex mt-2 justify-between">
                                     <Button
                                       variant="contained"
-                                      className="!bg-[#979797] w-fit !mr-2 !py-[3px] !font-bold !text-[13px] !capitalize"
+                                      className="!bg-[#979797] !w-fit !mr-2 !py-[3px] !font-bold !text-[13px] !capitalize"
                                       style={{
                                         fontFamily: "inherit",
                                       }}
@@ -1711,7 +1711,7 @@ useEffect(() => {
                       <Button
                         sx={stylex.button}
                         className={
-                          "!flex !items-center mx-auto !mb-1 !mt-[2pc]"
+                          "!flex !items-center !mx-auto !mb-1 !mt-[2pc]"
                         }
                       >
                         <div className="mr-3 h-[20px] text-[#fff]">
@@ -1731,7 +1731,7 @@ useEffect(() => {
                           },
                         }}
                         className={
-                          "!flex !items-center mx-auto !mb-1 !mt-[2pc]"
+                          "!flex !items-center !mx-auto !mb-1 !mt-[2pc]"
                         }
                         onClick={saveSets}
                       >

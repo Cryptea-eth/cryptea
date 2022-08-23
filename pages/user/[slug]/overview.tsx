@@ -6,12 +6,14 @@ import Head from 'next/head';
 import { dash, DashContext } from "../../../app/contexts/GenContext";
 import Sidebar from "../../../app/components/elements/dashboard/sidebar";
 import { Avatar } from "@mui/material";
-import NumberFormat from 'react-number-format'
+import NumberFormat from 'react-number-format';
+import { FiTrash2 } from "react-icons/fi";
 import {
   initD
 } from "../../../app/components/elements/dashboard/link/data";
 import Link from "next/link";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
+import { MdArrowBackIos, MdLink } from "react-icons/md";
 
 const Overview = () => {
 
@@ -107,10 +109,31 @@ const Overview = () => {
                           String(slug).charAt(0) + String(slug).charAt(1)
                         ).toUpperCase()}
                       </Avatar>
-                      <h1 className="text-[rgb(32,33,36)] text-[1.95rem] leading-[2.45rem] mb-[16px] font-[400] text-center">
-                        {data.get("title") !== undefined
-                          ? data.get("title")
-                          : slug}
+                      <h1
+                        style={{
+                          maxWidth: !sidebar?.openPage ? "1031px" : "861px",
+                        }}
+                        className="text-[rgb(32,33,36)] mb-[16px] font-[400] flex items-center justify-between mx-auto text-center"
+                      >
+                        <Link href="/dashboard/links">
+                          <a>
+                            <MdArrowBackIos size={20}/>
+                          </a>
+                        </Link>
+
+                        <Link href={`/user/${slug}`}>
+                          <a className="cursor-pointer text-[1.95rem] leading-[2.45rem] mx-auto flex items-center">
+                            <span className="mr-2">
+                              {data.get("title") !== undefined
+                                ? data.get("title")
+                                : slug}
+                            </span>
+
+                            <MdLink size={30} />
+                          </a>
+                        </Link>
+                        
+                        
                       </h1>
 
                       <p className="text-[0.875rem] text-[rgb(95,99,104)]  truncate leading-[1.25rem] block">
@@ -122,8 +145,9 @@ const Overview = () => {
                       style={{
                         gridTemplateColumns:
                           "repeat(auto-fill, minmax(410px, 1fr))",
+                        maxWidth: !sidebar?.openPage ? "1031px" : "861px",
                       }}
-                      className="max-w-[861px] m-auto grid gap-6 grid-flow-dense"
+                      className="m-auto transition-all delay-500 grid gap-6 grid-flow-dense"
                     >
                       <div
                         style={{

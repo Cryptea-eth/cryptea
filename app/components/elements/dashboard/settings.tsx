@@ -375,7 +375,7 @@ const DashSettings = () => {
             <Button
               onClick={handleCloseM}
               variant="contained"
-              className="!bg-[#F57059] max-w-[100px] !ml-2 !py-[13px] !font-medium !capitalize"
+              className="!bg-[#F57059] !max-w-[100px] !ml-2 !py-[13px] !font-medium !capitalize"
               style={{
                 fontFamily: "inherit",
               }}
@@ -552,7 +552,7 @@ const DashSettings = () => {
                             element.click();
                           }}
                           variant="contained"
-                          className="!text-sm !rounded-lg !capitalize !bg-[#F57059] !text-white !font-semibold p-[10px]"
+                          className="!text-sm !rounded-lg !capitalize !bg-[#F57059] !text-white !font-semibold !p-[10px]"
                         >
                           Update
                         </Button>

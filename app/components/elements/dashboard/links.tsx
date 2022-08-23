@@ -191,7 +191,7 @@ const DashLinks = () => {
           </div>
           <Link href="/dashboard/links/new">
             <a>
-              <Button className="py-2 font-bold px-5 !capitalize flex items-center text-black bg-[#F57059] border border-solid border-[rgb(218,220,224)] transition-all delay-500 hover:text-[#f0f0f0] rounded-lg">
+              <Button className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-black !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
                 <MdAddLink size={25} className="mr-1" /> Create Link
               </Button>
             </a>
@@ -208,7 +208,7 @@ const DashLinks = () => {
             }}
             className="grid gap-6 grid-flow-dense"
           >
-            <Button className="w-full rounded-md hover:border-[#f5705982] hover:bg-[#f5705982] text-[#121212] bg-transparent hover:text-white border border-solid border-[rgb(218,220,224)]">
+            <Button className="!w-full !rounded-md hover:!border-[#f5705982] hover:!bg-[#f5705982] !text-[#121212] !bg-transparent hover:!text-white !border !border-solid !border-[rgb(218,220,224)]">
               <Link href="/dashboard/links/new">
                 <a className="flex-col p-4 w-full h-full flex justify-center items-center">
                   <MdAddLink size={50} className="mb-3" />
@@ -238,7 +238,7 @@ const DashLinks = () => {
                     rel="noreferrer"
                   >
                     <a>
-                      <Button className="py-2 font-bold px-4 !capitalize flex items-center text-white hover:!bg-[#ff8c78b8] bg-[#f36e57b8] transition-all delay-500 rounded-lg">
+                      <Button className="!py-2 !font-bold !px-4 !capitalize !flex !items-center !text-white hover:!bg-[#ff8c78b8] !bg-[#f36e57b8] !transition-all !delay-500 !rounded-lg">
                         <RiPagesLine size={19} className="mr-1" /> View Page
                       </Button>
                     </a>

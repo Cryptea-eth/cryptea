@@ -1514,7 +1514,7 @@ const NewLink = () => {
               <div className="flex relative items-center">
                 {" "}
                 {isLoading && (
-                  <Button className="py-3 font-bold px-6 normal-case flex items-center text-white hover:bg-[#f57059] bg-[#f57059] m-auto rounded-lg">
+                  <Button className="!py-3 !font-bold !px-6 !normal-case !flex !items-center !text-white hover:!bg-[#f57059] !bg-[#f57059] !m-auto !rounded-lg">
                     <CircularProgress
                       sx={{
                         color: "white",
@@ -1531,7 +1531,7 @@ const NewLink = () => {
                 {!isLoading && (
                   <Button
                     onClick={saveLink}
-                    className="py-3 font-bold px-6 !capitalize flex items-center text-white bg-[#f57059] transition-all delay-500 hover:bg-[#fb4d2e] m-auto rounded-lg"
+                    className="!py-3 !font-bold !px-6 !capitalize !flex !items-center !text-white !bg-[#f57059] !transition-all !delay-500 hover:!bg-[#fb4d2e] !m-auto !rounded-lg"
                   >
                     <MdInsertLink size={25} className="mr-1" /> Create Link
                   </Button>

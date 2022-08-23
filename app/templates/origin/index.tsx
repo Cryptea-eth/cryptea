@@ -655,7 +655,7 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                             backgroundColor: `${data.hoverColorScheme} !important`,
                           },
                         }}
-                        className="ml-2 transition-all delay-500 text-sm !capitalize rounded-lg font-semibold py-4 px-4 mx-auto"
+                        className="!ml-2 !transition-all !delay-500 !text-sm !capitalize !rounded-lg !font-semibold !py-4 !px-4 !mx-auto"
                       >
                         Refresh Page
                       </Button>
@@ -1017,7 +1017,7 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                                 sx={{
                                   backgroundColor: `${data.colorScheme} !important`,
                                 }}
-                                className=" !mt-4 !py-[5px] !font-medium !capitalize mx-auto"
+                                className=" !mt-4 !py-[5px] !font-medium !capitalize !mx-auto"
                                 style={{
                                   fontFamily: "inherit",
                                 }}

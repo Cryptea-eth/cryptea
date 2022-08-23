@@ -82,13 +82,15 @@ const Dashboard = () => {
       {loading && <Loader />}
 
       {!loading && (
+        <>
         <div className="h-full dash w-full bg-white flex">
           <Sidebar page={page} />
 
           <div className={`body transition-all delay-500 ${
               sidebar?.openPage ? "pl-[247px]" : "pl-[77px]"
             } w-full h-full 2sm:!pl-[77px]`}>
-
+              
+              <>
             <div
               style={{
                 width: sidebar?.openPage
@@ -206,8 +208,11 @@ const Dashboard = () => {
                 "page",
               ].includes(page.toString()) &&
               router.replace("/404")}
+
+              </>
           </div>
         </div>
+        </>
       )}
     </>
   );
