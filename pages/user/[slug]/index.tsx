@@ -8,7 +8,6 @@ import {
 
 
 const User = () => {
-  
 
    const router = useRouter();
 
@@ -18,48 +17,20 @@ const User = () => {
   
    useEffect(() => {
       const init = async () => {
-           const temp = await initD(String(linkUser));
+           await initD(String(linkUser));
 
             setTemplate(template)
 
+            if(template === undefined){
+                router.push("/404");
+            }
       }
 
       if(router.isReady){
         init()
       }
 
-   }, [linkUser, router.isReady]);
-
-
-  //  useEffect(() => {
-  //    const init = async () => {
-  //      const PQ = Moralis.Object.extend("link");
-
-  //      const QP = new Moralis.Query(PQ);
-
-  //      QP.equalTo("link", String(linkUser).toLowerCase());
-
-  //      const linkDt = await QP.first();
-
-  //      if (linkDt?.get("template_data") !== undefined) {
-  //        const { name } = JSON.parse(linkDt?.get("template_data"));
-
-        
-  //      }
-  //    };
-
-  //    if (isInitialized && router.isReady) {
-  //      init();
-  //    }
-  //  }, [
-  //    isAuthenticated,
-  //    isInitialized,
-  //    Moralis.Object,
-  //    Moralis.Query,
-  //    linkUser,
-  //    router.isReady,
-  //  ]);
-
+   }, [linkUser, router.isReady, router]);
 
 
 

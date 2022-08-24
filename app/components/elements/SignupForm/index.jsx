@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
 import { useMoralis } from "react-moralis";
-import { MdInfo } from "react-icons/md";
+import { data } from "../../../templates/origin/data";
+
 import {
   Button,
-  Link,
-  OutlinedInput,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
   TextField,
   LinearProgress,
   Box,
-  Alert,
+  Alert
 } from "@mui/material";
+import Router from "next/router";
 
 const SignupForm = () => {
   const {
@@ -22,8 +18,7 @@ const SignupForm = () => {
     authenticate,
     Moralis,
     isWeb3Enabled,
-    enableWeb3,
-    chainId
+    enableWeb3
   } = useMoralis();
 
   useEffect(() => {
@@ -42,8 +37,6 @@ const SignupForm = () => {
   }, [enableWeb3, isWeb3Enabled]);
 
 
-
-  const [userLink, setUserLink] = useState("");
   const [userDescription, setUserDescription] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userInfo, setuserInfo] = useState("");
@@ -69,7 +62,7 @@ const SignupForm = () => {
           .then(function (user) {
             if (user.get("email") !== undefined) {
               if (user.get("email").length) {
-                window.location.href = "/dashboard";
+                Router.push('/dashboard');
               }
             }
           })
@@ -82,15 +75,27 @@ const SignupForm = () => {
       }
 
       if (user.get("email") === undefined) {
+
+        const templateData = { name: 'origin', data}
+
         user.set("username", userInfo);
         user.set("desc", userDescription);
         user.set("email", userEmail);
+        user.set("link", userInfo);
+
 
         const Links = Moralis.Object.extend("link");
         const link = new Links();
-        link.set("link", (userLink.length ? userLink : userInfo).toLowerCase());
-        link.set("amount", "variable");
-        link.set("user", user);
+
+        link?.set("link", userInfo.toLowerCase());
+        link?.set("amount", "variable");
+        link?.set("desc", userDescription);
+        link?.set("onetime", "[]");
+        link?.set("subscribers", "[]");
+        link?.set("amountMulti", JSON.stringify([0.1, 10, 50, 100]));
+        link?.set("type", "both");
+        link?.set("user", user);
+        link?.set("template_data", JSON.stringify(templateData));
 
         try {
           await user.save();
@@ -102,7 +107,8 @@ const SignupForm = () => {
           return;
         }
 
-        window.location.href = "/dashboard";
+        Router.push('/dashboard');
+
       } else {
         setError("Logout of your current wallet to sign up");
         setLoading(false);
@@ -210,44 +216,7 @@ const SignupForm = () => {
               </div>
             </div>
           </div>
-          <div className="rounded-[5px] border-[#C2C7D6] mt-8 w-full border-2 border-solid overflow-hidden">
-            <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#F57059] text-white">
-              <span className="uppercase font-semibold mr-3">Cryptea Link</span>
-              <div className="flex items-center">
-                <span className="mr-2 text-sm">
-                  This is the link which enables other crypto enthusiasts tip
-                  you. E.g cryptea.com/wagmi <br />
-                  If left empty your username is used as default link
-                </span>
-                <MdInfo size={20} color="#fff" />
-              </div>
-            </div>
-
-            <div className="w-full p-10">
-              <div className="flex items-center ssm:flex-wrap">
-                <TextField
-                  label={"Enter Link Slug"}
-                  placeholder="wagmi"
-                  sx={{
-                    "& .Mui-focused.MuiFormLabel-root": {
-                      color: "#f57059",
-                    },
-                    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: `#f57059 !important`,
-                    },
-                  }}
-                  value={userLink}
-                  onChange={(e) => {
-                    const lk = e.target.value;
-                    setUserLink(lk.replace(/[/\\.@#&?;:"'~,*^%|]/g, ""));
-                    setError("");
-                  }}
-                  name="link"
-                  fullWidth
-                />
-              </div>
-            </div>
-          </div>
+          
           <div className="flex flex-row justify-end w-full mt-8">
             <Button
               variant="contained"

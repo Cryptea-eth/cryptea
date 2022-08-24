@@ -151,7 +151,7 @@ function Nav() {
             onClick={() => {
               document.querySelector("#about")?.scrollIntoView();
             }}
-            className="text-black pr-4"
+            className="text-black cursor-pointer pr-4"
           >
             About
           </div>
