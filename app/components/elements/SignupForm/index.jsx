@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMoralis } from "react-moralis";
 import { data } from "../../../templates/origin/data";
-
+import validator from "validator";
 import {
   Button,
   TextField,
@@ -55,7 +55,23 @@ const SignupForm = () => {
       }
     });
 
+    if(!validator.isAlphanumeric(userInfo)){
+        setError("Username cannot contain spaces or special characters");
+        setLoading(false);
+        more = false;
+    }
+
+    if (!validator.isEmail(validator.normalizeEmail(userEmail))) {
+
+      setError("The email provided is incorrect");
+      setLoading(false);
+      more = false;
+
+    }
+
+
     if (more) {
+
       if (!isAuthenticated) {
         await authenticate({ signingMessage: "Welcome to Cryptea" })
           .then(function (user) {
@@ -79,7 +95,7 @@ const SignupForm = () => {
 
         user.set("username", userInfo);
         user.set("desc", userDescription);
-        user.set("email", userEmail);
+        user.set("email", validator.normalizeEmail(userEmail));
         user.set("link", userInfo);
 
 
@@ -156,7 +172,7 @@ const SignupForm = () => {
                         borderColor: `#f57059 !important`,
                       },
                     }}
-                    placeholder="wagmi.eth"
+                    placeholder="wagmi"
                     name="username"
                     onChange={(e) => {
                       setError("");

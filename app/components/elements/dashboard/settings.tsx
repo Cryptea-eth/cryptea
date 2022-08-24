@@ -4,6 +4,7 @@ import "react-image-crop/dist/ReactCrop.css";
 import { IoMdClose } from "react-icons/io";
 import { useMoralis } from "react-moralis";
 import { makeStorageClient } from "../../../functions/clients";
+import validator from 'validator';
 import { MdVisibilityOff, MdVisibility } from "react-icons/md";
 import {
   Button,
@@ -32,10 +33,10 @@ interface PixelCrop {
 const DashSettings = () => {
   const { Moralis, user } = useMoralis();
   const [dp, setDp] = useState<string | undefined>(user?.get("img"));
-  const [userLink, setUserLink] = useState("");
-  const [userDescription, setUserDescription] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userInfo, setuserInfo] = useState("");
+  const [userLink, setUserLink] = useState<string>("");
+  const [userDescription, setUserDescription] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [userInfo, setuserInfo] = useState<string>("");
   const [isLoading, setLoading] = useState({
     account: false,
     security: false,
@@ -97,11 +98,15 @@ const DashSettings = () => {
     });
 
     if (more) {
-      if (
-        userEmail.match(
-          /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/
-        ) === null
-      ) {
+
+      if (!validator.isAlphanumeric(userLink)) {
+        setError({ ...error, account: "Username cannot contain special characters or spaces" });
+        setLoading({ ...isLoading, account: false });
+      }
+
+      const email = validator.normalizeEmail(userEmail)
+
+      if (!validator.isEmail(email ? email : '')) {
         setError({ ...error, account: "Email Address Is Incorrect" });
         setLoading({ ...isLoading, account: false });
       }
@@ -109,7 +114,7 @@ const DashSettings = () => {
       if (!error["account"].length) {
         try {
           user?.set("username", userInfo);
-          user?.set("email", userEmail);
+          user?.set("email", validator.normalizeEmail(userEmail));
           await user?.save();
 
           setSuccess({

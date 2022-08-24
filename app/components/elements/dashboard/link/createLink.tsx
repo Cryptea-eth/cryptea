@@ -21,6 +21,8 @@ import { useMoralis } from "react-moralis";
 import Loader from "../../loader";
 import TabPanel from "./TabPanel";
 import Router from "next/router";
+import validator from 'validator';
+
 
 const NewLink = () => {
 
@@ -295,9 +297,9 @@ const NewLink = () => {
         return;
       }
 
-      if (/[!@#$%^`&*=?>+<\\\'\"]/g.test(data.slug[index])) {
+      if (!validator.isAlphanumeric(data.slug[index])) {
         const xe = { ...error.slug };
-        xe[index] = "Slug can only contain special character like ~, -, _";
+        xe[index] = "Slug should not contain any special characters";
         init({
           slug: {...xe}
         });

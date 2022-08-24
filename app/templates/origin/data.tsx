@@ -109,7 +109,7 @@ data = {
 };
 
 export const getData = async (linkData: object) => {
-  console.log('here')
+  
   data = {...data, ...linkData };
 
 };

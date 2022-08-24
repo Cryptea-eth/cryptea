@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Typography, Box, Button, Avatar, IconButton, Modal } from '@mui/material';
 import { MdAddLink, MdDeleteOutline, MdInfo, MdModeEditOutline } from 'react-icons/md';
+import Link from "next/link";
 import { RiDeleteBin2Line, RiPagesLine } from "react-icons/ri";
 
 const DashPages = () => {
@@ -62,7 +63,6 @@ const DashPages = () => {
             </span>
           </div>
         </div>
-
       )}
 
       {Boolean(links.length) && !isLoading && (
@@ -74,8 +74,17 @@ const DashPages = () => {
             }}
             className="grid gap-2 grid-flow-dense"
           >
-            {links.map(({ attributes }: any, i: number) => (
-              <div
+            {links.map(({ attributes }: any, i: number) => {
+                let realS = '';
+              if (attributes.templates_data !== undefined) {
+                  const temp = JSON.parse(attributes.template_data);
+
+                  const { image } = temp;
+
+                  realS = image.src
+              }
+
+          return (<div
                 key={i}
                 className="w-full cursor-default border-2 border-[#f5705982] border-solid p-4 rounded-md"
               >
@@ -87,6 +96,7 @@ const DashPages = () => {
                       backgroundColor: "#F57059",
                       marginRight: "10px",
                     }}
+                    src={realS}
                     variant="rounded"
                   >
                     {(
@@ -107,23 +117,33 @@ const DashPages = () => {
                 </div>
 
                 <div className="flex mt-4 justify-between items-center w-full">
-                  <a target="_blank" href={`/user/${attributes.link.toLowerCase()}`} rel="noreferrer">
-                    <a>
+                  <Link href={`/user/${attributes.link.toLowerCase()}/edit`}>
+                    <a rel="noreferrer">
                       <Button className="!py-2 !font-bold !px-4 !capitalize !flex !items-center !text-white hover:!bg-[#ff8c78b8] !bg-[#f36e57b8] !transition-all !delay-500 !rounded-lg">
-                        <RiPagesLine size={19} className="mr-1" /> View Page
+                        <MdModeEditOutline size={19} className="mr-1" /> Edit
+                        Page
                       </Button>
                     </a>
-                  </a>
+                  </Link>
 
-                  <a href={`/dashboard/pages/${attributes.link.toLowerCase()}`} rel="noreferrer">
-                    <IconButton color='inherit' size={'large'} sx={{ color: "#f36e57b8" }}>
-                      <MdModeEditOutline size={20}></MdModeEditOutline>
-                    </IconButton>
-                  </a>
+                  <Link href={`/user/${attributes.link.toLowerCase()}`}>
+                    <a title="View Page" target="_blank" rel="noreferrer">
+                      <IconButton
+                        color="inherit"
+                        size={"large"}
+                        sx={{ color: "#f36e57b8" }}
+                      >
+                        <RiPagesLine size={20} />{" "}
+                      </IconButton>
+                    </a>
+                  </Link>
                 </div>
               </div>
-            ))
-            }</div>
+            )
+            
+                    }
+            )}
+          </div>
         </>
       )}
     </div>

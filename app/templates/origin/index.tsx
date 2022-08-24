@@ -9,7 +9,6 @@ import bigimg from '../../../public/images/logobig.png';
 import PAYMENT from '../../../artifacts/contracts/payment.sol/Payment.json';
 import SUBSCRIPTION from "../../../artifacts/contracts/subscription.sol/Subscription.json";
 import * as temp_x from "./data"; 
-import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 import TabPanel from "../../components/elements/dashboard/link/TabPanel";
 import { FaInstagram, FaFacebook, FaTwitter, FaLinkedinIn, FaLink } from 'react-icons/fa';
 import Link from 'next/link'
@@ -30,10 +29,11 @@ import {
 
 import { useMoralis } from "react-moralis";
 import Loader from "../../components/elements/loader";
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect, SetStateAction, useContext } from "react";
 import { makeNFTClient } from "../../functions/clients";
 import axios from "axios";
 import { initD } from "../../components/elements/dashboard/linkOverview/linkData";
+import { DashContext } from "../../contexts/GenContext";
 
 const contractAddress: { subscribe: string; onetime: string } = {
   // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457", //rink
@@ -98,10 +98,14 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
 
   const [data, setData] = useState(temp_x.data);
  
+  const { template } = useContext(DashContext);  
+
+  const { isLoading, toggle: setIsLoading } = template;
+
   const [userD, setUserD] = useState<{[index: string]: any}>({});
   const [pemail, setPemail] = useState<string>("");
-  const [name, setName] = useState<string>("")
-  const [isLoading, setIsLoading] = useState(true);
+  const [name, setName] = useState<string>("");
+
   const [ loadingText, setLoadingText ] = useState<any>('')
   const [ transferSuccess, setTransferSuccess] = useState<boolean>(false);
   const [transferFail, setTransferFail] = useState<boolean>(false);
@@ -202,7 +206,8 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                 linkAmount,
               });
 
-              setIsLoading(false);
+              if(setIsLoading !== undefined)
+                    setIsLoading(false);
             }
           );
         } else {
@@ -613,7 +618,7 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
   return (
     <div className={`origin ${className}`}>
       {isLoading ? (
-        <Loader fixed={false} />
+        <Loader />
       ) : (
         <>
           {is500 ? (
