@@ -52,11 +52,10 @@ const SignupForm = () => {
         setError("Data Incomplete, Please required fields should be field");
         setLoading(false);
         more = false;
-        return;
       }
     });
 
-    if (!error.length) {
+    if (more) {
       if (!isAuthenticated) {
         await authenticate({ signingMessage: "Welcome to Cryptea" })
           .then(function (user) {
@@ -74,7 +73,7 @@ const SignupForm = () => {
           });
       }
 
-      if (user.get("email") === undefined) {
+      if (user.get("email") !== undefined) {
 
         const templateData = { name: 'origin', data}
 
