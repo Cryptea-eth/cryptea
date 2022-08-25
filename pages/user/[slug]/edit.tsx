@@ -30,7 +30,7 @@ import "react-image-crop/dist/ReactCrop.css";
 import { makeStorageClient } from "../../../app/functions/clients";
 import dynamic from "next/dynamic";
 import Loader from "../../../app/components/elements/loader";
-import { DashContext } from "../../../app/contexts/GenContext";
+import tmp from '../../../styles/temp.module.css'
 
 const Edit = () => {
   const { Moralis, isInitialized, isAuthenticated, user } = useMoralis();
@@ -45,9 +45,7 @@ const Edit = () => {
     }>
   >();
 
-  const { template } = useContext(DashContext);
-
-  const { isLoading: templateLoading } = template;
+  const [templates, setTemplates] = useState<any[]>([]);
 
   const stylex = {
     button: {
@@ -82,6 +80,7 @@ const Edit = () => {
 
   let [editable, setEditable] = useState<string[]>([]);
 
+
   useEffect(() => {
     const init = async () => {
       if (isInitialized) {
@@ -92,7 +91,7 @@ const Edit = () => {
 
           LQ.equalTo("link", String(usern).toLowerCase());
 
-          LQ.contains("user", user !== null ? user?.id : "");
+          LQ.contains("user", user !== null ? user?.id : "");           
 
           const linkx = await LQ.first();
 
@@ -103,11 +102,19 @@ const Edit = () => {
               linkx?.get("template_data")
             );
 
+            const temp = Moralis.Object.extend("templates");
+
+            const tempList = new Moralis.Query(temp);
+
+            const tl = await tempList.find();
+
+            setTemplates(tl);
+
             const { rules, getData } = await import(
               `../../../app/templates/${name}/data`
             );
 
-            setRules(rules);
+            setRules({...rules, change_template: {}});
 
             setData(name);
 
@@ -121,7 +128,7 @@ const Edit = () => {
               }
             }
 
-            setEditable(edx);
+            setEditable([...edx, 'change_template']);
 
             const Utemplate = dynamic(
               () => import(`../../../app/templates/${name}`),
@@ -134,9 +141,15 @@ const Edit = () => {
               
             setLoader(false);
 
+          }else{
+            if(router.isReady){
+            router.push('/404')
           }
+        }
+        
+          
         } else {
-          router.push("/");
+          router.push("/404");
         }
       }
     };
@@ -145,7 +158,6 @@ const Edit = () => {
   }, [
     Moralis.Object,
     usern,
-    templateLoading,
     user,
     Moralis.Query,
     router,
@@ -200,6 +212,34 @@ const Edit = () => {
   const [update, updateMe] = useState<any>("");
 
   const [isUploading, setIsUploading] = useState<number>(0);
+
+   const setXTemplates = async (name: string) => {
+     const { rules, getData } = await import(
+       `../../../app/templates/${name}/data`
+     );
+
+     const Utemplate = dynamic(() => import(`../../../app/templates/${name}`), {
+       suspense: true,
+     });
+
+     setRules({ ...rules, change_template: {} });
+
+     setData(name);
+
+     const edx: string[] = [];
+
+     for (let aa in rules) {
+       if (aa != "body") {
+         edx.push(aa);
+       }
+     }
+
+     setEditable([...edx, "change_template"]);
+
+     setTemplate(Utemplate);
+
+     setPart("");
+   };
 
   const imgCrop = (
     event: React.SyntheticEvent & { target: HTMLInputElement }
@@ -307,6 +347,7 @@ const Edit = () => {
     }
   };
 
+
   return (
     <div>
       <Head>
@@ -317,10 +358,9 @@ const Edit = () => {
 
       {isLoading && <Loader />}
 
-      {/* // come back here */}
       {!isLoading && Template !== undefined && null}
 
-      {!templateLoading && (
+      {
         <div
           style={{
             left: isSaving["two"] ? "calc(100% - 353px)" : undefined,
@@ -329,7 +369,7 @@ const Edit = () => {
         >
           Saved
         </div>
-      )}
+      }
 
       {!isLoading && (
         <div className="flex items-start">
@@ -342,7 +382,7 @@ const Edit = () => {
             </Suspense>
           )}
 
-          {!templateLoading && (
+          {
             <div className="flex relative z-[130] left-[calc(100%-257px)] right-0 flex-row">
               <div className="max-w-[257px] w-[257px] h-screen bg-[white]">
                 <div>
@@ -350,7 +390,7 @@ const Edit = () => {
                     <div
                       onClick={() => {
                         if (!getRules.length) {
-                          router.push('/dashboard/pages');
+                          router.push("/dashboard/pages");
                         } else {
                           setPart("");
                           setViewColor("");
@@ -651,9 +691,12 @@ const Edit = () => {
                           .textChange
                       ) && (
                         <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
-                          <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
-                            Text
-                          </span>
+                          <div className="text-[#505050] w-full flex items-center mb-[7px] font-bold text-[12px]">
+                            <span>Text</span>
+                            {/* <Button className="!cursor-pointer !transition-all !delay-300 hover:!text-[#fff] !text-[12px] !normal-case !text-[#505050] !p-1 !rounded-[3rem] hover:!bg-[rgb(157,157,157)]">
+                              Advance
+                            </Button> */}
+                          </div>
 
                           <TextField
                             type="textarea"
@@ -1648,6 +1691,47 @@ const Edit = () => {
                     />
                   </div> */}
 
+                      {getRules == "change_template" && (
+                        <div className="w-full flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                          <>
+                            {templates.map(({ attributes }, i: number) => {
+                              if (
+                                attributes.importance == "both" ||
+                                attributes.importance == linkx.get("type")
+                              ) {
+                                return (
+                                  <div
+                                    key={i}
+                                    className="flex flex-col w-full h-fit px-3 py-2 border-b border-solid border-[#bbbbbb24] justify-between"
+                                  >
+                                    <span className="text-[#505050] mb-[7px] font-bold text-[14px]">
+                                      {attributes.name}
+                                    </span>
+                                    <div
+                                      onClick={() =>
+                                        setXTemplates(attributes.name)
+                                      }
+                                    >
+                                      <Image
+                                        src={require(`../../../app/templates/${attributes.name}/img.png`)}
+                                        alt={attributes.name}
+                                        width={257}
+                                        className={`${
+                                          attributes.name != ndata
+                                            ? tmp.tempimg
+                                            : tmp.tempimg_selected
+                                        } !border !border-solid hover:!border-[#777] !cursor-pointer transition-all delay-[300] !rounded-[3px]`}
+                                        height={128.5}
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            })}
+                          </>
+                        </div>
+                      )}
+
                       {Boolean(
                         rules[Boolean(getRules.length) ? getRules : "body"]
                           .colorScheme
@@ -1742,28 +1826,6 @@ const Edit = () => {
                               </div>
                             );
                           })}
-
-                            <div
-                                className="w-full py-2 border-b border-solid border-[#bbbbbb24]"
-                              >
-                                <button
-                                  className={`font-semibold ${style.cus_item} cursor-pointer text-xl justify-between pl-3 pr-2 transition-all delay-350 items-center hover:bg-[#e7e7e752] py-[5px] w-full flex`}
-                                  onClick={() => {
-                                    // router.push('')   
-
-                                  }}
-                                >
-                                  <span className="#575757 capitalize font-[300] text-[15px]">
-                                    Change Template
-                                  </span>
-
-                                  <div
-                                    className={`relative ${style.cus_angle} right-[4px] transition-all delay-350 h-[30px] w-[35px] bg-[#00000014] flex items-center justify-center rounded-lg`}
-                                  >
-                                    <MdChevronRight color="#767676" size={18} />
-                                  </div>
-                                </button>
-                              </div>
                         </>
                       )}
                     </div>
@@ -1804,7 +1866,7 @@ const Edit = () => {
                 </div>
               </div>
             </div>
-          )}
+          }
         </div>
       )}
     </div>

@@ -337,7 +337,7 @@ const Overview = () => {
 
                           <div className="w-full flex h-[100px]"></div>
                         </div>
-                        <Link href={`/dashboard/pages/${slug}`}>
+                        <Link href={`/user/${slug}/edit`}>
                           <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
                             Edit Template
                           </a>

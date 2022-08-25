@@ -97,10 +97,9 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
   } = useMoralis();
 
   const [data, setData] = useState(temp_x.data);
- 
-  const { template } = useContext(DashContext);  
 
-  const { isLoading, toggle: setIsLoading } = template;
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [userD, setUserD] = useState<{[index: string]: any}>({});
   const [pemail, setPemail] = useState<string>("");
@@ -618,7 +617,7 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
   return (
     <div className={`origin ${className}`}>
       {isLoading ? (
-        <Loader />
+        <Loader fixed={false}/>
       ) : (
         <>
           {is500 ? (
@@ -830,7 +829,12 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                                       fontWeight: "bold",
                                       borderRadius: "4px",
                                       color: data.colorScheme,
-                                      backgroundColor: `${data.colorScheme}23 !important`,
+                                      backgroundColor: `${
+                                        data.colorScheme.length > 7
+                                          ? data.colorScheme.substring(0, 7) +
+                                            "23"
+                                          : data.colorScheme + "23"
+                                      } !important`,
                                       textTransform: "capitalize",
                                     },
                                   "& .MuiButtonBase-root.MuiTab-root": {
@@ -1003,7 +1007,9 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                                 }}
                                 className="mb-2 text-[15px] font-bold"
                               >
-                                {!value ? `Payment was successful` : `Subscription was successful`}
+                                {!value
+                                  ? `Payment was successful`
+                                  : `Subscription was successful`}
                               </h2>
 
                               <Link

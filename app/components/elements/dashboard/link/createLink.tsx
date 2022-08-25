@@ -999,7 +999,7 @@ const NewLink = () => {
                   <div className="mt-3 w-full overflow-hidden">
                     <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
                       <span className="uppercase font-bold mr-3">
-                        Link Slug
+                        Link
                       </span>
                       <div className="flex items-center">
                         <span className="mr-2 text-sm">
@@ -1024,11 +1024,7 @@ const NewLink = () => {
                             >
                           ) => {
                             const val: string = e.target.value;
-                            const accept: string[] = ["~", "-", "_"];
-
-                            const random: number = Math.floor(
-                              Math.random() * 2
-                            );
+                           
                             init({
                               slug: {
                                 sub: "",
@@ -1039,12 +1035,7 @@ const NewLink = () => {
                               ...data,
                               slug: {
                                 ...data["slug"],
-                                onetime: val
-                                  .replace(
-                                    /[!@#$%^`&*=?>+<\\\'\"]/g,
-                                    accept[random]
-                                  )
-                                  .toLowerCase(),
+                                onetime: val.toLowerCase(),
                               },
                             });
                           }}
@@ -1052,6 +1043,12 @@ const NewLink = () => {
                           name="link"
                           fullWidth
                         />
+                      </div>
+
+                      <div className="flex items-center ssm:flex-wrap">
+
+                          
+
                       </div>
                     </div>
                   </div>
@@ -1454,7 +1451,7 @@ const NewLink = () => {
                   <div className="mt-3 w-full overflow-hidden">
                     <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
                       <span className="uppercase font-bold mr-3">
-                        Link Slug
+                        Link
                       </span>
                       <div className="flex items-center">
                         <span className="mr-2 text-sm">
@@ -1479,11 +1476,7 @@ const NewLink = () => {
                             >
                           ) => {
                             const val: string = e.target.value;
-                            const accept: string[] = ["~", "-", "_"];
-
-                            const random: number = Math.floor(
-                              Math.random() * 2
-                            );
+                            
                             init({
                               slug: {
                                 sub: "",
@@ -1494,12 +1487,7 @@ const NewLink = () => {
                               ...data,
                               slug: {
                                 ...data["slug"],
-                                sub: val
-                                  .replace(
-                                    /[!@#$%^`&*=?>+<\\\'\"]/g,
-                                    accept[random]
-                                  )
-                                  .toLowerCase(),
+                                sub: (val).toLowerCase(),
                               },
                             });
                           }}
