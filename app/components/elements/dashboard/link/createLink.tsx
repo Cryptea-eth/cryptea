@@ -11,6 +11,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   CircularProgress,
+  Checkbox, Select, FormControl, ListItemText, MenuItem, InputLabel, OutlinedInput, SelectChangeEvent, FormHelperText
 } from "@mui/material";
 import { MdInfo, MdAddLink, MdInsertLink, MdClose } from "react-icons/md";
 import { GiTwoCoins } from "react-icons/gi";
@@ -38,6 +39,18 @@ const NewLink = () => {
       "aria-controls": `simple-tabpanel-${index}`,
     };
   }
+
+const item_height = 48;
+const padding_top = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: item_height * 4.5 + padding_top,
+      width: 250,
+    },
+  },
+};
+
 
   const [value, setValue] = useState<number>(Type.onetime);
 
@@ -86,6 +99,10 @@ const NewLink = () => {
     };
     desc: Strings;
     slug: Strings;
+    rdata: {
+        sub: string[],
+        onetime: string[]
+    };
   }
 
 
@@ -103,6 +120,15 @@ const NewLink = () => {
     }
   }, [isAuthenticated, isInitialized, isloadPage]);
 
+  const helper = {
+    padding: "6px 3px",
+    backgroundColor: "#fff",
+    color: "#565656",
+    fontSize: "12px",
+    fontWeight: "bold",
+    marginTop: "0px",
+  };
+
   const text = {
     "& .Mui-focused.MuiFormLabel-root": {
       color: "#f57059",
@@ -115,14 +141,7 @@ const NewLink = () => {
       {
         borderColor: `#f57059 !important`,
       },
-    "& .MuiFormHelperText-root":{
-        padding: '6px 3px',
-        backgroundColor: '#fff',
-        color: '#565656',
-        fontSize: '12px',
-        fontWeight: 'bold',
-        marginTop: '0px',
-    }
+    "& .MuiFormHelperText-root": helper
   };
 
   const [data, udata] = useState<data>({
@@ -139,7 +158,7 @@ const NewLink = () => {
         value: "",
         range: ["", ""],
       },
-      multi: [0.1, 10, 50, 100]
+      multi: [0.1, 10, 50, 100],
     },
     amountType: {
       sub: "fixed",
@@ -153,6 +172,10 @@ const NewLink = () => {
       sub: "",
       onetime: "",
     },
+    rdata: {
+      sub: ['Email'],
+      onetime: [],
+    }
   });
 
   const [amountOpt, setAmountOpt] = useState(''); 
@@ -184,6 +207,10 @@ const NewLink = () => {
       sub: "",
       onetime: "",
     },
+    rdata: {
+      sub: "",
+      onetime: ""
+    }
   });
 
   const [success, usuccess] = useState<boolean>(false);
@@ -307,6 +334,38 @@ const NewLink = () => {
         return;
       }
 
+      if (data.rdata['onetime'].length || data.rdata['sub'].length) {
+
+      }
+
+      let ix: 'onetime' | 'sub';
+      const rinputs:{
+        sub: string[],
+        onetime: string[]
+      } = {
+        onetime: [],
+        sub: []
+      }
+
+      for (ix in data.rdata) {
+        const { rdata } = data;
+
+          if (rdata[ix].length) {
+
+              rdata[ix].forEach((input:string) => {
+                  if(validator.isAlphanumeric(input)){
+                      rinputs[ix].push(input)
+                  }
+              })
+          }
+      }
+
+      if(rinputs['sub'].indexOf('Email') == -1){
+          rinputs['sub'].push('Email')
+      }
+
+      
+
       const Link = Moralis.Object.extend("link");
       const link = new Link();
 
@@ -326,6 +385,7 @@ const NewLink = () => {
             "type",
             value === Type.onetime ? "onetime" : "sub"
           );
+          link?.set("rdata", JSON.stringify(rinputs));
           link?.set("user", user);
 
           link?.set("template_data", JSON.stringify(templateData));
@@ -998,9 +1058,7 @@ const NewLink = () => {
 
                   <div className="mt-3 w-full overflow-hidden">
                     <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
-                      <span className="uppercase font-bold mr-3">
-                        Link
-                      </span>
+                      <span className="uppercase font-bold mr-3">Link</span>
                       <div className="flex items-center">
                         <span className="mr-2 text-sm">
                           This is your new Link page:
@@ -1024,7 +1082,7 @@ const NewLink = () => {
                             >
                           ) => {
                             const val: string = e.target.value;
-                           
+
                             init({
                               slug: {
                                 sub: "",
@@ -1046,9 +1104,98 @@ const NewLink = () => {
                       </div>
 
                       <div className="flex items-center ssm:flex-wrap">
+                        <FormControl
+                          sx={{
+                            "& .Mui-focused.MuiInputLabel-root": {
+                              color: "#f57059",
+                            },
+                            "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
+                              {
+                                borderColor: `#f57059 !important`,
+                              },
+                            "& .MuiFormHelperText-root": {
+                              padding: "6px 3px",
+                              backgroundColor: "#fff",
+                              color: "#565656",
+                              marginTop: "0px",
+                            },
+                            m: 1,
+                            width: "100%",
+                          }}
+                        >
+                          <InputLabel
+                            sx={{
+                              "& .Mui-focused.MuiFormLabel-root": {
+                                color: "#f57059",
+                              },
+                            }}
+                            id="inputBox"
+                          >
+                            User Data Required
+                          </InputLabel>
+                          <Select
+                            labelId="inputBox"
+                            id="input"
+                            multiple
+                            value={data.rdata["onetime"]}
+                            onChange={(event: SelectChangeEvent<any>) => {
+                              const {
+                                target: { value },
+                              } = event;
 
-                          
+                              init({
+                                rdata: {
+                                  sub: "",
+                                  onetime: "",
+                                },
+                              });
 
+                              udata({
+                                ...data,
+                                rdata: {
+                                  ...data["rdata"],
+                                  onetime:
+                                    typeof value === "string"
+                                      ? value.split(",")
+                                      : value,
+                                },
+                              });
+                            }}
+                            input={<OutlinedInput label="User Data Required" />}
+                            renderValue={(selected) => selected.join(", ")}
+                            MenuProps={MenuProps}
+                          >
+                            {["Name", "Email", "Phone"].map((name) => (
+                              <MenuItem
+                                sx={{
+                                  "&.Mui-selected": {
+                                    backgroundColor: "#f5705914 !important",
+                                  },
+                                }}
+                                key={name}
+                                value={name}
+                              >
+                                <Checkbox
+                                  sx={{
+                                    "& .MuiSvgIcon-root": {
+                                      fill: "#f57059",
+                                    },
+                                  }}
+                                  checked={
+                                    data.rdata["onetime"].indexOf(name) > -1
+                                  }
+                                />
+                                <ListItemText primary={name} />
+                              </MenuItem>
+                            ))}
+                          </Select>
+
+                          <FormHelperText sx={helper}>
+                            {Boolean(error.rdata["onetime"].length)
+                              ? error.rdata["onetime"]
+                              : "Not Required"}
+                          </FormHelperText>
+                        </FormControl>
                       </div>
                     </div>
                   </div>
@@ -1450,9 +1597,7 @@ const NewLink = () => {
 
                   <div className="mt-3 w-full overflow-hidden">
                     <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
-                      <span className="uppercase font-bold mr-3">
-                        Link
-                      </span>
+                      <span className="uppercase font-bold mr-3">Link</span>
                       <div className="flex items-center">
                         <span className="mr-2 text-sm">
                           This is your new Link page:
@@ -1476,7 +1621,7 @@ const NewLink = () => {
                             >
                           ) => {
                             const val: string = e.target.value;
-                            
+
                             init({
                               slug: {
                                 sub: "",
@@ -1487,7 +1632,7 @@ const NewLink = () => {
                               ...data,
                               slug: {
                                 ...data["slug"],
-                                sub: (val).toLowerCase(),
+                                sub: val.toLowerCase(),
                               },
                             });
                           }}
@@ -1495,6 +1640,99 @@ const NewLink = () => {
                           name="link"
                           fullWidth
                         />
+                      </div>
+
+                      <div className="flex items-center ssm:flex-wrap">
+                        <FormControl
+                          sx={{
+                            "& .Mui-focused.MuiInputLabel-root": {
+                              color: "#f57059",
+                            },
+                            "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
+                              {
+                                borderColor: `#f57059 !important`,
+                              },
+                            "& .MuiFormHelperText-root": {
+                              padding: "6px 3px",
+                              backgroundColor: "#fff",
+                              color: "#565656",
+                              marginTop: "0px",
+                            },
+                            m: 1,
+                            width: "100%",
+                          }}
+                        >
+                          <InputLabel
+                            sx={{
+                              "& .Mui-focused.MuiFormLabel-root": {
+                                color: "#f57059",
+                              },
+                            }}
+                            id="inputBox"
+                          >
+                            User Data Required
+                          </InputLabel>
+                          <Select
+                            labelId="inputBox"
+                            id="input"
+                            multiple
+                            value={data.rdata["sub"]}
+                            onChange={(event: SelectChangeEvent<any>) => {
+                              const {
+                                target: { value },
+                              } = event;
+
+                              init({
+                                rdata: {
+                                  sub: "",
+                                  onetime: "",
+                                },
+                              });
+
+                              udata({
+                                ...data,
+                                rdata: {
+                                  ...data["rdata"],
+                                  sub:
+                                    typeof value === "string"
+                                      ? value.split(",")
+                                      : value,
+                                },
+                              });
+                            }}
+                            input={<OutlinedInput label="User Data Required" />}
+                            renderValue={(selected) => selected.join(", ")}
+                            MenuProps={MenuProps}
+                          >
+                            {["Name", "Phone"].map((name) => (
+                              <MenuItem
+                                sx={{
+                                  "&.Mui-selected": {
+                                    backgroundColor: "#f5705914 !important",
+                                  },
+                                }}
+                                key={name}
+                                value={name}
+                              >
+                                <Checkbox
+                                  sx={{
+                                    "& .MuiSvgIcon-root": {
+                                      fill: "#f57059",
+                                    },
+                                  }}
+                                  checked={data.rdata["sub"].indexOf(name) > -1}
+                                />
+                                <ListItemText primary={name} />
+                              </MenuItem>
+                            ))}
+                          </Select>
+
+                          <FormHelperText sx={helper}>
+                            {Boolean(error.rdata["sub"].length)
+                              ? error.rdata["sub"]
+                              : "Not Required"}
+                          </FormHelperText>
+                        </FormControl>
                       </div>
                     </div>
                   </div>

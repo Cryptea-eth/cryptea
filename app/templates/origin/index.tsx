@@ -33,10 +33,10 @@ import { useState, useEffect, SetStateAction, useContext } from "react";
 import { makeNFTClient } from "../../functions/clients";
 import axios from "axios";
 import { initD } from "../../components/elements/dashboard/linkOverview/linkData";
-import { DashContext } from "../../contexts/GenContext";
+
 
 const contractAddress: { subscribe: string; onetime: string } = {
-  // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457", //rink
+  // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457", 
   subscribe: "0xd328f64974b319b046cf36E41c945bb773Fed1d8",
   // subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940", //polygon
   onetime: "0xBE6A162578e17D02F9c5F6b2167a62c6C01070ae",
@@ -102,7 +102,9 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [userD, setUserD] = useState<{[index: string]: any}>({});
-  const [pemail, setPemail] = useState<string>("");
+
+  const [pemail, setPemail] = useState<string[]>([]);
+
   const [name, setName] = useState<string>("");
 
   const [ loadingText, setLoadingText ] = useState<any>('')
@@ -132,7 +134,13 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
     setAuth(false);
     setLoadingText("Initializing Payment")
     try {
+        if(Boolean(price)){
+
         await beginPayment(price, type);
+        
+      }else{
+        setFailMessage("Your amount is invalid");
+      }
     } catch (x) {
         console.log(x)
     }
@@ -142,6 +150,14 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
 
   const [linkHook, setLinkHook] = useState<any>();
 
+  const text = {
+    "& .Mui-focused.MuiFormLabel-root": {
+      color: data.colorScheme,
+    },
+    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: `${data.colorScheme} !important`,
+    },
+  };
   
   useEffect(() => {
 
@@ -203,6 +219,7 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                   ? JSON.parse(lQ.get("amountMulti"))
                   : [],
                 linkAmount,
+                rdata: JSON.parse(lQ.get('rdata'))
               });
 
               if(setIsLoading !== undefined)
@@ -354,7 +371,7 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
     setHash("");
     setLoadingText("");
     setTransferFail(false);
-    setPemail('');
+    setPemail([]);
     setTinterval('')
 
     if (typeof userD.linkAmount != "number") {
@@ -617,7 +634,7 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
   return (
     <div className={`origin ${className}`}>
       {isLoading ? (
-        <Loader fixed={false}/>
+        <Loader fixed={false} />
       ) : (
         <>
           {is500 ? (
@@ -1043,33 +1060,44 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                             {(userD?.linktype == "both" ||
                               userD?.linktype == "onetime") && (
                               <FormControl fullWidth>
-                                {/* <Select
-                          disabled
-                          displayEmpty
-                          value={blockchainName}
-                          onChange={handleSelectChange}
-                          input={<OutlinedInput />}
-                          renderValue={(selected) => {
-                            if (selected.length === 0) {
-                              return <span>Select Blockchain</span>;
-                            }
+                                {userD.rdata["onetime"].map(
+                                  (ixn: string, i: number) => {
+                                    
+                                    return (
+                                      <>
+                                        <div className="py-3 font-bold">
+                                          {ixn}
+                                        </div>
 
-                            return selected.join(", ");
-                          }}
-                          MenuProps={MenuProps}
-                          inputProps={{ "aria-label": "Without label" }}
-                        >
-                          <MenuItem value="">Select Blockchain</MenuItem>
-                          {names.map((name) => (
-                            <MenuItem
-                              key={name}
-                              value={name}
-                              style={getStyles(name, blockchainName, theme)}
-                            >
-                              {name}
-                            </MenuItem>
-                          ))}
-                        </Select> */}
+                                        <TextField
+                                          fullWidth
+                                          id="outlined-basic"
+                                          placeholder={`Your ${ixn}`}
+                                          variant="outlined"
+                                          sx={text}
+                                          value={
+                                            pemail[i] !== undefined
+                                              ? pemail[i]
+                                              : ""
+                                          }
+                                          onChange={(
+                                            e: React.ChangeEvent<
+                                              | HTMLInputElement
+                                              | HTMLTextAreaElement
+                                            >
+                                          ) => {
+                                            setTransferFail(false);
+                                            setLoadingText("");
+                                            const val = e.target.value;
+                                            pemail[i] = val;
+
+                                            setPemail(pemail);
+                                          }}
+                                        />
+                                      </>
+                                    );
+                                  }
+                                )}
 
                                 <div className="py-3 font-bold">
                                   Amount (USD)
@@ -1253,35 +1281,51 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                                   </ToggleButton>
                                 </ToggleButtonGroup>
 
-                                <div className="py-3 font-bold">Email</div>
+                                {userD.rdata["sub"].map(
+                                  (ixn: string, i: number) => {
+                                    let help: string = "";
 
-                                <TextField
-                                  fullWidth
-                                  id="outlined-basic"
-                                  placeholder={"example@cryptea.me"}
-                                  variant="outlined"
-                                  sx={{
-                                    "& .Mui-focused.MuiFormLabel-root": {
-                                      color: data.colorScheme,
-                                    },
-                                    "& .Mui-focused .MuiOutlinedInput-notchedOutline":
-                                      {
-                                        borderColor: `${data.colorScheme} !important`,
-                                      },
-                                  }}
-                                  helperText="This is just to send a reminder when your subscription expires"
-                                  value={pemail}
-                                  onChange={(
-                                    e: React.ChangeEvent<
-                                      HTMLInputElement | HTMLTextAreaElement
-                                    >
-                                  ) => {
-                                    setTransferFail(false);
-                                    setLoadingText("");
-                                    const val = e.target.value;
-                                    setPemail(val);
-                                  }}
-                                />
+                                    if (ixn == "Email") {
+                                      help =
+                                        "Required to send reminders when your subscription expires";
+                                    }
+
+                                    return (
+                                      <>
+                                        <div className="py-3 font-bold">
+                                          {ixn}
+                                        </div>
+
+                                        <TextField
+                                          fullWidth
+                                          id="outlined-basic"
+                                          placeholder={`Your ${ixn}`}
+                                          variant="outlined"
+                                          sx={text}
+                                          helperText={help}
+                                          value={
+                                            pemail[i] !== undefined
+                                              ? pemail[i]
+                                              : ""
+                                          }
+                                          onChange={(
+                                            e: React.ChangeEvent<
+                                              | HTMLInputElement
+                                              | HTMLTextAreaElement
+                                            >
+                                          ) => {
+                                            setTransferFail(false);
+                                            setLoadingText("");
+                                            const val = e.target.value;
+                                            pemail[i] = val;
+
+                                            setPemail(pemail);
+                                          }}
+                                        />
+                                      </>
+                                    );
+                                  }
+                                )}
 
                                 <div className="my-2">
                                   <div className="py-3 font-bold">
