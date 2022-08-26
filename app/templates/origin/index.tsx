@@ -1,18 +1,24 @@
 import PropTypes from "prop-types";
 import { Theme, useTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
-import Image from 'next/image';
-import Head from 'next/head';
+import Image from "next/image";
+import Head from "next/head";
 import Nav from "../../components/elements/Nav";
-import web3 from 'web3';
-import bigimg from '../../../public/images/logobig.png';
-import PAYMENT from '../../../artifacts/contracts/payment.sol/Payment.json';
+import web3 from "web3";
+import bigimg from "../../../public/images/logobig.png";
+import PAYMENT from "../../../artifacts/contracts/payment.sol/Payment.json";
 import SUBSCRIPTION from "../../../artifacts/contracts/subscription.sol/Subscription.json";
-import validator from 'validator';
-import * as temp_x from "./data"; 
+import validator from "validator";
+import * as temp_x from "./data";
 import TabPanel from "../../components/elements/dashboard/link/TabPanel";
-import { FaInstagram, FaFacebook, FaTwitter, FaLinkedinIn, FaLink } from 'react-icons/fa';
-import Link from 'next/link'
+import {
+  FaInstagram,
+  FaFacebook,
+  FaTwitter,
+  FaLinkedinIn,
+  FaLink,
+} from "react-icons/fa";
+import Link from "next/link";
 import {
   OutlinedInput,
   Box,
@@ -25,7 +31,7 @@ import {
   Select,
   ToggleButtonGroup,
   TextField,
-  Button
+  Button,
 } from "@mui/material";
 
 import { useMoralis } from "react-moralis";
@@ -35,9 +41,8 @@ import { makeNFTClient } from "../../functions/clients";
 import axios from "axios";
 import { initD } from "../../components/elements/dashboard/linkOverview/linkData";
 
-
 const contractAddress: { subscribe: string; onetime: string } = {
-  // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457", 
+  // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457",
   subscribe: "0xd328f64974b319b046cf36E41c945bb773Fed1d8",
   // subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940", //polygon
   onetime: "0xBE6A162578e17D02F9c5F6b2167a62c6C01070ae",
@@ -72,19 +77,25 @@ function getStyles(name: string, blockchainName: string | any[], theme: Theme) {
   };
 }
 
-const Origin = ({ className, editMode = false }: {className?: string, editMode: boolean}) => {
-
+const Origin = ({
+  className,
+  editMode = false,
+}: {
+  className?: string;
+  editMode: boolean;
+}) => {
   const router = useRouter();
 
-  let username = router.query['slug'];
+  let username = router.query["slug"];
 
-  useEffect(() => {
-
-  }, [username, router.isReady])
+  useEffect(() => {}, [username, router.isReady]);
 
   const [alignment, setAlignment] = useState();
 
-  const changeAlignMent = (event: any, newAlignment: SetStateAction<undefined>) => {
+  const changeAlignMent = (
+    event: any,
+    newAlignment: SetStateAction<undefined>
+  ) => {
     setAlignment(newAlignment);
   };
 
@@ -99,53 +110,53 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
 
   const [data, setData] = useState(temp_x.data);
 
-
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const [userD, setUserD] = useState<{[index: string]: any}>({});
+  const [userD, setUserD] = useState<{ [index: string]: any }>({});
 
   const [pemail, setPemail] = useState<string[]>([]);
 
   const [name, setName] = useState<string>("");
 
-  const [ loadingText, setLoadingText ] = useState<any>('')
-  const [ transferSuccess, setTransferSuccess] = useState<boolean>(false);
+  const [loadingText, setLoadingText] = useState<any>("");
+  const [transferSuccess, setTransferSuccess] = useState<boolean>(false);
   const [transferFail, setTransferFail] = useState<boolean>(false);
-  const [failMessage, setFailMessage] = useState<string>('');
-  const [hash, setHash] = useState<string>('');
+  const [failMessage, setFailMessage] = useState<string>("");
+  const [hash, setHash] = useState<string>("");
   const [interval, setTinterval] = useState<string>("daily");
   const [is500, setIs500] = useState<boolean>(false);
 
-    const getPrice = async (price: number) => {
-      setLoadingText("Loading Price data...");
+  const getPrice = async (price: number) => {
+    setLoadingText("Loading Price data...");
 
-      const e = await Moralis.Web3API.token.getTokenPrice({
-        address: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0", //matic public address
-      });
- 
-      const priceCurrency = Number(e.usdPrice.toFixed(2));
+    const e = await Moralis.Web3API.token.getTokenPrice({
+      address: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0", //matic public address
+    });
 
-      const final = price / priceCurrency;
+    const priceCurrency = Number(e.usdPrice.toFixed(2));
 
-      return (final).toFixed(6);
+    const final = price / priceCurrency;
+
+    return final.toFixed(6);
   };
 
-
-  const initMain = async (price: number, type: 'subscription' | 'onetime' = 'onetime') => {
+  const initMain = async (
+    price: number,
+    type: "subscription" | "onetime" = "onetime"
+  ) => {
     setAuth(false);
-    setLoadingText("Initializing Payment")
+    setLoadingText("Initializing Payment");
     try {
-        if(Boolean(price)){
-
+      if (Number(price)) {
         await beginPayment(price, type);
-        
-      }else{
+      } else {
         setFailMessage("Your amount is invalid");
       }
     } catch (x) {
-        console.log(x)
+      console.log(x);
+      setFailMessage("Something went wrong, Please try again");
     }
-  } 
+  };
 
   const [amount, setAmount] = useState<string | number>("");
 
@@ -159,25 +170,19 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
       borderColor: `${data.colorScheme} !important`,
     },
   };
-  
-  useEffect(() => {
 
+  useEffect(() => {
     const init = async () => {
-        
-      try{
-        
+      try {
         const lQ = await initD(String(username).toLowerCase());
 
         if (lQ !== undefined) {
-
           setLinkHook(lQ);
 
-          if(lQ.get('template_data') !== undefined && !editMode){
-            
-              const { data:udata } = JSON.parse(lQ.get('template_data'));
+          if (lQ.get("template_data") !== undefined && !editMode) {
+            const { data: udata } = JSON.parse(lQ.get("template_data"));
 
-              setData(udata);
-
+            setData(udata);
           }
 
           Moralis.Cloud.run("getUser", { obj: lQ.get("user").id }).then(
@@ -220,35 +225,48 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                   ? JSON.parse(lQ.get("amountMulti"))
                   : [],
                 linkAmount,
-                rdata: JSON.parse(lQ.get('rdata'))
+                rdata: JSON.parse(lQ.get("rdata")),
               });
 
-              if(setIsLoading !== undefined)
-                    setIsLoading(false);
+              if (setIsLoading !== undefined) setIsLoading(false);
             }
           );
         } else {
           router.push("/404");
         }
-      }catch(err){
+      } catch (err) {
         const error = err as Error;
-        console.log(error)
-        setIs500(true)
-    }
-  }
-  
-  if(router.isReady){
-    init();
-  }
+        console.log(error);
+        setIs500(true);
+      }
+    };
 
+    if (router.isReady) {
+      init();
+    }
   }, [Moralis.Cloud, router, username, router.isReady, editMode]);
 
+  const {
+    username: usern,
+    description,
+    email,
+    img,
+    ethAddress,
+    id: linkId,
+    onetime,
+    subscribers,
+  }: {
+    username?: string;
+    description?: string;
+    email?: string;
+    img?: string | null;
+    ethAddress?: string;
+    id?: string;
+    onetime?: string;
+    subscribers?: string;
+  } = userD;
 
-
-  const { username: usern, description, email, img, ethAddress, id: linkId, onetime, subscribers }: { username?: string, description?: string, email?: string, img?: string | null, ethAddress?: string, id?: string, onetime?: string, subscribers ?: string} = userD;
-
-
-   const [subCheck, setSubCheck] = useState<boolean>(true);
+  const [subCheck, setSubCheck] = useState<boolean>(true);
   if (!userD) {
     window.location.href = "/404";
   }
@@ -261,13 +279,13 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
     name: string,
     owner: string,
     duration: number,
-    desc?: string,
+    desc?: string
   ) => {
     const nfx = makeNFTClient(await Moralis.Cloud.run("getNFTStorageKey"));
 
     const date = new Date();
-    
-    const exdate = new Date(date.getTime() + (duration * 1000));
+
+    const exdate = new Date(date.getTime() + duration * 1000);
 
     const load: string = img?.length ? img : bigimg.src;
 
@@ -301,32 +319,39 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
     return nft.url;
   };
 
-  const beginSubscription = async (tokenURI: string, receiver: string, to: string, value:string | number) => {
+  const beginSubscription = async (
+    tokenURI: string,
+    receiver: string,
+    to: string,
+    value: string | number
+  ) => {
     const web3x = new web3(provider);
-    const abi:any = SUBSCRIPTION.abi;
-    const nftContract = new web3x.eth.Contract(abi, contractAddress['subscribe']);
-    
+    const abi: any = SUBSCRIPTION.abi;
+    const nftContract = new web3x.eth.Contract(
+      abi,
+      contractAddress["subscribe"]
+    );
+
     try {
       const gasPrice = await web3x.eth.getGasPrice();
-      
+
       const tx = {
         from: receiver,
         value,
-        gasPrice
+        gasPrice,
       };
 
-     setLoadingText("Transferring Tokens...");
+      setLoadingText("Transferring Tokens...");
 
-     const trx = await nftContract.methods
-       .mintTokens(receiver, to, value, tokenURI)
-       .send(tx);
+      const trx = await nftContract.methods
+        .mintTokens(receiver, to, value, tokenURI)
+        .send(tx);
 
-     setHash(trx["transactionHash"]);
-     setSubCheck(true);
-
+      setHash(trx["transactionHash"]);
+      setSubCheck(true);
     } catch (err) {
       console.log(err);
-      setTransferFail(true); 
+      setTransferFail(true);
       setLoadingText("");
     }
   };
@@ -338,47 +363,61 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
 
   const [eSubscription, setESubscription] = useState<string[]>([]);
 
+  const mainIx = (inter: string) => {
+    const date = new Date();
 
-  const mainIx = (inter:string) => {
-      const date = new Date();
+    if (inter == "monthly") {
+      const datex: number = new Date(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        0
+      ).getDate();
 
-      if(inter == 'monthly'){
+      return datex * 86400;
+    } else if (inter == "yearly") {
+      const year = date.getFullYear();
 
-        const datex:number = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate(); 
+      return year % 4 ? 31536000 : 31622400;
+    } else if (inter == "daily") {
+      return 86400;
+    } else if (inter == "weekly") {
+      return 604800;
+    }
 
-        return datex * 86400;
-
-      }else if(inter == 'yearly'){
-  
-        const year = date.getFullYear();
-
-        return year % 4 ? 31536000 : 31622400; 
-
-      }else if(inter == 'daily'){ 
-
-        return 86400;
-
-      }else if (inter == 'weekly') {
-          return 604800;
-      }
-
-      return 0
-  }
+    return 0;
+  };
 
   const reset = () => {
-    
     setTransferSuccess(false);
     setFailMessage("");
     setHash("");
     setLoadingText("");
     setTransferFail(false);
     setPemail([]);
-    setTinterval('')
+    setTinterval("");
 
     if (typeof userD.linkAmount != "number") {
-        setAmount('');
+      setAmount("");
     }
-}
+  };
+
+  const support = ["name", "email", "phone"];
+
+  const validForm = (value: string, valid: string) => {
+    if (valid == "email" && !validator.isEmail(value)) {
+      return false;
+    }
+
+    if (valid == "name" && !validator.isAlphanumeric(value)) {
+      return false;
+    }
+
+    if (support.indexOf(valid) == -1) {
+      return false;
+    }
+
+    return true;
+  };
 
   const beginPayment = async (
     price: number,
@@ -386,20 +425,18 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
   ) => {
     setLoadingText("Connecting to wallet/Awaiting signature");
     let from = "";
-    
+
     try {
-      
       const senx = await authenticate({ signingMessage: message[type] });
       from = senx?.get("ethAddress");
-
     } catch (e) {
       setTransferFail(true);
       setLoadingText("");
       return;
     }
-    
+
     setLoadingText("Pending...");
-    
+
     const initWeb3 = new web3(provider);
 
     const ether = await getPrice(price);
@@ -408,9 +445,9 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
 
     const gasPrice = parseFloat(gasPx);
 
-    if(type == "subscription"){
+    if (type == "subscription") {
       if (!subCheck) {
-         setLoadingText("Checking Wallet...");
+        setLoadingText("Checking Wallet...");
         const subdata = await axios.get(
           `https://api.covalenthq.com/v1/${Number(
             chainId
@@ -435,12 +472,20 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
 
                     const date = new Date();
                     const expDate = new Date(expirySeconds);
-                    
-                    const extSecs = Date.parse(`${expDate.getFullYear()}-${expDate.getMonth() + 1}-${expDate.getDate()}`);
 
-                    const curSecs = Date.parse(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+                    const extSecs = Date.parse(
+                      `${expDate.getFullYear()}-${
+                        expDate.getMonth() + 1
+                      }-${expDate.getDate()}`
+                    );
 
-                    if ((date.getTime() <= expirySeconds && extSecs != curSecs)) {
+                    const curSecs = Date.parse(
+                      `${date.getFullYear()}-${
+                        date.getMonth() + 1
+                      }-${date.getDate()}`
+                    );
+
+                    if (date.getTime() <= expirySeconds && extSecs != curSecs) {
                       eSubs.push(expiry);
                     }
                   }
@@ -458,9 +503,13 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
       }
 
       setLoadingText("Awaiting payment confirmation");
-  
 
-      const suser: string = typeof username == 'string' ? username : (usern === undefined ? "" : usern);
+      const suser: string =
+        typeof username == "string"
+          ? username
+          : usern === undefined
+          ? ""
+          : usern;
 
       const seth: string = ethAddress === undefined ? "" : ethAddress;
 
@@ -470,62 +519,68 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
         suser,
         seth,
         mainIx(interval),
-        description ? (description.length ?  description : undefined) : undefined
+        description ? (description.length ? description : undefined) : undefined
       );
-      try{
+      try {
+        await beginSubscription(
+          nft,
+          from,
+          ethAddress || "", //receiver
+          initWeb3.utils.toWei(ether, "ether")
+        );
 
-      await beginSubscription(
-        nft,
-        from,
-        ethAddress || '', //receiver
-        initWeb3.utils.toWei(ether, "ether")
-      );
+        const remind = subscribers === undefined ? [] : JSON.parse(subscribers);
+        const date = new Date().getTime();
+        if (linkHook !== undefined) {
 
-      const remind = subscribers === undefined ? [] : JSON.parse(subscribers);
-      const date = new Date().getTime();
-       if (linkHook !== undefined) {
+          const rx:{[index:string]: string | number} = {};
+
+          pemail.forEach((val: undefined | string, i: number) => {
+            if (val !== undefined && val.length) {
+              if (userD.rdata["sub"][i] !== undefined) {
+                     rx[(userD.rdata["sub"][i]).toLowerCase()] = val;
+              }
+            }
+          });
 
           remind.push({
-            mail: pemail,
+            ...rx,
             date,
-            remind: date + (mainIx(interval) * 1000),
+            remind: date + mainIx(interval) * 1000,
             address: from,
             amount: price,
             renewal: interval,
-          })
-         
-         linkHook.set("subscribers", JSON.stringify(remind));
-         await linkHook.save();
-         console.log("done");
-       } 
+          });
 
-      setTransferSuccess(true);
+          linkHook.set("subscribers", JSON.stringify(remind));
+          await linkHook.save();
+          console.log("done");
+        }
 
-      setTimeout(reset, 3500)
+        setTransferSuccess(true);
 
-      }catch(err){
-        console.log(err)
-         setTransferFail(true); 
+        setTimeout(reset, 3500);
+      } catch (err) {
+        console.log(err);
+        setTransferFail(true);
         setLoadingText("");
       }
-
-    }else if (type == "onetime") {
+    } else if (type == "onetime") {
       const abi: any = PAYMENT.abi;
 
       const initContract = new initWeb3.eth.Contract(
         abi,
-        contractAddress['onetime']
+        contractAddress["onetime"]
       );
 
-      setLoadingText("Awaiting payment confirmation")
-      
-      
+      setLoadingText("Awaiting payment confirmation");
+
       initContract.methods
-        .transferToken(ethAddress || '') //receiver
+        .transferToken(ethAddress || "") //receiver
         .send({
           from,
           value: initWeb3.utils.toWei(ether, "ether"),
-          gasPrice
+          gasPrice,
         })
         .then(async (init: any) => {
           console.log(init);
@@ -544,19 +599,17 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
             linkHook.set("onetime", JSON.stringify(payers));
 
             await linkHook.save();
-
           }
 
           setTransferSuccess(true);
 
           setTimeout(reset, 3500);
-
         })
         .catch((err: any) => {
           const error = err as Error;
           if (error.message.length) {
             setTransferFail(true);
-            console.log(err)
+            console.log(err);
             setLoadingText("");
           }
         });
@@ -565,39 +618,35 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
 
   const [value, setValue] = useState<number>(0);
 
-  const [auth, setAuth] = useState<boolean>(true)
-
+  const [auth, setAuth] = useState<boolean>(true);
 
   const beginSub = () => {
     setFailMessage("");
     setTransferFail(false);
     setHash("");
-    
+
     if (Number(amount)) {
       if (pemail.length) {
-        const proceed = true;
+        let proceed = true;
 
-        // pemail.forEach((val: undefined | string, i:number) => {
+        pemail.forEach((val: undefined | string, i: number) => {
+          if (val !== undefined && val.length) {
+            if (userD.rdata["sub"][i] !== undefined) {
+              if (!validForm(val, (userD.rdata["sub"][i]).toLowerCase())) {
+                proceed = false;
+              }
+            }
+          }
+        });
 
-        // })
-
-        // if (
-        //   /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/.test(
-        //     pemail
-        //   )
-        // ) {
-          
-        // } else {
-        //   setFailMessage(
-        //     "Your email is incorrect, please check it and try again"
-        //   );
-        // }
-
-        if(proceed){
+        if (proceed) {
           setESubscription([]);
           initMain(Number(amount), "subscription");
+        } else {
+          setFailMessage(
+            "Please enter the correct details required in available fields"
+          );
         }
-
       } else {
         setFailMessage("Your email is required");
       }
@@ -609,28 +658,20 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
   useEffect(() => {
     if (!isAuthenticated && !auth) {
       if (!isWeb3Enabled) {
-        enableWeb3()
+        enableWeb3();
       }
     } else {
       if (!isWeb3Enabled) {
-        enableWeb3()
+        enableWeb3();
       }
     }
-
-  }, [
-    enableWeb3,
-    isWeb3Enabled,
-    isAuthenticated,
-    auth,
-    Moralis
-  ]);
-
+  }, [enableWeb3, isWeb3Enabled, isAuthenticated, auth, Moralis]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  const handleSelectChange = (event: { target: { value: any; }; }) => {
+  const handleSelectChange = (event: { target: { value: any } }) => {
     const {
       target: { value },
     } = event;
@@ -1074,7 +1115,6 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                               <FormControl fullWidth>
                                 {userD.rdata["onetime"].map(
                                   (ixn: string, i: number) => {
-                                    
                                     return (
                                       <>
                                         <div className="py-3 font-bold">
@@ -1220,7 +1260,36 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
                                     setTransferFail(false);
                                     setHash("");
                                     if (Number(amount)) {
-                                      initMain(Number(amount));
+                                      let proceed = true;
+
+                                      pemail.forEach(
+                                        (
+                                          val: undefined | string,
+                                          i: number
+                                        ) => {
+                                          if (val !== undefined && val.length) {
+                                            if (
+                                              userD.rdata["onetime"][i] !==
+                                              undefined
+                                            ) {
+                                              if (
+                                                !validForm(
+                                                  val,
+                                                  (userD.rdata["onetime"][i]).toLowerCase()
+                                                )
+                                              ) {
+                                                proceed = false;
+                                              }
+                                            }
+                                          }
+                                        }
+                                      );
+                                      if (proceed) initMain(Number(amount));
+                                      else
+                                        setFailMessage(
+                                          "Please enter the correct details required in available fields"
+                                        );
+
                                     } else {
                                       setFailMessage(
                                         "The amount set is invalid"
@@ -1467,6 +1536,6 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
       )}
     </div>
   );
-}
+};
 
 export default Origin;

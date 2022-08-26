@@ -111,7 +111,7 @@ const SignupForm = () => {
         link?.set("type", "both");
         link?.set("user", user);
         link?.set("template_data", JSON.stringify(templateData));
-
+        link?.set("rdata", '{"sub":["Email"],"onetime":[]}');
         try {
           await user.save();
           await link.save();

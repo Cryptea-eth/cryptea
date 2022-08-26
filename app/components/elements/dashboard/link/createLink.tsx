@@ -47,6 +47,7 @@ const MenuProps = {
     style: {
       maxHeight: item_height * 4.5 + padding_top,
       width: 250,
+      marginTop: "39px",
     },
   },
 };
@@ -1069,7 +1070,7 @@ const MenuProps = {
                     </div>
 
                     <div className="w-full sm:px-2 p-10">
-                      <div className="flex items-center ssm:flex-wrap">
+                      <div className="w-full sm:px-2 py-5">
                         <TextField
                           sx={text}
                           label={"Enter Link Slug"}
@@ -1103,11 +1104,16 @@ const MenuProps = {
                         />
                       </div>
 
-                      <div className="flex items-center ssm:flex-wrap">
+                      <div className="w-full sm:px-2 py-5">
                         <FormControl
+                          variant="standard"
                           sx={{
                             "& .Mui-focused.MuiInputLabel-root": {
                               color: "#f57059",
+                            },
+                            "& .MuiInputLabel-root": {
+                              fontWeight: "600",
+                              color: "#121212",
                             },
                             "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
                               {
@@ -1119,11 +1125,11 @@ const MenuProps = {
                               color: "#565656",
                               marginTop: "0px",
                             },
-                            m: 1,
                             width: "100%",
                           }}
                         >
                           <InputLabel
+                            variant="standard"
                             sx={{
                               "& .Mui-focused.MuiFormLabel-root": {
                                 color: "#f57059",
@@ -1134,6 +1140,7 @@ const MenuProps = {
                             User Data Required
                           </InputLabel>
                           <Select
+                            variant="standard"
                             labelId="inputBox"
                             id="input"
                             multiple
@@ -1161,7 +1168,6 @@ const MenuProps = {
                                 },
                               });
                             }}
-                            input={<OutlinedInput label="User Data Required" />}
                             renderValue={(selected) => selected.join(", ")}
                             MenuProps={MenuProps}
                           >
@@ -1190,10 +1196,10 @@ const MenuProps = {
                             ))}
                           </Select>
 
-                          <FormHelperText sx={helper}>
+                          <FormHelperText variant="standard" sx={helper}>
                             {Boolean(error.rdata["onetime"].length)
                               ? error.rdata["onetime"]
-                              : "Not Required"}
+                              : "Can be left empty"}
                           </FormHelperText>
                         </FormControl>
                       </div>
@@ -1608,7 +1614,7 @@ const MenuProps = {
                     </div>
 
                     <div className="w-full sm:px-2 p-10">
-                      <div className="flex items-center ssm:flex-wrap">
+                      <div className="w-full sm:px-2 py-5">
                         <TextField
                           sx={text}
                           label={"Enter Subscription Link Slug"}
@@ -1642,11 +1648,16 @@ const MenuProps = {
                         />
                       </div>
 
-                      <div className="flex items-center ssm:flex-wrap">
+                      <div className="w-full sm:px-2 py-5">
                         <FormControl
+                          variant="filled"
                           sx={{
                             "& .Mui-focused.MuiInputLabel-root": {
                               color: "#f57059",
+                            },
+                            "& .MuiInputLabel-root": {
+                              fontWeight: "600",
+                              color: "#121212",
                             },
                             "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
                               {
@@ -1658,7 +1669,6 @@ const MenuProps = {
                               color: "#565656",
                               marginTop: "0px",
                             },
-                            m: 1,
                             width: "100%",
                           }}
                         >
@@ -1700,7 +1710,6 @@ const MenuProps = {
                                 },
                               });
                             }}
-                            input={<OutlinedInput label="User Data Required" />}
                             renderValue={(selected) => selected.join(", ")}
                             MenuProps={MenuProps}
                           >
@@ -1730,7 +1739,7 @@ const MenuProps = {
                           <FormHelperText sx={helper}>
                             {Boolean(error.rdata["sub"].length)
                               ? error.rdata["sub"]
-                              : "Not Required"}
+                              : "Non required"}
                           </FormHelperText>
                         </FormControl>
                       </div>
