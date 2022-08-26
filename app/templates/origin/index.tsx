@@ -8,6 +8,7 @@ import web3 from 'web3';
 import bigimg from '../../../public/images/logobig.png';
 import PAYMENT from '../../../artifacts/contracts/payment.sol/Payment.json';
 import SUBSCRIPTION from "../../../artifacts/contracts/subscription.sol/Subscription.json";
+import validator from 'validator';
 import * as temp_x from "./data"; 
 import TabPanel from "../../components/elements/dashboard/link/TabPanel";
 import { FaInstagram, FaFacebook, FaTwitter, FaLinkedinIn, FaLink } from 'react-icons/fa';
@@ -574,18 +575,29 @@ const Origin = ({ className, editMode = false }: {className?: string, editMode: 
     
     if (Number(amount)) {
       if (pemail.length) {
-        if (
-          /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/.test(
-            pemail
-          )
-        ) {
+        const proceed = true;
+
+        // pemail.forEach((val: undefined | string, i:number) => {
+
+        // })
+
+        // if (
+        //   /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/.test(
+        //     pemail
+        //   )
+        // ) {
+          
+        // } else {
+        //   setFailMessage(
+        //     "Your email is incorrect, please check it and try again"
+        //   );
+        // }
+
+        if(proceed){
           setESubscription([]);
           initMain(Number(amount), "subscription");
-        } else {
-          setFailMessage(
-            "Your email is incorrect, please check it and try again"
-          );
         }
+
       } else {
         setFailMessage("Your email is required");
       }
