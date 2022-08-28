@@ -75,16 +75,16 @@ const DashPages = () => {
             className="grid gap-2 grid-flow-dense"
           >
             {links.map(({ attributes }: any, i: number) => {
-                let realS = '';
+              let realS = '';
               if (attributes.templates_data !== undefined) {
-                  const temp = JSON.parse(attributes.template_data);
+                const temp = JSON.parse(attributes.template_data);
 
-                  const { image } = temp;
+                const { image } = temp;
 
-                  realS = image.src
+                realS = image.src
               }
 
-          return (<div
+              return (<div
                 key={i}
                 className="w-full cursor-default border-2 border-[#f5705982] border-solid p-4 rounded-md"
               >
@@ -139,9 +139,9 @@ const DashPages = () => {
                   </Link>
                 </div>
               </div>
-            )
-            
-                    }
+              )
+
+            }
             )}
           </div>
         </>

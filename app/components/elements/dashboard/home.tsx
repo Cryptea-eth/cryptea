@@ -6,7 +6,7 @@ import { IoMdClose } from "react-icons/io";
 import Loader from "../loader";
 import Image from 'next/image';
 import { BsBoxArrowInDownLeft, BsArrowRight } from "react-icons/bs";
-import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
+import { MdKeyboardArrowUp, MdKeyboardArrowDown, MdMode, MdPreview } from "react-icons/md";
 import {
   TextField,
   Button,
@@ -27,6 +27,7 @@ import {
 import { useMoralis, useWeb3Transfer } from "react-moralis";
 import { data } from "autoprefixer";
 import axios from "axios";
+import Link from 'next/link'
 
 const DashHome = () => {
   const {
@@ -36,6 +37,8 @@ const DashHome = () => {
     enableWeb3,
     chainId
   } = useMoralis();
+
+  const [links, addLinks] = useState<any>([]);
 
   const userAddress = user?.get("ethAddress");
 
@@ -64,6 +67,14 @@ const DashHome = () => {
   const [nfts, setNfts] = useState<number | undefined>(0)
 
   useEffect(() => {
+    const Link = Moralis.Object.extend("link");
+
+    const mlink = new Moralis.Query(Link);
+    mlink.equalTo("user", user);
+
+    mlink.find().then((e) => {
+      addLinks(e);
+    });
 
     if (!isWeb3Enabled) {
       enableWeb3();
@@ -154,7 +165,7 @@ const DashHome = () => {
           );
         });
     }
-  }, [chainId, isWeb3Enabled, loading2, userAddress, enableWeb3])
+  }, [chainId, isWeb3Enabled, loading2, userAddress, enableWeb3, Moralis.Object, Moralis.Query, user])
 
 
   const { fetch: fetched, error, isFetching } = useWeb3Transfer({
@@ -869,29 +880,78 @@ const DashHome = () => {
         <div className="min-w-[337px] 2sm:hidden pt-5 h-full">
           <div className="px-4 pt-3 bg-white border-[1px] border-solid border-[#e3e3e3] rounded-[4px]">
             <h2 className="text-[18px] font-bold pb-[10px]">Pages</h2>
-            <div className="py-2">
-              <div className="border-b-[#f57059] border-b flex py-2">
-                <div className="i">
-                  <Avatar></Avatar>
-                </div>
-                <div className="pl-2 flex flex-col">
-                  <div className="font-bold text-[15px]">Lucid</div>
-                  <div className="font-nomal text-[10px]">Added 2 days ago</div>
-                </div>
+            {Boolean(links.length) && !loading2 && (
+              <div className="py-2">
+                {links.map(({ attributes }: any, i: number) => {
+                  let source = '';
+                  if (attributes.templates_data !== undefined) {
+                    const temp = JSON.parse(attributes.template_data);
+                    const { image } = temp;
+                    source = image.src
+                  }
+                  return (<div key={i}>
+                    <div className="border-b-[#f57059] border-b flex justify-between py-2">
+                      <div className="flex">
+                        <div className="i">
+                          <Avatar sx={{
+                            width: 40,
+                            height: 40,
+                            backgroundColor: '#f57059',
+                          }} src={source} variant='rounded'>{(
+                            String(attributes.link).charAt(0) +
+                            String(attributes.link).charAt(1)
+                          ).toUpperCase()}</Avatar>
+                        </div>
+                        <div className="pl-2 flex flex-col">
+                          <div className="font-bold text-[15px]">{attributes.link}</div>
+                          <div className="font-nomal text-[10px]">{attributes.desc ? attributes.desc : ""}
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex items-center w-full">
+                          <Link href={`/user/${attributes.link.toLowerCase()}/edit`}>
+                            <a title='Edit Page' rel="noreferrer">
+                              <IconButton color="inherit"
+                                size={"large"}
+                                sx={{ color: "#f36e57b8" }}>
+                                <MdMode size={20} />
+                              </IconButton>
+                            </a>
+                          </Link>
+
+                          <Link href={`/user/${attributes.link.toLowerCase()}`}>
+                            <a title="View Page" target="_blank" rel="noreferrer">
+                              <IconButton
+                                color="inherit"
+                                size={"large"}
+                                sx={{ color: "#f36e57b8" }}
+                              >
+                                <MdPreview size={20} />{" "}
+                              </IconButton>
+                            </a>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>)
+                })}
               </div>
-            </div>
-            <div className="py-4 flex justify-center">
-              <Button
-                variant="contained"
-                className="!bg-[#F57059] !py-[13px] !font-medium !capitalize"
-                style={{
-                  fontFamily: "inherit",
-                }}
-                fullWidth
-              >
-                New Page <BsArrowRight className="ml-3 font-medium" size={18} />
-              </Button>
-            </div>
+            )}
+            <Link href={`/dashboard/links/new`}>
+              <div className="py-4 flex justify-center">
+                <Button
+                  variant="contained"
+                  className="!bg-[#F57059] !py-[13px] !font-medium !capitalize"
+                  style={{
+                    fontFamily: "inherit",
+                  }}
+                  fullWidth
+                >
+                  New Page <BsArrowRight className="ml-3 font-medium" size={18} />
+                </Button>
+              </div>
+            </Link>
           </div>
           {/* <div className="px-4 pt-3 pb-5 mb-10 bg-white border-[1px] border-solid border-[#E3E3E3] rounded-[4px]">
           <h2 className="text-[18px] font-bold text-bold pb-[10px]">
