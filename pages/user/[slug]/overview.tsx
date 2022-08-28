@@ -5,9 +5,9 @@ import Loader from "../../../app/components/elements/loader";
 import Head from 'next/head';
 import { dash, DashContext } from "../../../app/contexts/GenContext";
 import Sidebar from "../../../app/components/elements/dashboard/sidebar";
-import { Avatar } from "@mui/material";
+import { Avatar, IconButton } from "@mui/material";
 import NumberFormat from 'react-number-format';
-import { FiTrash2 } from "react-icons/fi";
+import { FiShare2, FiTrash2 } from "react-icons/fi";
 import {
   initD
 } from "../../../app/components/elements/dashboard/link/data";
@@ -159,6 +159,10 @@ const Overview = () => {
                           <MdLink size={30} />
                         </a>
                       </Link>
+
+                      <IconButton size="large" className="cursor-pointer">
+                        <FiShare2 color={"rgb(32,33,36)"} size={22} />
+                      </IconButton>
                     </h1>
 
                     <p className="text-[0.875rem] text-[rgb(95,99,104)]  truncate leading-[1.25rem] block">
