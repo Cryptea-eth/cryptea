@@ -47,7 +47,7 @@ const LineChart = ({
     if (tooltip !== null) {
       const tooltipModel = model.tooltip;
 
-      tooltip.style.display = tooltipModel.opacity ? "block" : "none";
+      // tooltip.style.display = tooltipModel.opacity ? "block" : "none";
 
       tooltip.style.left = tooltipModel.caretX + "px";
       tooltip.style.top = tooltipModel.caretY - 66 - 5 + "px";
@@ -140,7 +140,20 @@ const LineChart = ({
 
   return (
     <>
-      <div style={styles} className="w-[400px] relative h-[100px]">
+      <div style={styles} onMouseEnter={() => {
+          const elem = (document.querySelector(`.tooltip${name}`) || {
+            style: { display: "" },
+          }) as HTMLDivElement;
+
+          elem.style.display = "block";
+      }} onMouseLeave={() => {
+          const elem = (
+            document.querySelector(`.tooltip${name}`) || {
+              style: { display: "" },
+            }) as HTMLDivElement;
+
+         elem.style.display = "none"
+      }} className="w-[400px] relative h-[100px]">
         {" "}
         <Line options={options} data={data()} />{" "}
         <div className={`${toolstype.tooltip} tooltip tooltip${name}`}>
