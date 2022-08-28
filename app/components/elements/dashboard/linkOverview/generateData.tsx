@@ -93,7 +93,7 @@ const generateData = ({
   return { data: edata, label };
 };
 
-export const sortData = (
+ const sortData = (
   xdata: any[],
   interval: "24h" | "7d" | "30m" | "1yr" | "all",
   h24: boolean = false
@@ -170,3 +170,6 @@ export const sortData = (
 
   return {label: [], data: []};
 };
+
+
+export default sortData;

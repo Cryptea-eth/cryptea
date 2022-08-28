@@ -14,7 +14,9 @@ import {
 import Link from "next/link";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
 import { MdArrowBackIos, MdLink } from "react-icons/md";
-import { sortData } from "../../../app/components/elements/dashboard/linkOverview/generateData";
+import sortData from "../../../app/components/elements/dashboard/linkOverview/generateData";
+import { TbApiApp } from 'react-icons/tb';
+import { AiOutlineUser } from 'react-icons/ai'
 
 const Overview = () => {
 
@@ -116,7 +118,7 @@ const Overview = () => {
                 <Sidebar page={"link"} />
 
                 <div
-                  className={`body transition-all delay-500 ${
+                  className={`body pb-6 transition-all delay-500 ${
                     sidebar?.openPage ? "pl-[257px]" : "pl-[87px]"
                   } w-full h-full pr-[10px] 2sm:!pl-[87px]`}
                 >
@@ -211,9 +213,20 @@ const Overview = () => {
                           prefix="$"
                           color={["#f57059", "#961d08"]}
                           dataList={[
-                            sortData(data.onetime.length ? data.onetime : [{ amount: 0, date: 0 }], "24h", false)["data"]
-                            ,
-                            sortData(data.subscribers.length ? data.subscribers : [{ amount: 0, date: 0 }], "24h", false)["data"],
+                            sortData(
+                              data.onetime.length
+                                ? data.onetime
+                                : [{ amount: 0, date: 0 }],
+                              "24h",
+                              false
+                            )["data"],
+                            sortData(
+                              data.subscribers.length
+                                ? data.subscribers
+                                : [{ amount: 0, date: 0 }],
+                              "24h",
+                              false
+                            )["data"],
                           ]}
                           // dataList={[
                           //   [
@@ -239,7 +252,7 @@ const Overview = () => {
                       </div>
 
                       <Link href="/working">
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                           View more payment data
                         </a>
                       </Link>
@@ -264,12 +277,14 @@ const Overview = () => {
                               .toFixed(2)}
                             thousandSeparator={true}
                             displayType={"text"}
+                            prefix={"$"}
                           />
                         </div>
 
                         <LineChart
                           label={["data"]}
                           name="views"
+                          prefix="$"
                           dataList={[
                             sortData(
                               data.views.length
@@ -295,7 +310,7 @@ const Overview = () => {
                       </div>
 
                       {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
@@ -313,19 +328,24 @@ const Overview = () => {
                           </span>
                         </div>
 
-                        <div className="w-full items-center flex text-[rgb(95,99,104)] h-[100px]">
+                        <div className="z-0 right-0 flex items-center top-[32px] bottom-0 m-auto absolute">
+                          <div className="absolute z-0 h-full w-[100px] bg-overlay"></div>
+                          <AiOutlineUser size={180} color={"#f5705933"} />
+                        </div>
+
+                        <div className="w-full z-10 relative items-center flex text-[rgb(95,99,104)] h-[100px]">
                           This link only supports one-time payments. Click below
                           to enable subscriptions
                         </div>
                       </div>
                       <Link href="/working">
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                           Add subscription support to link
                         </a>
                       </Link>
                     </div>
 
-                    <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                    <div className="border-[rgb(218,220,224)] rounded-[8px] border relative bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
@@ -333,23 +353,26 @@ const Overview = () => {
                           </h2>
 
                           <span className="font-[400] capitalize text-[1.0rem] leading-[1.75rem]">
-                            Origin
+                            {data.template}
                           </span>
                         </div>
-
-                        <div className="w-full items-center flex text-[rgb(95,99,104)] h-[100px]">
+                        <div className="z-0 right-0 top-0 bottom-0 m-auto absolute">
+                          <div className="absolute z-0 h-full w-[100px] bg-overlay"></div>
+                          <MdLink size={220} color={"#f5705933"} />
+                        </div>
+                        <div className="w-full relative z-10 items-center flex text-[rgb(95,99,104)] h-[100px]">
                           Make changes to your link template here, click the
                           link below to edit your link template
                         </div>
                       </div>
                       <Link href={`/user/${slug}/edit`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                           Edit Template
                         </a>
                       </Link>
                     </div>
 
-                    <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                    <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
@@ -361,12 +384,17 @@ const Overview = () => {
                           </span>
                         </div>
 
-                        <div className="w-full items-center flex text-[rgb(95,99,104)] h-[100px]">
-                          Receive crypto payments through
+                        <div className="z-0 right-0 flex items-center top-[50px] bottom-0 m-auto absolute">
+                          <div className="absolute z-0 h-full w-[100px] bg-overlay"></div>
+                          <TbApiApp size={180} color={"#f5705933"} />
+                        </div>
+
+                        <div className="w-full relative z-[10] items-center flex text-[rgb(95,99,104)] h-[100px]">
+                          To Integrate This link through our API, Click Below
                         </div>
                       </div>
                       <Link href="/working">
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                           Lookup SDK/API
                         </a>
                       </Link>

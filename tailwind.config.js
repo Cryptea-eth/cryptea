@@ -31,7 +31,8 @@ module.exports = {
         donation: "url('../public/images/donation.png')",
         pattern: "url('../public/images/pattern.png')",
         pattern2: "url('../public/images/pattern2.png')",
-        pattern3: "radial-gradient(#F28585, transparent)"
+        pattern3: "radial-gradient(#F28585, transparent)",
+        overlay: "linear-gradient(to left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 65%, rgba(255, 255, 255, 1) 100%)"
       },
       backgroundSize: {
         patternsize: "160px"
