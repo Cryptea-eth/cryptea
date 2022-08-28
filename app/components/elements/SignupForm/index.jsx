@@ -107,6 +107,7 @@ const SignupForm = () => {
         link?.set("desc", userDescription);
         link?.set("onetime", "[]");
         link?.set("subscribers", "[]");
+        link?.set("views", "[]");
         link?.set("amountMulti", JSON.stringify([0.1, 10, 50, 100]));
         link?.set("type", "both");
         link?.set("user", user);

@@ -546,7 +546,7 @@ const Origin = ({
           remind.push({
             ...rx,
             date,
-            remind: date + mainIx(interval) * 1000,
+            remind: date + (mainIx(interval) * 1000),
             address: from,
             amount: price,
             renewal: interval,
@@ -785,7 +785,7 @@ const Origin = ({
                     </div>
 
                     {/* socials */}
-                    <div className="flex socials justify-evenly text-[#838383] 3sm:px-16 4sm:px-16 mt-6">
+                    <div  className="flex socials justify-evenly text-[#838383] 3sm:px-16 4sm:px-16 mt-3">
                       {!data.socials.instagram.hidden &&
                         Boolean(data.socials.instagram.link.length) && (
                           <Link href={data.socials.instagram.link}>

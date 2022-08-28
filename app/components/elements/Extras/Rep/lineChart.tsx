@@ -116,20 +116,6 @@ const LineChart = ({
     },
   };
 
-  //   const labels = [
-  //     "January",
-  //     "February",
-  //     "March",
-  //     "April",
-  //     "May",
-  //     "June",
-  //     "July",
-  //     "August",
-  //     "Sept",
-  //     "Nov",
-  //     "Dec",
-  //     "Somethng",
-  //   ];
 
   const data = () => {
     return {

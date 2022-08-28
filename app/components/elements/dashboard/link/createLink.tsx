@@ -381,6 +381,7 @@ const MenuProps = {
           link?.set("title", data.title[index]);
           link?.set("onetime", '[]');
           link?.set("subscribers", '[]');
+          link?.set("views", "[]");
           link?.set("amountMulti", JSON.stringify(data.amount.multi));
           link?.set(
             "type",

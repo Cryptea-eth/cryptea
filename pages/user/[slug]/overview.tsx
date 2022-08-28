@@ -14,6 +14,7 @@ import {
 import Link from "next/link";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
 import { MdArrowBackIos, MdLink } from "react-icons/md";
+import { sortData } from "../../../app/components/elements/dashboard/linkOverview/generateData";
 
 const Overview = () => {
 
@@ -27,7 +28,6 @@ const Overview = () => {
 
     const { sidebar }: dash  = useContext(DashContext);
 
-    const [ src, setSrc ] = useState<string>('');
     const [data, setData] = useState<any>({});
 
     useEffect(() => {
@@ -41,15 +41,42 @@ const Overview = () => {
             if (user.id === mDx.attributes.user.id) {
 
                 setData(mDx);
-            
+
+                let src = '';
+
+                let template = '';
+
                 if (mDx.get('template_data') !== undefined) {
-                    const { data: tdata } = JSON.parse(mDx.get('template_data'));
+                    const { data: tdata, name } = JSON.parse(mDx.get('template_data'));
 
                     const { src:srcc } = tdata.image;
                     
-                    setSrc(srcc);
 
+                     src = srcc;
+
+                     template = name;
                 }   
+
+                setData({
+                    src,
+
+                    title: mDx.get('title'),
+
+                    desc: mDx.get('desc'),
+
+                    template,
+
+                    link: mDx.get('link'),
+
+                    type: mDx.get('type'),
+                    
+                    onetime: mDx.get('onetime') !== undefined ? JSON.parse(mDx.get('onetime')) : [],
+
+                    subscribers: mDx.get('subscribers') !== undefined ? JSON.parse(mDx.get('subscribers')) : [],
+
+                    views: mDx.get('views') !== undefined ? JSON.parse(mDx.get('views')) : []
+
+                });
 
                 setLoading(false);
 
@@ -61,7 +88,6 @@ const Overview = () => {
         }
     };
 
-
     if (isInitialized) {
         if (router.isReady) {         
             if (!isAuthenticated) {
@@ -71,306 +97,287 @@ const Overview = () => {
             }
          }
         }
+
     }, [isAuthenticated, isInitialized, user, slug, router.isReady, router]);
     
 
+   
+      return (
+        <>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              <Head>
+                <title>Overview | {slug} | Cryptea</title>
+              </Head>
 
-        return (
-          <>
-            {isLoading ? (
-              <Loader />
-            ) : (
-              <>
-                <Head>
-                  <title>Overview | {slug} | Cryptea</title>
-                </Head>
+              <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
+                <Sidebar page={"link"} />
 
-                <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
-                  <Sidebar page={"link"} />
-
-                  <div
-                    className={`body transition-all delay-500 ${
-                      sidebar?.openPage ? "pl-[257px]" : "pl-[87px]"
-                    } w-full h-full pr-[10px] 2sm:!pl-[87px]`}
-                  >
-                    <div className="mb-6">
-                      <Avatar
-                        sx={{
-                          width: 120,
-                          height: 120,
-                          margin: "1pc auto",
-                          backgroundColor: "#f57059",
-                        }}
-                        className="text-[50px] font-bold"
-                        variant="circular"
-                        src={src}
-                      >
-                        {(
-                          String(slug).charAt(0) + String(slug).charAt(1)
-                        ).toUpperCase()}
-                      </Avatar>
-                      <h1
-                        style={{
-                          maxWidth: !sidebar?.openPage ? "1031px" : "861px",
-                        }}
-                        className="text-[rgb(32,33,36)] mb-[16px] font-[400] flex items-center justify-between mx-auto text-center"
-                      >
-                        <Link href="/dashboard/links">
-                          <a>
-                            <MdArrowBackIos size={20}/>
-                          </a>
-                        </Link>
-
-                        <Link href={`/user/${slug}`}>
-                          <a className="cursor-pointer text-[1.95rem] leading-[2.45rem] mx-auto flex items-center">
-                            <span className="mr-2">
-                              {data.get("title") !== undefined
-                                ? data.get("title")
-                                : slug}
-                            </span>
-
-                            <MdLink size={30} />
-                          </a>
-                        </Link>
-                        
-                        
-                      </h1>
-
-                      <p className="text-[0.875rem] text-[rgb(95,99,104)]  truncate leading-[1.25rem] block">
-                        {data.get("desc")}
-                      </p>
-                    </div>
-
-                    <div
+                <div
+                  className={`body transition-all delay-500 ${
+                    sidebar?.openPage ? "pl-[257px]" : "pl-[87px]"
+                  } w-full h-full pr-[10px] 2sm:!pl-[87px]`}
+                >
+                  <div className="mb-6">
+                    <Avatar
+                      sx={{
+                        width: 120,
+                        height: 120,
+                        margin: "1pc auto",
+                        backgroundColor: "#f57059",
+                      }}
+                      className="text-[50px] font-bold"
+                      variant="circular"
+                      src={data.src}
+                    >
+                      {(
+                        String(slug).charAt(0) + String(slug).charAt(1)
+                      ).toUpperCase()}
+                    </Avatar>
+                    <h1
                       style={{
-                        gridTemplateColumns:
-                          "repeat(auto-fill, minmax(410px, 1fr))",
                         maxWidth: !sidebar?.openPage ? "1031px" : "861px",
                       }}
-                      className="m-auto transition-all delay-500 grid gap-6 grid-flow-dense"
+                      className="text-[rgb(32,33,36)] mb-[16px] font-[400] flex items-center justify-between mx-auto text-center"
                     >
-                      <div
-                        style={{
-                          gridColumn: "span 2",
-                        }}
-                        className=" border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
-                      >
-                        <div className="px-6 pt-6 relative pb-3">
-                          <div className="flex justify-between mb-[16px] items-center">
-                            <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
-                              Payments Today
-                            </h2>
+                      <Link href="/dashboard/links">
+                        <a>
+                          <MdArrowBackIos size={20} />
+                        </a>
+                      </Link>
 
-                            <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
-                              24 Hr
-                            </span>
-                          </div>
+                      <Link href={`/user/${slug}`}>
+                        <a className="cursor-pointer text-[1.95rem] leading-[2.45rem] mx-auto flex items-center">
+                          <span className="mr-2">
+                            {data.title !== undefined ? data.title : slug}
+                          </span>
 
-                          <div className="absolute top-[47px] font-[400] text-[1.5rem]">
-                            <NumberFormat
-                              value={2000}
-                              thousandSeparator={true}
-                              displayType={"text"}
-                              prefix={"$"}
-                            />
-                          </div>
+                          <MdLink size={30} />
+                        </a>
+                      </Link>
+                    </h1>
 
-                          <LineChart
-                            label={["onetime", "subscribers"]}
-                            name="chart1"
-                            prefix="$"
-                            color={["#f57059", "#961d08"]}
-                            dataList={[
-                              [
-                                100, 230, 360, 230, 520, 200, 300, 400, 500,
-                                130, 1100, 1230, 1210, 1200, 1300, 1400, 1340,
-                                1400, 1600, 1900, 2200, 1200, 1340, 2400, 2200,
+                    <p className="text-[0.875rem] text-[rgb(95,99,104)]  truncate leading-[1.25rem] block">
+                      {data.desc}
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      gridTemplateColumns:
+                        "repeat(auto-fill, minmax(410px, 1fr))",
+                      maxWidth: !sidebar?.openPage ? "1031px" : "861px",
+                    }}
+                    className="m-auto transition-all delay-500 grid gap-6 grid-flow-dense"
+                  >
+                    <div
+                      style={{
+                        gridColumn: "span 2",
+                      }}
+                      className=" border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
+                    >
+                      <div className="px-6 pt-6 relative pb-3">
+                        <div className="flex justify-between mb-[16px] items-center">
+                          <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
+                            Payments Today
+                          </h2>
+
+                          <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
+                            24 Hr
+                          </span>
+                        </div>
+
+                        <div className="absolute top-[47px] font-[400] text-[1.5rem]">
+                          <NumberFormat
+                            value={[
+                              ...sortData(data.subscribers, "24h", false)[
+                                "data"
                               ],
-                              [
-                                10, 23, 36, 23, 50, 40, 30, 30, 50, 130, 110,
-                                123, 121, 120, 130, 140, 134, 140, 1600, 1900,
-                                2200, 1200, 1340, 240, 200,
-                              ],
-                            ]}
-                            styles={{
-                              width: "100%",
-                            }}
-                            labels={[
-                              "00:00",
-                              "01:00",
-                              "02:00",
-                              "03:00",
-                              "04:00",
-                              "05:00",
-                              "06:00",
-                              "07:00",
-                              "08:00",
-                              "09:00",
-                              "10:00",
-                              "11:00",
-                              "12:00",
-                              "13:00",
-                              "14:00",
-                              "15:00",
-                              "16:00",
-                              "17:00",
-                              "18:00",
-                              "19:00",
-                              "20:00",
-                              "21:00",
-                              "22:00",
-                              "23:00",
-                              "24:00",
-                            ]}
+                              ...sortData(data.onetime, "24h", false)["data"],
+                            ]
+                              .reduce((a, b) => a + b, 0)
+                              .toFixed(2)}
+                            thousandSeparator={true}
+                            displayType={"text"}
+                            prefix={"$"}
                           />
                         </div>
 
-                        <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
-                            View more payment data
-                          </a>
-                        </Link>
+                        <LineChart
+                          label={["onetime", "subscribers"]}
+                          name="chart1"
+                          prefix="$"
+                          color={["#f57059", "#961d08"]}
+                          dataList={[
+                            sortData(data.onetime.length ? data.onetime : [{ amount: 0, date: 0 }], "24h", false)["data"]
+                            ,
+                            sortData(data.subscribers.length ? data.subscribers : [{ amount: 0, date: 0 }], "24h", false)["data"],
+                          ]}
+                          // dataList={[
+                          //   [
+                          //     100, 230, 360, 230, 520, 200, 300, 400, 500,
+                          //     130, 1100, 1230, 1210, 1200, 1300, 1400, 1340,
+                          //     1400, 1600, 1900, 2200, 1200, 1340, 2400, 2200,
+                          //   ],
+                          //   [
+                          //     10, 23, 36, 23, 50, 40, 30, 30, 50, 130, 110,
+                          //     123, 121, 120, 130, 140, 134, 140, 1600, 1900,
+                          //     2200, 1200, 1340, 240, 200,
+                          //   ],
+                          // ]}
+                          styles={{
+                            width: "100%",
+                          }}
+                          labels={
+                            sortData([{ amount: 0, date: 0 }], "24h", false)[
+                              "label"
+                            ]
+                          }
+                        />
                       </div>
 
-                      <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
-                        <div className="px-6 pt-6 relative pb-3">
-                          <div className="flex justify-between mb-[16px] items-center">
-                            <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
-                              Page Views Today
-                            </h2>
+                      <Link href="/working">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
+                          View more payment data
+                        </a>
+                      </Link>
+                    </div>
 
-                            <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
-                              24 Hr
-                            </span>
-                          </div>
+                    <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                      <div className="px-6 pt-6 relative pb-3">
+                        <div className="flex justify-between mb-[16px] items-center">
+                          <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
+                            Page Views Today
+                          </h2>
 
-                          <div className="absolute top-[47px] font-[400] text-[1.5rem]">
-                            <NumberFormat
-                              value={2000}
-                              thousandSeparator={true}
-                              displayType={"text"}
-                            />
-                          </div>
+                          <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
+                            24 Hr
+                          </span>
+                        </div>
 
-                          <LineChart
-                            label={["data"]}
-                            name="views"
-                            dataList={[
-                              [
-                                10, 20, 30, 23, 52, 20, 30, 40, 50, 13, 110,
-                                120, 110, 200, 10, 400, 340, 40, 10, 10, 20, 10,
-                                10, 240, 20,
-                              ],
-                            ]}
-                            styles={{
-                              width: "100%",
-                            }}
-                            labels={[
-                              "00:00",
-                              "01:00",
-                              "02:00",
-                              "03:00",
-                              "04:00",
-                              "05:00",
-                              "06:00",
-                              "07:00",
-                              "08:00",
-                              "09:00",
-                              "10:00",
-                              "11:00",
-                              "12:00",
-                              "13:00",
-                              "14:00",
-                              "15:00",
-                              "16:00",
-                              "17:00",
-                              "18:00",
-                              "19:00",
-                              "20:00",
-                              "21:00",
-                              "22:00",
-                              "23:00",
-                              "24:00",
-                            ]}
+                        <div className="absolute top-[47px] font-[400] text-[1.5rem]">
+                          <NumberFormat
+                            value={sortData(data.views, "24h", false)
+                              ["data"].reduce((a, b) => a + b, 0)
+                              .toFixed(2)}
+                            thousandSeparator={true}
+                            displayType={"text"}
                           />
                         </div>
 
-                        <Link href="/working">
+                        <LineChart
+                          label={["data"]}
+                          name="views"
+                          dataList={[
+                            sortData(
+                              data.views.length
+                                ? data.views
+                                : [{ amount: 0, date: 0 }],
+                              "24h",
+                              false
+                            )["data"],
+                          ]}
+                          styles={{
+                            width: "100%",
+                          }}
+                          labels={
+                            sortData(
+                              data.views.length
+                                ? data.views
+                                : [{ amount: 0, date: 0 }],
+                              "24h",
+                              false
+                            )["label"]
+                          }
+                        />
+                      </div>
+
+                      {/* <Link href="/working">
                           <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
                             View more data
                           </a>
-                        </Link>
-                      </div>
+                        </Link> */}
+                    </div>
 
-                      <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
-                        <div className="px-6 pt-6 relative pb-3">
-                          <div className="flex justify-between mb-[16px] items-center">
-                            <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
-                              Subscribers
-                            </h2>
+                    <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                      <div className="px-6 pt-6 relative pb-3">
+                        <div className="flex justify-between mb-[16px] items-center">
+                          <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
+                            Subscribers
+                          </h2>
 
-                            <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
-                              24 Hr
-                            </span>
-                          </div>
-
-                          <div className="w-full flex h-[100px]"></div>
+                          <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
+                            24 Hr
+                          </span>
                         </div>
-                        <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
-                            Add subscription support to link
-                          </a>
-                        </Link>
-                      </div>
 
-                      <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
-                        <div className="px-6 pt-6 relative pb-3">
-                          <div className="flex justify-between mb-[16px] items-center">
-                            <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
-                              Link Template
-                            </h2>
-
-                            <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
-                              Origin
-                            </span>
-                          </div>
-
-                          <div className="w-full flex h-[100px]"></div>
+                        <div className="w-full items-center flex text-[rgb(95,99,104)] h-[100px]">
+                          This link only supports one-time payments. Click below
+                          to enable subscriptions
                         </div>
-                        <Link href={`/user/${slug}/edit`}>
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
-                            Edit Template
-                          </a>
-                        </Link>
                       </div>
+                      <Link href="/working">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
+                          Add subscription support to link
+                        </a>
+                      </Link>
+                    </div>
 
-                      <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
-                        <div className="px-6 pt-6 relative pb-3">
-                          <div className="flex justify-between mb-[16px] items-center">
-                            <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
-                              SDK/APIs
-                            </h2>
+                    <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                      <div className="px-6 pt-6 relative pb-3">
+                        <div className="flex justify-between mb-[16px] items-center">
+                          <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
+                            Link Template
+                          </h2>
 
-                            <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
-                              Non Active
-                            </span>
-                          </div>
-
-                          <div className="w-full flex h-[100px]"></div>
+                          <span className="font-[400] capitalize text-[1.0rem] leading-[1.75rem]">
+                            Origin
+                          </span>
                         </div>
-                        <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
-                            Lookup SDK/API
-                          </a>
-                        </Link>
+
+                        <div className="w-full items-center flex text-[rgb(95,99,104)] h-[100px]">
+                          Make changes to your link template here, click the
+                          link below to edit your link template
+                        </div>
                       </div>
+                      <Link href={`/user/${slug}/edit`}>
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
+                          Edit Template
+                        </a>
+                      </Link>
+                    </div>
+
+                    <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                      <div className="px-6 pt-6 relative pb-3">
+                        <div className="flex justify-between mb-[16px] items-center">
+                          <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
+                            SDK/APIs
+                          </h2>
+
+                          <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
+                            Non Active
+                          </span>
+                        </div>
+
+                        <div className="w-full items-center flex text-[rgb(95,99,104)] h-[100px]">
+                          Receive crypto payments through
+                        </div>
+                      </div>
+                      <Link href="/working">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all delay-150">
+                          Lookup SDK/API
+                        </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
-              </>
-            )}
-          </>
-        );
+              </div>
+            </>
+          )}
+        </>
+      );
 }
 
 export default Overview;
