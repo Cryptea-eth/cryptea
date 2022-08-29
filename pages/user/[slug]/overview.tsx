@@ -37,7 +37,11 @@ const Overview = () => {
 
     const { sidebar }: dash  = useContext(DashContext);
 
+
+
     const [data, setData] = useState<any>({});
+
+    const [userLk, setUserLk] = useState<string>('');
 
     useEffect(() => {
 
@@ -45,6 +49,7 @@ const Overview = () => {
             
         const mDx = await initD(String(slug).toLowerCase());
 
+        setUserLk(`${window.location.origin}/user/${slug}`); 
 
         if(user !== null){
             if (user.id === mDx.attributes.user.id) {
@@ -65,27 +70,36 @@ const Overview = () => {
                 }   
 
                 setData({
-                    src,
+                  src,
 
-                    title: mDx.get('title'),
+                  title: mDx.get("title") == undefined ? mDx.get("title") : "",
 
-                    desc: mDx.get('desc'),
+                  desc: mDx.get("desc") == undefined ? mDx.get("desc") : "",
 
-                    template,
+                  template,
 
-                    link: mDx.get('link'),
+                  link: mDx.get("link"),
 
-                    type: mDx.get('type'),
-                    
-                    onetime: mDx.get('onetime') !== undefined ? JSON.parse(mDx.get('onetime')) : [],
+                  type: mDx.get("type"),
 
-                    subscribers: mDx.get('subscribers') !== undefined ? JSON.parse(mDx.get('subscribers')) : [],
+                  onetime:
+                    mDx.get("onetime") !== undefined
+                      ? JSON.parse(mDx.get("onetime"))
+                      : [],
 
-                    views: mDx.get('views') !== undefined ? JSON.parse(mDx.get('views')) : []
+                  subscribers:
+                    mDx.get("subscribers") !== undefined
+                      ? JSON.parse(mDx.get("subscribers"))
+                      : [],
 
+                  views:
+                    mDx.get("views") !== undefined
+                      ? JSON.parse(mDx.get("views"))
+                      : [],
                 });
 
                 setLoading(false);
+
 
             }else {
                 router.push('/')
@@ -106,8 +120,7 @@ const Overview = () => {
         }
 
     }, [isAuthenticated, isInitialized, user, slug, router.isReady, router]);
-    
-    const userLk = `${window.location.origin}/user/${slug}`; 
+  
    
       return (
         <>
@@ -173,11 +186,11 @@ const Overview = () => {
 
                         <TwitterShareButton
                           title={`${Boolean(data.desc) ? data.desc : ""} ${
-                            data.desc.toLowerCase().indexOf("@usecryptea") != -1
+                            String(data.desc).toLowerCase().indexOf("@usecryptea") != -1
                               ? ""
                               : "@usecryptea"
                           } ${
-                            data.desc.toLowerCase().indexOf("#cryptea") != -1
+                            String(data.desc).toLowerCase().indexOf("#cryptea") != -1
                               ? ""
                               : "#cryptea"
                           } \n`}
@@ -385,7 +398,12 @@ const Overview = () => {
                       </IconButton>
                     </h1>
 
-                    <p className="text-[0.875rem] text-[rgb(95,99,104)]  truncate leading-[1.25rem] block">
+                    <p
+                      style={{
+                        maxWidth: !sidebar?.openPage ? "1031px" : "861px",
+                      }}
+                      className="text-[0.875rem] text-[rgb(95,99,104)]  truncate leading-[1.25rem] block"
+                    >
                       {data.desc}
                     </p>
                   </div>
@@ -423,8 +441,7 @@ const Overview = () => {
                               ],
                               ...sortData(data.onetime, "24h", false)["data"],
                             ]
-                              .reduce((a, b) => a + b, 0)
-                              .toFixed(2)}
+                              .reduce((a, b) => { return a + b;}, 0)}
                             thousandSeparator={true}
                             displayType={"text"}
                             prefix={"$"}

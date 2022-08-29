@@ -84,7 +84,7 @@ const generateData = ({
 
     selected.forEach((v: number, ix: number) => {
       if (v >= time + hr && v <= time + hrp) {
-        count += addAmt ? (selAmount[ix]/selAmount[ix]) : selAmount[ix];
+        count += !addAmt ? (selAmount[ix]/selAmount[ix]) : selAmount[ix];
       }
     });
 
