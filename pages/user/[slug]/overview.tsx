@@ -8,6 +8,7 @@ import Sidebar from "../../../app/components/elements/dashboard/sidebar";
 import { Avatar, IconButton } from "@mui/material";
 import NumberFormat from 'react-number-format';
 import { FiShare2, FiTrash2 } from "react-icons/fi";
+import { EmailIcon, EmailShareButton, FacebookIcon, FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton } from 'react-share';
 import {
   initD
 } from "../../../app/components/elements/dashboard/link/data";
@@ -26,6 +27,8 @@ const Overview = () => {
 
     const router = useRouter();    
 
+    const [social, toggleSocial] = useState<boolean>(false);
+
     const { slug } = router.query;
 
     const { sidebar }: dash  = useContext(DashContext);
@@ -41,8 +44,6 @@ const Overview = () => {
 
         if(user !== null){
             if (user.id === mDx.attributes.user.id) {
-
-                setData(mDx);
 
                 let src = '';
 
@@ -142,7 +143,7 @@ const Overview = () => {
                       style={{
                         maxWidth: !sidebar?.openPage ? "1031px" : "861px",
                       }}
-                      className="text-[rgb(32,33,36)] mb-[16px] font-[400] flex items-center justify-between mx-auto text-center"
+                      className="text-[rgb(32,33,36)] mb-[16px] font-[400] flex items-center justify-between relative mx-auto text-center"
                     >
                       <Link href="/dashboard/links">
                         <a>
@@ -160,9 +161,46 @@ const Overview = () => {
                         </a>
                       </Link>
 
-                      <IconButton size="large" className="cursor-pointer">
+                      <IconButton onClick={() => toggleSocial(!social)} size="large" className="cursor-pointer">
                         <FiShare2 color={"rgb(32,33,36)"} size={22} />
                       </IconButton>
+
+                      {social && <div className="absolute flex items-center top-2/3 right-0 rounded-md px-2 py-3">
+                        <EmailShareButton
+                          className="mx-1"
+                          url={`${window.location.origin}/user/${slug}`}
+                        >
+                          <EmailIcon size={32} round={true} />
+                        </EmailShareButton>
+
+                        <TwitterShareButton
+                          className="mx-1"
+                          url={`${window.location.origin}/user/${slug}`}
+                        >
+                          <TwitterIcon size={32} round={true} />
+                        </TwitterShareButton>
+
+                        <WhatsappShareButton
+                          className="mx-1"
+                          url={`${window.location.origin}/user/${slug}`}
+                        >
+                          <WhatsappIcon size={32} round={true} />
+                        </WhatsappShareButton>
+
+                        <TelegramShareButton
+                          className="mx-1"
+                          url={`${window.location.origin}/user/${slug}`}
+                        >
+                          <TelegramIcon size={32} round={true} />
+                        </TelegramShareButton>
+
+                        <FacebookShareButton
+                          className="mx-1"
+                          url={`${window.location.origin}/user/${slug}`}
+                        >
+                          <FacebookIcon size={32} round={true} />
+                        </FacebookShareButton>
+                      </div>}
                     </h1>
 
                     <p className="text-[0.875rem] text-[rgb(95,99,104)]  truncate leading-[1.25rem] block">
@@ -322,29 +360,88 @@ const Overview = () => {
 
                     <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
-                        <div className="flex justify-between mb-[16px] items-center">
-                          <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
-                            Subscribers
-                          </h2>
+                        {data.type == "both" || data.type == "sub" ? (
+                          <>
+                            <div className="flex justify-between mb-[16px] items-center">
+                              <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
+                                Subscribers
+                              </h2>
 
-                          <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
-                            24 Hr
-                          </span>
-                        </div>
+                              <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
+                                24 Hr
+                              </span>
+                            </div>
 
-                        <div className="z-0 right-0 flex items-center top-[32px] bottom-0 m-auto absolute">
-                          <div className="absolute z-0 h-full w-[100px] bg-overlay"></div>
-                          <AiOutlineUser size={180} color={"#f5705933"} />
-                        </div>
+                            <div className="absolute top-[47px] font-[400] text-[1.5rem]">
+                              <NumberFormat
+                                value={sortData(
+                                  data.subscribers,
+                                  "24h",
+                                  false,
+                                  false
+                                )["data"].reduce((a, b) => a + b, 0)}
+                                thousandSeparator={true}
+                                displayType={"text"}
+                              />
+                            </div>
 
-                        <div className="w-full z-10 relative items-center flex text-[rgb(95,99,104)] h-[100px]">
-                          This link only supports one-time payments. Click below
-                          to enable subscriptions
-                        </div>
+                            <LineChart
+                              label={["data"]}
+                              name="subscribers"
+                              dataList={[
+                                sortData(
+                                  data.subscribers.length
+                                    ? data.subscribers
+                                    : [{ amount: 0, date: 0 }],
+                                  "24h",
+                                  false,
+                                  false
+                                )["data"],
+                              ]}
+                              styles={{
+                                width: "100%",
+                              }}
+                              labels={
+                                sortData(
+                                  data.subscribers.length
+                                    ? data.subscribers
+                                    : [{ amount: 0, date: 0 }],
+                                  "24h",
+                                  false,
+                                  false
+                                )["label"]
+                              }
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex justify-between mb-[16px] items-center">
+                              <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
+                                Subscribers
+                              </h2>
+
+                              <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
+                                24 Hr
+                              </span>
+                            </div>
+
+                            <div className="z-0 right-0 flex items-center top-[32px] bottom-0 m-auto absolute">
+                              <div className="absolute z-0 h-full w-[100px] bg-overlay"></div>
+                              <AiOutlineUser size={180} color={"#f5705933"} />
+                            </div>
+
+                            <div className="w-full z-10 relative items-center flex text-[rgb(95,99,104)] h-[100px]">
+                              This link only supports one-time payments. Click
+                              below to enable subscriptions
+                            </div>
+                          </>
+                        )}
                       </div>
                       <Link href="/working">
                         <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
-                          Add subscription support to link
+                          {data.type == "sub" || data.type == "both"
+                            ? "View more subscription data"
+                            : "Add subscription support to link"}
                         </a>
                       </Link>
                     </div>

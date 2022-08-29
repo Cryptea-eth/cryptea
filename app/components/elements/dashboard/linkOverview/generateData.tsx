@@ -32,12 +32,14 @@ const generateData = ({
   h24,
   mday,
   hourly,
+  addAmt,
 }: {
   data: any[];
   amount: number[];
   hourx: number;
   h24: boolean;
   mday: number;
+  addAmt: boolean;
   hourly: number;
 }) => {
   const today = new Date().getTime();
@@ -82,9 +84,7 @@ const generateData = ({
 
     selected.forEach((v: number, ix: number) => {
       if (v >= time + hr && v <= time + hrp) {
-        console.log(v);
-
-        count += selAmount[ix];
+        count += addAmt ? (selAmount[ix]/selAmount[ix]) : selAmount[ix];
       }
     });
 
@@ -96,14 +96,22 @@ const generateData = ({
  const sortData = (
   xdata: any[],
   interval: "24h" | "7d" | "30m" | "1yr" | "all",
-  h24: boolean = false
+  h24: boolean = false, addAmt: boolean = true
 ): {label: any[], data: any[]} => {
   const data: number[] = xdata.map((v) => Number(v.date));
 
   const amount: number[] = xdata.map((v) => Number(v.amount));
 
   if (interval == "24h") {
-    return generateData({ data, amount, hourx: 24, h24, mday: 1, hourly: 1 });
+    return generateData({
+      data,
+      amount,
+      hourx: 24,
+      h24,
+      mday: 1,
+      hourly: 1,
+      addAmt,
+    });
   }
 
   if (interval == "1yr") {
@@ -114,6 +122,7 @@ const generateData = ({
       h24,
       mday: new Date().getFullYear() % 2 == 0 ? 366 : 365,
       hourly: 12,
+      addAmt,
     });
   }
 
@@ -141,6 +150,7 @@ const generateData = ({
       amount,
       hourx,
       h24,
+      addAmt,
       mday,
       hourly,
     });
@@ -154,6 +164,7 @@ const generateData = ({
       h24,
       mday: 30,
       hourly: 3,
+      addAmt,
     });
   }
 
@@ -165,6 +176,7 @@ const generateData = ({
       h24,
       mday: 7,
       hourly: 1,
+      addAmt,
     });
   }
 
