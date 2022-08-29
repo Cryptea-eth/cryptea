@@ -8,20 +8,24 @@ import Sidebar from "../../../app/components/elements/dashboard/sidebar";
 import { Avatar, IconButton } from "@mui/material";
 import NumberFormat from 'react-number-format';
 import { FiShare2, FiTrash2 } from "react-icons/fi";
-import { EmailIcon, EmailShareButton, FacebookIcon, FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton } from 'react-share';
+import { EmailIcon, EmailShareButton, FacebookIcon, FacebookShareButton, PinterestShareButton, RedditShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton } from 'react-share';
+import copy from 'copy-to-clipboard';
 import {
   initD
 } from "../../../app/components/elements/dashboard/link/data";
 import Link from "next/link";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
-import { MdArrowBackIos, MdLink } from "react-icons/md";
+import { MdArrowBackIos, MdClose, MdLink } from "react-icons/md";
 import sortData from "../../../app/components/elements/dashboard/linkOverview/generateData";
+import bigimg from "../../../public/images/logobig.png";
 import { TbApiApp } from 'react-icons/tb';
 import { AiOutlineUser } from 'react-icons/ai'
+import { FaDiscord, FaEnvelope, FaFacebookF, FaInstagram, FaPinterest, FaRedditAlien, FaRegClone, FaTelegram, FaTelegramPlane, FaTwitter, FaTwitterSquare, FaWhatsapp } from "react-icons/fa";
 
 const Overview = () => {
 
     const { isAuthenticated, isInitialized, user } = useMoralis();
+
 
     const [isLoading, setLoading] = useState<boolean>(true);
 
@@ -103,7 +107,7 @@ const Overview = () => {
 
     }, [isAuthenticated, isInitialized, user, slug, router.isReady, router]);
     
-
+    const userLk = `${window.location.origin}/user/${slug}`; 
    
       return (
         <>
@@ -117,6 +121,166 @@ const Overview = () => {
 
               <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
                 <Sidebar page={"link"} />
+
+                {social && (
+                  <div
+                    className={`${
+                      sidebar?.openPage ? "pl-[257px]" : "pl-[87px]"
+                    } justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur-[2px] fixed inset-0 z-50 outline-none focus:outline-none`}
+                  >
+                    <div className="relative max-w-[1200px] mmd:w-[70%] 4sm:w-[60%] w-[340px] min-w-[340px]">
+                      <div className="border-0 p-6 rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                        <div className="mb-8">
+                          <h2
+                            style={{ fontFamily: "inherit" }}
+                            className="text-[22px] font-bold flex items-center justify-between w-full"
+                          >
+                            <span className="text-[rgb(32,33,36)]">Share</span>
+
+                            <IconButton
+                              size={"large"}
+                              onClick={() => toggleSocial(false)}
+                              className="cursor-pointer flex items-center justify-center"
+                            >
+                              <MdClose color={"rgb(32,33,36)"} size={18} />
+                            </IconButton>
+                          </h2>
+                        </div>
+
+                        <div className="cusscroller flex overflow-x-scroll overflow-y-hidden flex-nowrap px-4 pb-4 mb-9">
+                          <EmailShareButton url={userLk}>
+                            <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                              <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                                <FaEnvelope color={"#6a6a6a"} size={35} />
+                              </div>
+
+                              <span className="font-semibold text-[#777]">
+                                Email
+                              </span>
+                            </div>
+                          </EmailShareButton>
+
+                          <TwitterShareButton url={userLk}>
+                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                              <FaTwitter color={"#6a6a6a"} size={35} />
+                            </div>
+
+                            <span className="font-semibold text-[#777]">
+                              Twitter
+                            </span>
+                          </div>
+                          </TwitterShareButton>
+
+
+                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                              <FaDiscord color={"#6a6a6a"} size={35} />
+                            </div>
+
+                            <span className="font-semibold text-[#777]">
+                              Discord
+                            </span>
+                          </div>
+
+                          <WhatsappShareButton url={userLk}>
+                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                              <FaWhatsapp color={"#6a6a6a"} size={35} />
+                            </div>
+
+                            <span className="font-semibold text-[#777]">
+                              Whatsapp
+                            </span>
+                          </div>
+                          </WhatsappShareButton>
+
+                          <TelegramShareButton url={userLk}>
+                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                              <FaTelegramPlane color={"#6a6a6a"} size={35} />
+                            </div>
+
+                            <span className="font-semibold text-[#777]">
+                              Telegram
+                            </span>
+                          </div></TelegramShareButton>
+
+                          <FacebookShareButton url={userLk}>
+                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                              <FaFacebookF color={"#6a6a6a"} size={35} />
+                            </div>
+
+                            <span className="font-semibold text-[#777]">
+                              Facebook
+                            </span>
+                          </div></FacebookShareButton>
+
+
+                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                              <FaInstagram color={"#6a6a6a"} size={35} />
+                            </div>
+
+                            <span className="font-semibold text-[#777]">
+                              Instagram
+                            </span>
+                          </div>
+
+                          <RedditShareButton url={userLk}>
+                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                              <FaRedditAlien color={"#6a6a6a"} size={35} />
+                            </div>
+
+                            <span className="font-semibold text-[#777]">
+                              Reddit
+                            </span>
+                          </div></RedditShareButton>
+
+                          <PinterestShareButton media={Boolean(data.src) ? data.src : (Boolean(user?.get('img')) ? user?.get('img') : bigimg.src)} url={userLk}>
+                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                              <FaPinterest color={"#6a6a6a"} size={35} />
+                            </div>
+
+                            <span className="font-semibold text-[#777]">
+                              Pinterest
+                            </span>
+                          </div>
+                          </PinterestShareButton>
+
+                        </div>
+
+                        <div>
+                          <h2 className="text-[18px] text-[#5a5a5a] mb-3 font-bold w-full">
+                            Link
+                          </h2>
+
+                          <div className="w-full items-center mx-[2px] rounded-md flex justify-between bg-[#2020200e] py-1 px-3">
+                            <span className="text-[#919191] h-fit">
+                              {window.location.origin}/user/{slug}
+                            </span>
+
+                            <IconButton
+                              size={"large"}
+                              onClick={() =>
+                                copy(userLk)
+                              }
+                            >
+                              <FaRegClone
+                                color={"#919191"}
+                                className="cursor-pointer"
+                                size={16}
+                              />
+                            </IconButton>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div
                   className={`body pb-6 transition-all delay-500 ${
@@ -147,7 +311,16 @@ const Overview = () => {
                     >
                       <Link href="/dashboard/links">
                         <a>
-                          <MdArrowBackIos size={20} />
+                          <IconButton
+                            size="large"
+                            className="cursor-pointer flex items-center justify-center"
+                          >
+                            <MdArrowBackIos
+                              color={"rgb(32,33,36)"}
+                              className="relative left-[4px]"
+                              size={20}
+                            />
+                          </IconButton>
                         </a>
                       </Link>
 
@@ -157,50 +330,56 @@ const Overview = () => {
                             {data.title !== undefined ? data.title : slug}
                           </span>
 
-                          <MdLink size={30} />
+                          <MdLink className="relative top-[2px]" size={30} />
                         </a>
                       </Link>
 
-                      <IconButton onClick={() => toggleSocial(!social)} size="large" className="cursor-pointer">
+                      <IconButton
+                        onClick={() => toggleSocial(!social)}
+                        size="large"
+                        className="cursor-pointer flex items-center justify-center"
+                      >
                         <FiShare2 color={"rgb(32,33,36)"} size={22} />
                       </IconButton>
 
-                      {social && <div className="absolute flex items-center top-2/3 right-0 rounded-md px-2 py-3">
-                        <EmailShareButton
-                          className="mx-1"
-                          url={`${window.location.origin}/user/${slug}`}
-                        >
-                          <EmailIcon size={32} round={true} />
-                        </EmailShareButton>
+                      {social && (
+                        <div className="absolute flex items-center top-2/3 right-0 rounded-md px-2 py-3">
+                          <EmailShareButton
+                            className="mx-1"
+                            url={userLk}
+                          >
+                            <EmailIcon size={32} round={true} />
+                          </EmailShareButton>
 
-                        <TwitterShareButton
-                          className="mx-1"
-                          url={`${window.location.origin}/user/${slug}`}
-                        >
-                          <TwitterIcon size={32} round={true} />
-                        </TwitterShareButton>
+                          <TwitterShareButton
+                            className="mx-1"
+                            url={userLk}
+                          >
+                            <TwitterIcon size={32} round={true} />
+                          </TwitterShareButton>
 
-                        <WhatsappShareButton
-                          className="mx-1"
-                          url={`${window.location.origin}/user/${slug}`}
-                        >
-                          <WhatsappIcon size={32} round={true} />
-                        </WhatsappShareButton>
+                          <WhatsappShareButton
+                            className="mx-1"
+                            url={userLk}
+                          >
+                            <WhatsappIcon size={32} round={true} />
+                          </WhatsappShareButton>
 
-                        <TelegramShareButton
-                          className="mx-1"
-                          url={`${window.location.origin}/user/${slug}`}
-                        >
-                          <TelegramIcon size={32} round={true} />
-                        </TelegramShareButton>
+                          <TelegramShareButton
+                            className="mx-1"
+                            url={userLk}
+                          >
+                            <TelegramIcon size={32} round={true} />
+                          </TelegramShareButton>
 
-                        <FacebookShareButton
-                          className="mx-1"
-                          url={`${window.location.origin}/user/${slug}`}
-                        >
-                          <FacebookIcon size={32} round={true} />
-                        </FacebookShareButton>
-                      </div>}
+                          <FacebookShareButton
+                            className="mx-1"
+                            url={userLk}
+                          >
+                            <FacebookIcon size={32} round={true} />
+                          </FacebookShareButton>
+                        </div>
+                      )}
                     </h1>
 
                     <p className="text-[0.875rem] text-[rgb(95,99,104)]  truncate leading-[1.25rem] block">

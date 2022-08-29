@@ -160,7 +160,7 @@ function Nav() {
           </Link>
         </div>
 
-        {showModal ? (
+        {showModal && (
           <div className="justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur fixed inset-0 z-50 outline-none focus:outline-none">
             <div className="relative max-w-[1200px] mmd:w-[70%] 4sm:w-[60%] w-[340px] min-w-[340px]">
               {/*content*/}
@@ -240,7 +240,7 @@ function Nav() {
               </div>
             </div>
           </div>
-        ) : null}
+        )}
 
         <div className="right mmd:hidden">
           <div>

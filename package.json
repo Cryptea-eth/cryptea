@@ -20,6 +20,7 @@
     "@web3auth/web3auth": "^1.1.0",
     "axios": "^0.27.2",
     "chart.js": "^3.9.1",
+    "copy-to-clipboard": "^3.3.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "hardhat": "^2.10.2",
