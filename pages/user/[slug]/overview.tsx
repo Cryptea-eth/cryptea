@@ -5,10 +5,10 @@ import Loader from "../../../app/components/elements/loader";
 import Head from 'next/head';
 import { dash, DashContext } from "../../../app/contexts/GenContext";
 import Sidebar from "../../../app/components/elements/dashboard/sidebar";
-import { Avatar, IconButton } from "@mui/material";
+import { Avatar, IconButton, Modal } from "@mui/material";
 import NumberFormat from 'react-number-format';
 import { FiShare2, FiTrash2 } from "react-icons/fi";
-import { EmailIcon, EmailShareButton, FacebookIcon, FacebookShareButton, PinterestShareButton, RedditShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton } from 'react-share';
+import { EmailShareButton, FacebookShareButton, PinterestShareButton, RedditShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton } from 'react-share';
 import copy from 'copy-to-clipboard';
 import {
   initD
@@ -122,45 +122,67 @@ const Overview = () => {
               <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
                 <Sidebar page={"link"} />
 
-                {social && (
-                  <div
-                    className={`${
-                      sidebar?.openPage ? "pl-[257px]" : "pl-[87px]"
-                    } justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur-[2px] fixed inset-0 z-50 outline-none focus:outline-none`}
-                  >
-                    <div className="relative max-w-[1200px] mmd:w-[70%] 4sm:w-[60%] w-[340px] min-w-[340px]">
-                      <div className="border-0 p-6 rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                        <div className="mb-8">
-                          <h2
-                            style={{ fontFamily: "inherit" }}
-                            className="text-[22px] font-bold flex items-center justify-between w-full"
+                <Modal
+                  open={social}
+                  sx={{
+                    "& .MuiBackdrop-root": {
+                      backgroundColor: "rgb(229, 229, 229, .5)",
+                    },
+                  }}
+                  onClose={() => toggleSocial(false)}
+                  className={`${
+                    sidebar?.openPage ? "pl-[257px]" : "pl-[87px]"
+                  } justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur-[2px] fixed inset-0 z-50 outline-none focus:outline-none`}
+                >
+                  <div className="relative max-w-[1200px] mmd:w-[70%] 4sm:w-[60%] w-[340px] min-w-[340px]">
+                    <div className="border-0 p-6 rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                      <div className="mb-8">
+                        <h2
+                          style={{ fontFamily: "inherit" }}
+                          className="text-[22px] font-bold flex items-center justify-between w-full"
+                        >
+                          <span className="text-[rgb(32,33,36)]">Share</span>
+
+                          <IconButton
+                            size={"large"}
+                            onClick={() => toggleSocial(false)}
+                            className="cursor-pointer flex items-center justify-center"
                           >
-                            <span className="text-[rgb(32,33,36)]">Share</span>
+                            <MdClose color={"rgb(32,33,36)"} size={18} />
+                          </IconButton>
+                        </h2>
+                      </div>
 
-                            <IconButton
-                              size={"large"}
-                              onClick={() => toggleSocial(false)}
-                              className="cursor-pointer flex items-center justify-center"
-                            >
-                              <MdClose color={"rgb(32,33,36)"} size={18} />
-                            </IconButton>
-                          </h2>
-                        </div>
-
-                        <div className="cusscroller flex overflow-x-scroll overflow-y-hidden flex-nowrap px-4 pb-4 mb-9">
-                          <EmailShareButton url={userLk}>
-                            <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
-                              <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
-                                <FaEnvelope color={"#6a6a6a"} size={35} />
-                              </div>
-
-                              <span className="font-semibold text-[#777]">
-                                Email
-                              </span>
+                      <div className="cusscroller flex overflow-x-scroll overflow-y-hidden flex-nowrap px-4 pb-4 mb-9">
+                        <EmailShareButton
+                          subject={""}
+                          separator={"\n"}
+                          body={`${Boolean(data.desc) ? data.desc : ""}`}
+                          url={userLk}
+                        >
+                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                              <FaEnvelope color={"#6a6a6a"} size={35} />
                             </div>
-                          </EmailShareButton>
 
-                          <TwitterShareButton url={userLk}>
+                            <span className="font-semibold text-[#777]">
+                              Email
+                            </span>
+                          </div>
+                        </EmailShareButton>
+
+                        <TwitterShareButton
+                          title={`${Boolean(data.desc) ? data.desc : ""} ${
+                            data.desc.toLowerCase().indexOf("@usecryptea") != -1
+                              ? ""
+                              : "@usecryptea"
+                          } ${
+                            data.desc.toLowerCase().indexOf("#cryptea") != -1
+                              ? ""
+                              : "#cryptea"
+                          } \n`}
+                          url={userLk}
+                        >
                           <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
                             <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
                               <FaTwitter color={"#6a6a6a"} size={35} />
@@ -170,20 +192,23 @@ const Overview = () => {
                               Twitter
                             </span>
                           </div>
-                          </TwitterShareButton>
+                        </TwitterShareButton>
 
-
-                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
-                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
-                              <FaDiscord color={"#6a6a6a"} size={35} />
-                            </div>
-
-                            <span className="font-semibold text-[#777]">
-                              Discord
-                            </span>
+                        {/* <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                          <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                            <FaDiscord color={"#6a6a6a"} size={35} />
                           </div>
 
-                          <WhatsappShareButton url={userLk}>
+                          <span className="font-semibold text-[#777]">
+                            Discord
+                          </span>
+                        </div> */}
+
+                        <WhatsappShareButton
+                          separator={"\n"}
+                          title={`${Boolean(data.desc) ? data.desc : ""}`}
+                          url={userLk}
+                        >
                           <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
                             <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
                               <FaWhatsapp color={"#6a6a6a"} size={35} />
@@ -193,9 +218,12 @@ const Overview = () => {
                               Whatsapp
                             </span>
                           </div>
-                          </WhatsappShareButton>
+                        </WhatsappShareButton>
 
-                          <TelegramShareButton url={userLk}>
+                        <TelegramShareButton
+                          title={`${Boolean(data.desc) ? data.desc : ""} \n`}
+                          url={userLk}
+                        >
                           <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
                             <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
                               <FaTelegramPlane color={"#6a6a6a"} size={35} />
@@ -204,9 +232,13 @@ const Overview = () => {
                             <span className="font-semibold text-[#777]">
                               Telegram
                             </span>
-                          </div></TelegramShareButton>
+                          </div>
+                        </TelegramShareButton>
 
-                          <FacebookShareButton url={userLk}>
+                        <FacebookShareButton
+                          title={`${Boolean(data.desc) ? data.desc : ""} \n`}
+                          url={userLk}
+                        >
                           <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
                             <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
                               <FaFacebookF color={"#6a6a6a"} size={35} />
@@ -215,20 +247,23 @@ const Overview = () => {
                             <span className="font-semibold text-[#777]">
                               Facebook
                             </span>
-                          </div></FacebookShareButton>
+                          </div>
+                        </FacebookShareButton>
 
-
-                          <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
-                            <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
-                              <FaInstagram color={"#6a6a6a"} size={35} />
-                            </div>
-
-                            <span className="font-semibold text-[#777]">
-                              Instagram
-                            </span>
+                        {/* <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+                          <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                            <FaInstagram color={"#6a6a6a"} size={35} />
                           </div>
 
-                          <RedditShareButton url={userLk}>
+                          <span className="font-semibold text-[#777]">
+                            Instagram
+                          </span>
+                        </div> */}
+
+                        <RedditShareButton
+                          title={`${Boolean(data.desc) ? data.desc : ""} \n`}
+                          url={userLk}
+                        >
                           <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
                             <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
                               <FaRedditAlien color={"#6a6a6a"} size={35} />
@@ -237,9 +272,20 @@ const Overview = () => {
                             <span className="font-semibold text-[#777]">
                               Reddit
                             </span>
-                          </div></RedditShareButton>
+                          </div>
+                        </RedditShareButton>
 
-                          <PinterestShareButton media={Boolean(data.src) ? data.src : (Boolean(user?.get('img')) ? user?.get('img') : bigimg.src)} url={userLk}>
+                        <PinterestShareButton
+                          title={`${Boolean(data.desc) ? data.desc : ""} \n`}
+                          media={
+                            Boolean(data.src)
+                              ? data.src
+                              : Boolean(user?.get("img"))
+                              ? user?.get("img")
+                              : bigimg.src
+                          }
+                          url={userLk}
+                        >
                           <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
                             <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
                               <FaPinterest color={"#6a6a6a"} size={35} />
@@ -249,38 +295,34 @@ const Overview = () => {
                               Pinterest
                             </span>
                           </div>
-                          </PinterestShareButton>
+                        </PinterestShareButton>
+                      </div>
 
-                        </div>
+                      <div>
+                        <h2 className="text-[18px] text-[#5a5a5a] mb-3 font-bold w-full">
+                          Link
+                        </h2>
 
-                        <div>
-                          <h2 className="text-[18px] text-[#5a5a5a] mb-3 font-bold w-full">
-                            Link
-                          </h2>
+                        <div className="w-full items-center mx-[2px] rounded-md flex justify-between bg-[#2020200e] py-1 px-3">
+                          <span className="text-[#919191] h-fit">
+                            {window.location.origin}/user/{slug}
+                          </span>
 
-                          <div className="w-full items-center mx-[2px] rounded-md flex justify-between bg-[#2020200e] py-1 px-3">
-                            <span className="text-[#919191] h-fit">
-                              {window.location.origin}/user/{slug}
-                            </span>
-
-                            <IconButton
-                              size={"large"}
-                              onClick={() =>
-                                copy(userLk)
-                              }
-                            >
-                              <FaRegClone
-                                color={"#919191"}
-                                className="cursor-pointer"
-                                size={16}
-                              />
-                            </IconButton>
-                          </div>
+                          <IconButton
+                            size={"large"}
+                            onClick={() => copy(userLk)}
+                          >
+                            <FaRegClone
+                              color={"#919191"}
+                              className="cursor-pointer"
+                              size={16}
+                            />
+                          </IconButton>
                         </div>
                       </div>
                     </div>
                   </div>
-                )}
+                </Modal>
 
                 <div
                   className={`body pb-6 transition-all delay-500 ${
@@ -341,45 +383,6 @@ const Overview = () => {
                       >
                         <FiShare2 color={"rgb(32,33,36)"} size={22} />
                       </IconButton>
-
-                      {social && (
-                        <div className="absolute flex items-center top-2/3 right-0 rounded-md px-2 py-3">
-                          <EmailShareButton
-                            className="mx-1"
-                            url={userLk}
-                          >
-                            <EmailIcon size={32} round={true} />
-                          </EmailShareButton>
-
-                          <TwitterShareButton
-                            className="mx-1"
-                            url={userLk}
-                          >
-                            <TwitterIcon size={32} round={true} />
-                          </TwitterShareButton>
-
-                          <WhatsappShareButton
-                            className="mx-1"
-                            url={userLk}
-                          >
-                            <WhatsappIcon size={32} round={true} />
-                          </WhatsappShareButton>
-
-                          <TelegramShareButton
-                            className="mx-1"
-                            url={userLk}
-                          >
-                            <TelegramIcon size={32} round={true} />
-                          </TelegramShareButton>
-
-                          <FacebookShareButton
-                            className="mx-1"
-                            url={userLk}
-                          >
-                            <FacebookIcon size={32} round={true} />
-                          </FacebookShareButton>
-                        </div>
-                      )}
                     </h1>
 
                     <p className="text-[0.875rem] text-[rgb(95,99,104)]  truncate leading-[1.25rem] block">
