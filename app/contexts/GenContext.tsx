@@ -1,6 +1,16 @@
 
 import { createContext, useState } from 'react';
 
+interface ChartParam {
+  amount?: number | string;
+  date?: string;
+  hide?: boolean;
+}
+
+export interface Chartx extends ChartParam {
+    update?: (opt: ChartParam) => any
+}
+
 export interface dash {
     sidebar: {
     open?: boolean, 
@@ -11,13 +21,15 @@ export interface dash {
   template: {
     isLoading?: boolean,
     toggle?: (e: boolean) => void
-  }
+  },
+  chartData: Chartx
 }
 
 
 export const DashContext = createContext<dash>({
   sidebar: {},
-  template: {}
+  template: {},
+  chartData: {}
 })
 
 export const GenProvider = ({children}: {children: JSX.Element }) => {
@@ -26,7 +38,13 @@ export const GenProvider = ({children}: {children: JSX.Element }) => {
           const [isOpen2, close2] = useState(true);
           const [isOpen3, close3] = useState(true);        
 
-          const [tLoading, setTloading] = useState<boolean>(true);
+        const [tLoading, setTloading] = useState<boolean>(true);
+
+        const [chartx, updChart] = useState<ChartParam>({
+          amount: 0,
+          date: '',
+          hide: true
+        });
 
         const toggle = () => {
           close(!isOpen);
@@ -56,6 +74,12 @@ export const GenProvider = ({children}: {children: JSX.Element }) => {
                   setTloading(e)
                 },
               },
+              chartData: {
+                amount: chartx.amount,
+                date: chartx.date,
+                hide: chartx.hide,
+                update: (opt: ChartParam) => updChart(opt)
+              }
             }}
           >
             {children}

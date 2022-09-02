@@ -185,13 +185,13 @@ const DashLinks = () => {
             <h2 className="text-[22px] text-center font-bold">
               Hmm, its empty here
             </h2>
-            <span className="mt-2 text-[17px] block w-full text-center">
+            <span className="mt-2 text-[17px] text-[#565656] block w-full text-center">
               You have no links yet, Click the button below to create links
             </span>
           </div>
           <Link href="/dashboard/links/new">
             <a>
-              <Button className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-black !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
+              <Button className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
                 <MdAddLink size={25} className="mr-1" /> Create Link
               </Button>
             </a>
@@ -220,18 +220,21 @@ const DashLinks = () => {
 
             {links.map(({ attributes }: any, i: number) => {
               // bg-[#efefef]
-              
-              const { template_data, link, desc } = attributes
 
-              const { image } = template_data !== undefined ? JSON.parse(template_data) : {image: undefined};
+              const { template_data, link, desc } = attributes;
 
-              const { src } = image !== undefined ? image : {src: undefined}
+              const { image } =
+                template_data !== undefined
+                  ? JSON.parse(template_data)
+                  : { image: undefined };
 
-              
-              return (<Link href={`/user/${link}/overview`} key={i}>
-                <a>
-                  <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(240,240,240)] transition-all delay-300 cursor-pointer">
-                    {/* <div className="flex mt-4 justify-between items-center w-full">
+              const { src } = image !== undefined ? image : { src: undefined };
+
+              return (
+                <Link href={`/user/${link}/overview`} key={i}>
+                  <a>
+                    <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(240,240,240)] transition-all delay-300 cursor-pointer">
+                      {/* <div className="flex mt-4 justify-between items-center w-full">
                   <a
                     target="_blank"
                     href={`/user/${attributes.link.toLowerCase()}`}
@@ -266,63 +269,61 @@ const DashLinks = () => {
                   </div>
                 </div> */}
 
-                    <div className="mb-4">
-                      <Avatar
-                        sx={{
-                          width: "100%",
-                          height: 183,
-                          margin: "auto",
-                          backgroundColor: "#f5705982",
-                        }}
-                        className="text-[50px] font-bold"
-                        variant="rounded"
-                        src={src}
-                      >
-                        {(
-                          String(link).charAt(0) +
-                          String(link).charAt(1)
-                        ).toUpperCase()}
-                      </Avatar>
-                    </div>
-
-                    <div className="flex items-center mb-[10px] justify-between">
-                      <div className="flex items-center">
-                        <div className="text-white w-[40px] h-[40px] rounded-md mr-[.75rem] flex items-center justify-center bg-[#F57059]">
-                          <MdLink size={21} />
-                        </div>
-                        <div>
-                          <h3 className="truncate text-[17px] leading-[20px] font-[900] text-[#121212]">
-                            {link}
-                          </h3>
-                          <span className="block text-[14px] leading-[1.2] truncate w-full text-[#575757]">
-                            {Boolean(desc) ? desc : "•••"}
-                          </span>
-                        </div>
-                      </div>
-                      <div
-                        onClick={(e: any) => {
-                          e.preventDefault();
-
-                          setShowLinkModal(link);
-                        }}
-                      >
-                        <IconButton
-                          color="inherit"
-                          size={"large"}
+                      <div className="mb-4">
+                        <Avatar
                           sx={{
-                            color: "#F57059",
+                            width: "100%",
+                            height: 183,
+                            margin: "auto",
+                            backgroundColor: "#f5705982",
+                          }}
+                          className="text-[50px] font-bold"
+                          variant="rounded"
+                          src={src}
+                        >
+                          {(
+                            String(link).charAt(0) + String(link).charAt(1)
+                          ).toUpperCase()}
+                        </Avatar>
+                      </div>
+
+                      <div className="flex items-center mb-[10px] justify-between">
+                        <div className="flex items-center">
+                          <div className="text-white w-[40px] h-[40px] rounded-md mr-[.75rem] flex items-center justify-center bg-[#F57059]">
+                            <MdLink size={21} />
+                          </div>
+                          <div>
+                            <h3 className="truncate text-[17px] leading-[20px] font-[900] text-[#121212]">
+                              {link}
+                            </h3>
+                            <span className="block text-[14px] leading-[1.2] truncate w-full text-[#575757]">
+                              {Boolean(desc) ? desc : "•••"}
+                            </span>
+                          </div>
+                        </div>
+                        <div
+                          onClick={(e: any) => {
+                            e.preventDefault();
+
+                            setShowLinkModal(link);
                           }}
                         >
-                          <FiTrash2 size={20} />
-                        </IconButton>
+                          <IconButton
+                            color="inherit"
+                            size={"large"}
+                            sx={{
+                              color: "#F57059",
+                            }}
+                          >
+                            <FiTrash2 size={20} />
+                          </IconButton>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </a>
-              </Link>)
-
-            }
-            )}
+                  </a>
+                </Link>
+              );
+            })}
           </div>
         </>
       )}

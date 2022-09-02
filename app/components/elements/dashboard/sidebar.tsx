@@ -104,13 +104,11 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
         </div>
 
         <div
-          className={`flex innerSide transition-all delay-500 flex-col py-3 ${
-            sidebar?.open ? "px-[1px]" : "px-[1px]"
-          } justify-center`}
+          className={`flex innerSide transition-all delay-500 flex-col py-3 justify-center`}
         >
           <div className={`pb-3 mb-1 border-b-[#E3E3E3] border-b-[1px]`}>
             <div
-              className={`rounded-[4px] overflow-hidden flex-nowrap transition-all delay-200 hover:border-l-[#f89e8e] hover:text-[#F57059] hover:bg-[#F5F8FE] border-solid ${
+              className={`rounded-tr-[4px] rounded-br-[4px] overflow-hidden flex-nowrap transition-all delay-200 hover:border-l-[#f89e8e] hover:text-[#F57059] hover:bg-[#F5F8FE] border-solid ${
                 page === "home" || page === undefined ? active : ""
               } border-l-[3px] flex items-center transition-all delay-500 bg-[#F5F8FE] py-[9px]`}
             >
@@ -129,7 +127,7 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
           </div>
 
           <div
-            className={`rounded-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] flex items-center py-[9px] ${
+            className={`rounded-tr-[4px] rounded-br-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] flex items-center py-[9px] ${
               page === "links" || page === "link" ? active : ""
             }`}
           >
@@ -147,7 +145,7 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
           </div>
 
           <div
-            className={`rounded-[4px]  border-l-[3px] overflow-hidden flex-nowrap my-1 ${
+            className={`rounded-tr-[4px] rounded-br-[4px]  border-l-[3px] overflow-hidden flex-nowrap my-1 ${
               page === "userpages" || page === "pages" || page === "page"
                 ? active
                 : ""
@@ -167,7 +165,7 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
           </div>
 
           <div
-            className={`rounded-[4px] cursor-pointer border-l-[3px] overflow-hidden flex-nowrap my-1 transition-all delay-200 border-solid hover:border-l-[3px] hover:border-l-[#F57059] hover:text-[#F57059] border-l-transparent text-[#A9A9A9] hover:bg-[#F5F8FE] flex items-center py-[9px] ${
+            className={`rounded-tr-[4px] rounded-br-[4px] cursor-pointer border-l-[3px] overflow-hidden flex-nowrap my-1 transition-all delay-200 border-solid hover:border-l-[3px] hover:border-l-[#F57059] hover:text-[#F57059] border-l-transparent text-[#A9A9A9] hover:bg-[#F5F8FE] flex items-center py-[9px] ${
               page === "settings" || page === "setting" ? active : ""
             }`}
           >
@@ -184,7 +182,7 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
             </Link>
           </div>
 
-          <div className="rounded-[4px]  border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid flex items-center hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] py-[9px]">
+          <div className="rounded-tr-[4px] rounded-br-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid flex items-center hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] py-[9px]">
             <div
               className="text-inherit flex items-center text-[14px]"
               onClick={async () => {

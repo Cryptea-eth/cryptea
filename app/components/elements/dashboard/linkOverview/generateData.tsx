@@ -90,39 +90,41 @@ const generateData = ({
 
     edata.push(count);
   }
+  
   return { data: edata, label };
 };
 
  const sortData = (
   xdata: any[],
-  interval: "24h" | "7d" | "30m" | "1yr" | "all",
+  interval: "24h" | "7d" | "30d" | "1yr" | "all",
   h24: boolean = false, addAmt: boolean = true
 ): {label: any[], data: any[]} => {
   const data: number[] = xdata.map((v) => Number(v.date));
 
   const amount: number[] = xdata.map((v) => Number(v.amount));
 
+  const gen = {
+    data,
+    amount,
+    h24,
+    addAmt
+  };
+
   if (interval == "24h") {
     return generateData({
-      data,
-      amount,
+      ...gen,
       hourx: 24,
-      h24,
       mday: 1,
       hourly: 1,
-      addAmt,
     });
   }
 
   if (interval == "1yr") {
     return generateData({
-      data,
-      amount,
+      ...gen,
       hourx: new Date().getFullYear() % 2 == 0 ? 8784 : 8760,
-      h24,
       mday: new Date().getFullYear() % 2 == 0 ? 366 : 365,
       hourly: 12,
-      addAmt,
     });
   }
 
@@ -146,37 +148,28 @@ const generateData = ({
     }
 
     return generateData({
-      data,
-      amount,
+      ...gen,
       hourx,
-      h24,
-      addAmt,
       mday,
       hourly,
     });
   }
 
-  if (interval == "30m") {
+  if (interval == "30d") {
     return generateData({
-      data,
-      amount,
+      ...gen,
       hourx: 720,
-      h24,
       mday: 30,
       hourly: 3,
-      addAmt,
     });
   }
 
   if (interval == "7d") {
     return generateData({
-      data,
-      amount,
+      ...gen,
       hourx: 168,
-      h24,
       mday: 7,
       hourly: 1,
-      addAmt,
     });
   }
 

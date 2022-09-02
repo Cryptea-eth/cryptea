@@ -9,6 +9,21 @@
   text-align: center;
 }
 
+::-moz-selection {
+  background: rgb(255, 167, 151);
+  color: #fff;
+}
+
+::-webkit-selection {
+  background: rgb(255, 167, 151);
+  color: #fff;
+}
+
+::selection {
+  background: rgb(255, 167, 151);
+  color: #fff;
+}
+
 .App-logo {
   height: 120vmin;
   pointer-events: none;

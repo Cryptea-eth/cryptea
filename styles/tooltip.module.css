@@ -12,6 +12,11 @@
 }
 
 
+.tooltip.hide{
+    background:transparent;
+}
+
+
 .tooltip .tooltip_label,
 .tooltip .tooltip_sublabel {
     padding: 1px 2px;
@@ -21,6 +26,10 @@
 
 .tooltip .tooltip_value {
     padding: 0 2px 8px 2px;
+}
+
+.tooltip.hide .tooltip_value {
+    padding:0px;
 }
 
 .tooltip .tooltip_value .color_circle {
@@ -36,6 +45,7 @@
 .tooltip .tooltip_value .value {
     font-size: 14px;
 }
+
 
 .tooltip::after {
     content: "";

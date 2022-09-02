@@ -12,6 +12,8 @@ import {
   Legend,
   ScriptableContext,
 } from "chart.js";
+import { useContext } from "react";
+import { Chartx, dash, DashContext } from "../../../../contexts/GenContext";
 
 ChartJS.register(
   CategoryScale,
@@ -32,6 +34,7 @@ const LineChart = ({
   dataList,
   label,
   name,
+  exportLabel = true
 }: {
   styles?: object;
   color?: string[];
@@ -40,13 +43,25 @@ const LineChart = ({
   label: string[];
   prefix?: string;
   name: string;
+  exportLabel?: boolean
 }) => {
+
+  const { chartData }: { chartData: Chartx } = useContext<dash>(DashContext);
+
   const processTooltipModel = (model: any) => {
     const tooltip = document.querySelector(`.tooltip${name}`) as HTMLDivElement;
 
-    if (tooltip !== null) {
-      const tooltipModel = model.tooltip;
+    const tooltipModel = model.tooltip;
 
+    if (!exportLabel) {
+      
+        const specialTip = document.querySelector(".tooltiprep") as HTMLParagraphElement;
+
+        specialTip.innerHTML = `$${tooltipModel.dataPoints[0].raw} - ${tooltipModel.dataPoints[0].label}`;
+    }
+
+    if (tooltip !== null) {
+      
       // tooltip.style.display = tooltipModel.opacity ? "block" : "none";
 
       tooltip.style.left = tooltipModel.caretX + "px";
@@ -153,11 +168,22 @@ const LineChart = ({
             }) as HTMLDivElement;
 
          elem.style.display = "none"
+
+         if (!exportLabel) {
+            if (chartData.update !== undefined) {
+              const { amount, date } = chartData;
+                chartData.update({
+                    amount, date, hide:true
+                });
+            }
+         }
+
       }} className="w-[400px] relative h-[100px]">
         {" "}
         <Line options={options} data={data()} />{" "}
-        <div className={`${toolstype.tooltip} tooltip tooltip${name}`}>
-          <div
+        
+      <div className={`${toolstype.tooltip} tooltip tooltip${name}`}>
+          {exportLabel && <><div
             style={{
               fontWeight: label.length > 1 ? 700 : undefined,
             }}
@@ -169,7 +195,8 @@ const LineChart = ({
               padding: label.length < 2 ? "6px 2px" : undefined,
             }}
             className={`${toolstype.tooltip_sublabel} tooltip_sublabel`}
-          ></div>
+          ></div></>}
+
           <div className={`${toolstype.tooltip_value} tooltip_value`}>
             <span className={`${toolstype.color_circle} color_circle`}></span>
             <span className={`${toolstype.value} value`}></span>

@@ -106,7 +106,6 @@ const MenuProps = {
     };
   }
 
-
   const { isAuthenticated, isInitialized, Moralis, user } = useMoralis();
 
   const [loadpage, isloadPage] = useState<boolean>(true);

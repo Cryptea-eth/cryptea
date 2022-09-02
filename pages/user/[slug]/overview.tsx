@@ -37,8 +37,6 @@ const Overview = () => {
 
     const { sidebar }: dash  = useContext(DashContext);
 
-
-
     const [data, setData] = useState<any>({});
 
     const [userLk, setUserLk] = useState<string>('');
@@ -109,15 +107,15 @@ const Overview = () => {
         }
     };
 
-    if (isInitialized) {
-        if (router.isReady) {         
+    if (isInitialized && router.isReady) {
+      
             if (!isAuthenticated) {
                 router.push("/");
             }else{
                 init();
             }
-         }
-        }
+         
+      }
 
     }, [isAuthenticated, isInitialized, user, slug, router.isReady, router]);
   
@@ -492,7 +490,7 @@ const Overview = () => {
                         />
                       </div>
 
-                      <Link href="/working">
+                      <Link href={`/user/${slug}/onetime`}>
                         <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                           View more payment data
                         </a>
@@ -514,11 +512,9 @@ const Overview = () => {
                         <div className="absolute top-[47px] font-[400] text-[1.5rem]">
                           <NumberFormat
                             value={sortData(data.views, "24h", false)
-                              ["data"].reduce((a, b) => a + b, 0)
-                              .toFixed(2)}
+                              ["data"].reduce((a, b) => a + b, 0)}
                             thousandSeparator={true}
                             displayType={"text"}
-                            prefix={"$"}
                           />
                         </div>
 

@@ -588,7 +588,7 @@
     "aes-js" "3.0.0"
     "scrypt-js" "3.0.1"
 
-"@ethersproject/keccak256@^5.0.3", "@ethersproject/keccak256@^5.6.1":
+"@ethersproject/keccak256@^5.0.0-beta.130", "@ethersproject/keccak256@^5.0.3", "@ethersproject/keccak256@^5.6.1":
   "version" "5.6.1"
   dependencies:
     "@ethersproject/bytes" "^5.6.1"
@@ -890,6 +890,31 @@
   dependencies:
     "multiformats" "^9.5.4"
 
+"@json-rpc-tools/provider@^1.5.5":
+  "integrity" "sha512-z7D3xvJ33UfCGv77n40lbzOYjZKVM3k2+5cV7xS8G6SCvKTzMkhkUYuD/qzQUNT4cG/lv0e9mRToweEEVLVVmA=="
+  "resolved" "https://registry.npmjs.org/@json-rpc-tools/provider/-/provider-1.7.6.tgz"
+  "version" "1.7.6"
+  dependencies:
+    "@json-rpc-tools/utils" "^1.7.6"
+    "axios" "^0.21.0"
+    "safe-json-utils" "^1.1.1"
+    "ws" "^7.4.0"
+
+"@json-rpc-tools/types@^1.7.6":
+  "integrity" "sha512-nDSqmyRNEqEK9TZHtM15uNnDljczhCUdBmRhpNZ95bIPKEDQ+nTDmGMFd2lLin3upc5h2VVVd9tkTDdbXUhDIQ=="
+  "resolved" "https://registry.npmjs.org/@json-rpc-tools/types/-/types-1.7.6.tgz"
+  "version" "1.7.6"
+  dependencies:
+    "keyvaluestorage-interface" "^1.0.0"
+
+"@json-rpc-tools/utils@^1.7.6":
+  "integrity" "sha512-HjA8x/U/Q78HRRe19yh8HVKoZ+Iaoo3YZjakJYxR+rw52NHo6jM+VE9b8+7ygkCFXl/EHID5wh/MkXaE/jGyYw=="
+  "resolved" "https://registry.npmjs.org/@json-rpc-tools/utils/-/utils-1.7.6.tgz"
+  "version" "1.7.6"
+  dependencies:
+    "@json-rpc-tools/types" "^1.7.6"
+    "@pedrouid/environment" "^1.0.1"
+
 "@magic-sdk/commons@^4.1.1":
   "integrity" "sha512-nHbMRkssAC1z5rHpPwkiYolp3qxmtnkNaynGlreVxgtPTemJ8USRrXjg/cF0WVhRwtPTpegdTvtpJWOMd0Ratg=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@magic-sdk/commons/-/commons-4.1.1.tgz"
@@ -1097,6 +1122,11 @@
   "integrity" "sha512-dGRS0agJzu8ybo44pCIf3xBaPQN/65AIXNgK8+4gzKd5kbvlqyxryUYVLJv7fK98Seyd2hDZzVEHSWAh0Bt1Yw=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@openzeppelin/contracts/-/contracts-4.7.3.tgz"
   "version" "4.7.3"
+
+"@pedrouid/environment@^1.0.1":
+  "integrity" "sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug=="
+  "resolved" "https://registry.npmjs.org/@pedrouid/environment/-/environment-1.0.1.tgz"
+  "version" "1.0.1"
 
 "@popperjs/core@^2.11.6":
   "integrity" "sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw=="
@@ -1927,6 +1957,20 @@
   "resolved" "https://repo.huaweicloud.com/repository/npm/@walletconnect/environment/-/environment-1.0.0.tgz"
   "version" "1.0.0"
 
+"@walletconnect/ethereum-provider@^1.7.1":
+  "integrity" "sha512-Nq9m+oo5P0F+njsROHw9KMWdoc/8iGHYzQdkjJN/1C7DtsqFRg5k5a3hd9rzCLpbPsOC1q8Z5lRs6JQgDvPm6Q=="
+  "resolved" "https://registry.npmjs.org/@walletconnect/ethereum-provider/-/ethereum-provider-1.8.0.tgz"
+  "version" "1.8.0"
+  dependencies:
+    "@walletconnect/client" "^1.8.0"
+    "@walletconnect/jsonrpc-http-connection" "^1.0.2"
+    "@walletconnect/jsonrpc-provider" "^1.0.5"
+    "@walletconnect/signer-connection" "^1.8.0"
+    "@walletconnect/types" "^1.8.0"
+    "@walletconnect/utils" "^1.8.0"
+    "eip1193-provider" "1.0.1"
+    "eventemitter3" "4.0.7"
+
 "@walletconnect/http-connection@^1.8.0":
   "integrity" "sha512-IziEr3c53qsMromK7jz0EkbKDHlryRbxXdFR+xaG+S5nfxtUdAfjzlZabvczXdDCgmTij6KbNsZAjBMqCBzACw=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@walletconnect/http-connection/-/http-connection-1.8.0.tgz"
@@ -1945,6 +1989,23 @@
     "@walletconnect/crypto" "^1.0.2"
     "@walletconnect/types" "^1.8.0"
     "@walletconnect/utils" "^1.8.0"
+
+"@walletconnect/jsonrpc-http-connection@^1.0.2":
+  "integrity" "sha512-npPvDG2JxyxoqOphDiyjp5pPeASRBrlfQS39wHESPHlFIjBuvNt9lV9teh53MK9Ncbyxh4y2qEKMfPgcUulTRg=="
+  "resolved" "https://registry.npmjs.org/@walletconnect/jsonrpc-http-connection/-/jsonrpc-http-connection-1.0.3.tgz"
+  "version" "1.0.3"
+  dependencies:
+    "@walletconnect/jsonrpc-utils" "^1.0.3"
+    "@walletconnect/safe-json" "^1.0.0"
+    "cross-fetch" "^3.1.4"
+
+"@walletconnect/jsonrpc-provider@^1.0.5":
+  "integrity" "sha512-v61u4ZIV8+p9uIHS2Kl2YRj/2idrQiHcrbrJXw3McQkEJtj9mkCofr1Hu/n419wSRM5uiNK8Z4WRS9zGTTAhWQ=="
+  "resolved" "https://registry.npmjs.org/@walletconnect/jsonrpc-provider/-/jsonrpc-provider-1.0.5.tgz"
+  "version" "1.0.5"
+  dependencies:
+    "@walletconnect/jsonrpc-utils" "^1.0.3"
+    "@walletconnect/safe-json" "^1.0.0"
 
 "@walletconnect/jsonrpc-types@^1.0.1":
   "integrity" "sha512-+6coTtOuChCqM+AoYyi4Q83p9l/laI6NvuM2/AHaZFuf0gT0NjW7IX2+86qGyizn7Ptq4AYZmfxurAxTnhefuw=="
@@ -1987,10 +2048,22 @@
     "@walletconnect/environment" "^1.0.0"
     "randombytes" "^2.1.0"
 
-"@walletconnect/safe-json@1.0.0":
+"@walletconnect/safe-json@^1.0.0", "@walletconnect/safe-json@1.0.0":
   "integrity" "sha512-QJzp/S/86sUAgWY6eh5MKYmSfZaRpIlmCJdi5uG4DJlKkZrHEF7ye7gA+VtbVzvTtpM/gRwO2plQuiooIeXjfg=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@walletconnect/safe-json/-/safe-json-1.0.0.tgz"
   "version" "1.0.0"
+
+"@walletconnect/signer-connection@^1.8.0":
+  "integrity" "sha512-+YAaTAP52MWZJ2wWnqKClKCPlPHBo6reURFe0cWidLADh9mi/kPWGALZ5AENK22zpem1bbKV466rF5Rzvu0ehA=="
+  "resolved" "https://registry.npmjs.org/@walletconnect/signer-connection/-/signer-connection-1.8.0.tgz"
+  "version" "1.8.0"
+  dependencies:
+    "@walletconnect/client" "^1.8.0"
+    "@walletconnect/jsonrpc-types" "^1.0.1"
+    "@walletconnect/jsonrpc-utils" "^1.0.3"
+    "@walletconnect/qrcode-modal" "^1.8.0"
+    "@walletconnect/types" "^1.8.0"
+    "eventemitter3" "4.0.7"
 
 "@walletconnect/socket-transport@^1.8.0":
   "integrity" "sha512-5DyIyWrzHXTcVp0Vd93zJ5XMW61iDM6bcWT4p8DTRfFsOtW46JquruMhxOLeCOieM4D73kcr3U7WtyR4JUsGuQ=="
@@ -2001,15 +2074,15 @@
     "@walletconnect/utils" "^1.8.0"
     "ws" "7.5.3"
 
+"@walletconnect/types@^1.7.1", "@walletconnect/types@^1.8.0":
+  "integrity" "sha512-Cn+3I0V0vT9ghMuzh1KzZvCkiAxTq+1TR2eSqw5E5AVWfmCtECFkVZBP6uUJZ8YjwLqXheI+rnjqPy7sVM4Fyg=="
+  "resolved" "https://repo.huaweicloud.com/repository/npm/@walletconnect/types/-/types-1.8.0.tgz"
+  "version" "1.8.0"
+
 "@walletconnect/types@^1.7.8", "@walletconnect/types@~1.7.8":
   "integrity" "sha512-0oSZhKIrtXRJVP1jQ0EDTRtotQY6kggGjDcmm/LLQBKnOZXdPeo0sPkV/7DjT5plT3O7Cjc6JvuXt9WOY0hlCA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@walletconnect/types/-/types-1.7.8.tgz"
   "version" "1.7.8"
-
-"@walletconnect/types@^1.8.0":
-  "integrity" "sha512-Cn+3I0V0vT9ghMuzh1KzZvCkiAxTq+1TR2eSqw5E5AVWfmCtECFkVZBP6uUJZ8YjwLqXheI+rnjqPy7sVM4Fyg=="
-  "resolved" "https://repo.huaweicloud.com/repository/npm/@walletconnect/types/-/types-1.8.0.tgz"
-  "version" "1.8.0"
 
 "@walletconnect/utils@^1.7.8", "@walletconnect/utils@^1.8.0":
   "integrity" "sha512-zExzp8Mj1YiAIBfKNm5u622oNw44WOESzo6hj+Q3apSMIb0Jph9X3GDIdbZmvVZsNPxWDL7uodKgZcCInZv2vA=="
@@ -2086,6 +2159,49 @@
   "version" "1.0.0"
   dependencies:
     "web-streams-polyfill" "^3.1.1"
+
+"@web3-react/abstract-connector@^6.0.7":
+  "integrity" "sha512-RhQasA4Ox8CxUC0OENc1AJJm8UTybu/oOCM61Zjg6y0iF7Z0sqv1Ai1VdhC33hrQpA8qSBgoXN9PaP8jKmtdqg=="
+  "resolved" "https://registry.npmjs.org/@web3-react/abstract-connector/-/abstract-connector-6.0.7.tgz"
+  "version" "6.0.7"
+  dependencies:
+    "@web3-react/types" "^6.0.7"
+
+"@web3-react/core@^6.1.9":
+  "integrity" "sha512-P877DslsbAkWIlMANpWiK7pCvNwlz0kJC0EGckuVh0wlA23J4UnFxq6xyOaxkxaDCu14rA/tAO0NbwjcXTQgSA=="
+  "resolved" "https://registry.npmjs.org/@web3-react/core/-/core-6.1.9.tgz"
+  "version" "6.1.9"
+  dependencies:
+    "@ethersproject/keccak256" "^5.0.0-beta.130"
+    "@web3-react/abstract-connector" "^6.0.7"
+    "@web3-react/types" "^6.0.7"
+    "tiny-invariant" "^1.0.6"
+    "tiny-warning" "^1.0.3"
+
+"@web3-react/injected-connector@^6.0.7":
+  "integrity" "sha512-Y7aJSz6pg+MWKtvdyuqyy6LWuH+4Tqtph1LWfiyVms9II9ar/9B/de4R8wh4wjg91wmHkU+D75yP09E/Soh2RA=="
+  "resolved" "https://registry.npmjs.org/@web3-react/injected-connector/-/injected-connector-6.0.7.tgz"
+  "version" "6.0.7"
+  dependencies:
+    "@web3-react/abstract-connector" "^6.0.7"
+    "@web3-react/types" "^6.0.7"
+    "tiny-warning" "^1.0.3"
+
+"@web3-react/types@^6.0.7":
+  "integrity" "sha512-ofGmfDhxmNT1/P/MgVa8IKSkCStFiyvXe+U5tyZurKdrtTDFU+wJ/LxClPDtFerWpczNFPUSrKcuhfPX1sI6+A=="
+  "resolved" "https://registry.npmjs.org/@web3-react/types/-/types-6.0.7.tgz"
+  "version" "6.0.7"
+
+"@web3-react/walletconnect-connector@^6.2.13":
+  "integrity" "sha512-rTsYLv2UpQZ92Yv5kyIwzrG+2aQkzE8ki2ElotJ6GmSl3yF9WSaGNfKpE8XI5+aPvbAk4mMn8lIy+os3a9gJgw=="
+  "resolved" "https://registry.npmjs.org/@web3-react/walletconnect-connector/-/walletconnect-connector-6.2.13.tgz"
+  "version" "6.2.13"
+  dependencies:
+    "@walletconnect/ethereum-provider" "^1.7.1"
+    "@walletconnect/types" "^1.7.1"
+    "@web3-react/abstract-connector" "^6.0.7"
+    "@web3-react/types" "^6.0.7"
+    "tiny-invariant" "^1.0.6"
 
 "@web3-storage/multipart-parser@^1.0.0":
   "integrity" "sha512-BEO6al7BYqcnfX15W2cnGR+Q566ACXAT9UQykORCWW80lmkpWsnEob6zJS1ZVBKsSJC8+7vJkHwlp+lXG1UCdw=="
@@ -2665,6 +2781,13 @@
   "integrity" "sha512-32+ub6kkdhhWick/UjvEwRchgoetXqTK14INLqbGm5U2TzBkBNF3nQtLYm8ovxSkQWArjEQvftCKryjZaATu3w=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/axe-core/-/axe-core-4.4.3.tgz"
   "version" "4.4.3"
+
+"axios@^0.21.0":
+  "integrity" "sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg=="
+  "resolved" "https://registry.npmjs.org/axios/-/axios-0.21.4.tgz"
+  "version" "0.21.4"
+  dependencies:
+    "follow-redirects" "^1.14.0"
 
 "axios@^0.27.2":
   "integrity" "sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ=="
@@ -4014,6 +4137,13 @@
   "resolved" "https://repo.huaweicloud.com/repository/npm/ee-first/-/ee-first-1.1.1.tgz"
   "version" "1.1.1"
 
+"eip1193-provider@1.0.1":
+  "integrity" "sha512-kSuqwQ26d7CzuS/t3yRXo2Su2cVH0QfvyKbr2H7Be7O5YDyIq4hQGCNTo5wRdP07bt+E2R/8nPCzey4ojBHf7g=="
+  "resolved" "https://registry.npmjs.org/eip1193-provider/-/eip1193-provider-1.0.1.tgz"
+  "version" "1.0.1"
+  dependencies:
+    "@json-rpc-tools/provider" "^1.5.5"
+
 "electron-fetch@^1.7.2":
   "integrity" "sha512-+fBLXEy4CJWQ5bz8dyaeSG1hD6JJ15kBZyj3eh24pIVrd3hLM47H/umffrdQfS6GZ0falF0g9JT9f3Rs6AVUhw=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/electron-fetch/-/electron-fetch-1.7.4.tgz"
@@ -4851,7 +4981,7 @@
 
 "eventemitter3@4.0.7":
   "integrity" "sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw=="
-  "resolved" "https://repo.huaweicloud.com/repository/npm/eventemitter3/-/eventemitter3-4.0.7.tgz"
+  "resolved" "https://registry.npmjs.org/eventemitter3/-/eventemitter3-4.0.7.tgz"
   "version" "4.0.7"
 
 "events@^3.0.0", "events@^3.3.0":
@@ -5086,7 +5216,7 @@
 "flatted@^3.1.0":
   "version" "3.2.6"
 
-"follow-redirects@^1.12.1", "follow-redirects@^1.14.8", "follow-redirects@^1.14.9":
+"follow-redirects@^1.12.1", "follow-redirects@^1.14.0", "follow-redirects@^1.14.8", "follow-redirects@^1.14.9":
   "integrity" "sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/follow-redirects/-/follow-redirects-1.15.1.tgz"
   "version" "1.15.1"
@@ -8649,6 +8779,11 @@
   dependencies:
     "events" "^3.0.0"
 
+"safe-json-utils@^1.1.1":
+  "integrity" "sha512-SAJWGKDs50tAbiDXLf89PDwt9XYkWyANFWVzn4dTXl5QyI8t2o/bW5/OJl3lvc2WVU4MEpTo9Yz5NVFNsp+OJQ=="
+  "resolved" "https://registry.npmjs.org/safe-json-utils/-/safe-json-utils-1.1.1.tgz"
+  "version" "1.1.1"
+
 "safer-buffer@^2.0.2", "safer-buffer@^2.1.0", "safer-buffer@>= 2.1.2 < 3", "safer-buffer@>= 2.1.2 < 3.0.0", "safer-buffer@~2.1.0":
   "integrity" "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/safer-buffer/-/safer-buffer-2.1.2.tgz"
@@ -9267,6 +9402,16 @@
   "integrity" "sha512-NO/1CZigzlCWQiWdIGv8ebXt6Uk77zdLz2NE7KcZRU5Egj2+947lzUpk30xQUQlq5dRY25j7ZulG4RfA2DHYfA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/timestamp-nano/-/timestamp-nano-1.0.0.tgz"
   "version" "1.0.0"
+
+"tiny-invariant@^1.0.6":
+  "integrity" "sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg=="
+  "resolved" "https://registry.npmjs.org/tiny-invariant/-/tiny-invariant-1.2.0.tgz"
+  "version" "1.2.0"
+
+"tiny-warning@^1.0.3":
+  "integrity" "sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA=="
+  "resolved" "https://registry.npmjs.org/tiny-warning/-/tiny-warning-1.0.3.tgz"
+  "version" "1.0.3"
 
 "tmp@0.0.33":
   "integrity" "sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw=="
@@ -10403,7 +10548,7 @@
   "resolved" "https://repo.huaweicloud.com/repository/npm/wrappy/-/wrappy-1.0.2.tgz"
   "version" "1.0.2"
 
-"ws@*", "ws@^7.4.5", "ws@^7.4.6", "ws@7.5.3":
+"ws@*", "ws@^7.4.0", "ws@^7.4.5", "ws@^7.4.6", "ws@7.5.3":
   "integrity" "sha512-kQ/dHIzuLrS6Je9+uv81ueZomEwH0qVYstcAQ4/Z93K8zeko9gtAbttJWzoC5ukqXY1PpoouV3+VSOqEAFt5wg=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/ws/-/ws-7.5.3.tgz"
   "version" "7.5.3"
