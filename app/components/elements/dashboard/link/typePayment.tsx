@@ -50,7 +50,7 @@ const TypePayment = ({
             <div
               className={`body pb-6 transition-all delay-500 ${
                 sidebar?.openPage ? "pl-[249px]" : "pl-[79px]"
-              } w-full h-full 2sm:!pl-[87px]`}
+              } w-full h-full 2sm:!pl-[75px]`}
             >
               {support ? (
                 <>{children}</>

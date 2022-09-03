@@ -15,6 +15,8 @@ import { FiSettings, FiShare2 } from 'react-icons/fi';
 import { RiCoinLine } from 'react-icons/ri';
 import NumberFormat from 'react-number-format';
 import LineChart from '../../../app/components/elements/Extras/Rep/lineChart';
+import { MdOutlineSettingsSuggest } from 'react-icons/md';
+import ShareLink from '../../../app/components/elements/dashboard/linkOverview/share';
 
 
 const Onetime = () => {
@@ -45,7 +47,6 @@ const Onetime = () => {
 
     const { isAuthenticated, isInitialized, user } = useMoralis();
   
-
     const [amountInfo, setAmountInfo] = useState<string>(``);
 
     useEffect(() => {
@@ -150,11 +151,23 @@ const Onetime = () => {
               data={{
                 src: data.src,
                 title: data.title !== undefined ? data.title : slug,
-                slug: String(slug)
+                slug: String(slug),
               }}
               support={data.type == "both" || data.type == "onetime"}
               which={"onetime"}
             >
+              <ShareLink
+                data={{
+                  src: data.src,
+                  usrc: user?.get("img"),
+                  desc: data.desc,
+                  userLk: `${window.location.origin}/user/${slug}`,
+                  slug: String(slug),
+                }}
+                toggleSocial={(ee: boolean) => toggleSocial(ee)}
+                open={social}
+              />
+
               <div className="pl-5 pr-2 flex items-center justify-between min-h-[75px] py-3 border-b sticky top-0 bg-white z-10 w-full">
                 <div className="text-truncate capitalize text-[rgb(32,33,36)] text-[19px] mr-1">
                   <Link href={`/user/${slug}/overview`}>
@@ -171,12 +184,11 @@ const Onetime = () => {
                     <FiShare2 color={"rgb(32,33,36)"} size={22} />
                   </IconButton>
 
-                  <IconButton
-                    size="large"
-                    className="cursor-pointer flex items-center justify-center"
-                  >
-                    <FiSettings color={"rgb(32,33,36)"} size={22} />
-                  </IconButton>
+                  <Avatar
+                    alt={user?.get("username")}
+                    src={user?.get("img") !== undefined ? user?.get("img") : ""}
+                    sx={{ width: 45, height: 45, marginLeft: "10px" }}
+                  />
                 </div>
               </div>
 
@@ -184,7 +196,7 @@ const Onetime = () => {
                 style={{
                   maxWidth: !sidebar?.openPage ? "1031px" : "861px",
                 }}
-                className="mb-6 mt-3 mx-auto"
+                className="mb-6 mt-3 mx-auto 2sm:px-3"
               >
                 <h1 className="text-[rgb(32,33,36)] mb-[5px] font-[400] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
                   <RiCoinLine className="mr-2" size={23} /> Onetime Payments
@@ -327,6 +339,90 @@ const Onetime = () => {
                         }
                       />
                     </div>
+                  </div>
+
+                  <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                    <div className="px-6 pt-6 relative pb-3">
+                      <div className="flex justify-between mb-[16px] items-center">
+                        <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
+                          Page Views
+                        </h2>
+
+                        <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
+                          24 Hr
+                        </span>
+                      </div>
+
+                      <div className="absolute top-[47px] font-[400] text-[1.5rem]">
+                        <NumberFormat
+                          value={sortData(data.views, "24h", false)[
+                            "data"
+                          ].reduce((a, b) => a + b, 0)}
+                          thousandSeparator={true}
+                          displayType={"text"}
+                        />
+                      </div>
+
+                      <LineChart
+                        label={["data"]}
+                        name="views"
+                        prefix="$"
+                        dataList={[
+                          sortData(
+                            data.views.length
+                              ? data.views
+                              : [{ amount: 0, date: 0 }],
+                            "24h",
+                            false
+                          )["data"],
+                        ]}
+                        styles={{
+                          width: "100%",
+                        }}
+                        labels={
+                          sortData(
+                            data.views.length
+                              ? data.views
+                              : [{ amount: 0, date: 0 }],
+                            "24h",
+                            false
+                          )["label"]
+                        }
+                      />
+                    </div>
+
+                    {/* <Link href="/working">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
+                            View more data
+                          </a>
+                        </Link> */}
+                  </div>
+
+                  <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
+                    <div className="px-6 pt-6 relative pb-3">
+                      <div className="flex justify-between mb-[16px] items-center">
+                        <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
+                          Settings
+                        </h2>
+                      </div>
+
+                      <div className="z-0 right-[15px] flex items-center top-[5px] bottom-0 m-auto absolute">
+                        <div className="absolute z-0 h-full w-[140px] bg-overlay"></div>
+                        <MdOutlineSettingsSuggest
+                          size={180}
+                          color={"#f5705933"}
+                        />
+                      </div>
+
+                      <div className="w-full relative z-[10] items-center flex text-[rgb(95,99,104)] h-[100px]">
+                        Configure link
+                      </div>
+                    </div>
+                    <Link href="/working">
+                      <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
+                        Go To Settings
+                      </a>
+                    </Link>
                   </div>
                 </div>
               </div>
