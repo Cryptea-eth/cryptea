@@ -54,6 +54,8 @@ const Onetime = () => {
   });
 
 
+  const [pcols, setPcols] = useState<string[]>([]);
+
   const genClr = ():string => {
      const clr:string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
 
@@ -70,6 +72,18 @@ const Onetime = () => {
       return '#'+gnClr;
 
   }
+
+
+  useEffect(() => {
+    const ex:string[] = [];
+
+      for (let i: number = 0; i < 10; i++) {
+          ex.push(genClr());
+      }
+
+      setPcols(ex);
+
+  }, []);
 
   const [interText, setInterText] = useState<{ [index: string]: string }>({
     "24h": "24 hours ago",
@@ -92,7 +106,6 @@ const Onetime = () => {
           ee[index] = bool !== undefined ? bool : !ee[index];
 
           setCopied(ee);
-
   }
 
   const [columns, setColumns] = useState([
@@ -147,7 +160,6 @@ const Onetime = () => {
 
         setColumns(addColumn);
         const rowx: any = [];
-
         
 
     if(dd.length) {
@@ -184,7 +196,7 @@ const Onetime = () => {
                         width: 30,
                         height: 30,
                         marginRight: "10px",
-                        backgroundColor: genClr(),
+                        backgroundColor: ii > 9 ? pcols[ii%10] : pcols[ii],
                         fontSize: "18px",
                       }}
                     >
@@ -312,6 +324,8 @@ const Onetime = () => {
     router.isReady,
     router,
     copied,
+    mainCopy,
+    pcols,
     interval,
     columns,
     paymentS,
