@@ -9,6 +9,7 @@ import {
   WhatsappShareButton,
 } from "react-share";
 import bigimg from "../../../../../public/images/logobig.png";
+import { CgMore } from "react-icons/cg";
 import copy from "copy-to-clipboard";
 import {
   FaFacebookF,
@@ -37,6 +38,7 @@ const ShareLink = ({
     src: string;
     usrc: string;
     desc: string;
+    title: string;
     userLk: string;
     slug: string
   };
@@ -157,15 +159,7 @@ const ShareLink = ({
                   <span className="font-semibold text-[#777]">Facebook</span>
                 </div>
               </FacebookShareButton>
-              {/* <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
-                          <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
-                            <FaInstagram color={"#6a6a6a"} size={35} />
-                          </div>
 
-                          <span className="font-semibold text-[#777]">
-                            Instagram
-                          </span>
-                        </div> */}
               <RedditShareButton
                 title={`${Boolean(data.desc) ? data.desc : ""} \n`}
                 url={data.userLk}
@@ -197,14 +191,24 @@ const ShareLink = ({
                   <span className="font-semibold text-[#777]">Pinterest</span>
                 </div>
               </PinterestShareButton>
-              {/* navigator.share(shareData); */}
 
-              <div className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9">
+              <div
+                onClick={() => {
+                  const shareData = {
+                    title: Boolean(data.title) ? data.title : "",
+                    text: Boolean(data.desc) ? data.desc : "",
+                    url: data.userLk,
+                  };
+
+                  navigator.share(shareData);
+                }}
+                className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9"
+              >
                 <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
-                  <FaPinterest color={"#6a6a6a"} size={35} />
+                  <CgMore color={"#6a6a6a"} size={40} />
                 </div>
 
-                <span className="font-semibold text-[#777]">Pinterest</span>
+                <span className="font-semibold text-[#777]">More</span>
               </div>
             </div>
 

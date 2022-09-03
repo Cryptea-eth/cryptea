@@ -160,6 +160,7 @@ const Onetime = () => {
                 data={{
                   src: data.src,
                   usrc: user?.get("img"),
+                  title: data.title,
                   desc: data.desc,
                   userLk: `${window.location.origin}/user/${slug}`,
                   slug: String(slug),

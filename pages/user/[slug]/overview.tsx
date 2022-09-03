@@ -136,6 +136,7 @@ const Overview = () => {
                     src: data.src,
                     usrc: user?.get("img"),
                     desc: data.desc,
+                    title: data.title,
                     userLk,
                     slug: String(slug)
                   }}
