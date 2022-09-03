@@ -549,6 +549,7 @@ const Origin = ({
             remind: date + (mainIx(interval) * 1000),
             address: from,
             amount: price,
+            token: 'matic',
             renewal: interval,
           });
 
@@ -589,11 +590,23 @@ const Origin = ({
 
           const payers = onetime === undefined ? [] : JSON.parse(onetime);
 
+          const rx: { [index: string]: string | number } = {};
+
+          pemail.forEach((val: undefined | string, i: number) => {
+            if (val !== undefined && val.length) {
+              if (userD.rdata["onetime"][i] !== undefined) {
+                rx[userD.rdata["onetime"][i].toLowerCase()] = val;
+              }
+            }
+          });
+
           if (linkHook !== undefined) {
             payers.push({
+              ...rx,
               date: new Date().getTime(),
               address: from,
               amount: price,
+              token: 'matic'
             });
 
             linkHook.set("onetime", JSON.stringify(payers));
@@ -1143,7 +1156,7 @@ const Origin = ({
                                             const val = e.target.value;
                                             pemail[i] = val;
 
-                                            setPemail(pemail);
+                                            setPemail([...pemail]);
                                           }}
                                         />
                                       </>
@@ -1400,7 +1413,7 @@ const Origin = ({
                                             const val = e.target.value;
                                             pemail[i] = val;
 
-                                            setPemail(pemail);
+                                            setPemail([...pemail]);
                                           }}
                                         />
                                       </>

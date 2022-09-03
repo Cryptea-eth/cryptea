@@ -1,364 +1,811 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, Fragment } from "react";
 import Link from "next/link";
-import { Avatar, Button, IconButton, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  IconButton,
+  TableCell,
+  TableBody,
+  TablePagination,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Table,
+  AvatarGroup,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+  ClickAwayListener,
+} from "@mui/material";
 import { useRouter } from "next/router";
 import Loader from "../../../app/components/elements/loader";
-import Head from "next/head";
-import sortData from '../../../app/components/elements/dashboard/linkOverview/generateData';
+import copy from "copy-to-clipboard";
+import sortData from "../../../app/components/elements/dashboard/linkOverview/generateData";
 import { initD } from "../../../app/components/elements/dashboard/link/data";
 import { dash, DashContext } from "../../../app/contexts/GenContext";
 import { useMoralis } from "react-moralis";
-import Image from 'next/image';
-import { GiTwoCoins } from 'react-icons/gi';
 import TypePayment from "../../../app/components/elements/dashboard/link/typePayment";
-import { FiSettings, FiShare2 } from 'react-icons/fi';
-import { RiCoinLine } from 'react-icons/ri';
-import NumberFormat from 'react-number-format';
-import LineChart from '../../../app/components/elements/Extras/Rep/lineChart';
-import { MdOutlineSettingsSuggest } from 'react-icons/md';
-import ShareLink from '../../../app/components/elements/dashboard/linkOverview/share';
-
+import { FiSettings, FiShare2 } from "react-icons/fi";
+import { RiCoinLine } from "react-icons/ri";
+import NumberFormat from "react-number-format";
+import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
+import { MdContentCopy, MdOutlineSettingsSuggest } from "react-icons/md";
+import ShareLink from "../../../app/components/elements/dashboard/linkOverview/share";
 
 const Onetime = () => {
+  const router = useRouter();
 
-    const router = useRouter();
+  const { slug } = router.query;
 
-    const { slug } = router.query;
+  const [social, toggleSocial] = useState<boolean>(false);
 
-    const [social, toggleSocial] = useState<boolean>(false);
+  const { sidebar, chartData }: dash = useContext(DashContext);
 
-    const { sidebar, chartData }: dash = useContext(DashContext);
+  const [data, setData] = useState<{ [index: string]: any }>({});
 
-    const [data, setData] = useState<{[index: string]: any}>({});
+  const [paymentS, setPaymentS] = useState<'latest' | 'top'>('latest');
 
-    const [interval, updInter] = useState<"24h" | "7d" | "30d" | "1yr" | "all">(
-      "24h"
-    );
+  const [interval, updInter] = useState<{
+    [index: string]: { [index: string]: "24h" | "7d" | "30d" | "1yr" | "all" };
+  }>({
+    onetime: { main: "24h", views: "24h" },
 
-    const [interText, setInterText] = useState<{[index: string]: string}>({
-        '24h': "24 hours ago",
-        '7d' : "7 days ago",
-        '30d' : "past 30 days",
-        '1yr' : '1yr ago',
-        'all' : 'All time'
-    });
+    sub: { main: "24h", views: "24h", subscribers: "24h" },
+  });
 
-    const [isLoading, setLoader] = useState<boolean>(true);
 
-    const { isAuthenticated, isInitialized, user } = useMoralis();
-  
-    const [amountInfo, setAmountInfo] = useState<string>(``);
+  const genClr = ():string => {
+     const clr:string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
 
-    useEffect(() => {
-        const init = async () => {
-
-        const oDx = await initD(String(slug).toLowerCase());
-            
-        if(user !== null){
-            if (user.id === oDx.attributes.user.id) {
-                
-                 let src = "";
-
-                 if (oDx.get("template_data") !== undefined) {
-                   const { data: tdata } = JSON.parse(
-                     oDx.get("template_data")
-                   );
-
-                   const { src: srcc } = tdata.image;
-
-                   src = srcc;
-
-                 }   
-                const dd = oDx.get("onetime") !== undefined
-                      ? JSON.parse(oDx.get("onetime"))
-                      : [];
-                setData({
-                  src,
-
-                  title: oDx.get("title") == undefined ? oDx.get("title") : "",
-
-                  desc: oDx.get("desc") == undefined ? oDx.get("desc") : "",
-
-                  link: oDx.get("link"),
-
-                  type: oDx.get("type"),
-
-                  onetime: dd,
-
-                  views:
-                    oDx.get("views") !== undefined
-                      ? JSON.parse(oDx.get("views"))
-                      : [],
-                });
-
-                setAmountInfo(`$${sortData(
-        dd.length ? dd : [{ amount: 0, date: 0 }],
-        interval,
-        false
-      )["data"].reduce((a, b) => a + b, 0)} - ${interText[interval]}`)
-            
-            }
-        }
-
-            setLoader(false);
-        }
-
-    if(router.isReady && isInitialized){
-        if (isAuthenticated) {
-            init();
-        } else {
-            router.push('/');
-        }
-    }
-
-    }, [
-      isAuthenticated,
-      isInitialized,
-      user,
-      slug,
-      router.isReady,
-      router,
-      interval,
-      interText
-    ]);
-
-    
-
-    useEffect(() => {
-      if(chartData.hide){
-
-      if(!isLoading){
-        const setx = document.querySelector(".tooltiprep") as HTMLParagraphElement;
-
-         setx.innerHTML = `$${sortData(
-            data.onetime.length ? data.onetime : [{ amount: 0, date: 0 }],
-            interval,
-            false
-          )["data"].reduce((a, b) => a + b, 0)} - ${interText[interval]}`;
+      const max:number = 6;
+      let gnClr:string = '';
+      
+      for(let i:number = 0; i < max; i++){
+          const random:number = Math.floor(Math.random() * clr.length);
+          
+          gnClr = gnClr + clr[random];
 
       }
+
+      return '#'+gnClr;
+
+  }
+
+  const [interText, setInterText] = useState<{ [index: string]: string }>({
+    "24h": "24 hours ago",
+    "7d": "7 days ago",
+    "30d": "past 30 days",
+    "1yr": "1yr ago",
+    all: "All time",
+  });
+
+  const [isLoading, setLoader] = useState<boolean>(true);
+
+  const { isAuthenticated, isInitialized, user } = useMoralis();
+
+  const [amountInfo, setAmountInfo] = useState<string>(``);
+
+  const [copied, setCopied] = useState<boolean[]>([]);
+
+  const mainCopy = (index: number, bool?: boolean) => {
+        const ee = [...copied];
+          ee[index] = bool !== undefined ? bool : !ee[index];
+
+          setCopied(ee);
+
+  }
+
+  const [columns, setColumns] = useState([
+    { id: "name", label: "Name", minWidth: 120 },
+
+    { id: "asset", label: "Asset", minWidth: 100 },
+    {
+      id: "amount",
+      label: "Amount",
+      minWidth: 100,
+    },
+
+    { id: "address", label: "Address", minWidth: 100 },
+  ]);
+
+  const [rows, setRows] = useState<{[index: string]: JSX.Element | string | number}[]>([]);
+
+  useEffect(() => {
+    const init = async () => {
+      const oDx = await initD(String(slug).toLowerCase());
+
+      if (user !== null) {
+        if (user.id === oDx.attributes.user.id) {
+          let src = "";
+
+          if (oDx.get("template_data") !== undefined) {
+            const { data: tdata } = JSON.parse(oDx.get("template_data"));
+
+            const { src: srcc } = tdata.image;
+
+            src = srcc;
+          }
+          
+          const dd =
+            oDx.get("onetime") !== undefined
+              ? JSON.parse(oDx.get("onetime"))
+              : [];
+
+          const extra = oDx.get('rdata') !== undefined ? JSON.parse(oDx.get('rdata')) : {};
+          let addColumn = [...columns];
+        if(extra['onetime'] !== undefined){
+          extra['onetime'].forEach((v:string) => {
+              if(v != 'Name'){
+                  addColumn.push({
+                    id: v.toLowerCase(),
+                    label: v,
+                    minWidth: 100,
+                  });
+              }
+          });
+        }
+
+        setColumns(addColumn);
+        const rowx: any = [];
+
+        
+
+    if(dd.length) {
+      let sdd:any[] = dd.sort((a:any, b:any) => b.date - a.date);
+
+      if(paymentS == 'top'){
+
+        sdd = dd.sort((a:any, b:any) => b.amount - a.amount);
+
+      }
+
+      sdd.forEach((vmain:{[index: string]: string | number}, ii: number) => {
+        const supply:{[index: string]: string | number} = {};
+
+         supply['name'] = vmain.name === undefined ? 'anonymous' :  vmain.name;
+         supply['token'] = vmain.token === undefined ? "matic" : vmain.token;
+         const msupply = {...supply, ...vmain};
+
+
+
+        const date = new Date(msupply.date);
+
+        const hrx = date.getHours() % 12 || 12;
+        const rowD: { [index: string]: any } = {};
+
+        addColumn.forEach((v:{[index:string]: string | number}) => {
+            const ddx = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            if (v['id'] == 'name') {
+                rowD["name"] = (
+                  <div className="flex items-center">
+                    <Avatar
+                      sx={{
+                        width: 30,
+                        height: 30,
+                        marginRight: "10px",
+                        backgroundColor: genClr(),
+                        fontSize: "18px",
+                      }}
+                    >
+                      {String(msupply.name).charAt(0).toUpperCase()}
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-truncate text-[#4d4d4d]">
+                        {msupply.name}
+                      </span>
+                      <span className="block text-[#858585] font-normal">
+                        {ddx[date.getMonth()]}{" "}
+                        {String(date.getDate()).length == 1
+                          ? "0" + date.getDate()
+                          : date.getDate()}{" "}
+                        {date.getFullYear()} {hrx}:{date.getMinutes()}{" "}
+                        {hrx > 12 ? "pm" : "am"}
+                      </span>
+                    </div>
+                  </div>
+                );
+            }else if(v['id'] == 'address'){
+                  rowD["address"] = (
+                    <ClickAwayListener onClickAway={() => mainCopy(ii, false)}>
+                      <Tooltip
+                        placement="top"
+                        onClose={() => mainCopy(ii, false)}
+                        open={Boolean(copied[ii])}
+                        disableFocusListener
+                        disableHoverListener
+                        disableTouchListener
+                        PopperProps={{
+                          disablePortal: true,
+                        }}
+                        arrow
+                        title="Copied"
+                      >
+                        <div
+                          onClick={() => {
+                            mainCopy(ii, true);
+                            copy(String(msupply.address));
+                          }}
+                          className="flex cursor-pointer items-center relative"
+                        >
+                          {" "}
+                          <span className="text-[#4d4d4d]">
+                            {String(msupply.address).substring(0, 6)}...
+                            {String(msupply.address).substring(38, 42)}
+                          </span>{" "}
+                          <MdContentCopy
+                            className="left-1 relative cursor-pointer"
+                            size={14}
+                          />
+                        </div>
+                      </Tooltip>
+                    </ClickAwayListener>
+                  );
+            }else if(v['id'] == 'amount'){
+              const remind = msupply['remind'] !== undefined ? msupply['remind'] : '';
+
+              rowD['amount'] = Number((Number(msupply['amount'])).toFixed(5)) + ' ' + remind;
+
+            }else if(v['id'] == 'asset'){
+              rowD['asset'] = msupply['token'];
+            }else{
+              rowD[v['id']] = msupply[v['id']];
+            }
+        })
+
+        rowx.push(rowD);
+
+      })
+      
+      setRows([...rowx])
+
     }
 
-    }, [chartData, interval, data.onetime, interText, isLoading]);
 
-    return (
-      <>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <>
-            <TypePayment
+          setData({
+            src,
+
+            title: oDx.get("title") == undefined ? oDx.get("title") : "",
+
+            desc: oDx.get("desc") == undefined ? oDx.get("desc") : "",
+
+            link: oDx.get("link"),
+
+            type: oDx.get("type"),
+
+            main: dd,
+
+            views:
+              oDx.get("views") !== undefined
+                ? JSON.parse(oDx.get("views"))
+                : [],
+          });
+
+          setAmountInfo(
+            `$${(sortData(
+              dd.length ? dd : [{ amount: 0, date: 0 }],
+              interval["onetime"]['main'],
+              false
+            )["data"].reduce((a, b) => a + b, 0)).toFixed(2)} - ${
+              interText[interval["onetime"]['main']]
+            }`
+          );
+
+        }
+      }
+
+      setLoader(false);
+    };
+
+    if (router.isReady && isInitialized) {
+      if (isAuthenticated) {
+        init();
+      } else {
+        router.push("/");
+      }
+    }
+  }, [
+    isAuthenticated,
+    isInitialized,
+    user,
+    slug,
+    router.isReady,
+    router,
+    copied,
+    interval,
+    columns,
+    paymentS,
+    interText,
+  ]);
+
+
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+
+  const handleChangePage = (event:any, newPage:any) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event:any) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
+
+  useEffect(() => {
+    if (chartData.hide) {
+      if (!isLoading) {
+        const setx = document.querySelector(
+          ".tooltiprep"
+        ) as HTMLParagraphElement;
+
+        setx.innerHTML = `$${(sortData(
+          data.main.length ? data.main : [{ amount: 0, date: 0 }],
+          interval["onetime"]['main'],
+          false
+        )["data"].reduce((a, b) => a + b, 0)).toFixed(2)} - ${
+          interText[interval["onetime"]['main']]
+        }`;
+      }
+    }
+  }, [chartData, interval, data.main, interText, isLoading]);
+
+  return (
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <TypePayment
+            data={{
+              src: data.src,
+              title: data.title !== undefined ? data.title : slug,
+              slug: String(slug),
+            }}
+            support={data.type == "both" || data.type == "onetime"}
+            which={"onetime"}
+          >
+            <ShareLink
               data={{
                 src: data.src,
-                title: data.title !== undefined ? data.title : slug,
+                usrc: user?.get("img"),
+                title: data.title,
+                desc: data.desc,
+                userLk: `${window.location.origin}/user/${slug}`,
                 slug: String(slug),
               }}
-              support={data.type == "both" || data.type == "onetime"}
-              which={"onetime"}
-            >
-              <ShareLink
-                data={{
-                  src: data.src,
-                  usrc: user?.get("img"),
-                  title: data.title,
-                  desc: data.desc,
-                  userLk: `${window.location.origin}/user/${slug}`,
-                  slug: String(slug),
-                }}
-                toggleSocial={(ee: boolean) => toggleSocial(ee)}
-                open={social}
-              />
+              toggleSocial={(ee: boolean) => toggleSocial(ee)}
+              open={social}
+            />
 
-              <div className="pl-5 pr-2 flex items-center justify-between min-h-[75px] py-3 border-b sticky top-0 bg-white z-10 w-full">
-                <div className="text-truncate capitalize text-[rgb(32,33,36)] text-[19px] mr-1">
-                  <Link href={`/user/${slug}/overview`}>
-                    <a>{data.title !== undefined ? data.title : slug}</a>
-                  </Link>
-                </div>
-
-                <div className="flex items-center">
-                  <IconButton
-                    onClick={() => toggleSocial(!social)}
-                    size="large"
-                    className="cursor-pointer flex items-center justify-center"
-                  >
-                    <FiShare2 color={"rgb(32,33,36)"} size={22} />
-                  </IconButton>
-
-                  <Avatar
-                    alt={user?.get("username")}
-                    src={user?.get("img") !== undefined ? user?.get("img") : ""}
-                    sx={{ width: 45, height: 45, marginLeft: "10px" }}
-                  />
-                </div>
+            <div className="pl-5 pr-2 flex items-center justify-between min-h-[75px] py-3 border-b sticky top-0 bg-white z-10 w-full">
+              <div className="text-truncate capitalize text-[rgb(32,33,36)] text-[19px] mr-1">
+                <Link href={`/user/${slug}/overview`}>
+                  <a>{data.title !== undefined ? data.title : slug}</a>
+                </Link>
               </div>
 
-              <div
+              <div className="flex items-center">
+                <Tooltip arrow title="Share Link">
+          
+                <IconButton
+                  onClick={() => toggleSocial(!social)}
+                  size="large"
+                  className="cursor-pointer flex items-center justify-center"
+                >
+                  <FiShare2 color={"rgb(32,33,36)"} size={22} />
+                </IconButton>
+            </Tooltip>
+                <Avatar
+                  alt={user?.get("username")}
+                  src={user?.get("img") !== undefined ? user?.get("img") : ""}
+                  sx={{ width: 45, height: 45, marginLeft: "10px" }}
+                />
+              </div>
+            </div>
+
+            <div
+              style={{
+                maxWidth: !sidebar?.openPage ? "1031px" : "861px",
+              }}
+              className="mb-6 mt-3 mx-auto 2sm:px-3"
+            >
+              <h1 className="text-[rgb(32,33,36)] mb-[5px] font-[400] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
+                <RiCoinLine className="mr-2" size={23} /> Onetime Payments
+              </h1>
+
+              <p
                 style={{
                   maxWidth: !sidebar?.openPage ? "1031px" : "861px",
                 }}
-                className="mb-6 mt-3 mx-auto 2sm:px-3"
+                className="text-[1.2rem] capitalize text-center text-[rgb(95,99,104)] leading-[1.25rem] tooltiprep block"
               >
-                <h1 className="text-[rgb(32,33,36)] mb-[5px] font-[400] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
-                  <RiCoinLine className="mr-2" size={23} /> Onetime Payments
-                </h1>
+                {amountInfo}
+              </p>
 
-                <p
-                  style={{
-                    maxWidth: !sidebar?.openPage ? "1031px" : "861px",
-                  }}
-                  className="text-[1.2rem] capitalize text-center text-[rgb(95,99,104)] leading-[1.25rem] tooltiprep block"
-                >
-                  {amountInfo}
-                </p>
-                <ToggleButtonGroup
-                  value={interval}
+              <ToggleButtonGroup
+                value={interval["onetime"]["main"]}
+                sx={{
+                  justifyContent: "space-between",
+                  maxWidth: "300px",
+                  "& .Mui-selected": {
+                    backgroundColor: `#f57059 !important`,
+                    color: `#fff !important`,
+                  },
+                  "& .MuiToggleButtonGroup-grouped": {
+                    borderRadius: "4px !important",
+                    minWidth: 55,
+                    padding: "2px",
+                    color: "#d3d3d3",
+                    border: "none",
+                  },
+                }}
+                exclusive
+                className="cusscroller overflow-y-hidden flex justify-center mt-5 mx-auto mb-2 pb-1"
+                onChange={(e: any) => {
+                  const val: string | any = e.target.value;
+                  setAmountInfo(
+                    `$${sortData(
+                      data.main.length ? data.main : [{ amount: 0, date: 0 }],
+                      val,
+                      false
+                    )
+                      ["data"].reduce((a, b) => a + b, 0)
+                      .toFixed(2)} - ${interText[val]}`
+                  );
+
+                  updInter({
+                    ...interval,
+                    onetime: { main: val, views: val, subscribers: val },
+                  });
+                }}
+              >
+                <ToggleButton
                   sx={{
-                    justifyContent: "space-between",
-                    maxWidth: "300px",
-                    "& .Mui-selected": {
-                      backgroundColor: `#f57059 !important`,
-                      color: `#fff !important`,
-                    },
-                    "& .MuiToggleButtonGroup-grouped": {
-                      borderRadius: "4px !important",
-                      minWidth: 55,
-                      padding: "2px",
-                      color: "#d3d3d3",
-                      border: "none",
-                    },
+                    textTransform: "capitalize",
+                    fontWeight: "bold",
                   }}
-                  exclusive
-                  className="cusscroller overflow-y-hidden flex justify-center mt-5 mx-auto mb-2 pb-1"
-                  onChange={(e: any) => {
-                    const val: string | any = e.target.value;
-                    setAmountInfo(
-                      `$${sortData(
-                        data.onetime.length
-                          ? data.onetime
-                          : [{ amount: 0, date: 0 }],
-                        val,
-                        false
-                      )["data"].reduce((a, b) => a + b, 0)} - ${interText[val]}`
-                    );
-
-                    updInter(val);
-                  }}
+                  value={`24h`}
                 >
-                  <ToggleButton
-                    sx={{
-                      textTransform: "capitalize",
-                      fontWeight: "bold",
-                    }}
-                    value={`24h`}
-                  >
-                    24h
-                  </ToggleButton>
+                  24h
+                </ToggleButton>
 
-                  <ToggleButton
-                    sx={{
-                      textTransform: "capitalize",
-                      fontWeight: "bold",
-                    }}
-                    value={`7d`}
-                  >
-                    7d
-                  </ToggleButton>
+                <ToggleButton
+                  sx={{
+                    textTransform: "capitalize",
+                    fontWeight: "bold",
+                  }}
+                  value={`7d`}
+                >
+                  7d
+                </ToggleButton>
 
-                  <ToggleButton
-                    sx={{
-                      textTransform: "capitalize",
-                      fontWeight: "bold",
-                    }}
-                    value={`30d`}
-                  >
-                    30d
-                  </ToggleButton>
+                <ToggleButton
+                  sx={{
+                    textTransform: "capitalize",
+                    fontWeight: "bold",
+                  }}
+                  value={`30d`}
+                >
+                  30d
+                </ToggleButton>
 
-                  <ToggleButton
-                    sx={{
-                      textTransform: "capitalize",
-                      fontWeight: "bold",
-                    }}
-                    value={`1yr`}
-                  >
-                    1yr
-                  </ToggleButton>
+                <ToggleButton
+                  sx={{
+                    textTransform: "capitalize",
+                    fontWeight: "bold",
+                  }}
+                  value={`1yr`}
+                >
+                  1yr
+                </ToggleButton>
 
-                  <ToggleButton
-                    sx={{
-                      textTransform: "capitalize",
-                      fontWeight: "bold",
-                    }}
-                    value={`all`}
-                  >
-                    all
-                  </ToggleButton>
-                </ToggleButtonGroup>
+                <ToggleButton
+                  sx={{
+                    textTransform: "capitalize",
+                    fontWeight: "bold",
+                  }}
+                  value={`all`}
+                >
+                  all
+                </ToggleButton>
+              </ToggleButtonGroup>
+              <div
+                style={{
+                  gridTemplateColumns: "repeat(auto-fill, minmax(410px, 1fr))",
+                  maxWidth: !sidebar?.openPage ? "1031px" : "861px",
+                }}
+                className="mt-4 mx-auto transition-all delay-500 grid gap-6 grid-flow-dense"
+              >
                 <div
                   style={{
-                    gridTemplateColumns:
-                      "repeat(auto-fill, minmax(410px, 1fr))",
-                    maxWidth: !sidebar?.openPage ? "1031px" : "861px",
+                    gridColumn: "span 2",
                   }}
-                  className="mt-4 mx-auto transition-all delay-500 grid gap-6 grid-flow-dense"
+                  className=" border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
                 >
-                  <div
-                    style={{
-                      gridColumn: "span 2",
-                    }}
-                    className=" border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
-                  >
-                    <div className="p-6 relative">
-                      <LineChart
-                        label={["onetime"]}
-                        name="chart1"
-                        prefix="$"
-                        color={["#f57059"]}
-                        exportLabel={false}
-                        dataList={[
-                          sortData(
-                            data.onetime.length
-                              ? data.onetime
-                              : [{ amount: 0, date: 0 }],
-                            interval,
-                            false
-                          )["data"],
-                        ]}
-                        styles={{
-                          width: "100%",
-                          height: "200px",
+                  <div className="p-6 relative">
+                    <LineChart
+                      label={["onetime"]}
+                      name="chart1"
+                      prefix="$"
+                      color={["#f57059"]}
+                      exportLabel={false}
+                      dataList={[
+                        sortData(
+                          data.main.length
+                            ? data.main
+                            : [{ amount: 0, date: 0 }],
+                          interval["onetime"]["main"],
+                          false
+                        )["data"],
+                      ]}
+                      styles={{
+                        width: "100%",
+                        height: "200px",
+                      }}
+                      labels={
+                        sortData(
+                          data.main.length
+                            ? data.main
+                            : [{ amount: 0, date: 0 }],
+                          interval["onetime"]["main"],
+                          false
+                        )["label"]
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                  <div className="px-6 pt-6 relative pb-3">
+                    <div className="flex justify-between mb-[16px] items-center">
+                      <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
+                        Page Views
+                      </h2>
+
+                      <ToggleButtonGroup
+                        value={interval["onetime"]["views"]}
+                        sx={{
+                          justifyContent: "space-between",
+                          maxWidth: "270px",
+                          "& .Mui-selected": {
+                            backgroundColor: `#f57059 !important`,
+                            color: `#fff !important`,
+                          },
+                          "& .MuiToggleButtonGroup-grouped": {
+                            borderRadius: "4px !important",
+                            minWidth: 48,
+                            padding: "2px",
+                            color: "#d3d3d3",
+                            border: "none",
+                          },
                         }}
-                        labels={
-                          sortData(
-                            data.onetime.length
-                              ? data.onetime
-                              : [{ amount: 0, date: 0 }],
-                            interval,
-                            false
-                          )["label"]
-                        }
+                        exclusive
+                        className="cusscroller top-[5px] relative overflow-y-hidden flex justify-center pb-1"
+                        onChange={(e: any) => {
+                          const val: string | any = e.target.value;
+                          setAmountInfo(
+                            `$${sortData(
+                              data.main.length
+                                ? data.main
+                                : [{ amount: 0, date: 0 }],
+                              val,
+                              false
+                            )
+                              ["data"].reduce((a, b) => a + b, 0)
+                              .toFixed(2)} - ${interText[val]}`
+                          );
+
+                          updInter({
+                            ...interval,
+                            onetime: { ...interval["onetime"], views: val },
+                          });
+                        }}
+                      >
+                        <ToggleButton
+                          sx={{
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                          }}
+                          value={`24h`}
+                        >
+                          24h
+                        </ToggleButton>
+
+                        <ToggleButton
+                          sx={{
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                          }}
+                          value={`7d`}
+                        >
+                          7d
+                        </ToggleButton>
+
+                        <ToggleButton
+                          sx={{
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                          }}
+                          value={`30d`}
+                        >
+                          30d
+                        </ToggleButton>
+
+                        <ToggleButton
+                          sx={{
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                          }}
+                          value={`1yr`}
+                        >
+                          1yr
+                        </ToggleButton>
+
+                        <ToggleButton
+                          sx={{
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                          }}
+                          value={`all`}
+                        >
+                          all
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                    </div>
+
+                    <div className="absolute top-[47px] font-[400] text-[1.5rem]">
+                      <NumberFormat
+                        value={sortData(
+                          data.views,
+                          interval["onetime"]["views"],
+                          false
+                        )["data"].reduce((a, b) => a + b, 0)}
+                        thousandSeparator={true}
+                        displayType={"text"}
                       />
                     </div>
+
+                    <LineChart
+                      label={["data"]}
+                      name="views"
+                      dataList={[
+                        sortData(
+                          data.views.length
+                            ? data.views
+                            : [{ amount: 0, date: 0 }],
+                          interval["onetime"]["views"],
+                          false
+                        )["data"],
+                      ]}
+                      styles={{
+                        width: "100%",
+                      }}
+                      labels={
+                        sortData(
+                          data.views.length
+                            ? data.views
+                            : [{ amount: 0, date: 0 }],
+                          interval["onetime"]["views"],
+                          false
+                        )["label"]
+                      }
+                    />
                   </div>
 
+                  {/* <Link href="/working">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
+                            View more data
+                          </a>
+                        </Link> */}
+                </div>
+
+                {false && (
                   <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
                     <div className="px-6 pt-6 relative pb-3">
                       <div className="flex justify-between mb-[16px] items-center">
                         <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
-                          Page Views
+                          Subscribers
                         </h2>
 
-                        <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
-                          24 Hr
-                        </span>
+                        <ToggleButtonGroup
+                          value={interval["sub"]["views"]}
+                          sx={{
+                            justifyContent: "space-between",
+                            maxWidth: "270px",
+                            "& .Mui-selected": {
+                              backgroundColor: `#f57059 !important`,
+                              color: `#fff !important`,
+                            },
+                            "& .MuiToggleButtonGroup-grouped": {
+                              borderRadius: "4px !important",
+                              minWidth: 48,
+                              padding: "2px",
+                              color: "#d3d3d3",
+                              border: "none",
+                            },
+                          }}
+                          exclusive
+                          className="cusscroller top-[5px] relative overflow-y-hidden flex justify-center pb-1"
+                          onChange={(e: any) => {
+                            const val: string | any = e.target.value;
+                            setAmountInfo(
+                              `$${sortData(
+                                data.sub.length
+                                  ? data.sub
+                                  : [{ amount: 0, date: 0 }],
+                                val,
+                                false
+                              )
+                                ["data"].reduce((a, b) => a + b, 0)
+                                .toFixed(2)} - ${interText[val]}`
+                            );
+
+                            updInter({
+                              ...interval,
+                              sub: { ...interval["onetime"], views: val },
+                            });
+                          }}
+                        >
+                          <ToggleButton
+                            sx={{
+                              textTransform: "capitalize",
+                              fontWeight: "bold",
+                            }}
+                            value={`24h`}
+                          >
+                            24h
+                          </ToggleButton>
+
+                          <ToggleButton
+                            sx={{
+                              textTransform: "capitalize",
+                              fontWeight: "bold",
+                            }}
+                            value={`7d`}
+                          >
+                            7d
+                          </ToggleButton>
+
+                          <ToggleButton
+                            sx={{
+                              textTransform: "capitalize",
+                              fontWeight: "bold",
+                            }}
+                            value={`30d`}
+                          >
+                            30d
+                          </ToggleButton>
+
+                          <ToggleButton
+                            sx={{
+                              textTransform: "capitalize",
+                              fontWeight: "bold",
+                            }}
+                            value={`1yr`}
+                          >
+                            1yr
+                          </ToggleButton>
+
+                          <ToggleButton
+                            sx={{
+                              textTransform: "capitalize",
+                              fontWeight: "bold",
+                            }}
+                            value={`all`}
+                          >
+                            all
+                          </ToggleButton>
+                        </ToggleButtonGroup>
                       </div>
 
                       <div className="absolute top-[47px] font-[400] text-[1.5rem]">
                         <NumberFormat
-                          value={sortData(data.views, "24h", false)[
-                            "data"
-                          ].reduce((a, b) => a + b, 0)}
+                          value={sortData(
+                            data.sub,
+                            interval["sub"]["subscribers"],
+                            false
+                          )["data"].reduce((a, b) => a + b, 0)}
                           thousandSeparator={true}
                           displayType={"text"}
                         />
@@ -366,14 +813,13 @@ const Onetime = () => {
 
                       <LineChart
                         label={["data"]}
-                        name="views"
-                        prefix="$"
+                        name="subscribers"
                         dataList={[
                           sortData(
-                            data.views.length
-                              ? data.views
+                            data.sub.length
+                              ? data.sub
                               : [{ amount: 0, date: 0 }],
-                            "24h",
+                            interval["sub"]["subscribers"],
                             false
                           )["data"],
                         ]}
@@ -382,10 +828,10 @@ const Onetime = () => {
                         }}
                         labels={
                           sortData(
-                            data.views.length
-                              ? data.views
+                            data.sub.length
+                              ? data.sub
                               : [{ amount: 0, date: 0 }],
-                            "24h",
+                            interval["sub"]["subscribers"],
                             false
                           )["label"]
                         }
@@ -398,41 +844,164 @@ const Onetime = () => {
                           </a>
                         </Link> */}
                   </div>
+                )}
 
-                  <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
-                    <div className="px-6 pt-6 relative pb-3">
-                      <div className="flex justify-between mb-[16px] items-center">
-                        <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
-                          Settings
-                        </h2>
-                      </div>
-
-                      <div className="z-0 right-[15px] flex items-center top-[5px] bottom-0 m-auto absolute">
-                        <div className="absolute z-0 h-full w-[140px] bg-overlay"></div>
-                        <MdOutlineSettingsSuggest
-                          size={180}
-                          color={"#f5705933"}
-                        />
-                      </div>
-
-                      <div className="w-full relative z-[10] items-center flex text-[rgb(95,99,104)] h-[100px]">
-                        Configure link
-                      </div>
+                <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
+                  <div className="px-6 pt-6 relative pb-3">
+                    <div className="flex justify-between mb-[16px] items-center">
+                      <h2 className="font-[400] text-[1.375rem] leading-[1.75rem]">
+                        Settings
+                      </h2>
                     </div>
-                    <Link href="/working">
-                      <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
-                        Go To Settings
-                      </a>
-                    </Link>
+
+                    <div className="z-0 right-[15px] flex items-center top-[5px] bottom-0 m-auto absolute">
+                      <div className="absolute z-0 h-full w-[140px] bg-overlay"></div>
+                      <MdOutlineSettingsSuggest
+                        size={180}
+                        color={"#f5705933"}
+                      />
+                    </div>
+
+                    <div className="w-full relative z-[10] items-center flex text-[rgb(95,99,104)] h-[100px]">
+                      Configure link
+                    </div>
+                  </div>
+                  <Link href="/working">
+                    <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
+                      Go To Settings
+                    </a>
+                  </Link>
+                </div>
+
+                <div
+                  style={{
+                    gridColumn: "span 2",
+                  }}
+                  className=" border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
+                >
+                  <div className="p-6 relative">
+                    <div className="flex justify-between mb-[16px] items-center">
+                      
+                      <h2 className="text-[1.3rem] leading-[1.6rem] font-[400]">
+                        Payments
+                      </h2>
+
+                      <ToggleButtonGroup
+                        value={paymentS}
+                        sx={{
+                          justifyContent: "space-between",
+                          maxWidth: "270px",
+                          "& .Mui-selected": {
+                            backgroundColor: `#f57059 !important`,
+                            color: `#fff !important`,
+                          },
+                          "& .MuiToggleButtonGroup-grouped": {
+                            borderRadius: "4px !important",
+                            minWidth: 65,
+                            padding: "2px",
+                            color: "#d3d3d3",
+                            border: "none",
+                          },
+                        }}
+                        exclusive
+                        className="cusscroller top-[5px] relative overflow-y-hidden flex justify-center pb-1"
+                        onChange={(e: any) => setPaymentS(e.target.value)}
+                      >
+                        <ToggleButton
+                          sx={{
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                          }}
+                          value={`latest`}
+                        >
+                          Latest
+                        </ToggleButton>
+
+                        <ToggleButton
+                          sx={{
+                            textTransform: "capitalize",
+                            fontWeight: "bold",
+                          }}
+                          value={`top`}
+                        >
+                          Top
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+
+                          </div>
+
+                      <TableContainer
+                        className="mainTable"
+                        sx={{ maxHeight: "auto" }}
+                      >
+                        <Table
+                          stickyHeader
+                          aria-label="sticky table"
+                        >
+                          <TableHead>
+                            <TableRow>
+                              {columns.map((column, id) => (
+                                <TableCell
+                                  key={column.id + "-" + id}
+                                  style={{ minWidth: column.minWidth, borderBottom:'none', fontWeight: 'bold', color: 'rgb(32,33,36)', cursor: 'default'}}
+                                >
+                                  {column.label}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {rows
+                              .slice(
+                                page * rowsPerPage,
+                                page * rowsPerPage + rowsPerPage
+                              )
+                              .map((row: any, id: number) => {
+                                return (
+                                  <Fragment key={id}>
+                                    <TableRow role="checkbox" tabIndex={-1}>
+                                      {columns.map((column) => {
+                                        const value = row[column.id];
+                                        return (
+                                          <TableCell
+                                            className="!border-[0px] text-[#4d4d4d] relative font-[500] !border-none"
+                                            key={column.id + "-" + id}
+                                            style={{
+                                              cursor: 'default',
+                                              verticalAlign: 'baseline'
+                                            }}
+                                          >
+                                            {value}
+                                          </TableCell>
+                                        );
+                                      })}
+                                    </TableRow>
+                                  </Fragment>
+                                );
+                              })}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                      <TablePagination
+                        rowsPerPageOptions={[10, 25, 100]}
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                      />
+
+
                   </div>
                 </div>
               </div>
-            </TypePayment>
-          </>
-        )}
-      </>
-    );
-
-}
+            </div>
+          </TypePayment>
+        </>
+      )}
+    </>
+  );
+};
 
 export default Onetime;

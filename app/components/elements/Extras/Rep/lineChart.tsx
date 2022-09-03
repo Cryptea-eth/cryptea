@@ -57,13 +57,11 @@ const LineChart = ({
       
         const specialTip = document.querySelector(".tooltiprep") as HTMLParagraphElement;
 
-        specialTip.innerHTML = `$${tooltipModel.dataPoints[0].raw} - ${tooltipModel.dataPoints[0].label}`;
+        specialTip.innerHTML = `$${(tooltipModel.dataPoints[0].raw).toFixed(2)} - ${tooltipModel.dataPoints[0].label}`;
     }
 
     if (tooltip !== null) {
       
-      // tooltip.style.display = tooltipModel.opacity ? "block" : "none";
-
       tooltip.style.left = tooltipModel.caretX + "px";
       tooltip.style.top = tooltipModel.caretY - 66 - 5 + "px";
 
@@ -180,6 +178,7 @@ const LineChart = ({
 
       }} className="w-[400px] relative h-[100px]">
         {" "}
+
         <Line options={options} data={data()} />{" "}
         
       <div className={`${toolstype.tooltip} tooltip tooltip${name}`}>
