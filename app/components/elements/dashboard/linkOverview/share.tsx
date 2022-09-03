@@ -59,8 +59,8 @@ const ShareLink = ({
           sidebar?.openPage ? "pl-[257px]" : "pl-[87px]"
         } justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur-[2px] fixed inset-0 z-50 outline-none focus:outline-none`}
       >
-        <div className="relative max-w-[1200px] mmd:w-[70%] 4sm:w-[60%] w-[340px] min-w-[340px]">
-          <div className="border-0 p-6 rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+        <div className="relative max-w-[1200px] 4sm:w-[60%] 42sm:w-[65%] w-[85%] min-w-[340px]">
+          <div className="border-0 p-6 2md:px-4 rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
             <div className="mb-8">
               <h2
                 style={{ fontFamily: "inherit" }}
