@@ -94,6 +94,19 @@ const generateData = ({
   return { data: edata, label };
 };
 
+export const totSub = (data: any[]) => {
+
+    const today = new Date().getTime();
+    let num: number = 0;
+    data.forEach((v: any, i: number) => {
+      if (v.remind > today) {
+        num++;
+      }
+    });
+
+    return num;
+} 
+
 const generateDataSub = ({
   data,
   secondary,
@@ -125,7 +138,7 @@ const generateDataSub = ({
 
   const edata = [];
   const label = [];
-
+  let upd = false;
   for (let z = 0; z <= hourx; z += hourly) {
     const i = z / hourx;
 
@@ -150,10 +163,13 @@ const generateDataSub = ({
     let count = 0; 
 
     selected.forEach((v: number, ix: number) => {
-      if (v >= time + hr && v <= time + hrp) {
-          count += 1;
-      }else if(secondary[ix] > today){
-          count += 1;
+      if (
+        (v >= time + hr && v <= time + hrp)
+      ) {
+        count += 1;
+
+      }else if (secondary[ix] > today && v < time + hr) {
+        count += 1;
       }
     });
 

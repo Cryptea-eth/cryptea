@@ -14,7 +14,7 @@ import {
 import Link from "next/link";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
 import { MdArrowBackIos, MdLink } from "react-icons/md";
-import sortData from "../../../app/components/elements/dashboard/linkOverview/generateData";
+import sortData, { totSub } from "../../../app/components/elements/dashboard/linkOverview/generateData";
 
 import { TbApiApp } from 'react-icons/tb';
 import { AiOutlineUser } from 'react-icons/ai'
@@ -138,7 +138,7 @@ const Overview = () => {
                     desc: data.desc,
                     title: data.title,
                     userLk,
-                    slug: String(slug)
+                    slug: String(slug),
                   }}
                   toggleSocial={(ee: boolean) => toggleSocial(ee)}
                   open={social}
@@ -380,12 +380,7 @@ const Overview = () => {
 
                             <div className="absolute top-[47px] font-[400] text-[1.5rem]">
                               <NumberFormat
-                                value={sortData(
-                                  data.subscribers,
-                                  "24h",
-                                  false,
-                                  false
-                                )["data"].reduce((a, b) => a + b, 0)}
+                                value={totSub(data.subscribers)}
                                 thousandSeparator={true}
                                 displayType={"text"}
                               />
@@ -401,7 +396,8 @@ const Overview = () => {
                                     : [{ amount: 0, date: 0 }],
                                   "24h",
                                   false,
-                                  false
+                                  false,
+                                  true
                                 )["data"],
                               ]}
                               styles={{
@@ -414,7 +410,8 @@ const Overview = () => {
                                     : [{ amount: 0, date: 0 }],
                                   "24h",
                                   false,
-                                  false
+                                  false,
+                                  true
                                 )["label"]
                               }
                             />

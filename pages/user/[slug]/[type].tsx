@@ -21,7 +21,7 @@ import {
 import { useRouter } from "next/router";
 import Loader from "../../../app/components/elements/loader";
 import copy from "copy-to-clipboard";
-import sortData from "../../../app/components/elements/dashboard/linkOverview/generateData";
+import sortData, { totSub } from "../../../app/components/elements/dashboard/linkOverview/generateData";
 import { initD } from "../../../app/components/elements/dashboard/link/data";
 import { dash, DashContext } from "../../../app/contexts/GenContext";
 import { useMoralis } from "react-moralis";
@@ -881,15 +881,7 @@ const Onetime = () => {
 
                       <div className="absolute top-[47px] font-[400] text-[1.5rem]">
                         <NumberFormat
-                          value={sortData(
-                            data.main.length
-                              ? data.main
-                              : [{ amount: 0, date: 0 }],
-                            interval["sub"]["subscribers"],
-                            false,
-                            false,
-                            true
-                          )["data"].reduce((a, b) => a + b, 0)}
+                          value={totSub(data.main)}
                           thousandSeparator={true}
                           displayType={"text"}
                         />
