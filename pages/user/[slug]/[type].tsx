@@ -1,3 +1,4 @@
+import empty from '../../../public/images/empty2.png';
 import { useState, useEffect, useContext, Fragment } from "react";
 import Link from "next/link";
 import {
@@ -31,11 +32,14 @@ import NumberFormat from "react-number-format";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
 import { MdContentCopy, MdOutlineSettingsSuggest } from "react-icons/md";
 import ShareLink from "../../../app/components/elements/dashboard/linkOverview/share";
+import { defineType, types } from "../../../app/components/elements/dashboard/linkOverview/linkTypes";
+import { BiCoinStack } from "react-icons/bi";
+import Image from "next/image";
 
 const Onetime = () => {
   const router = useRouter();
 
-  const { slug } = router.query;
+  const { slug, type } = router.query;
 
   const [social, toggleSocial] = useState<boolean>(false);
 
@@ -43,7 +47,7 @@ const Onetime = () => {
 
   const [data, setData] = useState<{ [index: string]: any }>({});
 
-  const [paymentS, setPaymentS] = useState<'latest' | 'top'>('latest');
+  const [paymentS, setPaymentS] = useState<'latest' | 'top' | 'expired'>('latest');
 
   const [interval, updInter] = useState<{
     [index: string]: { [index: string]: "24h" | "7d" | "30d" | "1yr" | "all" };
@@ -108,7 +112,7 @@ const Onetime = () => {
           setCopied(ee);
   }
 
-  const [columns, setColumns] = useState([
+  const dcolumns = [
     { id: "name", label: "Name", minWidth: 120 },
 
     { id: "asset", label: "Asset", minWidth: 100 },
@@ -117,15 +121,21 @@ const Onetime = () => {
       label: "Amount",
       minWidth: 100,
     },
-
     { id: "address", label: "Address", minWidth: 100 },
-  ]);
+  ];
+
+  const [columns, setColumns] = useState([...dcolumns]);
+
+  const [linkType, setLinkType] = useState<'onetime' | 'sub' | ''>('');
 
   const [rows, setRows] = useState<{[index: string]: JSX.Element | string | number}[]>([]);
 
   useEffect(() => {
     const init = async () => {
+
       const oDx = await initD(String(slug).toLowerCase());
+
+      const logic = linkType == 'sub' ? 'subscribers' : linkType;
 
       if (user !== null) {
         if (user.id === oDx.attributes.user.id) {
@@ -140,15 +150,27 @@ const Onetime = () => {
           }
           
           const dd =
-            oDx.get("onetime") !== undefined
-              ? JSON.parse(oDx.get("onetime"))
+            oDx.get(logic) !== undefined
+              ? JSON.parse(oDx.get(logic))
               : [];
 
+          const amount = oDx.get('amount');
+
           const extra = oDx.get('rdata') !== undefined ? JSON.parse(oDx.get('rdata')) : {};
-          let addColumn = [...columns];
-        if(extra['onetime'] !== undefined){
-          extra['onetime'].forEach((v:string) => {
+          let addColumn = [...dcolumns];
+
+        if (Boolean(Number(amount))) {
+          addColumn.forEach((v: any) => {
+              if(v.id == 'amount'){
+                  delete v.id;
+              }
+          })
+        }
+
+        if(extra[linkType] !== undefined){
+          extra[linkType].forEach((v:string) => {
               if(v != 'Name'){
+
                   addColumn.push({
                     id: v.toLowerCase(),
                     label: v,
@@ -159,6 +181,7 @@ const Onetime = () => {
         }
 
         setColumns(addColumn);
+
         const rowx: any = [];
         
 
@@ -169,15 +192,21 @@ const Onetime = () => {
 
         sdd = dd.sort((a:any, b:any) => b.amount - a.amount);
 
+      }else if(paymentS == 'expired') {
+
+        sdd = dd.map((v:any) => v.expired !== undefined ? v : undefined);
+        
       }
 
-      sdd.forEach((vmain:{[index: string]: string | number}, ii: number) => {
-        const supply:{[index: string]: string | number} = {};
+      if(sdd.length){
+
+      sdd.forEach((vmain:{[index: string]: string | number} | undefined, ii: number) => {
+        if (vmain !== undefined) {
+         const supply:{[index: string]: string | number} = {};
 
          supply['name'] = vmain.name === undefined ? 'anonymous' :  vmain.name;
          supply['token'] = vmain.token === undefined ? "matic" : vmain.token;
          const msupply = {...supply, ...vmain};
-
 
 
         const date = new Date(msupply.date);
@@ -254,20 +283,23 @@ const Onetime = () => {
                     </ClickAwayListener>
                   );
             }else if(v['id'] == 'amount'){
-              const remind = msupply['remind'] !== undefined ? msupply['remind'] : '';
+              const renewal = msupply['renewal'] !== undefined ? msupply['renewal'] : '';
 
-              rowD['amount'] = Number((Number(msupply['amount'])).toFixed(5)) + ' ' + remind;
+              rowD['amount'] = Number((Number(msupply['amount'])).toFixed(5)) + ' ' + renewal;
 
             }else if(v['id'] == 'asset'){
               rowD['asset'] = msupply['token'];
+            }else if(v['id'] == 'email'){
+              rowD['email'] = msupply['mail'];
             }else{
               rowD[v['id']] = msupply[v['id']];
             }
         })
 
         rowx.push(rowD);
-
+      }
       })
+    }
       
       setRows([...rowx])
 
@@ -287,19 +319,22 @@ const Onetime = () => {
 
             main: dd,
 
+            amount: oDx.get('amount'),
+
             views:
               oDx.get("views") !== undefined
                 ? JSON.parse(oDx.get("views"))
                 : [],
           });
 
+        
           setAmountInfo(
             `$${(sortData(
               dd.length ? dd : [{ amount: 0, date: 0 }],
-              interval["onetime"]['main'],
+              '24h',
               false
             )["data"].reduce((a, b) => a + b, 0)).toFixed(2)} - ${
-              interText[interval["onetime"]['main']]
+              interText['24h']
             }`
           );
 
@@ -311,7 +346,17 @@ const Onetime = () => {
 
     if (router.isReady && isInitialized) {
       if (isAuthenticated) {
-        init();
+        const ctypes = defineType(String(type).toLowerCase());
+
+        if (types.indexOf(String(type).toLowerCase()) != -1 && ctypes !== false) {
+      
+
+          setLinkType(ctypes);
+
+          init();
+        } else {
+          router.push("/404");
+        }
       } else {
         router.push("/");
       }
@@ -321,15 +366,14 @@ const Onetime = () => {
     isInitialized,
     user,
     slug,
+    type,
+    linkType,
     router.isReady,
     router,
-    copied,
-    mainCopy,
     pcols,
     interval,
-    columns,
     paymentS,
-    interText,
+    interText
   ]);
 
 
@@ -355,14 +399,14 @@ const Onetime = () => {
 
         setx.innerHTML = `$${(sortData(
           data.main.length ? data.main : [{ amount: 0, date: 0 }],
-          interval["onetime"]['main'],
+          interval[linkType]['main'],
           false
         )["data"].reduce((a, b) => a + b, 0)).toFixed(2)} - ${
-          interText[interval["onetime"]['main']]
+          interText[interval[linkType]['main']]
         }`;
       }
     }
-  }, [chartData, interval, data.main, interText, isLoading]);
+  }, [chartData, interval, data.main, linkType, interText, isLoading]);
 
   return (
     <>
@@ -376,8 +420,8 @@ const Onetime = () => {
               title: data.title !== undefined ? data.title : slug,
               slug: String(slug),
             }}
-            support={data.type == "both" || data.type == "onetime"}
-            which={"onetime"}
+            support={data.type == "both" || data.type == linkType}
+            which={linkType != "" ? linkType : "onetime"}
           >
             <ShareLink
               data={{
@@ -401,15 +445,14 @@ const Onetime = () => {
 
               <div className="flex items-center">
                 <Tooltip arrow title="Share Link">
-          
-                <IconButton
-                  onClick={() => toggleSocial(!social)}
-                  size="large"
-                  className="cursor-pointer flex items-center justify-center"
-                >
-                  <FiShare2 color={"rgb(32,33,36)"} size={22} />
-                </IconButton>
-            </Tooltip>
+                  <IconButton
+                    onClick={() => toggleSocial(!social)}
+                    size="large"
+                    className="cursor-pointer flex items-center justify-center"
+                  >
+                    <FiShare2 color={"rgb(32,33,36)"} size={22} />
+                  </IconButton>
+                </Tooltip>
                 <Avatar
                   alt={user?.get("username")}
                   src={user?.get("img") !== undefined ? user?.get("img") : ""}
@@ -424,8 +467,17 @@ const Onetime = () => {
               }}
               className="mb-6 mt-3 mx-auto 2sm:px-3"
             >
-              <h1 className="text-[rgb(32,33,36)] mb-[5px] font-[400] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
-                <RiCoinLine className="mr-2" size={23} /> Onetime Payments
+              <h1 className="text-[rgb(32,33,36)] capitalize mb-[5px] font-[400] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
+                {linkType == "sub" ? (
+                  <>
+                    <BiCoinStack className="mr-2" size={23} /> Subscription
+                    Based Payments
+                  </>
+                ) : (
+                  <>
+                    <RiCoinLine className="mr-2" size={23} /> Onetime Payments
+                  </>
+                )}
               </h1>
 
               <p
@@ -438,7 +490,7 @@ const Onetime = () => {
               </p>
 
               <ToggleButtonGroup
-                value={interval["onetime"]["main"]}
+                value={interval[linkType]["main"]}
                 sx={{
                   justifyContent: "space-between",
                   maxWidth: "300px",
@@ -468,10 +520,15 @@ const Onetime = () => {
                       .toFixed(2)} - ${interText[val]}`
                   );
 
-                  updInter({
-                    ...interval,
-                    onetime: { main: val, views: val, subscribers: val },
-                  });
+                  const ninterval: { [index: string]: any } = { ...interval };
+
+                  ninterval[linkType] = {
+                    main: val,
+                    views: val,
+                    subscribers: val,
+                  };
+
+                  updInter(ninterval);
                 }}
               >
                 <ToggleButton
@@ -539,7 +596,7 @@ const Onetime = () => {
                 >
                   <div className="p-6 relative">
                     <LineChart
-                      label={["onetime"]}
+                      label={[linkType]}
                       name="chart1"
                       prefix="$"
                       color={["#f57059"]}
@@ -549,7 +606,7 @@ const Onetime = () => {
                           data.main.length
                             ? data.main
                             : [{ amount: 0, date: 0 }],
-                          interval["onetime"]["main"],
+                          interval[linkType]["main"],
                           false
                         )["data"],
                       ]}
@@ -562,7 +619,7 @@ const Onetime = () => {
                           data.main.length
                             ? data.main
                             : [{ amount: 0, date: 0 }],
-                          interval["onetime"]["main"],
+                          interval[linkType]["main"],
                           false
                         )["label"]
                       }
@@ -578,7 +635,7 @@ const Onetime = () => {
                       </h2>
 
                       <ToggleButtonGroup
-                        value={interval["onetime"]["views"]}
+                        value={interval[linkType]["views"]}
                         sx={{
                           justifyContent: "space-between",
                           maxWidth: "270px",
@@ -604,16 +661,21 @@ const Onetime = () => {
                                 ? data.main
                                 : [{ amount: 0, date: 0 }],
                               val,
+                              false,
                               false
                             )
                               ["data"].reduce((a, b) => a + b, 0)
                               .toFixed(2)} - ${interText[val]}`
                           );
 
-                          updInter({
-                            ...interval,
-                            onetime: { ...interval["onetime"], views: val },
-                          });
+                          const ninterval = { ...interval };
+
+                          ninterval[linkType] = {
+                            ...interval[linkType],
+                            views: val,
+                          };
+
+                          updInter(ninterval);
                         }}
                       >
                         <ToggleButton
@@ -672,7 +734,8 @@ const Onetime = () => {
                       <NumberFormat
                         value={sortData(
                           data.views,
-                          interval["onetime"]["views"],
+                          interval[linkType]["views"],
+                          false,
                           false
                         )["data"].reduce((a, b) => a + b, 0)}
                         thousandSeparator={true}
@@ -688,19 +751,20 @@ const Onetime = () => {
                           data.views.length
                             ? data.views
                             : [{ amount: 0, date: 0 }],
-                          interval["onetime"]["views"],
+                          interval[linkType]["views"],
                           false
                         )["data"],
                       ]}
                       styles={{
                         width: "100%",
+                        height: "140px",
                       }}
                       labels={
                         sortData(
                           data.views.length
                             ? data.views
                             : [{ amount: 0, date: 0 }],
-                          interval["onetime"]["views"],
+                          interval[linkType]["views"],
                           false
                         )["label"]
                       }
@@ -714,7 +778,7 @@ const Onetime = () => {
                         </Link> */}
                 </div>
 
-                {false && (
+                {linkType == "sub" && (
                   <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
                     <div className="px-6 pt-6 relative pb-3">
                       <div className="flex justify-between mb-[16px] items-center">
@@ -723,7 +787,7 @@ const Onetime = () => {
                         </h2>
 
                         <ToggleButtonGroup
-                          value={interval["sub"]["views"]}
+                          value={interval["sub"]["subscribers"]}
                           sx={{
                             justifyContent: "space-between",
                             maxWidth: "270px",
@@ -745,11 +809,13 @@ const Onetime = () => {
                             const val: string | any = e.target.value;
                             setAmountInfo(
                               `$${sortData(
-                                data.sub.length
-                                  ? data.sub
+                                data.main.length
+                                  ? data.main
                                   : [{ amount: 0, date: 0 }],
                                 val,
-                                false
+                                false,
+                                false,
+                                true
                               )
                                 ["data"].reduce((a, b) => a + b, 0)
                                 .toFixed(2)} - ${interText[val]}`
@@ -757,7 +823,7 @@ const Onetime = () => {
 
                             updInter({
                               ...interval,
-                              sub: { ...interval["onetime"], views: val },
+                              sub: { ...interval["sub"], subscribers: val },
                             });
                           }}
                         >
@@ -816,9 +882,13 @@ const Onetime = () => {
                       <div className="absolute top-[47px] font-[400] text-[1.5rem]">
                         <NumberFormat
                           value={sortData(
-                            data.sub,
+                            data.main.length
+                              ? data.main
+                              : [{ amount: 0, date: 0 }],
                             interval["sub"]["subscribers"],
-                            false
+                            false,
+                            false,
+                            true
                           )["data"].reduce((a, b) => a + b, 0)}
                           thousandSeparator={true}
                           displayType={"text"}
@@ -830,23 +900,28 @@ const Onetime = () => {
                         name="subscribers"
                         dataList={[
                           sortData(
-                            data.sub.length
-                              ? data.sub
+                            data.main.length
+                              ? data.main
                               : [{ amount: 0, date: 0 }],
                             interval["sub"]["subscribers"],
-                            false
+                            false,
+                            false,
+                            true
                           )["data"],
                         ]}
                         styles={{
                           width: "100%",
+                          height: "140px",
                         }}
                         labels={
                           sortData(
-                            data.sub.length
-                              ? data.sub
+                            data.main.length
+                              ? data.main
                               : [{ amount: 0, date: 0 }],
                             interval["sub"]["subscribers"],
-                            false
+                            false,
+                            false,
+                            true
                           )["label"]
                         }
                       />
@@ -895,118 +970,222 @@ const Onetime = () => {
                 >
                   <div className="p-6 relative">
                     <div className="flex justify-between mb-[16px] items-center">
-                      
-                      <h2 className="text-[1.3rem] leading-[1.6rem] font-[400]">
-                        Payments
+                      <h2 className="text-[1.3rem] text-[rgb(32,33,36)] leading-[1.6rem] font-[400]">
+                        {linkType == "onetime" ? "Payments" : "Subscribers"}
                       </h2>
 
-                      <ToggleButtonGroup
-                        value={paymentS}
-                        sx={{
-                          justifyContent: "space-between",
-                          maxWidth: "270px",
-                          "& .Mui-selected": {
-                            backgroundColor: `#f57059 !important`,
-                            color: `#fff !important`,
-                          },
-                          "& .MuiToggleButtonGroup-grouped": {
-                            borderRadius: "4px !important",
-                            minWidth: 65,
-                            padding: "2px",
-                            color: "#d3d3d3",
-                            border: "none",
-                          },
+                      {data.amount == "variable" ||
+                      Boolean(Number(data.amount)) ? (
+                        <ToggleButtonGroup
+                          value={paymentS}
+                          sx={{
+                            justifyContent: "space-between",
+                            maxWidth: "270px",
+                            "& .Mui-selected": {
+                              backgroundColor: `#f57059 !important`,
+                              color: `#fff !important`,
+                            },
+                            "& .MuiToggleButtonGroup-grouped": {
+                              borderRadius: "4px !important",
+                              minWidth: 65,
+                              padding: "2px",
+                              color: "#d3d3d3",
+                              border: "none",
+                            },
+                          }}
+                          exclusive
+                          className="cusscroller top-[5px] relative overflow-y-hidden flex justify-center pb-1"
+                          onChange={(e: any) => setPaymentS(e.target.value)}
+                        >
+                          <ToggleButton
+                            sx={{
+                              textTransform: "capitalize",
+                              fontWeight: "bold",
+                            }}
+                            value={`latest`}
+                          >
+                            Latest
+                          </ToggleButton>
+
+                          <ToggleButton
+                            sx={{
+                              textTransform: "capitalize",
+                              fontWeight: "bold",
+                            }}
+                            value={`top`}
+                          >
+                            Top
+                          </ToggleButton>
+
+                          {linkType == "sub" && (
+                            <ToggleButton
+                              sx={{
+                                textTransform: "capitalize",
+                                fontWeight: "bold",
+                              }}
+                              value={`expired`}
+                            >
+                              Expired
+                            </ToggleButton>
+                          )}
+                        </ToggleButtonGroup>
+                      ) : linkType == "onetime" ? (
+                        <span className="font-semibold text-[rgb(32,33,36)]">
+                          ${Number(data.amount).toFixed(2)}
+                        </span>
+                      ) : (
+                        <ToggleButtonGroup
+                          value={paymentS}
+                          sx={{
+                            justifyContent: "space-between",
+                            maxWidth: "270px",
+                            "& .Mui-selected": {
+                              backgroundColor: `#f57059 !important`,
+                              color: `#fff !important`,
+                            },
+                            "& .MuiToggleButtonGroup-grouped": {
+                              borderRadius: "4px !important",
+                              minWidth: 65,
+                              padding: "2px",
+                              color: "#d3d3d3",
+                              border: "none",
+                            },
+                          }}
+                          exclusive
+                          className="cusscroller top-[5px] relative overflow-y-hidden flex justify-center pb-1"
+                          onChange={(e: any) => setPaymentS(e.target.value)}
+                        >
+                          <ToggleButton
+                            sx={{
+                              textTransform: "capitalize",
+                              fontWeight: "bold",
+                            }}
+                            value={`latest`}
+                          >
+                            Latest
+                          </ToggleButton>
+
+                          <ToggleButton
+                            sx={{
+                              textTransform: "capitalize",
+                              fontWeight: "bold",
+                            }}
+                            value={`expired`}
+                          >
+                            Expired
+                          </ToggleButton>
+                        </ToggleButtonGroup>
+                      )}
+                    </div>
+
+                    {Boolean(rows.length) ? (
+                      <>
+                        <TableContainer
+                          className="mainTable"
+                          sx={{ maxHeight: "auto" }}
+                        >
+                          <Table stickyHeader aria-label="sticky table">
+                            <TableHead>
+                              <TableRow>
+                                {columns.map((column, id) => (
+                                  <TableCell
+                                    key={column.id + "-" + id}
+                                    style={{
+                                      minWidth: column.minWidth,
+                                      borderBottom: "none",
+                                      fontWeight: "bold",
+                                      color: "rgb(32,33,36)",
+                                      cursor: "default",
+                                    }}
+                                  >
+                                    {column.label}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {rows
+                                .slice(
+                                  page * rowsPerPage,
+                                  page * rowsPerPage + rowsPerPage
+                                )
+                                .map((row: any, id: number) => {
+                                  return (
+                                    <Fragment key={id}>
+                                      <TableRow role="checkbox" tabIndex={-1}>
+                                        {columns.map((column) => {
+                                          const value = row[column.id];
+                                          return (
+                                            <TableCell
+                                              className="!border-[0px] text-[#4d4d4d] relative font-[500] !border-none"
+                                              key={column.id + "-" + id}
+                                              style={{
+                                                cursor: "default",
+                                                verticalAlign: "baseline",
+                                              }}
+                                            >
+                                              {value}
+                                            </TableCell>
+                                          );
+                                        })}
+                                      </TableRow>
+                                    </Fragment>
+                                  );
+                                })}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                        <TablePagination
+                          rowsPerPageOptions={[10, 25, 100]}
+                          component="div"
+                          count={rows.length}
+                          rowsPerPage={rowsPerPage}
+                          page={page}
+                          onPageChange={handleChangePage}
+                          onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                      </>
+                    ) : (
+                      <div
+                        className="empty"
+                        style={{
+                          display: "flex",
+                          width: "100%",
+                          height: "fit-content",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
-                        exclusive
-                        className="cusscroller top-[5px] relative overflow-y-hidden flex justify-center pb-1"
-                        onChange={(e: any) => setPaymentS(e.target.value)}
                       >
-                        <ToggleButton
-                          sx={{
-                            textTransform: "capitalize",
-                            fontWeight: "bold",
-                          }}
-                          value={`latest`}
-                        >
-                          Latest
-                        </ToggleButton>
+                        <div className="w-[240px]">
+                          <Image
+                            src={empty}
+                            className="mb-3 object-scale-down"
+                            layout={"intrinsic"}
+                            alt="Quite empty here"
+                          />
+                        </div>
 
-                        <ToggleButton
-                          sx={{
-                            textTransform: "capitalize",
-                            fontWeight: "bold",
-                          }}
-                          value={`top`}
-                        >
-                          Top
-                        </ToggleButton>
-                      </ToggleButtonGroup>
-
+                        <div className="mt-2 mb-3">
+                          <h2 className="text-[20px] text-[#3e3e3e] capitalize text-center font-[400]">
+                            No{" "}
+                            {linkType == "onetime" ? "Payments" : "Subscribers"}{" "}
+                            Yet
+                          </h2>
+                          <span className="mt-2 text-[17px] text-[#949494] block w-full text-center">
+                            This place would be filled anytime soon😊
+                          </span>
+                          <div className="flex mt-2 item-center justify-center">
+                            <Button
+                              onClick={() => toggleSocial(true)}
+                              className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                            >
+                              <FiShare2 size={25} className="mr-1" /> Share Link
+                            </Button>
                           </div>
-
-                      <TableContainer
-                        className="mainTable"
-                        sx={{ maxHeight: "auto" }}
-                      >
-                        <Table
-                          stickyHeader
-                          aria-label="sticky table"
-                        >
-                          <TableHead>
-                            <TableRow>
-                              {columns.map((column, id) => (
-                                <TableCell
-                                  key={column.id + "-" + id}
-                                  style={{ minWidth: column.minWidth, borderBottom:'none', fontWeight: 'bold', color: 'rgb(32,33,36)', cursor: 'default'}}
-                                >
-                                  {column.label}
-                                </TableCell>
-                              ))}
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {rows
-                              .slice(
-                                page * rowsPerPage,
-                                page * rowsPerPage + rowsPerPage
-                              )
-                              .map((row: any, id: number) => {
-                                return (
-                                  <Fragment key={id}>
-                                    <TableRow role="checkbox" tabIndex={-1}>
-                                      {columns.map((column) => {
-                                        const value = row[column.id];
-                                        return (
-                                          <TableCell
-                                            className="!border-[0px] text-[#4d4d4d] relative font-[500] !border-none"
-                                            key={column.id + "-" + id}
-                                            style={{
-                                              cursor: 'default',
-                                              verticalAlign: 'baseline'
-                                            }}
-                                          >
-                                            {value}
-                                          </TableCell>
-                                        );
-                                      })}
-                                    </TableRow>
-                                  </Fragment>
-                                );
-                              })}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                      <TablePagination
-                        rowsPerPageOptions={[10, 25, 100]}
-                        component="div"
-                        count={rows.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                      />
-
-
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

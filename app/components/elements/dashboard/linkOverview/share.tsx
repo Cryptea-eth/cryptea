@@ -21,11 +21,10 @@ import {
   FaTwitter,
   FaWhatsapp,
 } from "react-icons/fa";
-import { Modal, IconButton } from "@mui/material";
-import { useContext } from 'react';
+import { Modal, IconButton, Tooltip, ClickAwayListener } from "@mui/material";
+import { useContext, useState } from 'react';
 import { dash, DashContext } from "../../../../contexts/GenContext";
 import { MdClose } from "react-icons/md";
-
 
 const ShareLink = ({
   open,
@@ -43,7 +42,10 @@ const ShareLink = ({
     slug: string
   };
 }) => {
+
   const { sidebar }: dash = useContext(DashContext);
+
+  const [copied, mainCopy] = useState<boolean>(false);
 
   return (
     <>
@@ -221,14 +223,35 @@ const ShareLink = ({
                 <span className="text-[#919191] h-fit">
                   {window.location.origin}/user/{data.slug}
                 </span>
-
-                <IconButton size={"large"} onClick={() => copy(data.userLk)}>
-                  <FaRegClone
-                    color={"#919191"}
-                    className="cursor-pointer"
-                    size={16}
-                  />
-                </IconButton>
+                <ClickAwayListener onClickAway={() => mainCopy(false)}>
+                  <Tooltip
+                    placement="top"
+                    onClose={() => mainCopy(false)}
+                    open={copied}
+                    disableFocusListener
+                    disableHoverListener
+                    disableTouchListener
+                    PopperProps={{
+                      disablePortal: true,
+                    }}
+                    arrow
+                    title="Copied"
+                  >
+                    <IconButton
+                      size={"large"}
+                      onClick={() => {
+                        mainCopy(true);
+                        copy(data.userLk)
+                    }}
+                    >
+                      <FaRegClone
+                        color={"#919191"}
+                        className="cursor-pointer"
+                        size={16}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                </ClickAwayListener>
               </div>
             </div>
           </div>
