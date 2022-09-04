@@ -10,6 +10,7 @@ import {
   TablePagination,
   TableContainer,
   TableHead,
+  Grid,
   TableRow,
   Table,
   AvatarGroup,
@@ -586,13 +587,10 @@ const Onetime = () => {
                   gridTemplateColumns: "repeat(auto-fill, minmax(410px, 1fr))",
                   maxWidth: !sidebar?.openPage ? "1031px" : "861px",
                 }}
-                className="mt-4 mx-auto transition-all delay-500 grid gap-6 grid-flow-dense"
+                className="mt-4 mx-auto transition-all delay-500 grid gap-6"
               >
                 <div
-                  style={{
-                    gridColumn: "span 2",
-                  }}
-                  className=" border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
+                  className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
                 >
                   <div className="p-6 relative">
                     <LineChart
@@ -627,7 +625,7 @@ const Onetime = () => {
                   </div>
                 </div>
 
-                <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                <div className="w-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="px-6 pt-6 relative pb-3">
                     <div className="flex justify-between mb-[16px] items-center">
                       <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -779,7 +777,7 @@ const Onetime = () => {
                 </div>
 
                 {linkType == "sub" && (
-                  <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                  <div className="w-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
                     <div className="px-6 pt-6 relative pb-3">
                       <div className="flex justify-between mb-[16px] items-center">
                         <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -927,7 +925,7 @@ const Onetime = () => {
                   </div>
                 )}
 
-                <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
+                <div className="w-full border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
                   <div className="px-6 pt-6 relative pb-3">
                     <div className="flex justify-between mb-[16px] items-center">
                       <h2 className="font-[400] text-[1.375rem] leading-[1.75rem]">
@@ -955,10 +953,7 @@ const Onetime = () => {
                 </div>
 
                 <div
-                  style={{
-                    gridColumn: "span 2",
-                  }}
-                  className=" border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
+                  className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
                 >
                   <div className="p-6 relative">
                     <div className="flex justify-between mb-[16px] items-center">

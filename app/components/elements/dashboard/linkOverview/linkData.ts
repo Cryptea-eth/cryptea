@@ -8,7 +8,7 @@ export const initD = async (link:string) => {
     Moralis.start({
       serverUrl: process.env.NEXT_PUBLIC_MORALIS_SERVER,
       appId: process.env.NEXT_PUBLIC_MORALIS_APP_ID,
-    });
+});
 
     
       const initS = Moralis.Object.extend("link");

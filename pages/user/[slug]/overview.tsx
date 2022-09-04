@@ -223,12 +223,7 @@ const Overview = () => {
                     }}
                     className="m-auto transition-all delay-500 grid gap-6 grid-flow-dense"
                   >
-                    <div
-                      style={{
-                        gridColumn: "span 2",
-                      }}
-                      className=" border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
-                    >
+                    <div className="col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -440,7 +435,7 @@ const Overview = () => {
                           </>
                         )}
                       </div>
-                      <Link href="/working">
+                      <Link href={`/user/${slug}/multiple`}>
                         <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                           {data.type == "sub" || data.type == "both"
                             ? "View more subscription data"
