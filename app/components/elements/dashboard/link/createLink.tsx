@@ -363,7 +363,6 @@ const MenuProps = {
       if(rinputs['sub'].indexOf('Email') == -1){
           rinputs['sub'].push('Email')
       }
-
       
 
       const Link = Moralis.Object.extend("link");
