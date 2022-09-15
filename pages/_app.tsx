@@ -8,7 +8,8 @@ import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import { MoralisProvider } from 'react-moralis'
 import { GenProvider } from '../app/contexts/GenContext';
-
+import { CrypteaProvider } from '../app/contexts/Cryptea/provider';
+import '../app/contexts/Cryptea/types.d.ts';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -16,9 +17,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID || ""}
       serverUrl={process.env.NEXT_PUBLIC_MORALIS_SERVER || ""}
     >
-      <GenProvider>
-        <Component {...pageProps} />
-      </GenProvider>
+      <CrypteaProvider>
+        <GenProvider>
+          <Component {...pageProps} />
+        </GenProvider>
+      </CrypteaProvider>
     </MoralisProvider>
   );
 }
