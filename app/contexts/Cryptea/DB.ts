@@ -26,7 +26,7 @@ const getKey = (key: string, obj: {[index: string]: any}): string | undefined =>
     }
 }
 
-export const time = () => axios.get(`/time`, { params: { timezone: jstz.determine().name() } });
+// export const time = () => axios.get(`/time`, { params: { timezone: jstz.determine().name() } });
 
 const allowed: CrypteaDBS = {
   links: { supports: ["get", "all", "delete", "id"], endpoint: "/link" },

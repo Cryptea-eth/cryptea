@@ -42,7 +42,7 @@ export interface authenticateUserExtended extends authenticateUserDefault {
 
 export interface AuthContext {
   usAuth?: ({
-    type = "injected",
+    type,
     message,
     activate,
     account,
