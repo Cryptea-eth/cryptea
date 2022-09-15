@@ -89,7 +89,7 @@ const SignupForm = () => {
           });
       }
 
-      if (user.get("email") !== undefined) {
+      if (user.get("email") === undefined) {
 
         const templateData = { name: 'origin', data}
 
@@ -126,7 +126,7 @@ const SignupForm = () => {
         Router.push('/dashboard');
 
       } else {
-        setError("Logout of your current wallet to sign up");
+        Router.push('/dashboard');
         setLoading(false);
       }
     }
