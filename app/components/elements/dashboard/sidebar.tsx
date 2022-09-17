@@ -1,6 +1,6 @@
 import { 
   BiHomeAlt,
-  BiPaperPlane,
+  BiLinkAlt,
   BiCreditCard,
   BiLogOut,
  } from 'react-icons/bi'
@@ -133,7 +133,7 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
           >
             <Link href="/dashboard/links">
               <a className="text-inherit flex items-center text-[14px]">
-                <BiCreditCard
+                <BiLinkAlt
                   size={sidebar?.openDelay ? 16.5 : 21}
                   className={`text-inherit transition-all delay-400  ${
                     sidebar?.openDelay ? "min-w-[16.5px]" : "min-w-[21px]"
@@ -153,7 +153,7 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
           >
             <Link href="/dashboard/pages">
               <a className="text-inherit flex items-center text-[14px]">
-                <BiPaperPlane
+                <BiCreditCard
                   size={sidebar?.openDelay ? 16.5 : 21}
                   className={`text-inherit transition-all delay-400 ${
                     sidebar?.openDelay ? "min-w-[16.5px]" : "min-w-[21px]"
