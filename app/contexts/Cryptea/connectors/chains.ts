@@ -21,6 +21,135 @@ const avalancheChain: Chain = {
   testnet: false,
 };
 
+const avalancheTestnet: Chain = {
+  id: 43_113,
+  name: "Avalanche Testnet",
+  network: "avalanche",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Avalanche",
+    symbol: "AVAX",
+  },
+  rpcUrls: {
+    default: "https://api.avax-test.network/ext/bc/C/rpc",
+  },
+  blockExplorers: {
+    default: { name: "SnowTrace", url: "https://testnet.snowtrace.io" },
+  },
+  testnet: true,
+};
+
+const Optimism: Chain = {
+  id: 10,
+  name: "Optimism",
+  network: "optimism",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Optimism",
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: "https://mainnet.optimism.io",
+  },
+  blockExplorers: {
+    default: { name: "Optimism", url: "https://optimistic.etherscan.io" },
+  },
+  testnet: false,
+};
+
+const OptimismTestnet: Chain = {
+  id: 69,
+  name: "Optimism Testnet",
+  network: "optimism",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Optimism",
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: "https://kovan.optimism.io",
+  },
+  blockExplorers: {
+    default: { name: "Optimism", url: "https://kovan-optimistic.etherscan.io" },
+  },
+  testnet: true,
+};
+
+const Aurora: Chain = {
+  id: 1313161554,
+  name: "Aurora",
+  network: "aurora",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Aurora",
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: "https://mainnet.aurora.dev",
+  },
+  blockExplorers: {
+    default: { name: "Aurora", url: "https://explorer.mainnet.aurora.dev" },
+  },
+  testnet: false,
+};
+
+const AuroraTestnet: Chain = {
+  id: 1313161555,
+  name: "Aurora Testnet",
+  network: "aurora",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Aurora",
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: "https://testnet.aurora.dev",
+  },
+  blockExplorers: {
+    default: { name: "Aurora", url: "https://explorer.testnet.aurora.dev" },
+  },
+  testnet: true,
+};
+
+const OasisEmerald: Chain = {
+  id: 42262,
+  name: "Oasis",
+  network: "oasis",
+  nativeCurrency: {
+    name: "Oasis",
+    decimals: 18,
+    symbol: "ROSE",
+  },
+  rpcUrls: {
+    default: "https://emerald.oasis.dev	",
+  },
+  blockExplorers: {
+    default: { name: "Oasis", url: "https://explorer.emerald.oasis.dev" },
+  },
+  testnet: false,
+};
+
+const OasisEmeraldTestnet: Chain = {
+  id: 42261,
+  name: "Oasis Testnet",
+  network: "oasis",
+  nativeCurrency: {
+    name: "Oasis",
+    decimals: 18,
+    symbol: "ROSE",
+  },
+  rpcUrls: {
+    default: "wss://testnet.emerald.oasis.dev/ws",
+  },
+  blockExplorers: {
+    default: {
+      name: "Oasis",
+      url: "https://testnet.explorer.emerald.oasis.dev",
+    },
+  },
+  testnet: true,
+};
+
 const Cronos: Chain = {
   id: 25,
   name: "Cronos",
@@ -53,21 +182,46 @@ const CronosTest: Chain = {
     wss: "wss://cronos-testnet-3.crypto.org:8546",
   },
   blockExplorers: {
-    default: {name: "cronos-test", url: ""},
+    default: { name: "cronos-test", url: "" },
   },
-  testnet: true
+  testnet: true,
 };
 
 export const { chains, provider, webSocketProvider } = configureChains(
-  [chain.polygon, chain.polygonMumbai, avalancheChain, CronosTest, Cronos],
+  [
+    chain.polygon,
+    chain.polygonMumbai,
+    avalancheChain,
+    avalancheTestnet,
+    CronosTest,
+    Cronos,
+    Aurora,
+    AuroraTestnet,
+    Optimism,
+    OptimismTestnet,
+    OasisEmerald,
+    OasisEmeraldTestnet,
+  ],
   [
     jsonRpcProvider({
       rpc: (chain) => {
-        if (chain.id !== avalancheChain.id || chain.id !== CronosTest.id || chain.id !== Cronos.id) return null
+        if (
+          chain.id !== avalancheChain.id ||
+          chain.id !== CronosTest.id ||
+          chain.id !== Cronos.id ||
+          chain.id !== avalancheTestnet.id ||
+          chain.id !== Aurora.id ||
+          chain.id !== AuroraTestnet.id ||
+          chain.id !== Optimism.id ||
+          chain.id !== OptimismTestnet.id ||
+          chain.id !== OasisEmerald.id ||
+          chain.id !== OasisEmeraldTestnet.id
+        )
+          return null;
 
-        return { http: chain.rpcUrls.default }
-      }
+        return { http: chain.rpcUrls.default };
+      },
     }),
-    publicProvider()
+    publicProvider(),
   ]
 );
