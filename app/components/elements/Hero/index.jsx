@@ -6,10 +6,10 @@ import desktop1 from "../../../../public/images/desktop1.png";
 import desktop2 from "../../../../public/images/desktop2.png";
 import desktop3 from "../../../../public/images/desktop3.png";
 import check from "../../../../public/images/tick.svg";
-import { HomeContextSet } from '../../../contexts/HomeContext';
+import { HomeContext } from '../../../contexts/HomeContext';
 const Hero = () => {
 
-  const useUpdateWalletModal = useContext(HomeContextSet)
+  const { open } = useContext(HomeContext)
 
   return (
     <div className="app">
@@ -30,27 +30,31 @@ const Hero = () => {
         </svg>
       </div>
 
-      <div className="flex overflow-hidden flex-row justify-between mmd:ml-0 relative ml-[30px] z-2">
-        <div className="sm:mx-auto w-1/2 2md:pl-5 pl-12 3sm:w-[85%] 2md:w-full mt-20">
-          <div className="text-black font-semibold text-lg">
+      <div className="flex overflow-hidden flex-row justify-between mmd:ml-0 relative ml-[30px] z-2 usm:ml-0">
+        <div className="usm:mx-auto w-1/2 usm:px-10 2md:px-5 pl-12 usm:w-full 3sm:w-[85%] mt-20">
+          <div className="text-black usm:text-center font-semibold text-lg">
             Bridging the Web3 payment gap
           </div>
-          <div className="text-black mmd:text-[2rem] font-bold text-[3rem] mb-14 mt-[8px]">
+          <div className="text-black usm:text-center mmd:text-[2rem] font-bold text-[3rem] usm:mb-7 mb-14 mt-[8px]">
             The Crypto Payment Infrastructure
           </div>
-          <div className="w-[73%] 2md:w-[92%]">
+          <div className="w-[73%] usm:text-center usm:w-full 2md:w-[92%]">
             <div className="text-[#757095] font-normal text-[17px] mt-6">
-              Cryptea is a payment infrastructure for businesses built on the blockchain. Our APIs and Product make it easy for any online business to accept cryptocurrency payments globally.
+              Cryptea is a payment infrastructure for businesses built on the
+              blockchain. Our APIs and Product make it easy for any online
+              business to accept cryptocurrency payments globally.
             </div>
             <div className="flex justify-center">
               <button
-                onClick={useUpdateWalletModal}
+                onClick={() => {
+                  if (open !== undefined) open();
+                }}
                 className="text-sm rounded-lg bg-[#1B1C31] mt-6 mx-auto justify-self-center place-self-center object-center text-white font-semibold py-4 px-8"
               >
                 Connect Wallet
               </button>
             </div>
-            <div className="flex sm:justify-center mt-16">
+            <div className="flex usm:justify-center mt-16">
               <Image src={check} className="mr-1" alt="yes" />
 
               <span className="text-[#757095] ml-1 mr-2">Instant Payment</span>
@@ -61,8 +65,9 @@ const Hero = () => {
           </div>
         </div>
 
-        <div className="right sm:hidden w-1/2 flex justify-center">
+        <div className="right usm:hidden w-1/2 flex justify-center">
           <Image
+            objectFit={"contain"}
             src={desktop3}
             priority
             className="w-auto"

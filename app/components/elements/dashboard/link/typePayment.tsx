@@ -1,14 +1,11 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext } from "react";
 import Link from "next/link";
 import { Avatar, Button } from "@mui/material";
-import { useRouter } from "next/router";
 import Loader from "../../loader";
 import Head from "next/head";
 import empty from "../../../../../public/images/coming-soon.svg";
-import { initD } from "./data";
 import { dash, DashContext } from "../../../../contexts/GenContext";
 import Sidebar from "../sidebar";
-import { useMoralis } from "react-moralis";
 import Image from "next/image";
 import { GiTwoCoins } from "react-icons/gi";
 

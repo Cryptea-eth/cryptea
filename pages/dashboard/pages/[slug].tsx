@@ -19,18 +19,19 @@ import React, { useState, useEffect } from "react";
 import validator from 'validator';
 import style from "../../../styles/custom.module.css";
 import { RiDeleteBin5Line } from 'react-icons/ri';
-import { useMoralis } from 'react-moralis';
 import ReactCrop, { PixelCrop } from 'react-image-crop';
 import "react-image-crop/dist/ReactCrop.css";
 import { makeStorageClient } from '../../../app/functions/clients';
 import dynamic from 'next/dynamic';
 import Loader from '../../../app/components/elements/loader';
+import { get_request } from '../../../app/contexts/Cryptea/requests';
+import { useCryptea } from '../../../app/contexts/Cryptea';
 
 
 
 const EditPage = () => {
 
-  const { Moralis, isInitialized, isAuthenticated, user } = useMoralis()
+  const { isAuthenticated } = useCryptea()
 
   const [ndata, setData] = useState<string>('');
   const [rules, setRules] = useState<any>({});
@@ -80,23 +81,17 @@ const EditPage = () => {
 useEffect(() => {
   const init = async () => {
 
-    if (isInitialized) {
+    if (isAuthenticated !== undefined) {
       if (isAuthenticated) {
-          const LinkData = Moralis.Object.extend("link");
+         
+          const linkx:any = await (`links/${String(usern).toLowerCase()}`).get('link', true);
 
-          const LQ = new Moralis.Query(LinkData);
-
-          LQ.equalTo("link", String(usern).toLowerCase());
-
-          LQ.contains("user", user !== null ? user?.id : '');
-
-          const linkx = await LQ.first();
 
           setLinkx(linkx);
           
-           if (linkx?.get("template_data") !== undefined) {
+           if (linkx?.template_data !== undefined) {
 
-             const {name, data: udata} = JSON.parse(linkx?.get("template_data"));
+             const {name, data: udata} = JSON.parse(linkx?.template_data);
 
              const { rules, getData } = await import(`../../../app/templates/${name}/data`);
   
@@ -128,9 +123,10 @@ useEffect(() => {
             setLoader(false);
 
         }
+      
       } else {
 
-        router.push("/");
+        router.push("/auth");
 
       }
     }
@@ -138,7 +134,7 @@ useEffect(() => {
 
   init();
 
-}, [Moralis.Object, usern, user, Moralis.Query, router, isAuthenticated, isInitialized])
+}, [usern, router, isAuthenticated])
 
 
   let times:any;
@@ -146,6 +142,8 @@ useEffect(() => {
   const saveSets = async () => {
 
       clearTimeout(times)
+
+      try {
 
       saveChanges({
         ...isSaving,
@@ -156,9 +154,7 @@ useEffect(() => {
 
       const sdata = JSON.stringify({name: ndata, data});
 
-      linkx.set('template_data', sdata);
-
-      await linkx.save();
+      await (`links/${linkx.id}`).update({"template_data": sdata})
 
       saveChanges({
         two: true,
@@ -171,8 +167,13 @@ useEffect(() => {
             two: false
           })
       }, 2000);
-  }
+    }catch (err) {
+        const error = err as Error;
 
+        console.log(error)
+
+    }
+  }
 
   const [isSaving, saveChanges] = useState<{
     one: boolean,
@@ -253,9 +254,7 @@ useEffect(() => {
       }
     };
 
-    const client = makeStorageClient(
-      await Moralis.Cloud.run("getWeb3StorageKey")
-    );
+    const client = makeStorageClient(await get_request("/storagekey"));
 
     return client.put(files, { onRootCidReady, onStoredChunk });
   };

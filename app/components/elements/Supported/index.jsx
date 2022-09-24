@@ -11,13 +11,13 @@ const Supported = () => {
       </h1>
 
       <div className="flex 3sm:w-full ssm:flex-wrap items-center justify-between w-[60%]">
-        <div className="flex justify-between items-center">
-          <Image src={matic} alt="polygon" />
+        <div className="flex justify-between items-center mb-2">
+          <Image src={matic} width={60} height={60} alt="polygon" />
           <span className="text-[#64607D] ml-[10px] font-bold">Polygon</span>
         </div>
 
-        <div className="flex justify-between items-center">
-          <Image src={avax} alt="avalanche" />
+        <div className="flex justify-between items-center mb-2">
+          <Image src={avax} width={60} height={60} alt="avalanche" />
           <span className="text-[#64607D] ml-[10px] font-bold">Avalanche</span>
         </div>
       </div>

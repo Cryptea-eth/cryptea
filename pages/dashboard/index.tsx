@@ -13,45 +13,50 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { DashContext, dash } from "../../app/contexts/GenContext";
 import { useState, useEffect, useContext } from 'react';
-import { useMoralis } from "react-moralis";
 import Sidebar from "../../app/components/elements/dashboard/sidebar";
+import { useCryptea } from "../../app/contexts/Cryptea";
 
 const DashboardIndex = () => {
 
-  const {
+  const { 
     user,
-    isAuthenticated,
-    isInitialized,
-    isWeb3Enabled,
-    enableWeb3,
-  } = useMoralis();
+    isAuthenticated
+  } = useCryptea();
+
   const router = useRouter();
 
   const { sidebar }: dash = useContext(DashContext);
+  
+  const u = async (column: string) => {
+      let ex = '';
 
-  const dp = user?.get("img");
+     return await ('user').get(column)
+
+  }
 
   const [loading, isLoading] = useState<Boolean>(true);
 
-  useEffect(() => {
-    if (!isWeb3Enabled) {
-      enableWeb3();
-    }
+  const [data, setData] = useState<any>({ username: "", img: "" });
 
-  if (isInitialized) {
+useEffect(() => {
+
+    if(isAuthenticated !== undefined){
       if(!isAuthenticated){
-          window.location.href = "/";
+          router.push('/auth');
       } else {
-          isLoading(false);
+         "user".get("*", true).then((e) => {
+           if (e !== null) {
+             setData(typeof e == "object" ? e : { username: "", img: "" });
+           }
+            isLoading(false);
+         });
       }
     }
   }, [
     user,
+    router,
     isLoading,
-    enableWeb3,
-    isAuthenticated,
-    isWeb3Enabled,
-    isInitialized
+    isAuthenticated
   ]);
 
 
@@ -72,8 +77,7 @@ const DashboardIndex = () => {
     <>
       <Head>
         <title>
-          {user?.get("username") ? user?.get("username") + " | " : ""} Dashboard
-          | Cryptea
+          {data?.username ? data?.username + " | " : ""} Dashboard | Cryptea
         </title>
         <meta
           name="description"
@@ -102,9 +106,7 @@ const DashboardIndex = () => {
               className="flex transition-all delay-500 z-10 fixed px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
             >
               <div className="">
-                <h1 className="font-bold">
-                  Welcome {user?.get("username")}!☕
-                </h1>
+                <h1 className="font-bold">Welcome {data?.username}!☕</h1>
                 <span>Hope you are healthy and happy today..</span>
               </div>
               <div className="flex items-center">
@@ -176,13 +178,13 @@ const DashboardIndex = () => {
                     </div>
                   </Popover>
                 </div>
-                 <Avatar
-                    src={dp}
-                    sx={{ width: 40, height: 40, bgcolor: "#F57059" }}
-                    alt={user?.get("username")}
-                  >
-                    {user?.get("username")?.charAt(0).toUpperCase()}
-                  </Avatar>
+                <Avatar
+                  src={data?.img}
+                  sx={{ width: 40, height: 40, bgcolor: "#F57059" }}
+                  alt={data?.username}
+                >
+                  {String(data?.username).charAt(0).toUpperCase()}
+                </Avatar>
               </div>
             </div>
 

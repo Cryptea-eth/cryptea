@@ -4,12 +4,12 @@ import three from "../../../../public/images/three.svg";
 import circle from "../../../../public/images/circle.svg";
 import Supported from "../Supported";
 import Image from "next/image";
-import { HomeContextSet } from '../../../contexts/HomeContext';
+import { HomeContext } from '../../../contexts/HomeContext';
 import { useContext } from "react";
 
 const About = () => {
 
-  const useUpdateWalletModal = useContext(HomeContextSet);
+  const { open } = useContext(HomeContext);
 
 
   return (
@@ -22,11 +22,15 @@ const About = () => {
           Accept Crypto Globally
         </h1>
         <span className="text-[#64607D] font-normal block text-[17px] mt-[10px]">
-          We allow businesses to accept cryptocurrency payments globally. We&#39;re helping online merchants around the world accept cryptocurrency as easily as they accept credit cards or PayPal today.
+          We allow businesses to accept cryptocurrency payments globally.
+          We&#39;re helping online merchants around the world accept
+          cryptocurrency as easily as they accept credit cards or PayPal today.
         </span>
 
         <button
-          onClick={useUpdateWalletModal}
+          onClick={() => {
+            if (open !== undefined) open();
+          }}
           className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet
@@ -68,15 +72,12 @@ const About = () => {
           />
           <h4 className="font-bold">Receive payments</h4>
           <span className="text-[#64607D]">
-            You’re good to go. Share your payment link, and receive crypto payment with ease.
+            You’re good to go. Share your payment link, and receive crypto
+            payment with ease.
           </span>
         </div>
         <div className="!absolute !-right-[5.406rem] !bottom-0 !z-[-1] !w-[290px]">
-
-          <Image
-            src={circle}
-            alt="for you"
-          />
+          <Image src={circle} alt="for you" />
         </div>
       </div>
 
@@ -90,7 +91,9 @@ const About = () => {
         </span>
 
         <button
-          onClick={useUpdateWalletModal}
+          onClick={() => {
+            if (open !== undefined) open();
+          }}
           className="text-sm mmd:mt-10 hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-20 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet

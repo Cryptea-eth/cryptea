@@ -20,8 +20,8 @@ const User = () => {
            await initD(String(linkUser));
 
             setTemplate(template)
-
-            if(template === undefined){
+            
+            if(template() === undefined){
                 router.push("/404");
             }
       }

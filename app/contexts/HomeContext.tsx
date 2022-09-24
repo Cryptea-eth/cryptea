@@ -1,22 +1,22 @@
 import React, { createContext, useState } from 'react'
 
-export const HomeContext = createContext<String | Boolean>(''); 
-
-export const HomeContextSet = createContext<any>(() => {
-
-});
+export const HomeContext = createContext<{
+  show?: boolean;
+  open?: () => any;
+  close?: () => any;
+}>({}); 
 
 export const HomeProvider = ({ children }: { children: JSX.Element }) => {
 
     const [showModal, setShowModal] = useState(false);
 
-    const setShowMod = () => setShowModal(!showModal)
-
     return (
-        <HomeContext.Provider value={showModal}>
-            <HomeContextSet.Provider value={setShowMod}>
+        <HomeContext.Provider value={{
+            show: showModal,
+            open: () => setShowModal(true),
+            close: () => setShowModal(false)
+        }}>
                 {children} 
-            </HomeContextSet.Provider>
         </HomeContext.Provider>
     )
 

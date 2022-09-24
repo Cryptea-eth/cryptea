@@ -24,23 +24,23 @@ import {
   TableBody,
   TablePagination
 } from "@mui/material";
-import { useMoralis, useWeb3Transfer } from "react-moralis";
 import { data } from "autoprefixer";
-import axios from "axios";
 import Link from 'next/link'
+import { useCryptea } from "../../../contexts/Cryptea";
 
 const DashHome = () => {
-  const {
-    user,
-    Moralis,
-    isWeb3Enabled,
-    enableWeb3,
+
+  const { 
+    isAuthenticated,
+    account,
     chainId
-  } = useMoralis();
+   } = useCryptea();
+
+   
 
   const [links, addLinks] = useState<any>([]);
 
-  const userAddress = user?.get("ethAddress");
+  const userAddress = account;
 
   const BigNum = (n = 0, p: number) => {
 
@@ -57,8 +57,6 @@ const DashHome = () => {
     }
   }
 
-  const [amount, setAmount] = useState(0);
-  const [receiver, setReceiver] = useState("");
   const [loading1, setLoading1] = useState(true);
   const [loading2, setLoading2] = useState(true);
   const [wdata, setWData] = useState({});
@@ -66,30 +64,26 @@ const DashHome = () => {
   const [nft, viewN] = useState(false);
   const [nfts, setNfts] = useState<number | undefined>(0)
 
+
   useEffect(() => {
-    const Link = Moralis.Object.extend("link");
+    if(isAuthenticated){
+    const mlink = ('links').get('*',true);
 
-    const mlink = new Moralis.Query(Link);
-    mlink.equalTo("user", user);
-
-    mlink.find().then((e) => {
+    mlink.then((e) => {
       addLinks(e);
+      setLoading1(false);
     });
 
-    if (!isWeb3Enabled) {
-      enableWeb3();
-      setLoading1(false)
-    } else {
-      setLoading1(false)
-
-      axios.get(
+      fetch(
         `https://api.covalenthq.com/v1/${Number(
           chainId
         )}/address/${userAddress}/balances_v2/?quote-currency=USD&format=JSON&nft=true&no-nft-fetch=false&key=ckey_d8fd93851d6a4d57bdcf14a337d`
       )
-        .then(d => {
+        .then(async (d) => {
 
-          const { data } = d.data;
+          const response = await d.json();
+
+          const { data } = response;
 
           setWData(data);
           setLoading2(false);
@@ -164,70 +158,59 @@ const DashHome = () => {
             )
           );
         });
-    }
-  }, [chainId, isWeb3Enabled, loading2, userAddress, enableWeb3, Moralis.Object, Moralis.Query, user])
-
-
-  const { fetch: fetched, error, isFetching } = useWeb3Transfer({
-    type: "native",
-    amount: Moralis.Units.ETH(amount),
-    receiver: receiver
-  });
-
-
-  const balances = () => {
-    if (!loading2) {
-      let bs = user?.get("balances");
-      const { items }: { items?: object[] } = wdata;
-      let bss = 0;
-
-      items?.forEach(({ quote = 0, balance = 0, contract_decimals = 0 }: { quote?: number, balance?: number, contract_decimals?: number }) => {
-        bss += (balance / 10 ** contract_decimals) * quote;
-      });
-
-      if (!Boolean(bs)) {
-        const json = [];
-        json.push({ amt: 0 }, { amt: bss });
-
-        user?.set("balances", JSON.stringify(json));
-        user?.save();
-
-        return json;
-
-      } else {
-        bs = JSON.parse(bs);
-
-        if (BigNum(bs[bs.length - 1].amt, 5) !== BigNum(bss, 5)) {
-          bs.push({ amt: bss });
-          user?.set("balances", JSON.stringify(bs));
-          user?.save();
-        }
-
-        return bs;
       }
-    }
-  }
+
+  }, [chainId, isAuthenticated, loading2, userAddress]);
 
 
 
-  const balance = balances();
-  const received = Boolean(user?.get('received')) ? JSON.parse(user?.get('received')) : [{ amt: 0 }];
+  // const balances = () => {
+  //   if (!loading2) {
+  //     let bs = user?.get("balances");
+  //     const { items }: { items?: object[] } = wdata;
+  //     let bss = 0;
+
+  //     items?.forEach(({ quote = 0, balance = 0, contract_decimals = 0 }: { quote?: number, balance?: number, contract_decimals?: number }) => {
+  //       bss += (balance / 10 ** contract_decimals) * quote;
+  //     });
+
+  //     if (!Boolean(bs)) {
+  //       const json = [];
+  //       json.push({ amt: 0 }, { amt: bss });
+
+  //       user?.set("balances", JSON.stringify(json));
+  //       user?.save();
+
+  //       return json;
+
+  //     } else {
+  //       bs = JSON.parse(bs);
+
+  //       if (BigNum(bs[bs.length - 1].amt, 5) !== BigNum(bss, 5)) {
+  //         bs.push({ amt: bss });
+  //         user?.set("balances", JSON.stringify(bs));
+  //         user?.save();
+  //       }
+
+  //       return bs;
+  //     }
+  //   }
+  // }
 
 
-  const [previous, current] = loading2 ? [] : [
-    balance[balance.length - 2].amt,
-    balance[balance.length - 1].amt,
-  ];
 
-  const change = loading2 ? 0 : ((current - previous) / previous) * 100;
+  const balance: {
+      amt: number
+  }[] = [{ amt: 0 }, { amt: 0 }];
+
+  const received = [{ amt: 0 }];
 
 
-  const [rprevious, rcurrent] = Boolean(user?.get('received')) ? [
+  const [rprevious, rcurrent] = false ? [
     received[received.length - 2].amt,
     received[received.length - 1].amt,
   ] : [0, 0];
-  const rchange = Boolean(user?.get('received')) ? ((rcurrent - rprevious) / rprevious) * 100 : 0;
-
+  const rchange = false ? ((rcurrent - rprevious) / rprevious) * 100 : 0;
 
 
   const columns: { id: string, label: string, minWidth: number, align?: "right" | "left", format?: <Val extends string & number>(value: Val) => (string | number) }[] = [
@@ -422,82 +405,12 @@ const DashHome = () => {
     maxWidth: 600,
     p: 4,
   };
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
   return (
     <div className="dashbody h-[calc(100%-75px)] pt-[75px] 2sm:pr-1 flex px-5 pb-5">
       {(loading1 || loading2) && <Loader />}
 
-      {(!loading1 && !loading2) && (<Fragment><div>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <div className="px-4 pt-3 pb-5 bg-white">
-              <h2 className="text-[18px] font-bold text-bold pb-[10px]">
-                Quick Transfer
-              </h2>
-              <div className="py-2">
-                <TextField
-                  label={"Amount"}
-                  fullWidth
-                  type={`number`}
-                  value={amount}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-                    const val = e.target.value;
-                    setAmount(parseFloat(val.replace(/[^\d.]/g, "")));
-                  }}
-                  className="amount"
-                  id="Amount"
-                />
-              </div>
-              <div className="py-2">
-                <TextField
-                  label={"Account/Address"}
-                  fullWidth
-                  value={receiver}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setReceiver(e.target.value)}
-                  className="account"
-                  id="account"
-                />
-              </div>
-              <div className="py-2 flex justify-center">
-                <Button
-                  variant="contained"
-                  className="!bg-[#F57059] !mr-2 !py-[13px] !font-medium !capitalize"
-                  style={{
-                    fontFamily: "inherit",
-                  }}
-                  fullWidth
-                  onClick={() => fetched()}
-                  disabled={isFetching}
-                >
-                  Transfer{" "}
-                  <BsArrowRight className="ml-3 font-medium" size={18} />
-                </Button>
-
-                <Button
-                  onClick={handleClose}
-                  variant="contained"
-                  className="!bg-[#F57059] !max-w-[100px] !ml-2 !py-[13px] !font-medium !capitalize"
-                  style={{
-                    fontFamily: "inherit",
-                  }}
-                  fullWidth
-                >
-                  Close
-                  <IoMdClose className="ml-3 font-medium" size={18} />
-                </Button>
-              </div>
-            </div>
-          </Box>
-        </Modal>
-      </div>
+      {(!loading1 && !loading2) && (<Fragment>
 
         <div className="mr-[20px] 2sm:mr-0 h-full pb-1 pt-5 pr-2 w-full cusscroller overflow-y-scroll">
           <svg
@@ -542,7 +455,7 @@ const DashHome = () => {
                     <span className="text-white">Balance</span>
                   </div>
 
-                  <div className="w-[40px] h-[40px]">
+                  {/* <div className="w-[40px] h-[40px]">
                     <ResponsiveContainer height="100%" width="100%">
                       <AreaChart width={400} height={400} data={balance}>
                         <Area
@@ -556,21 +469,21 @@ const DashHome = () => {
                         <Tooltip />
                       </AreaChart>
                     </ResponsiveContainer>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="w-full">
                   <span className="block text-white font-bold text-[15px]">
-                    ${BigNum(balance.pop().amt, 5)}
+                    ${BigNum(balance[0].amt, 5)}
                   </span>
-                  <span
+                  {/* <span
                     style={{
                       color: change > 0 ? "#53D258" : "#7c2424",
                     }}
                     className={`block text-[13px]`}
                   >
                     {change > 0 ? "+" + change.toFixed(2) : change.toFixed(2)}%
-                  </span>
+                  </span> */}
                 </div>
               </div>
             </div>
@@ -603,7 +516,7 @@ const DashHome = () => {
 
               <div className="w-full">
                 <span className="block text-black font-bold text-[15px]">
-                  ${received.pop().amt}
+                  ${received[0].amt}
                 </span>
                 <span
                   style={{
@@ -616,7 +529,7 @@ const DashHome = () => {
               </div>
             </div>
           </div>
-          <div className="">
+          {/* <div className="">
             <Button
               variant="contained"
               className="!bg-[#F57059] !hidden !mt-4 2sm:!block !py-[8px] !max-w-[520px] !m-auto !font-medium !capitalize"
@@ -628,7 +541,7 @@ const DashHome = () => {
             >
               Transfer
             </Button>
-          </div>
+          </div> */}
 
           <div className="bg-white mt-6 p-3 border-solid border-[1px] border-[#e3e3e3]">
             <div className="py-[10px]">
@@ -882,10 +795,10 @@ const DashHome = () => {
             <h2 className="text-[18px] font-bold pb-[10px]">Pages</h2>
             {Boolean(links.length) && !loading2 && (
               <div className="py-2">
-                {links.map(({ attributes }: any, i: number) => {
+                {links.map(({ template_data, link, desc }: any, i: number) => {
                   let source = '';
-                  if (attributes.templates_data !== undefined) {
-                    const temp = JSON.parse(attributes.template_data);
+                  if (template_data !== undefined) {
+                    const { data: temp } = JSON.parse(template_data);
                     const { image } = temp;
                     source = image.src
                   }
@@ -898,19 +811,19 @@ const DashHome = () => {
                             height: 40,
                             backgroundColor: '#f57059',
                           }} src={source} variant='rounded'>{(
-                            String(attributes.link).charAt(0) +
-                            String(attributes.link).charAt(1)
+                            String(link).charAt(0) +
+                            String(link).charAt(1)
                           ).toUpperCase()}</Avatar>
                         </div>
                         <div className="pl-2 flex flex-col">
-                          <div className="font-bold text-[15px]">{attributes.link}</div>
-                          <div className="font-nomal text-[10px]">{attributes.desc ? attributes.desc : ""}
+                          <div className="font-bold text-[15px]">{link}</div>
+                          <div className="font-nomal text-[10px]">{desc ? desc : ""}
                           </div>
                         </div>
                       </div>
                       <div>
                         <div className="flex items-center w-full">
-                          <Link href={`/user/${attributes.link.toLowerCase()}/edit`}>
+                          <Link href={`/user/${link.toLowerCase()}/edit`}>
                             <a title='Edit Page' rel="noreferrer">
                               <IconButton color="inherit"
                                 size={"large"}
@@ -920,7 +833,7 @@ const DashHome = () => {
                             </a>
                           </Link>
 
-                          <Link href={`/user/${attributes.link.toLowerCase()}`}>
+                          <Link href={`/user/${link.toLowerCase()}`}>
                             <a title="View Page" target="_blank" rel="noreferrer">
                               <IconButton
                                 color="inherit"

@@ -27,6 +27,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "ethers": "^5.7.1",
+    "fs": "^0.0.1-security",
     "hardhat": "^2.10.2",
     "magic-sdk": "^8.1.1",
     "moralis": "1.8.0",
@@ -44,6 +45,7 @@
     "react-share": "^4.4.0",
     "recharts": "2.1.10",
     "validator": "^13.7.0",
+    "wagmi": "^0.6.6",
     "web3": "^1.7.5",
     "web3.storage": "^4.3.0"
   },

@@ -2,9 +2,9 @@ import Image from "next/image";
 import { useContext } from "react";
 import logo from "../../../../public/images/img.svg";
 import check from "../../../../public/images/tick.svg";
-import { HomeContextSet } from "../../../contexts/HomeContext";
+import { HomeContext } from "../../../contexts/HomeContext";
 const HeroWaitlist = () => {
-  const useUpdateWalletModal = useContext(HomeContextSet);
+  const { open } = useContext(HomeContext);
 
   return (
     <div className="app">

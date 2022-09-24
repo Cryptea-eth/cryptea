@@ -39,7 +39,11 @@ import Loader from "../../components/elements/loader";
 import { useState, useEffect, SetStateAction, useContext } from "react";
 import { makeNFTClient } from "../../functions/clients";
 import axios from "axios";
-import { initD } from "../../components/elements/dashboard/linkOverview/linkData";
+import { initD } from "../../components/elements/dashboard/link/data";
+import { useCryptea } from "../../contexts/Cryptea";
+import { get_request, post_request } from "../../contexts/Cryptea/requests";
+import AuthModal from "../../components/elements/modal";
+
 
 const contractAddress: { subscribe: string; onetime: string } = {
   // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457",
@@ -77,6 +81,8 @@ function getStyles(name: string, blockchainName: string | any[], theme: Theme) {
   };
 }
 
+ 
+
 const Origin = ({
   className,
   editMode = false,
@@ -90,6 +96,8 @@ const Origin = ({
 
   useEffect(() => {}, [username, router.isReady]);
 
+  const [paymentData, setPaymentData] = useState<{ price: number, type: string } | undefined>();
+
   const [alignment, setAlignment] = useState();
 
   const changeAlignMent = (
@@ -101,12 +109,9 @@ const Origin = ({
 
   const {
     Moralis,
-    isWeb3Enabled,
-    enableWeb3,
-    authenticate,
-    chainId,
-    isAuthenticated,
   } = useMoralis();
+
+  const { isAuthenticated, connected, authenticate, provider, chainId, account } = useCryptea();
 
   const [data, setData] = useState(temp_x.data);
 
@@ -174,63 +179,50 @@ const Origin = ({
   useEffect(() => {
     const init = async () => {
       try {
-        const lQ = await initD(String(username).toLowerCase());
+        const { link: lQ, user: userl, sub, onetime } = await initD(String(username).toLowerCase());
 
         if (lQ !== undefined) {
           setLinkHook(lQ);
 
-          if (lQ.get("template_data") !== undefined && !editMode) {
-            const { data: udata } = JSON.parse(lQ.get("template_data"));
+          if (lQ.template_data !== undefined && !editMode) {
+            const { data: udata } = JSON.parse(lQ.template_data);
 
             setData(udata);
+
           }
 
-          Moralis.Cloud.run("getUser", { obj: lQ.get("user").id }).then(
-            (ex: any) => {
-              let linkAmount: string | object | undefined | number;
+        let linkAmount: string | object | undefined | number;
 
-              if (lQ.get("amount") !== undefined) {
-                linkAmount =
-                  lQ.get("amount") === "variable"
-                    ? "variable"
-                    : JSON.parse(lQ.get("amount"));
+        if (lQ.amount !== undefined) {
+          linkAmount =
+            lQ.amount === "variable"
+              ? "variable"
+              : JSON.parse(lQ.amount);
 
-                if (typeof linkAmount == "number") {
-                  setAmount(linkAmount);
-                }
-              }
+          if (typeof linkAmount == "number") {
+            setAmount(linkAmount);
+          }
+        }
 
-              setUserD({
-                description:
-                  lQ.get("desc") !== undefined
-                    ? lQ.get("desc")
-                    : ex[0]?.get("desc"),
-                username:
-                  lQ.get("title") !== undefined
-                    ? lQ.get("title")
-                    : ex[0]?.get("username"),
-                email: ex[0]?.get("email"),
-                ethAddress: ex[0]?.get("ethAddress"),
-                img:
-                  lQ.get("img") !== undefined
-                    ? lQ.get("img")
-                    : ex[0]?.get("img") === undefined
-                    ? ""
-                    : ex[0]?.get("img"),
-                id: lQ.id,
-                onetime: lQ.get("onetime"),
-                subscribers: lQ.get("subscribers"),
-                linktype: lQ.get("type"),
-                amountMultiple: Boolean(lQ.get("amountMulti"))
-                  ? JSON.parse(lQ.get("amountMulti"))
-                  : [],
-                linkAmount,
-                rdata: JSON.parse(lQ.get("rdata")),
-              });
+        setUserD({
+          description: lQ.desc,
+          username: lQ.title !== undefined ? lQ.title : userl.username,
+          email: userl.email,
+          ethAddress: lQ.address,
+          img: userl.img !== undefined ? userl.img : undefined,
+          id: lQ.id,
+          onetime,
+          subscribers: sub,
+          linktype: lQ.type,
+          amountMultiple: Boolean(lQ.accountMulti)
+            ? JSON.parse(lQ.accountMulti)
+            : [],
+          linkAmount,
+          rdata: JSON.parse(lQ.rdata),
+        });
 
-              if (setIsLoading !== undefined) setIsLoading(false);
-            }
-          );
+        if (setIsLoading !== undefined) setIsLoading(false);
+           
         } else {
           router.push("/404");
         }
@@ -244,12 +236,15 @@ const Origin = ({
     if (router.isReady) {
       init();
     }
-  }, [Moralis.Cloud, router, username, router.isReady, editMode]);
+
+
+  }, [router, username, router.isReady, editMode]);
+
+  
 
   const {
     username: usern,
     description,
-    email,
     img,
     ethAddress,
     id: linkId,
@@ -258,7 +253,6 @@ const Origin = ({
   }: {
     username?: string;
     description?: string;
-    email?: string;
     img?: string | null;
     ethAddress?: string;
     id?: string;
@@ -271,7 +265,6 @@ const Origin = ({
     window.location.href = "/404";
   }
 
-  const provider: any = Moralis.provider;
 
   let nft: any = "";
 
@@ -281,7 +274,7 @@ const Origin = ({
     duration: number,
     desc?: string
   ) => {
-    const nfx = makeNFTClient(await Moralis.Cloud.run("getNFTStorageKey"));
+    const nfx = makeNFTClient(await get_request("/nftkey"));
 
     const date = new Date();
 
@@ -325,7 +318,7 @@ const Origin = ({
     to: string,
     value: string | number
   ) => {
-    const web3x = new web3(provider);
+    const web3x = new web3('https://polygon-mumbai.g.alchemy.com/v2/MzZzDxvKCBv5Jv-ej3NuhtxuWheY62R6');
     const abi: any = SUBSCRIPTION.abi;
     const nftContract = new web3x.eth.Contract(
       abi,
@@ -386,6 +379,7 @@ const Origin = ({
 
     return 0;
   };
+  
 
   const reset = () => {
     setTransferSuccess(false);
@@ -402,7 +396,7 @@ const Origin = ({
   };
 
   const support = ["name", "email", "phone"];
-
+  
   const validForm = (value: string, valid: string) => {
     if (valid == "email" && !validator.isEmail(value)) {
       return false;
@@ -423,21 +417,22 @@ const Origin = ({
     price: number,
     type: "subscription" | "onetime" = "onetime"
   ) => {
-    setLoadingText("Connecting to wallet/Awaiting signature");
+
     let from = "";
 
-    try {
-      const senx = await authenticate({ signingMessage: message[type] });
-      from = senx?.get("ethAddress");
-    } catch (e) {
-      setTransferFail(true);
-      setLoadingText("");
-      return;
-    }
+    if(!connected) {
+    
+      authenticate(true);
+    
+    setPaymentData({ price, type });
+     
+    } else {
+     
+     from = account || "";
 
     setLoadingText("Pending...");
 
-    const initWeb3 = new web3(provider);
+    const initWeb3 = new web3('https://polygon-mumbai.g.alchemy.com/v2/MzZzDxvKCBv5Jv-ej3NuhtxuWheY62R6');
 
     const ether = await getPrice(price);
 
@@ -448,15 +443,19 @@ const Origin = ({
     if (type == "subscription") {
       if (!subCheck) {
         setLoadingText("Checking Wallet...");
-        const subdata = await axios.get(
+
+        const subdata = await fetch(
           `https://api.covalenthq.com/v1/${Number(
             chainId
           )}/address/${from}/balances_v2/?quote-currency=USD&format=JSON&nft=true&no-nft-fetch=false&key=ckey_d8fd93851d6a4d57bdcf14a337d`
         );
 
-        const main = subdata.data.data.items;
+        const mainx = await subdata.json()
+
+        const main = mainx.data.items;
+
         let eSubs: string[] = [];
-        if (!subdata.data.error) {
+     
           for (let i = 0; i < main.length; i++) {
             if (
               contractAddress["subscribe"].toLowerCase() ==
@@ -493,7 +492,7 @@ const Origin = ({
               }
             }
           }
-        }
+        
 
         if (eSubs.length) {
           setESubscription(eSubs);
@@ -543,18 +542,19 @@ const Origin = ({
             }
           });
 
-          remind.push({
-            ...rx,
-            date,
-            remind: date + (mainIx(interval) * 1000),
-            address: from,
-            amount: price,
-            token: 'matic',
-            renewal: interval,
-          });
 
-          linkHook.set("subscribers", JSON.stringify(remind));
-          await linkHook.save();
+        await post_request(`/link/payments/${linkId}`, {
+          ...rx,
+          date,
+          remind: date + mainIx(interval) * 1000,
+          address: from,
+          amount: price,
+          amountCrypto: ether,
+          token: "matic",
+          type: "sub",
+          renewal: interval,
+        });
+
           console.log("done");
         }
 
@@ -601,17 +601,17 @@ const Origin = ({
           });
 
           if (linkHook !== undefined) {
-            payers.push({
+
+            await post_request(`/link/payments/${linkId}`, {
               ...rx,
               date: new Date().getTime(),
               address: from,
+              type: "onetime",
               amount: price,
-              token: 'matic'
+              amountCrypto: ether,
+              token: "matic",
             });
 
-            linkHook.set("onetime", JSON.stringify(payers));
-
-            await linkHook.save();
           }
 
           setTransferSuccess(true);
@@ -627,13 +627,21 @@ const Origin = ({
           }
         });
     }
+  }
   };
+
+  useEffect(() => {
+      if (connected && paymentData !== undefined) {
+          console.log('i am here');
+      }
+  }, [connected])
 
   const [value, setValue] = useState<number>(0);
 
   const [auth, setAuth] = useState<boolean>(true);
 
   const beginSub = () => {
+
     setFailMessage("");
     setTransferFail(false);
     setHash("");
@@ -668,17 +676,6 @@ const Origin = ({
     }
   };
 
-  useEffect(() => {
-    if (!isAuthenticated && !auth) {
-      if (!isWeb3Enabled) {
-        enableWeb3();
-      }
-    } else {
-      if (!isWeb3Enabled) {
-        enableWeb3();
-      }
-    }
-  }, [enableWeb3, isWeb3Enabled, isAuthenticated, auth, Moralis]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -699,6 +696,7 @@ const Origin = ({
 
   return (
     <div className={`origin ${className}`}>
+      <AuthModal userAuth={false} />
       {isLoading ? (
         <Loader fixed={false} />
       ) : (

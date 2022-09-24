@@ -1,48 +1,38 @@
-import axios from 'axios';
+import { AxiosError } from "axios";
+import { del_request, post_request, get_request, patch_request } from "./requests";
 import { CrypteaDBS, CrypteaSub } from './types';
 
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "https://ap.cryptea.me";
-
-
-
-const init = (path: string) => {
-    const config = {
-        headers: {
-            'Authorization': `Bearer `
-        },
-    }
-
-    axios.get(`/`, config);
-}
-
 const getKey = (key: string, obj: {[index: string]: any}): string | undefined => {
+    
     for (let ix in obj) {
+
         if ((ix).toLowerCase() == (key).toLowerCase()) {
             return obj[ix];
         }else if(typeof obj[ix] == 'object'){
-            return getKey(key, obj[ix]);
+            const obx = getKey(key, obj[ix]);
+
+            if (obx !== undefined) return obx;
         } 
     }
 }
 
-// export const time = () => axios.get(`/time`, { params: { timezone: jstz.determine().name() } });
+export const time = () => get_request(`/time/`, { params: { timezone: window.jstz.determine().name() } });
 
 const allowed: CrypteaDBS = {
-  links: { supports: ["get", "all", "delete", "id"], endpoint: "/link" },
+  links: { supports: ["get", "delete", 'save', "id", "update"], endpoint: "/link" },
 
-  user: { supports: ["get", "all"], endpoint: "/user" },
-
+  user: { supports: ["get", "update"], endpoint: "/user" },
+ 
   payments: {
-    supports: ["get", "all", "id", "idrequire"],
-    endpoint: "/link/payments/",
+    supports: ["get", "id", 'save', "saveid", "idrequire"],
+    endpoint: "/link/payments",
   },
   views: {
-    supports: ["get", "all", "id", "idrequire"],
-    endpoint: "/link/views/",
+    supports: ["get", "id", 'save', "idrequire"],
+    endpoint: "/link/views",
   },
   templates: {
-    supports: ["get", "all"],
+    supports: ["get"],
     endpoint: "/template",
   },
 };
@@ -52,63 +42,201 @@ const headers =  {
         "Content-Type": "application"
     }
 
-String.prototype.get = async function (this:string, column: string, fresh: boolean = false) {
-    const pstring:string[] = this.split('/');
 
-    let allowP: CrypteaSub | undefined;
+const getSupport = (
+  proto: string,
+  supports: "get" | "delete" | "update" | 'save',
+  id?: number | string 
+): [CrypteaSub | undefined, string[]] => {
+  const pstring: string[] = proto.split("/");
 
-    for (let index in allowed) {
-        const dax = allowed[index].supports.indexOf('get') 
-        if (dax != -1) {  
-            if (
-              (allowed[index].supports.indexOf("idrequire") != -1 &&
-                pstring[1] !== undefined) ||
-              (allowed[index].supports.indexOf("idrequire") == -1)
-            ) {
-              if (pstring[0].toLowerCase() == index.toLowerCase()) {
-                allowP = allowed[index];
-                break;
-              }
-            }
+  if (pstring[1] === undefined && id !== undefined) pstring[1] == id;
+
+  let allowP: CrypteaSub | undefined;
+
+  for (let index in allowed) {
+    const { supports: support } = allowed[index]
+    const dax = support.indexOf(supports);
+    if (dax != -1) {
+      if (
+        (support.indexOf("idrequire") != -1 &&
+          pstring[1] !== undefined) ||
+        (supports == "save" &&
+          support.indexOf("saveid") != -1) ||
+        support.indexOf("idrequire") == -1
+      ) {
+        if (pstring[0].toLowerCase() == index.toLowerCase()) {
+          allowP = allowed[index];
+          break;
         }
+      }
     }
+  }
+
+  return [allowP, pstring];
+};
+
+String.prototype.get = async function (this:string, column: string, fresh: boolean | undefined = false, id?: number | string) {
+    
+    const [allowP, pstring]: [CrypteaSub | undefined, string[]] = getSupport(this, 'get', id);
+
 
     if (allowP !== undefined) {
-        const extra = pstring[1] !== undefined ? pstring[1] : '';
-        const cache = localStorage.getItem((pstring[0]).toLowerCase()) 
+        const extra = pstring[1] !== undefined ? "/" + pstring[1] : "";
+        const cache = localStorage.getItem(pstring[0].toLowerCase()); 
         
         const rcache = JSON.parse(cache ?? '{}');
 
         if (fresh || cache === null) {
-           const res = await axios.get(`${allowP.endpoint}${extra}`, {
-                headers
-            });
+
+           const res = await get_request(`${allowP.endpoint}${extra}`);
 
             const { data } = res;
 
            if (!data.error || data.error == undefined) {
-            
                 localStorage.setItem(pstring[0].toLowerCase(), JSON.stringify(data));
 
-                return getKey(column, data);
+                if (column == '*') {
+                  return data;
+                }else{
+                  return getKey(column, data);
+                }
            }
 
         }else{
+            if (column == "*") {
+              return rcache;
+            }else{
             return getKey(column, rcache);
+            }
         }
     }
-
 
     return undefined
 }
 
+String.prototype.update = async function (this: string, obj: Object, id?: number) {
 
-String.prototype.save = async (table: Object) => {
-  return true;
+  const [allowP, pstring]: [CrypteaSub | undefined, string[]] = getSupport(this, 'update', id);
+
+ if (allowP !== undefined) {
+   const extra = pstring[1] !== undefined ? "/" + pstring[1] : "";
+
+   
+   try{
+
+   const res = await patch_request(`${allowP.endpoint}${extra}`, obj);
+
+   const { data } = res;
+
+   if (!data.error || data.error == undefined) {
+     return {
+       error: false,
+       message: "Item Updated Successfully",
+     };
+   } else {
+     return {
+       error: true,
+       message: data.message,
+     };
+   }
+    } catch (error) {
+        const err = error as AxiosError
+
+        if (err.response) {
+            
+            throw err.response.data
+
+         }
+    }
+ }
+
+ return {
+   error: true,
+   message: "something went wrong",
+ };
 };
 
-String.prototype.delete = async (id: number) => {
-  return true;
+String.prototype.save = async function (this: string, obj: Object) {
+
+    const [allowP, pstring]: [CrypteaSub | undefined, string[]] = getSupport(this, 'save');
+
+    if (allowP !== undefined) {
+      const extra = pstring[1] !== undefined ? "/" + pstring[1] : "";
+    
+      
+    try {
+
+      const res = await post_request(`${allowP.endpoint}${extra}`, obj);
+
+        const { data } = res;
+
+        if (!data.error || data.error == undefined) {
+            return {
+                error: false,
+                message: "Item Added Successfully"
+            }
+        }else{
+            return {
+                error: true,
+                message: data.message
+            }
+        }
+    } catch (error) {
+        const err = error as AxiosError
+
+        if (err.response) {
+            
+            throw err.response.data
+
+         }    
+    } 
+}
+
+  return {
+     error: true,
+     message: "something went wrong"
+  };
+};
+
+String.prototype.delete = async function (this: string, id?: number) {
+ 
+   const [allowP, pstring]: [CrypteaSub | undefined, string[]] = getSupport(this, 'delete', id);
+
+    if (allowP !== undefined) {
+      const extra = pstring[1] !== undefined ? '/'+pstring[1] : "";
+
+      try {
+        const res = await del_request(`${allowP.endpoint}${extra}`);
+
+        const { data } = res;
+
+        if (!data.error || data.error == undefined) {
+          return {
+            error: false,
+            message: "Item Deleted Successfully",
+          };
+        } else {
+          return {
+            error: true,
+            message: data.message,
+          };
+        }
+      } catch (error) {
+        const err = error as AxiosError;
+
+        if (err.response) {
+
+          throw err.response.data;
+
+        }
+      }
+    }
+
+  return {
+    error: true,
+    message: "something went wrong",
+  };
 };
 
 

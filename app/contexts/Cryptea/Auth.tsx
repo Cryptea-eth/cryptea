@@ -1,160 +1,161 @@
 import { Web3ReactProvider } from "@web3-react/core";
-import { createContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import web3 from "web3";
-import { AbstractConnector } from "@web3-react/abstract-connector";
 import { useWeb3React } from "@web3-react/core";
-import axios from 'axios';
-import { injected, walletconnect } from "./connectors";
+import { AxiosError } from 'axios';
+import connectors from "./connectors";
+import { webSocketProvider } from './connectors/chains';
 import * as ethers from "ethers";
-
-export type authenticable = "injected" | "walletconnect" | "mail";
-
-export type userDataTypes  = string | null | undefined | number | boolean;
-
-export interface userData {
-    email: userDataTypes,
-    username: userDataTypes,
-    accounts: userDataTypes[],
-    img: userDataTypes
-}
-
-export interface authData {
-  chainId: Promise<string | number> | undefined;
-  web3Provider: Promise<any> | undefined;
-  ethersProvider: ethers.ethers.providers.Web3Provider | undefined;
-  isAuthenticated: boolean;
-}
-
-export interface authenticateUserDefault {
-  type: authenticable;
-  message?: string;
-}
-
-export interface authenticateUserExtended extends authenticateUserDefault {
-  activate: (
-    connector: AbstractConnector,
-    onError?: ((error: Error) => void) | undefined,
-    throwErrors?: boolean | undefined
-  ) => Promise<void>;
-  connector: AbstractConnector | undefined;
-  account: string | null | undefined;
-}
-
-export interface AuthContext {
-  usAuth?: ({
-    type,
-    message,
-    activate,
-    account,
-    connector,
-  }: authenticateUserExtended) => Promise<userData>;
-  useAuthData?: () => authData;
-  api_base?: string;
-  user?: userData | undefined;
-}
+import { AuthContext, authData, authenticateUserDefault, authenticateUserExtended, userData } from "./types";
+import './DB';
+import { post_request } from "./requests";
+import router  from "next/router";
+import { createClient, useAccount, WagmiConfig } from "wagmi";
 
 const getLibrary = (provider: any) => {
   return new web3(provider);
 };
 
-const API:string = 'https://ap.cryptea.me';
-
 let user:userData | undefined;
 
-const AuthAddress = async (address: string) => {
-   const userx = await axios.post(`${API}/login/walletAuth`, {
-        data: {
-            address
-        }
-    });
+let message = 'Welcome to Cryptea';
 
-    if (userx.data.error) {
-        const { email, img, accounts, username }: { username: string, img: string,email : string, accounts: string[] } = userx.data.data;
+let isAuth = false;
 
-        localStorage.setItem('userToken', userx.data.token);
+export const AuthAddress = async (address: string, signature: string) => {
 
-        user = {
-          email,
-          username,
-          accounts,
-          img,
-        };
+  try {
+    
+      const userx = await post_request(`/login/walletAuth`, {
+                address, signature
+      });
 
-        return user;
 
-    }else{
-        throw 'Something Went Wrong Error 01'
+      console.log(userx, 'Here')
+
+      if(!userx.data.error){
+
+        const { email, img, accounts, username, id }: { username: string, img: string,email : string, accounts: string[], id: number|string } = userx.data.data;
+
+         user = {
+           id,
+           email,
+           username,
+           accounts,
+           img,
+         };
+
+         localStorage.setItem('user', JSON.stringify(user));
+
+         localStorage.setItem("userToken", userx.data.token);
+
+         isAuth = true;
+
+      }else{
+          throw "Invalid Login Details";
+      }
+      
+  }catch (err) {
+      const error = err as AxiosError;
+      console.log(err);
+      if (error.response) {
+        throw "Invalid Login Details";
+      }
     }
+
+  return user;
+
 };
 
-export const useAuthData = (): authData => {
-  const { connector, active } = useWeb3React();
+export const AuthUser = async ({
+  type,
+  signMessage,
+  isConnected,
+  address,
+  signMessageAsync,
+  isSuccess,
+  connectAsync
+}: authenticateUserExtended): Promise<userData | undefined> => {
+  
 
-  let web3Provider:any;
- let chainId:Promise<string | number> | undefined 
- let ethersProvider: undefined | ethers.ethers.providers.Web3Provider; 
+  if (signMessage !== undefined) message = signMessage;
 
-  if(connector){
-
-  connector.getProvider().then((ww) => {
-     web3Provider = ww
-     ethersProvider = new ethers.providers.Web3Provider(web3Provider);
-  });
-
-  chainId = connector?.getChainId();
- }
-
-  return {
-    chainId,
-    web3Provider,
-    ethersProvider,
-    isAuthenticated: active,
-  };
-};
-
-
-export const usAuth = async ({
-  type = "injected",
-  message,
-  activate,
-  account,
-  connector,
-}: authenticateUserExtended): Promise<userData> => {
-  switch (type) {
-    case "injected":
-      await activate(injected);
-      break;
-    case "walletconnect":
-      await activate(walletconnect);
-      break;
+  if(!isConnected){
+     await connectAsync({ connector: type });
+     console.log(isConnected)
   }
 
-  const web3Provider = await (
-    connector ?? { getProvider: () => undefined }
-  ).getProvider();
+  const data = await signMessageAsync({ message });
 
-  return await AuthAddress(String(account));
+  console.log(isConnected)
+
+  if (data.length) {
+    try {
+      console.log('hhere now')
+
+      const main = await AuthAddress(String(address), data);
+
+
+      return main;
+
+    } catch (err) {
+      console.log(err)
+      throw "Something went wrong, please try again";
+    }
+  }else { 
+      console.log(isConnected, data.length)
+   }
 };
 
+export const AuthContextMain = createContext<AuthContext>({});
 
-export const Auth = createContext<AuthContext>({
-    
-});
+export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
 
-export const CrypteaAuth = ({children}: {children: JSX.Element}) => {
+    const [ isAuthenticated, setAuth ] = useState<boolean | undefined>();
 
-    const context: AuthContext = {
-      usAuth,
-      useAuthData,
-      api_base: API,
-      user
-    };
+    const [context, setContext] = useState<userData | undefined>(user);
+
+    useEffect(() => {
+
+        const cache:string | null = localStorage.getItem("userToken");
+
+        setAuth(cache !== null);
+
+    }, [context])
+
+
+    const client = createClient({
+      autoConnect: true,
+      connectors,
+      webSocketProvider,
+      provider: ethers.getDefaultProvider()
+    });
+  
 
     return (
-        <Web3ReactProvider getLibrary={getLibrary}>
-            <Auth.Provider value={context}>
-                {children}
-            </Auth.Provider>
-        </Web3ReactProvider>
-    )
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <WagmiConfig client={client}>
+          <AuthContextMain.Provider
+            value={{
+              user: context,
+              isAuthenticated,
+              update: (e: userData | undefined) => setContext(e),
+            }}
+          >
+            {children}
+          </AuthContextMain.Provider>
+        </WagmiConfig>
+      </Web3ReactProvider>
+    );
 }
+
+
+export const AuthGlob = ({ children }: { children: JSX.Element }) => {
+  
+  const { active } = useWeb3React();
+
+  const { isAuthenticated } = useContext(AuthContextMain);
+
+  
+  return <>{children}</>
+};

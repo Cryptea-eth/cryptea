@@ -6,29 +6,26 @@ import { Typography, Box, Button, Avatar, IconButton, Modal } from '@mui/materia
 import { MdAddLink, MdDeleteOutline, MdInfo, MdModeEditOutline } from 'react-icons/md';
 import Link from "next/link";
 import { RiDeleteBin2Line, RiPagesLine } from "react-icons/ri";
+import { useCryptea } from "../../../contexts/Cryptea";
+import Router from "next/router";
 
 const DashPages = () => {
   const [isLoading, loading] = useState<boolean>(true);
-  const { user, Moralis, isInitialized, isAuthenticated } = useMoralis();
+  const { isAuthenticated } = useCryptea();
   const [links, addLinks] = useState<any>([]);
 
   useEffect(() => {
-    if (isInitialized) {
+    if (isAuthenticated !== undefined) {
       if (!isAuthenticated) {
-        window.location.href = "/";
+        Router.push("/auth");
+      } else {
+        "links".get("*", true).then((e) => {
+          addLinks(e);
+          loading(false);
+        });
       }
     }
-    const Link = Moralis.Object.extend("link");
-
-    const mlink = new Moralis.Query(Link);
-    mlink.equalTo("user", user);
-
-    mlink.find().then((e) => {
-      addLinks(e);
-      loading(false);
-    });
-
-  }, [isAuthenticated, isInitialized, Moralis.Object, Moralis.Query, user]);
+  }, [isAuthenticated]);
 
   return (
     <div className="pt-[75px] px-5">
@@ -74,7 +71,7 @@ const DashPages = () => {
             }}
             className="grid gap-2 grid-flow-dense"
           >
-            {links.map(({ attributes }: any, i: number) => {
+            {links.map((attributes : any, i: number) => {
               let realS = '';
               if (attributes.templates_data !== undefined) {
                 const temp = JSON.parse(attributes.template_data);

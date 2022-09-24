@@ -2,21 +2,23 @@ import linked from "../../../../public/images/icon0.png";
 import Image from "next/image";
 import mess from "../../../../public/images/icon1.png";
 import twitt from "../../../../public/images/icon2.png";
-import { HomeContextSet } from '../../../contexts/HomeContext';
+import { HomeContext } from '../../../contexts/HomeContext';
 import { useContext } from "react";
 import LogoSpace from "../logo";
 const Footer = () => {
   const date = new Date();
 
-  const useUpdateWalletModal = useContext(HomeContextSet);
+  const { open } = useContext(HomeContext);
 
   return (
     <div>
       <div className="flex mx-[70px] md:mx-5 mmd:mx-[10px] border-solid border-b-[#E5E5EA] border-b-[1px] w-auto p-5 justify-between pb-12">
         <div className="w-[220px]">
-          <LogoSpace style={{
-            marginBottom: 8
-          }}/>
+          <LogoSpace
+            style={{
+              marginBottom: 8,
+            }}
+          />
 
           <span className="text-[#757095] ">
             Receive Payments Instantly With Ease.
@@ -38,7 +40,9 @@ const Footer = () => {
           <div className="hidden 2sm:flex items-center justify-between w-[200px]">
             <div className="mr-[5px] block">
               <button
-                onClick={useUpdateWalletModal}
+                onClick={() => {
+                  if (open !== undefined) open();
+                }}
                 className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
               >
                 Connect Wallet
@@ -83,7 +87,9 @@ const Footer = () => {
           <div className="flex items-center justify-between w-[200px]">
             <div className="mr-[5px]">
               <button
-                onClick={useUpdateWalletModal}
+                onClick={() => {
+                  if (open !== undefined) open();
+                }}
                 className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
               >
                 Connect Wallet

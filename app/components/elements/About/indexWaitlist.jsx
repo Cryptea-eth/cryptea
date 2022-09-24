@@ -4,14 +4,14 @@ import three from "../../../../public/images/three.svg";
 import circle from "../../../../public/images/circle.svg";
 import Supported from "../Supported";
 import Image from "next/image";
-import { HomeContextSet } from "../../../contexts/HomeContext";
+import { HomeContext } from "../../../contexts/HomeContext";
 import { useContext, useState } from "react";
 import { LinearProgress, Box } from "@mui/material";
 import axios from "axios";
 
 
 const AboutWaitlist = () => {
-  const useUpdateWalletModal = useContext(HomeContextSet);
+  const { open } = useContext(HomeContext);
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState("");
@@ -71,7 +71,9 @@ const AboutWaitlist = () => {
         </span>
 
         <button
-          onClick={useUpdateWalletModal}
+          onClick={() => {
+            if (open !== undefined) open();
+          }}
           className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet
@@ -157,7 +159,6 @@ const AboutWaitlist = () => {
           <div className="w-full mt-4 flex">
             <div className="mr-2 w-full">
               <label className="block text-white text-sm font-medium mb-2">
-               
                 Name{" "}
               </label>
               <input
@@ -197,7 +198,7 @@ const AboutWaitlist = () => {
                     setError("Your email seems incorrect");
                   }
 
-                   setSuccess("");
+                  setSuccess("");
                 }}
                 placeholder="hello@cryptea.me"
               />

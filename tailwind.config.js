@@ -13,6 +13,7 @@ module.exports = {
   theme: {
     screens: {
       "4sm": {min: "1240px"},
+      "4zsm": { min: "950px" },
       "42sm": {min: "800px"},
       "3sm": { max: "1025px" },
       "2sm": { max: "975px" },

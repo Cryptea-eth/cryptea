@@ -8,8 +8,9 @@ import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import { MoralisProvider } from 'react-moralis'
 import { GenProvider } from '../app/contexts/GenContext';
-import { CrypteaProvider } from '../app/contexts/Cryptea/provider';
+import { HomeProvider } from '../app/contexts/HomeContext';
 import '../app/contexts/Cryptea/types.d.ts';
+import { AuthGlob, CrypteaProvider } from "../app/contexts/Cryptea/Auth";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -19,7 +20,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     >
       <CrypteaProvider>
         <GenProvider>
+          <HomeProvider>
+            <AuthGlob>
           <Component {...pageProps} />
+          </AuthGlob>
+          </HomeProvider>
         </GenProvider>
       </CrypteaProvider>
     </MoralisProvider>

@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { HomeContextSet } from '../../../contexts/HomeContext';
+import { HomeContext } from '../../../contexts/HomeContext';
 
 const Extras = () => {
 
-  const useUpdateWalletModal = useContext(HomeContextSet);
+  const { open } = useContext(HomeContext);
 
   return (
     <div className="mt-40 mb-10 h-[660px] mmd:h-fit w-full bg-cover bg-no-repeat flex justify-center items-center relative">
@@ -35,7 +35,9 @@ const Extras = () => {
         </span>
 
         <button
-          onClick={useUpdateWalletModal}
+          onClick={() => {
+            if (open !== undefined) open();
+          }}
           className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet

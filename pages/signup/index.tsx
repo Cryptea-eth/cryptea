@@ -10,7 +10,9 @@ const Signup = () => {
         <meta name="description" content={`Receive Payments Instantly With Ease`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      
       <Nav />
+
       <SignUpForm />
     </div>
   );

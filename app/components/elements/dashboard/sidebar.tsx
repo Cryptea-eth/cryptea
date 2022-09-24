@@ -5,8 +5,6 @@ import {
   BiLogOut,
  } from 'react-icons/bi'
 
-import { useMoralis } from "react-moralis";
-
  import {
   IoIosArrowDropleftCircle,
   IoIosArrowDroprightCircle
@@ -21,11 +19,12 @@ import { RiSettingsLine } from "react-icons/ri";
 import logo from "../../../../public/images/cryptea-logo.svg";
 import logo2 from "../../../../public/images/cryptea.png";
 import { useContext } from 'react';
+import { useCryptea } from '../../../contexts/Cryptea';
 
 
 const Sidebar = ({page}: {page: string | string[] | undefined}) => {
 
-  const { logout } = useMoralis();
+  const { logout } = useCryptea();
 
   const router = useRouter()
 
@@ -186,7 +185,8 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
             <div
               className="text-inherit flex items-center text-[14px]"
               onClick={async () => {
-                logout();
+                await logout();
+                
                 router.push("/");
               }}
             >

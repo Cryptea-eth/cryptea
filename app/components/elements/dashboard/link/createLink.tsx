@@ -18,11 +18,12 @@ import { GiTwoCoins } from "react-icons/gi";
 import { FaCoins } from "react-icons/fa";
 import LogoSpace from "../../logo";
 import { useEffect, useState } from "react";
-import { useMoralis } from "react-moralis";
 import Loader from "../../loader";
 import TabPanel from "./TabPanel";
 import Router from "next/router";
 import validator from 'validator';
+import { AxiosError } from "axios";
+import { useCryptea } from "../../../../contexts/Cryptea";
 
 
 const NewLink = () => {
@@ -106,19 +107,19 @@ const MenuProps = {
     };
   }
 
-  const { isAuthenticated, isInitialized, Moralis, user } = useMoralis();
+  const { isAuthenticated, account } = useCryptea();
 
   const [loadpage, isloadPage] = useState<boolean>(true);
 
   useEffect(() => {
-    if (isInitialized) {
+    if (isAuthenticated !== undefined) {
       if (!isAuthenticated) {
-        window.location.href = "/";
+        Router.push('/auth');
       } else {
         isloadPage(false);
       }
     }
-  }, [isAuthenticated, isInitialized, isloadPage]);
+  }, [isAuthenticated]);
 
   const helper = {
     padding: "6px 3px",
@@ -364,51 +365,42 @@ const MenuProps = {
           rinputs['sub'].push('Email')
       }
       
-
-      const Link = Moralis.Object.extend("link");
-      const link = new Link();
-
-      const mQ = new Moralis.Query(Link);
-      mQ.equalTo("link", data.slug[index].toLowerCase());
-
-      mQ.find().then(async (ld) => {
-        if (!ld.length) {
-          link?.set("link", data.slug[index].toLowerCase());
-          link?.set("amount", String(amount));
-          link?.set("desc", data.desc[index]);
-          link?.set("title", data.title[index]);
-          link?.set("onetime", '[]');
-          link?.set("subscribers", '[]');
-          link?.set("views", "[]");
-          link?.set("amountMulti", JSON.stringify(data.amount.multi));
-          link?.set(
-            "type",
-            value === Type.onetime ? "onetime" : "sub"
-          );
-          link?.set("rdata", JSON.stringify(rinputs));
-          link?.set("user", user);
-
-          link?.set("template_data", JSON.stringify(templateData));
+          
+      const newData = {
+            slug: data.slug[index].toLowerCase(),
+            desc: data.desc[index],
+            title: data.title[index],
+            address: account,
+            amountMulti: JSON.stringify(data.amount.multi),
+            type: value === Type.onetime ? "onetime" : "sub",
+            rdata: JSON.stringify(rinputs),
+            template_data: JSON.stringify(templateData),
+          };
 
           try {
-            await link?.save();
             
-            Router.push('/dashboard/links');
+            await ('links').save(newData);
+            
+            Router.push(`/user/${newData.slug}/overview`);
 
           } catch (e) {
-            const errorObject = e as Error;
-            setGenError(errorObject?.message);
+            const errorObject = e as AxiosError;
+
+            if (errorObject.response) {
+            
+              const ee:any = errorObject.response
+
+              setGenError(ee.data.message);
+
+            }else{
+              setGenError("Something went wrong, please try again");
+            }
             setLoading(false);
 
             document.querySelector(".linkadd")?.scrollIntoView();
+            
           }
-      } else {
-        setGenError("Link slug has already been taken");
-        setLoading(false);
 
-        document.querySelector(".linkadd")?.scrollIntoView();
-      }
-      });
     }
   };
 

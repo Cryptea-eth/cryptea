@@ -81,95 +81,70 @@ const Edit = () => {
   let [editable, setEditable] = useState<string[]>([]);
 
 
-  useEffect(() => {
-    const init = async () => {
-      if (isInitialized) {
-        if (isAuthenticated) {
-          const LinkData = Moralis.Object.extend("link");
+useEffect(() => {
+  const init = async () => {
+    if (isAuthenticated !== undefined) {
+      if (isAuthenticated) {
+        const linkx: any = await `links/${String(usern).toLowerCase()}`.get(
+          "link",
+          true
+        );
 
-          const LQ = new Moralis.Query(LinkData);
+        const temx:any = await ('templates').get('*');
 
-          LQ.equalTo("link", String(usern).toLowerCase());
+        setTemplates(temx);
 
-          LQ.contains("user", user !== null ? user?.id : "");           
+        setLinkx(linkx);
 
-          const linkx = await LQ.first();
+        if (linkx?.template_data !== undefined) {
+          const { name, data: udata } = JSON.parse(linkx?.template_data);
 
-          setLinkx(linkx);
+          const { rules, getData } = await import(
+            `../../../app/templates/${name}/data`
+          );
 
-          if (linkx?.get("template_data") !== undefined) {
-            const { name, data: udata } = JSON.parse(
-              linkx?.get("template_data")
-            );
+          setRules(rules);
 
-            const temp = Moralis.Object.extend("templates");
+          setData(name);
 
-            const tempList = new Moralis.Query(temp);
+          getData(udata);
 
-            const tl = await tempList.find();
+          const edx: string[] = [];
 
-            setTemplates(tl);
-
-            const { rules, getData } = await import(
-              `../../../app/templates/${name}/data`
-            );
-
-            setRules({...rules, change_template: {}});
-
-            setData(name);
-
-            getData(udata);
-
-            const edx: string[] = [];
-
-            for (let aa in rules) {
-              if (aa != "body") {
-                edx.push(aa);
-              }
+          for (let aa in rules) {
+            if (aa != "body") {
+              edx.push(aa);
             }
-
-            setEditable([...edx, 'change_template']);
-
-            const Utemplate = dynamic(
-              () => import(`../../../app/templates/${name}`),
-              {
-                suspense: true,
-              }
-            );
-
-            setTemplate(Utemplate);
-              
-            setLoader(false);
-
-          }else{
-            if(router.isReady){
-            router.push('/404')
           }
+
+          setEditable(edx);
+
+          const Utemplate = dynamic(
+            () => import(`../../../app/templates/${name}`),
+            {
+              suspense: false,
+            }
+          );
+
+          setTemplate(Utemplate);
+
+          setLoader(false);
         }
-        
-          
-        } else {
-          router.push("/404");
-        }
+      } else {
+        router.push("/auth");
       }
-    };
+    }
+  };
 
-    init();
-  }, [
-    Moralis.Object,
-    usern,
-    user,
-    Moralis.Query,
-    router,
-    isAuthenticated,
-    isInitialized,
-  ]);
+  init();
+}, [usern, router, isAuthenticated]);
 
-  let times: any;
+let times: any;
 
-  const saveSets = async () => {
-    clearTimeout(times);
+const saveSets = async () => {
+  clearTimeout(times);
 
+  try {
     saveChanges({
       ...isSaving,
       one: true,
@@ -179,9 +154,7 @@ const Edit = () => {
 
     const sdata = JSON.stringify({ name: ndata, data });
 
-    linkx.set("template_data", sdata);
-
-    await linkx.save();
+    await `links/${linkx.id}`.update({ template_data: sdata });
 
     saveChanges({
       two: true,
@@ -194,15 +167,20 @@ const Edit = () => {
         two: false,
       });
     }, 2000);
-  };
+  } catch (err) {
+    const error = err as Error;
 
-  const [isSaving, saveChanges] = useState<{
-    one: boolean;
-    two: boolean;
-  }>({
-    one: false,
-    two: false,
-  });
+    console.log(error);
+  }
+};
+
+const [isSaving, saveChanges] = useState<{
+  one: boolean;
+  two: boolean;
+}>({
+  one: false,
+  two: false,
+});
 
   const [iimg, setIiimg] = useState({});
   const [getRules, setPart] = useState<string>("");
@@ -1694,10 +1672,10 @@ const Edit = () => {
                       {getRules == "change_template" && (
                         <div className="w-full flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
                           <>
-                            {templates.map(({ attributes }, i: number) => {
+                            {templates.map(( attributes: any, i: number) => {
                               if (
                                 attributes.importance == "both" ||
-                                attributes.importance == linkx.get("type")
+                                attributes.importance == linkx.type
                               ) {
                                 return (
                                   <div

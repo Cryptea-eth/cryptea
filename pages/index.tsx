@@ -5,11 +5,9 @@ import Hero from '../app/components/elements/Hero'
 import About from '../app/components/elements/About'
 import Extras from '../app/components/elements/Extras'
 import Footer from '../app/components/elements/Footer'
-import { HomeProvider } from '../app/contexts/HomeContext'
 
 const Home: NextPage = () => {
   return (
-      <HomeProvider>
         <div>
           <Head>
             <title>Cryptea</title>
@@ -33,7 +31,6 @@ const Home: NextPage = () => {
             <Footer />
           </footer>
         </div>
-      </HomeProvider>
   );
 }
 

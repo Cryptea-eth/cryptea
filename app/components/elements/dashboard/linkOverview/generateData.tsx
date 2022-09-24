@@ -122,6 +122,7 @@ const generateDataSub = ({
   mday: number;
   hourly: number;
 }) => {
+  
   const today = new Date().getTime();
 
   const time = today - 24 * 60 * 60 * 1000 * mday;
@@ -184,7 +185,7 @@ const generateDataSub = ({
   interval: "24h" | "7d" | "30d" | "1yr" | "all",
   h24: boolean = false, addAmt: boolean = true, sub: boolean = false
 ): {label: any[], data: any[]} => {
-  const data: number[] = xdata.map((v) => Number(v.date));
+  const data: number[] = xdata.map((v) => v.created_at !== undefined ? new Date(v.created_at).getTime() : Number(v.date));
 
   let gen; let secondary: number[]; 
 

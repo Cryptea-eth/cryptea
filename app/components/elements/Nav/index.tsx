@@ -1,146 +1,54 @@
 import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useContext, useState } from "react";
-import { useMoralis } from "react-moralis";
-import { HomeContext, HomeContextSet } from "../../../contexts/HomeContext";
-import meta from "../../../../public/images/metamask.png";
-import wallcon from "../../../../public/images/walletconnect.png";
+import { useContext, useState } from "react";
+import { HomeContext } from "../../../contexts/HomeContext";
 import { useRouter } from "next/router";
 import LogoSpace from "../logo";
-import { CircularProgress, Box } from '@mui/material';
+import { useCryptea } from "../../../contexts/Cryptea";
+import AuthModal from "../modal";
 
 function Nav() {
   const router = useRouter();
-  const {
-    isAuthenticated,
-    user,
-    isInitialized,
-    authenticate,
-    logout,
-    Moralis,
-    isWeb3Enabled,
-    enableWeb3,
-    chainId,
-  } = useMoralis();
 
-  const showModal = useContext(HomeContext);
-  const [authError, updAuthError] = useState<String>('');
-  const [isNotSupported, setSupport] = useState<Boolean>(false);
-  const useUpdateWalletModal = useContext(HomeContextSet);
-
-  const [isAuth, setIsAuth] = useState<{
-      [ix:string] : boolean
-  }>({
-      metamask: false,
-      walletconnect: false
-  });
-
-  useEffect(() => {
-    if (!isWeb3Enabled) {
-      enableWeb3();
-    }
-
-    if (isAuthenticated) {
-
-      console.log("Logged in user:", user!.get("ethAddress"));
-
-      if (isNotSupported) {
-        logout();
-      }
-
-    } else {
-      console.log("Not logged in");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, isWeb3Enabled, enableWeb3, isNotSupported]);
-
-  console.log(Number(chainId));
-
-  const supported = [80001, 137];
-
-    const logOut = async () => {
-      if (isAuthenticated) {
-          logout()
-      }
-    };
+  const { authenticate, user, isAuthenticated } =
+    useCryptea();
 
 
-  const login = async () => {
-    updAuthError('');
-    setIsAuth({...isAuth, metamask: true});
-    if (!isAuthenticated) {
-      setSupport(false)
-      await authenticate({ signingMessage: "Welcome to Cryptea" })
-        .then(function (user) {
-          setIsAuth({ ...isAuth, metamask: false });
-          if (supported.includes(chainId ? Number(chainId) : 137)) {
-            
-          if (user!.get("email") === undefined) {
-            window.location.href = "/signup";
-            console.log(isInitialized);
-          } else {
-            if (!user!.get("email").length) {
-              window.location.href = "/signup";
-              console.log(isInitialized);
-            } else {
-              window.location.href = "/dashboard";
-            }
-          }
-        }else{
-           setSupport(true);
-          throw 'Only Polygon network is supported';
-        }
-      })
-        .catch(function (error) {
-          updAuthError(error);
-          setIsAuth({ ...isAuth, metamask: false });
-        });
-    }else{
-      setIsAuth({ ...isAuth, metamask: false });
-    }
-  };
-
-  const useClose = () => {
-        useUpdateWalletModal();
-        updAuthError('');
-  }
-
-  const walletconnect = async () => {
-    updAuthError("");
-    setIsAuth({ ...isAuth, walletconnect: true });
-    if (!isAuthenticated) {
-      setSupport(false);
-      await authenticate({
-        signingMessage: "Welcome to Cryptea",
-        provider: "walletConnect",
-      })
-        .then(function (user) {
+  // const walletconnect = async () => {
+  //   updAuthError("");
+  //   setIsAuth({ ...isAuth, walletconnect: true });
+  //   if (!isAuthenticated) {
+  //     setSupport(false);
+  //     await authenticate({
+  //       signingMessage: "Welcome to Cryptea",
+  //       provider: "walletConnect",
+  //     })
+  //       .then(function (user) {
           
-          setIsAuth({ ...isAuth, walletconnect: false });
+  //         setIsAuth({ ...isAuth, walletconnect: false });
 
-          if(supported.includes(chainId ? Number(chainId) : 137)){
-          if (user!.get("email") === undefined) {
-            window.location.href = "/signup";
-          } else {
-            if (!user!.get("email").length) {
-              window.location.href = "/signup";
-            } else {
-              window.location.href = "/dashboard";
-            }
-          }
-        }else{
-          setSupport(true);
-          throw 'Only Polygon network is supported';
-        }
-        })
-        .catch(function (error) {
-          updAuthError(error);
-          setIsAuth({ ...isAuth, walletconnect: false });
-        });
-    }else {
-      setIsAuth({ ...isAuth, walletconnect: false });
-    }
-  };
+  //         if(supported.includes(chainId ? Number(chainId) : 137)){
+  //         if (user!.get("email") === undefined) {
+  //           window.location.href = "/signup";
+  //         } else {
+  //           if (!user!.get("email").length) {
+  //             window.location.href = "/signup";
+  //           } else {
+  //             window.location.href = "/dashboard";
+  //           }
+  //         }
+  //       }else{
+  //         setSupport(true);
+  //         throw 'Only Polygon network is supported';
+  //       }
+  //       })
+  //       .catch(function (error) {
+  //         updAuthError(error);
+  //         setIsAuth({ ...isAuth, walletconnect: false });
+  //       });
+  //   }else {
+  //     setIsAuth({ ...isAuth, walletconnect: false });
+  //   }
+  // };
 
   return (
     <div className="nav relative ml-[30px] 2sm:ml-1 z-10">
@@ -160,94 +68,14 @@ function Nav() {
           </Link>
         </div>
 
-        {showModal && (
-          <div className="justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur fixed inset-0 z-50 outline-none focus:outline-none">
-            <div className="relative max-w-[1200px] mmd:w-[70%] 4sm:w-[60%] w-[340px] min-w-[340px]">
-              {/*content*/}
-              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                {/*header*/}
-                <div className="flex items-center justify-center py-5 border-solid rounded-t">
-                  <LogoSpace />
-                </div>
-
-                <div className="flex items-center justify-center pb-2 pt-3 border-solid rounded-t">
-                  <h2
-                    style={{ fontFamily: "inherit" }}
-                    className="text-[18px] font-bold"
-                  >
-                    Connect Wallet
-                  </h2>
-                </div>
-                {/*body*/}
-                {Boolean(authError?.length) && (
-                  <div className="transition-all rounded-md delay-500 border-[#F57059] text-[rgb(245,112,89)] items-center font-bold text-[16px] border-[1px] mx-6 my-2 w-[calc(100%-48px)] p-3">
-                    {authError}
-                  </div>
-                )}
-
-                <div className="relative p-6 flex flex-col justify-center 4sm:flex-row">
-                  <button
-                    style={{ fontFamily: "inherit" }}
-                    onClick={login}
-                    className="transition-all rounded-md delay-500 hover:border-[#F57059] hover:text-[#F57059] items-center text-[16px] flex justify-between border-[1px] 4sm:mr-2 text-[#575757] mb-2 w-full py-4 px-4"
-                  >
-                    
-                    <div className="flex items-center">
-                      {isAuth['metamask'] && (<Box className="mr-2 h-[22px] text-[#F57059]">
-                        <CircularProgress
-                          className="!w-[22px] !h-[22px]"
-                          color="inherit"
-                        />
-                      </Box>)}
-
-                      Metamask
-                    </div>
-                    <Image src={meta} alt="Metamask" width={40} height={40} />
-                  </button>
-                  <button
-                    onClick={walletconnect}
-                    style={{ fontFamily: "inherit" }}
-                    className="transition-all rounded-md items-center delay-500 4sm:ml-2 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] flex justify-between text-[#575757] mb-2 w-full py-4 px-4"
-                  >
-                    <div className="flex items-center">
-                      {isAuth['walletconnect'] && (<Box className="mr-2 h-[22px] text-[#F57059]">
-                        <CircularProgress
-                          className="!w-[22px] !h-[22px]"
-                          color="inherit"
-                        />
-                      </Box>)}
-                      Walletconnect
-                    </div>
-
-                    <Image
-                      src={wallcon}
-                      alt="Wallet Connect"
-                      width={40}
-                      height={40}
-                    />
-                  </button>
-                </div>
-                {/*footer*/}
-                <div className="flex items-center justify-end p-2 border-t border-solid border-slate-200 rounded-b">
-                  <button
-                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    type="button"
-                    onClick={useClose}
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+       <AuthModal />
 
         <div className="right mmd:hidden">
           <div>
             {isAuthenticated! ? (
               <button
                 onClick={() => {
-                  window.location.href = "/dashboard";
+                  router.push('/dashboard');
                 }}
                 className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4"
               >
@@ -258,9 +86,9 @@ function Nav() {
                 <button
                   className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4 mx-2"
                   type="button"
-                  onClick={useUpdateWalletModal}
+                  onClick={() => authenticate(true)}
                 >
-                  Connect Wallet
+                  Launch App
                 </button>
               </div>
             )}

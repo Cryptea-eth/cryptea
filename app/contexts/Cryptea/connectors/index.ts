@@ -1,12 +1,30 @@
-import { InjectedConnector } from "@web3-react/injected-connector";
-import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
+import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
+import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
+import { InjectedConnector } from "wagmi/connectors/injected";
+import { chains } from "./chains";
 
-const support = [1, 80001, 137];
+export const supported = [1, 80001, 137];
 
-export const injected = new InjectedConnector({
-  supportedChainIds: support,
-});
+const connectors = [
+  new CoinbaseWalletConnector({
+    chains,
+    options: {
+      appName: "Cryptea",
+    },
+  }),
+  new WalletConnectConnector({
+    chains,
+    options: {
+      qrcode: true,
+    },
+  }),
+  new InjectedConnector({
+    chains,
+    options: {
+      name: "Cryptea",
+      shimDisconnect: true,
+    },
+  }),
+];
 
-export const walletconnect = new WalletConnectConnector({
-  supportedChainIds: support,
-});
+export default connectors;

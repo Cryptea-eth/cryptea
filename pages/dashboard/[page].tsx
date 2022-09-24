@@ -16,15 +16,18 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
 import { useMoralis } from "react-moralis";
 import { dash, DashContext } from "../../app/contexts/GenContext";
+import { useCryptea } from "../../app/contexts/Cryptea";
 
 
 const Dashboard = () => {
 
-  const { user, isAuthenticated, isInitialized, isWeb3Enabled, enableWeb3 } = useMoralis();
+  const { user, isAuthenticated } = useCryptea();
+
   const router = useRouter();
 
   const { sidebar }: dash = useContext(DashContext)
 
+  const [data, setData] = useState<any>({ username: '', img: ''});
 
   const page = router.query['page'];
 
@@ -33,19 +36,24 @@ const Dashboard = () => {
 
   useEffect(() => {
     
-    if (isInitialized) {
+    "user".get("*", true).then((e) => {
+      if (e !== null) {
+        setData(typeof e == "object" ? e : {});
+      }
+    });
+
+    if (isAuthenticated !== undefined) {
       if (!isAuthenticated) {
-        window.location.href = "/";
-      } else if(page && isAuthenticated) {
+        router.push("/auth");
+      } else {
         isLoading(false);
       }
-
-    }    
+    }   
     
-  }, [user, isLoading, page, isAuthenticated, isWeb3Enabled, isInitialized]);
+  }, [router, isLoading, page, isAuthenticated]);
 
 
-  const dp = user?.get("img");
+  const dp = data.img;
 
   const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(null);
 
@@ -61,6 +69,7 @@ const Dashboard = () => {
   const id = nopen ? "Your Notifications" : undefined;
 
   const active = "!border-l-[3px] !border-l-[#F57059] !text-[#F57059]";
+  
   return (
     <>
       <Head>
@@ -102,7 +111,7 @@ const Dashboard = () => {
             >
               <div className="">
                 <h1 className="font-bold">
-                  Welcome {user?.get("username")}!☕
+                  Welcome {data.username}!☕
                 </h1>
                 <span>Hope you are healthy and happy today..</span>
               </div>
@@ -178,9 +187,9 @@ const Dashboard = () => {
                 <Avatar
                     src={dp}
                     sx={{ width: 40, height: 40, bgcolor: "#F57059" }}
-                    alt={user?.get("username")}
+                    alt={data.username}
                   >
-                    {user?.get("username")?.charAt(0).toUpperCase()}
+                    {(data.username)?.charAt(0).toUpperCase()}
                 </Avatar>
                 
               </div>

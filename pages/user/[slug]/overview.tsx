@@ -33,82 +33,72 @@ const Overview = () => {
 
     const { slug } = router.query;
 
-    const { sidebar }: dash  = useContext(DashContext);
+    const { sidebar }: dash = useContext(DashContext);
 
     const [data, setData] = useState<any>({});
 
     const [userLk, setUserLk] = useState<string>('');
 
+    const [userx, setUserX] = useState<any>({});
+
     useEffect(() => {
 
         const init = async () => {
-            
-        const mDx = await initD(String(slug).toLowerCase());
+          
+        setUserX(await ('user').get('*', true))
+
+        const { link:mDx, user, onetime, sub, views } = await initD(String(slug).toLowerCase());
 
         setUserLk(`${window.location.origin}/user/${slug}`); 
 
-        if(user !== null){
-            if (user.id === mDx.attributes.user.id) {
-
+        if(user['owner']){
+         
                 let src = '';
 
                 let template = '';
 
-                if (mDx.get('template_data') !== undefined) {
-                    const { data: tdata, name } = JSON.parse(mDx.get('template_data'));
+                if (mDx.template_data !== undefined) {
+                    const { data: tdata, name } = JSON.parse(mDx.template_data);
 
                     const { src:srcc } = tdata.image;
-                    
 
                      src = srcc;
 
                      template = name;
+
                 }   
 
                 setData({
                   src,
 
-                  title: mDx.get("title") == undefined ? mDx.get("title") : "",
+                  title: mDx.title == undefined ? mDx.title : "",
 
-                  desc: mDx.get("desc") == undefined ? mDx.get("desc") : "",
+                  desc: mDx.desc == undefined ? mDx.desc : "",
 
                   template,
 
-                  link: mDx.get("link"),
+                  link: mDx.link,
 
-                  type: mDx.get("type"),
+                  type: mDx.type,
 
-                  onetime:
-                    mDx.get("onetime") !== undefined
-                      ? JSON.parse(mDx.get("onetime"))
-                      : [],
+                  onetime,
 
-                  subscribers:
-                    mDx.get("subscribers") !== undefined
-                      ? JSON.parse(mDx.get("subscribers"))
-                      : [],
+                  subscribers: sub,
 
-                  views:
-                    mDx.get("views") !== undefined
-                      ? JSON.parse(mDx.get("views"))
-                      : [],
+                  views,
                 });
 
                 setLoading(false);
 
-
-            }else {
-                router.push('/')
-            }
         }else{
-            router.push('/')
+            router.push(`/user/${String(slug).toLowerCase()}`);
         }
     };
 
-    if (isInitialized && router.isReady) {
+    if (isAuthenticated !== undefined && router.isReady) {
       
             if (!isAuthenticated) {
-                router.push("/");
+                router.push('/auth');
             }else{
                 init();
             }
@@ -134,7 +124,7 @@ const Overview = () => {
                 <ShareLink
                   data={{
                     src: data.src,
-                    usrc: user?.get("img"),
+                    usrc: userx.img,
                     desc: data.desc,
                     title: data.title,
                     userLk,
