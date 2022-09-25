@@ -20,6 +20,7 @@ const DashboardIndex = () => {
 
   const { 
     user,
+    connected,
     isAuthenticated
   } = useCryptea();
 

@@ -73,7 +73,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
 
   const actionAuth = (email?: string) => {
     if (pathname == "/") {
-      if (email === undefined) {
+      if (!Boolean(email)) {
         router.push("/signup");
       } else {
         if (String(email).length) {

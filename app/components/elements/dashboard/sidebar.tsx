@@ -24,7 +24,7 @@ import { useCryptea } from '../../../contexts/Cryptea';
 
 const Sidebar = ({page}: {page: string | string[] | undefined}) => {
 
-  const { logout } = useCryptea();
+  const { logout, authenticate } = useCryptea();
 
   const router = useRouter()
 
@@ -186,7 +186,7 @@ const Sidebar = ({page}: {page: string | string[] | undefined}) => {
               className="text-inherit flex items-center text-[14px]"
               onClick={async () => {
                 await logout();
-                
+                authenticate(false)
                 router.push("/");
               }}
             >
