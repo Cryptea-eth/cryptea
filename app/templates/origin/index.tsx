@@ -153,7 +153,7 @@ const Origin = ({
   const getPrice = async (price: number, chain: string | number | undefined = 80001) => {
     let final = 0
     setLoadingText("Loading Price data...");
-    
+
     if(chain == 80001){
     const e = await Moralis.Web3API.token.getTokenPrice({
       address: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0", //matic public address
@@ -446,6 +446,11 @@ const Origin = ({
     return true;
   };
 
+    const { chains, error, pendingChainId, switchNetwork, switchNetworkAsync } =
+      useSwitchNetwork();
+
+  console.log(token, signer)
+
   const beginPayment = async (
     price: number,
     type: "subscription" | "onetime" = "onetime"
@@ -454,9 +459,15 @@ const Origin = ({
     let from = "";
 
     if(!connected || chainId != token) {
-    
-      authenticate(true);
-    
+      if(chainId != token){
+        await switchNetworkAsync?.(token);
+
+         authenticate(true);
+
+      }else if (!connected) {
+           authenticate(true);
+      }    
+
       setPaymentData({ price, type });
      
     } else {
@@ -656,18 +667,20 @@ const Origin = ({
   }
   };
 
-  const { chains, error, pendingChainId, switchNetwork } = useSwitchNetwork();
+
 
   useEffect(() => {
-    if (connected && paymentData !== undefined) {
 
+    if (connected && paymentData !== undefined) {
+      
     if (chainId == token) {
+      if(Boolean(signer)){
       beginPayment(paymentData.price, paymentData.type);
-    } else {
-      switchNetwork?.(token);
+      setPaymentData(undefined);
+      }
     }
   }
-  }, [connected, chainId, token]);
+  }, [connected, chainId, token, signer]);
 
   const [value, setValue] = useState<number>(0);
 

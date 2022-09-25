@@ -20,7 +20,11 @@ export function useCryptea(): mainAppManager {
 
   const { isSuccess, signMessageAsync } = useSignMessage()
 
-  const { data: signer } = useSigner();
+  const { data: signer } = useSigner({ onError: (error) => {
+    console.log(error)
+  } });
+
+
 
   const { disconnect } = useDisconnect();
 
