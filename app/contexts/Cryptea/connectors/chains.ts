@@ -75,6 +75,24 @@ const OptimismTestnet: Chain = {
   testnet: true,
 };
 
+const OptimismGoerli: Chain = {
+  id: 420,
+  name: "Optimism Goerli",
+  network: "optimism",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Optimism",
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: "https://goerli.optimism.io",
+  },
+  blockExplorers: {
+    default: { name: "Optimism", url: "https://goerli-optimistic.etherscan.io" },
+  },
+  testnet: true,
+}
+
 const Aurora: Chain = {
   id: 1313161554,
   name: "Aurora",
@@ -199,6 +217,7 @@ export const { chains, provider, webSocketProvider } = configureChains(
     AuroraTestnet,
     Optimism,
     OptimismTestnet,
+    OptimismGoerli,
     OasisEmerald,
     OasisEmeraldTestnet,
   ],
@@ -214,6 +233,7 @@ export const { chains, provider, webSocketProvider } = configureChains(
           chain.id !== AuroraTestnet.id ||
           chain.id !== Optimism.id ||
           chain.id !== OptimismTestnet.id ||
+          chain.id !== OptimismGoerli.id ||
           chain.id !== OasisEmerald.id ||
           chain.id !== OasisEmeraldTestnet.id
         )
