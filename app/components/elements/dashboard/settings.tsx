@@ -97,6 +97,8 @@ const DashSettings = () => {
 
   }, [isAuthenticated])
 
+  
+
   const submitAccount = async () => {
     document.querySelector("#account_sett")?.scrollIntoView();
     window.scrollTo(0, 0);
@@ -125,8 +127,12 @@ const DashSettings = () => {
 
     if (more) {
 
-      if (!validator.isAlphanumeric(userLink)) {
-        setError({ ...error, account: "Username cannot contain special characters or spaces" });
+
+      if (!validator.isAlphanumeric(userInfo)) {
+        setError({
+          ...error,
+          account: "Username cannot contain special characters or spaces",
+        });
         setLoading({ ...isLoading, account: false });
       }
 
@@ -234,8 +240,9 @@ const DashSettings = () => {
 
       setLoading({ ...isLoading, progress: [pct, uploaded] });
     };
-
-    const client = makeStorageClient(await get_request("/storagekey"));
+    const token = await get_request("/storagekey");
+    
+    const client = makeStorageClient(token.data);
 
     return client.put(files, { onRootCidReady, onStoredChunk });
   };
@@ -343,7 +350,7 @@ const DashSettings = () => {
 
   return (
     <>
-      {pageLoading && (
+      {!pageLoading && (
         <div className="2sm:pr-1 pt-[75px] sett dashbody cusscroller overflow-y-scroll overflow-x-hidden px-5 pb-5 h-[calc(100%-75px)]">
           <Modal
             open={openM}
@@ -399,7 +406,7 @@ const DashSettings = () => {
                   setCrop(c);
                 }}
               >
-                <Image
+                <img
                   className="img w-full m-auto !max-h-[calc(100vh-128px)] min-w-[340px]"
                   alt="crop me"
                   src={simg ? simg : ""}
@@ -434,6 +441,7 @@ const DashSettings = () => {
               </div>
             </Box>
           </Modal>
+
           <div className="w-[80%] usm:w-[90%] sm:w-full">
             <div>
               <form

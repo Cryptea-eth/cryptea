@@ -460,6 +460,7 @@ const Origin = ({
 
     if(!connected || chainId != token) {
       if(chainId != token){
+        
         await switchNetworkAsync?.(token);
 
          authenticate(true);
@@ -1212,6 +1213,16 @@ const Origin = ({
                                     value={1313161555}
                                   >
                                     Aurora Testnet
+                                  </MenuItem>
+                                  <MenuItem
+                                    sx={{
+                                      "&.Mui-selected": {
+                                        backgroundColor: `${data.colorScheme}14  !important`,
+                                      },
+                                    }}
+                                    value={420}
+                                  >
+                                    Optimism testnet
                                   </MenuItem>
                                   <MenuItem
                                     sx={{

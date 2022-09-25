@@ -194,7 +194,7 @@ const Dashboard = () => {
                 
               </div>
             </div>
-
+              
             {(page === "settings" || page === "setting") && <DashSettings />}
 
             {(page === "home" || page === undefined) && <DashHome />}
