@@ -3,8 +3,7 @@ import { AuthContextMain, AuthAddress, AuthUser } from "./Auth";
 import { authenticateUserDefault, mainAppManager, userData } from "./types";
 import { HomeContext } from "../HomeContext";
 import validator from "validator";
-import { useAccount, useConnect, useDisconnect, useNetwork, useSignMessage } from "wagmi";
-import { webSocketProvider } from "./connectors/chains";
+import { useAccount, useConnect, useDisconnect, useNetwork, useSignMessage, useSigner } from "wagmi";
 import { get_request } from "./requests";
 
 export function useCryptea(): mainAppManager {
@@ -20,6 +19,8 @@ export function useCryptea(): mainAppManager {
   const { connectors, isLoading, connectAsync } = useConnect();
 
   const { isSuccess, signMessageAsync } = useSignMessage()
+
+  const { data: signer } = useSigner();
 
   const { disconnect } = useDisconnect();
 
@@ -69,9 +70,7 @@ export function useCryptea(): mainAppManager {
         localStorage.removeItem(remove[i]);
       }
     },
-    provider: webSocketProvider({
-      chainId: chainId !== undefined ? chainId.id : undefined,
-    }),
+    signer,
   };
 };
 

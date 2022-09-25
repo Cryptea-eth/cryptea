@@ -38,12 +38,12 @@ import { useMoralis } from "react-moralis";
 import Loader from "../../components/elements/loader";
 import { useState, useEffect, SetStateAction, useContext } from "react";
 import { makeNFTClient } from "../../functions/clients";
-import axios from "axios";
 import { initD } from "../../components/elements/dashboard/link/data";
 import { useCryptea } from "../../contexts/Cryptea";
 import { get_request, post_request } from "../../contexts/Cryptea/requests";
 import AuthModal from "../../components/elements/modal";
-
+import * as ethers from 'ethers';
+import { provider } from "../../contexts/Cryptea/connectors/chains";
 
 const contractAddress: { subscribe: string; onetime: string } = {
   // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457",
@@ -111,7 +111,7 @@ const Origin = ({
     Moralis,
   } = useMoralis();
 
-  const { isAuthenticated, connected, authenticate, provider, chainId, account } = useCryptea();
+  const { isAuthenticated, connected, authenticate, signer, chainId, account } = useCryptea();
 
   const [data, setData] = useState(temp_x.data);
 
@@ -179,7 +179,7 @@ const Origin = ({
   useEffect(() => {
     const init = async () => {
       try {
-        const { link: lQ, user: userl, sub, onetime } = await initD(String(username).toLowerCase());
+        const { link: lQ, user: userl } = await initD(String(username).toLowerCase());
 
         if (lQ !== undefined) {
           setLinkHook(lQ);
@@ -211,8 +211,6 @@ const Origin = ({
           ethAddress: lQ.address,
           img: userl.img !== undefined ? userl.img : undefined,
           id: lQ.id,
-          onetime,
-          subscribers: sub,
           linktype: lQ.type,
           amountMultiple: Boolean(lQ.accountMulti)
             ? JSON.parse(lQ.accountMulti)
@@ -248,16 +246,12 @@ const Origin = ({
     img,
     ethAddress,
     id: linkId,
-    onetime,
-    subscribers,
   }: {
     username?: string;
     description?: string;
     img?: string | null;
     ethAddress?: string;
     id?: string;
-    onetime?: string;
-    subscribers?: string;
   } = userD;
 
   const [subCheck, setSubCheck] = useState<boolean>(true);
@@ -267,6 +261,7 @@ const Origin = ({
 
 
   let nft: any = "";
+
 
   const generateNftData = async (
     name: string,
@@ -316,29 +311,29 @@ const Origin = ({
     tokenURI: string,
     receiver: string,
     to: string,
-    value: string | number
+    value: ethers.BigNumber
   ) => {
-    const web3x = new web3('https://polygon-mumbai.g.alchemy.com/v2/MzZzDxvKCBv5Jv-ej3NuhtxuWheY62R6');
-    const abi: any = SUBSCRIPTION.abi;
-    const nftContract = new web3x.eth.Contract(
-      abi,
-      contractAddress["subscribe"]
-    );
+
+
+     const signed: any = signer;
+
+     const nftContract = new ethers.Contract(
+       contractAddress["subscribe"],
+       SUBSCRIPTION.abi,
+       signed
+     );
 
     try {
-      const gasPrice = await web3x.eth.getGasPrice();
-
+    
       const tx = {
         from: receiver,
-        value,
-        gasPrice,
+        value
       };
 
       setLoadingText("Transferring Tokens...");
 
-      const trx = await nftContract.methods
-        .mintTokens(receiver, to, value, tokenURI)
-        .send(tx);
+      const trx = await nftContract
+        .mintTokens(receiver, to, value, tokenURI, tx)
 
       setHash(trx["transactionHash"]);
       setSubCheck(true);
@@ -432,15 +427,13 @@ const Origin = ({
 
     setLoadingText("Pending...");
 
-    const initWeb3 = new web3('https://polygon-mumbai.g.alchemy.com/v2/MzZzDxvKCBv5Jv-ej3NuhtxuWheY62R6');
-
     const ether = await getPrice(price);
 
-    const gasPx = await initWeb3.eth.getGasPrice();
-
-    const gasPrice = parseFloat(gasPx);
-
+    
     if (type == "subscription") {
+
+         
+
       if (!subCheck) {
         setLoadingText("Checking Wallet...");
 
@@ -521,16 +514,15 @@ const Origin = ({
         description ? (description.length ? description : undefined) : undefined
       );
       try {
+
         await beginSubscription(
           nft,
           from,
           ethAddress || "", //receiver
-          initWeb3.utils.toWei(ether, "ether")
+          ethers.utils.parseEther(ether)
         );
-
-        const remind = subscribers === undefined ? [] : JSON.parse(subscribers);
-        const date = new Date().getTime();
-        if (linkHook !== undefined) {
+        
+          const date = new Date().getTime();
 
           const rx:{[index:string]: string | number} = {};
 
@@ -549,6 +541,7 @@ const Origin = ({
           remind: date + mainIx(interval) * 1000,
           address: from,
           amount: price,
+          hash,
           amountCrypto: ether,
           token: "matic",
           type: "sub",
@@ -556,7 +549,7 @@ const Origin = ({
         });
 
           console.log("done");
-        }
+        
 
         setTransferSuccess(true);
 
@@ -567,29 +560,27 @@ const Origin = ({
         setLoadingText("");
       }
     } else if (type == "onetime") {
-      const abi: any = PAYMENT.abi;
+  
+        const signed: any = signer;
 
-      const initContract = new initWeb3.eth.Contract(
-        abi,
-        contractAddress["onetime"]
-      );
+        const initContract = new ethers.Contract(
+          contractAddress["onetime"],
+          PAYMENT.abi,
+          signed
+        );
 
       setLoadingText("Awaiting payment confirmation");
 
-      initContract.methods
-        .transferToken(ethAddress || "") //receiver
-        .send({
-          from,
-          value: initWeb3.utils.toWei(ether, "ether"),
-          gasPrice,
-        })
+      initContract
+        .transferToken(ethAddress || "", {
+          value: ethers.utils.parseEther(ether),
+        }) //receiver
         .then(async (init: any) => {
           console.log(init);
 
-          setHash(init.transactionHash);
+          setHash(init.hash);
 
-          const payers = onetime === undefined ? [] : JSON.parse(onetime);
-
+        
           const rx: { [index: string]: string | number } = {};
 
           pemail.forEach((val: undefined | string, i: number) => {
@@ -600,20 +591,17 @@ const Origin = ({
             }
           });
 
-          if (linkHook !== undefined) {
-
             await post_request(`/link/payments/${linkId}`, {
               ...rx,
               date: new Date().getTime(),
               address: from,
               type: "onetime",
               amount: price,
+              hash: init.hash,
               amountCrypto: ether,
               token: "matic",
             });
-
-          }
-
+          
           setTransferSuccess(true);
 
           setTimeout(reset, 3500);
