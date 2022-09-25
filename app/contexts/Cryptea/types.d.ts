@@ -65,10 +65,8 @@ export interface AuthContext {
 }
 
 export interface mainAppManager extends AuthContext {
-  provider:
-    | (import("@wagmi/core").WebSocketProvider & {
-        chains: import("@wagmi/core").Chain[];
-      })
+  signer:
+    | import("@wagmi/core").FetchSignerResult<import("@wagmi/core").Signer>
     | undefined;
   account: string | null | undefined;
   chainId: number | undefined;
