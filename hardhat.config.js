@@ -39,6 +39,22 @@ module.exports = {
     rinkeby: {
         url: process.env.RINK_LINK,
         accounts: [process.env.RINKEBY_KEY]
+    },
+    optimism_test: {
+      url: process.env.OPTIMISM_TEST,
+      accounts: [process.env.MATIC_PRIVATE_KEY]
+    },
+    cronos_test: {
+      url: process.env.CRONOS_TEST,
+      accounts: [process.env.MATIC_PRIVATE_KEY]
+    },
+    aurora_test: {
+      url: process.env.AURORA_TEST,
+      accounts: [process.env.MATIC_PRIVATE_KEY]
+    },
+    oasis_test: {
+      url: process.env.OASISEMARALD,
+      accounts: [process.env.MATIC_PRIVATE_KEY]
     }
   }
 };

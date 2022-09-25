@@ -203,6 +203,7 @@ export const { chains, provider, webSocketProvider } = configureChains(
     OasisEmeraldTestnet,
   ],
   [
+    publicProvider(),
     jsonRpcProvider({
       rpc: (chain) => {
         if (
@@ -222,6 +223,5 @@ export const { chains, provider, webSocketProvider } = configureChains(
         return { http: chain.rpcUrls.default };
       },
     }),
-    publicProvider(),
   ]
 );

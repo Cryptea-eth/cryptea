@@ -89,9 +89,8 @@ export const AuthUser = async ({
 
   console.log(isConnected)
 
-  if (data.length) {
+  if (data.length && isConnected) {
     try {
-      console.log('hhere now')
 
       const main = await AuthAddress(String(address), data);
 
