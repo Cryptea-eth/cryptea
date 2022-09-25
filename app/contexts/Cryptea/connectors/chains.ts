@@ -139,7 +139,7 @@ const OasisEmeraldTestnet: Chain = {
     symbol: "ROSE",
   },
   rpcUrls: {
-    default: "wss://testnet.emerald.oasis.dev/ws",
+    default: "https://testnet.emerald.oasis.dev/",
   },
   blockExplorers: {
     default: {
