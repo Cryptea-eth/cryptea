@@ -94,7 +94,6 @@ export const AuthUser = async ({
 
       const main = await AuthAddress(String(address), data);
 
-
       return main;
 
     } catch (err) {
