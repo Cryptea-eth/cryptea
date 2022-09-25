@@ -57,24 +57,6 @@ const Optimism: Chain = {
   testnet: false,
 };
 
-const OptimismTestnet: Chain = {
-  id: 69,
-  name: "Optimism Testnet",
-  network: "optimism",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Optimism",
-    symbol: "ETH",
-  },
-  rpcUrls: {
-    default: "https://kovan.optimism.io",
-  },
-  blockExplorers: {
-    default: { name: "Optimism", url: "https://kovan-optimistic.etherscan.io" },
-  },
-  testnet: true,
-};
-
 const OptimismGoerli: Chain = {
   id: 420,
   name: "Optimism Goerli",
@@ -216,7 +198,6 @@ export const { chains, provider, webSocketProvider } = configureChains(
     Aurora,
     AuroraTestnet,
     Optimism,
-    OptimismTestnet,
     OptimismGoerli,
     OasisEmerald,
     OasisEmeraldTestnet,
@@ -232,7 +213,6 @@ export const { chains, provider, webSocketProvider } = configureChains(
           chain.id !== Aurora.id ||
           chain.id !== AuroraTestnet.id ||
           chain.id !== Optimism.id ||
-          chain.id !== OptimismTestnet.id ||
           chain.id !== OptimismGoerli.id ||
           chain.id !== OasisEmerald.id ||
           chain.id !== OasisEmeraldTestnet.id
