@@ -32,6 +32,7 @@ import {
   ToggleButtonGroup,
   TextField,
   Button,
+  InputLabel,
 } from "@mui/material";
 
 import { useMoralis } from "react-moralis";
@@ -44,13 +45,25 @@ import { get_request, post_request } from "../../contexts/Cryptea/requests";
 import AuthModal from "../../components/elements/modal";
 import * as ethers from 'ethers';
 import { provider } from "../../contexts/Cryptea/connectors/chains";
+import { useSwitchNetwork } from "wagmi";
 
-const contractAddress: { subscribe: string; onetime: string } = {
+const contractAddress: {
+  subscribe: string;
+  onetime: { [index: string]: string };
+} = {
   // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457",
   subscribe: "0xd328f64974b319b046cf36E41c945bb773Fed1d8",
   // subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940", //polygon
-  onetime: "0xBE6A162578e17D02F9c5F6b2167a62c6C01070ae",
+  onetime: {
+    "80001": "0xBE6A162578e17D02F9c5F6b2167a62c6C01070ae",
+    "420": "0x672cc5A511bB9E6EFCbeb11Fa3DdbABc31671776",
+    "338": "0x672cc5A511bB9E6EFCbeb11Fa3DdbABc31671776",
+    "1313161555": "0x380FE6B54A035fC8EBF44fF7Ffc1d1F8fCE89533",
+    "42261": "0x672cc5A511bB9E6EFCbeb11Fa3DdbABc31671776"
+  },
 };
+
+
 
 function a11yProps(index: number) {
   return {
@@ -71,6 +84,7 @@ const MenuProps = {
 };
 
 const names = ["Polygon", "Avalanche", "Ethereum", "Binance Smart Chain"];
+
 
 function getStyles(name: string, blockchainName: string | any[], theme: Theme) {
   return {
@@ -96,7 +110,12 @@ const Origin = ({
 
   useEffect(() => {}, [username, router.isReady]);
 
-  const [paymentData, setPaymentData] = useState<{ price: number, type: string } | undefined>();
+  const [paymentData, setPaymentData] = useState<
+    { price: number; type: "onetime" | "subscription" } | undefined
+  >();
+
+  
+  const [token, setToken] = useState<any>('80001')
 
   const [alignment, setAlignment] = useState();
 
@@ -131,16 +150,34 @@ const Origin = ({
   const [interval, setTinterval] = useState<string>("daily");
   const [is500, setIs500] = useState<boolean>(false);
 
-  const getPrice = async (price: number) => {
+  const getPrice = async (price: number, chain: string | number | undefined = 80001) => {
+    let final = 0
     setLoadingText("Loading Price data...");
-
+    
+    if(chain == 80001){
     const e = await Moralis.Web3API.token.getTokenPrice({
       address: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0", //matic public address
     });
 
     const priceCurrency = Number(e.usdPrice.toFixed(2));
 
-    const final = price / priceCurrency;
+    final = price / priceCurrency;
+
+  }else if (chain == 42261) {
+      // oasis
+      final = price / 0.0608;
+
+  }else if (chain == 1313161555) {
+
+      final = price / 1.15;
+  }else if (chain == 338) {
+
+    final = price / 0.116;
+  }else if (chain == 420) {
+
+    final = price / 0.93;
+  }
+
 
     return final.toFixed(6);
   };
@@ -177,6 +214,7 @@ const Origin = ({
   };
 
   useEffect(() => {
+
     const init = async () => {
       try {
         const { link: lQ, user: userl } = await initD(String(username).toLowerCase());
@@ -415,11 +453,11 @@ const Origin = ({
 
     let from = "";
 
-    if(!connected) {
+    if(!connected || chainId != token) {
     
       authenticate(true);
     
-    setPaymentData({ price, type });
+      setPaymentData({ price, type });
      
     } else {
      
@@ -427,11 +465,11 @@ const Origin = ({
 
     setLoadingText("Pending...");
 
-    const ether = await getPrice(price);
+    const ether = await getPrice(price, chainId);
 
     
-    if (type == "subscription") {
 
+    if (type == "subscription") {
          
 
       if (!subCheck) {
@@ -564,7 +602,7 @@ const Origin = ({
         const signed: any = signer;
 
         const initContract = new ethers.Contract(
-          contractAddress["onetime"],
+          contractAddress["onetime"][chainId ?? 80001],
           PAYMENT.abi,
           signed
         );
@@ -618,11 +656,18 @@ const Origin = ({
   }
   };
 
+  const { chains, error, pendingChainId, switchNetwork } = useSwitchNetwork();
+
   useEffect(() => {
-      if (connected && paymentData !== undefined) {
-          console.log('i am here');
-      }
-  }, [connected])
+    if (connected && paymentData !== undefined) {
+
+    if (chainId == token) {
+      beginPayment(paymentData.price, paymentData.type);
+    } else {
+      switchNetwork?.(token);
+    }
+  }
+  }, [connected, chainId, token]);
 
   const [value, setValue] = useState<number>(0);
 
@@ -784,7 +829,7 @@ const Origin = ({
                     </div>
 
                     {/* socials */}
-                    <div  className="flex socials justify-evenly text-[#838383] 3sm:px-16 4sm:px-16 mt-3">
+                    <div className="flex socials justify-evenly text-[#838383] 3sm:px-16 4sm:px-16 mt-3">
                       {!data.socials.instagram.hidden &&
                         Boolean(data.socials.instagram.link.length) && (
                           <Link href={data.socials.instagram.link}>
@@ -1112,6 +1157,61 @@ const Origin = ({
                             {(userD?.linktype == "both" ||
                               userD?.linktype == "onetime") && (
                               <FormControl fullWidth>
+                                <div className="py-3 font-bold">Token</div>
+
+                                <Select
+                                  id="token"
+                                  sx={{
+                                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                      borderColor: data.colorScheme,
+                                    },
+                                    width: "100%",
+                                  }}
+                                  value={token}
+                                  onChange={(e) => setToken(e.target.value)}
+                                >
+                                  <MenuItem
+                                    sx={{
+                                      "&.Mui-selected": {
+                                        backgroundColor: `${data.colorScheme}14  !important`,
+                                      },
+                                    }}
+                                    value={80001}
+                                  >
+                                    Matic (Testnet)
+                                  </MenuItem>
+                                  <MenuItem
+                                    sx={{
+                                      "&.Mui-selected": {
+                                        backgroundColor: `${data.colorScheme}14  !important`,
+                                      },
+                                    }}
+                                    value={338}
+                                  >
+                                    Cronos (Test Cronos)
+                                  </MenuItem>
+                                  <MenuItem
+                                    sx={{
+                                      "&.Mui-selected": {
+                                        backgroundColor: `${data.colorScheme}14  !important`,
+                                      },
+                                    }}
+                                    value={1313161555}
+                                  >
+                                    Aurora Testnet
+                                  </MenuItem>
+                                  <MenuItem
+                                    sx={{
+                                      "&.Mui-selected": {
+                                        backgroundColor: `${data.colorScheme}14  !important`,
+                                      },
+                                    }}
+                                    value={42261}
+                                  >
+                                    Rose Testnet
+                                  </MenuItem>
+                                </Select>
+
                                 {userD.rdata["onetime"].map(
                                   (ixn: string, i: number) => {
                                     return (
@@ -1274,7 +1374,9 @@ const Origin = ({
                                               if (
                                                 !validForm(
                                                   val,
-                                                  (userD.rdata["onetime"][i]).toLowerCase()
+                                                  userD.rdata["onetime"][
+                                                    i
+                                                  ].toLowerCase()
                                                 )
                                               ) {
                                                 proceed = false;
@@ -1288,7 +1390,6 @@ const Origin = ({
                                         setFailMessage(
                                           "Please enter the correct details required in available fields"
                                         );
-
                                     } else {
                                       setFailMessage(
                                         "The amount set is invalid"

@@ -182,7 +182,7 @@ const CronosTest: Chain = {
     wss: "wss://cronos-testnet-3.crypto.org:8546",
   },
   blockExplorers: {
-    default: { name: "cronos-test", url: "" },
+    default: { name: "cronos-test", url: "https://cronos.org/explorer/testnet3" },
   },
   testnet: true,
 };

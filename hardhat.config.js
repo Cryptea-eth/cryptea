@@ -34,27 +34,27 @@ module.exports = {
     },
     polygon: {
       url: process.env.MATIC_LINK,
-      accounts: [process.env.MATIC_PRIVATE_KEY]
+      accounts: [process.env.PRIVATE_KEY]
     },  
     rinkeby: {
         url: process.env.RINK_LINK,
         accounts: [process.env.RINKEBY_KEY]
     },
     optimism_test: {
-      url: process.env.OPTIMISM_TEST,
-      accounts: [process.env.MATIC_PRIVATE_KEY]
+      url: "https://goerli.optimism.io",
+      accounts: [process.env.PRIVATE_KEY]
     },
     cronos_test: {
-      url: process.env.CRONOS_TEST,
-      accounts: [process.env.MATIC_PRIVATE_KEY]
+      url: "https://evm-t3.cronos.org",
+      accounts: [process.env.PRIVATE_KEY]
     },
     aurora_test: {
-      url: process.env.AURORA_TEST,
-      accounts: [process.env.MATIC_PRIVATE_KEY]
+      url: process.env.AURORA_LINK,
+      accounts: [process.env.PRIVATE_KEY]
     },
     oasis_test: {
-      url: process.env.OASISEMARALD,
-      accounts: [process.env.MATIC_PRIVATE_KEY]
+      url: "https://testnet.emerald.oasis.dev",
+      accounts: [process.env.PRIVATE_KEY]
     }
   }
 };
