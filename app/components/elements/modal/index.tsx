@@ -5,6 +5,7 @@ import Image from 'next/image';
 import LogoSpace from "../logo";
 import meta from "../../../../public/images/metamask.png";
 import wallcon from "../../../../public/images/walletconnect.png";
+import unstop from "../../../../public/images/unstoppable.svg";
 import { CircularProgress, Box } from "@mui/material";
 import Router, { useRouter } from "next/router";
 import { supported } from "../../../contexts/Cryptea/connectors";
@@ -76,9 +77,9 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
         router.push("/signup");
       } else {
         if (String(email).length) {
-          router.push("/signup");
-        } else {
           router.push("/dashboard");
+        } else {
+          router.push("/signup");
         }
       }
     } else if (pathname == '/auth') {
@@ -154,7 +155,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
               useclose();
             }
           } else {
-            updAuthError("Something went wrong please try again1");
+            updAuthError("Something went wrong please try again");
             setIsAuth({ ...isAuth, metamask: false });
           }
 
@@ -236,8 +237,9 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
     <>
       {(Boolean(modal.show) || openM) && (
         <div
-          className={`justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden z-[100000000] overflow-y-auto ${!blur ? "backdrop-blur" : "backdrop-blur-[2px]"
-            } fixed inset-0 z-50 outline-none focus:outline-none`}
+          className={`justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden z-[100000000] overflow-y-auto ${
+            !blur ? "backdrop-blur" : "backdrop-blur-[2px]"
+          } fixed inset-0 z-50 outline-none focus:outline-none`}
         >
           <div className="relative max-w-[1500px] w-[80%] 4sm:w-[60%] min-w-[340px]">
             {/*content*/}
@@ -262,7 +264,12 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                 </div>
               )}
 
-              <div className="relative p-6 flex flex-col justify-center 4zsm:flex-row">
+              <div
+                style={{
+                  gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+                }}
+                className="relative p-6 grid gap-2 grid-flow-dense"
+              >
                 <button
                   onClick={login}
                   style={{
@@ -270,7 +277,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                     borderColor: isAuth["metamask"] ? "#f57059" : undefined,
                     color: isAuth["metamask"] ? "#f57059" : undefined,
                   }}
-                  className="transition-all rounded-md delay-500 hover:border-[#F57059] hover:text-[#F57059] items-center text-[16px] flex justify-between border-[1px] 4zsm:mr-2 text-[#575757] mb-2 w-full py-4 px-4"
+                  className="transition-all rounded-md delay-500 hover:border-[#F57059] hover:text-[#F57059] items-center text-[16px] flex justify-between border-[1px] text-[#575757] w-full py-4 min-w-[320px] px-4"
                 >
                   <div className="flex items-center">
                     {isAuth["metamask"] && (
@@ -294,7 +301,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                       : undefined,
                     color: isAuth["walletconnect"] ? "#f57059" : undefined,
                   }}
-                  className="transition-all rounded-md items-center delay-500 4zsm:ml-2  text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] flex justify-between text-[#575757] mb-2 w-full py-4 px-4"
+                  className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
                 >
                   <div className="flex items-center">
                     {isAuth["walletconnect"] && (
@@ -319,33 +326,32 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                   onClick={Ulogin}
                   style={{
                     fontFamily: "inherit",
-                    borderColor: isAuth["walletconnect"]
-                      ? "#f57059"
-                      : undefined,
-                    color: isAuth["walletconnect"] ? "#f57059" : undefined,
+                    // borderColor: isAuth["walletconnect"]
+                    //   ? "#f57059"
+                    //   : undefined,
+                    // color: isAuth["walletconnect"] ? "#f57059" : undefined,
                   }}
-                  className="transition-all rounded-md items-center delay-500 4zsm:ml-2  text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] flex justify-between text-[#575757] mb-2 w-full py-4 px-4"
+                  className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
                 >
                   <div className="flex items-center">
-                    {isAuth["walletconnect"] && (
+                    {/* {isAuth["walletconnect"] && (
                       <Box className="mr-2 h-[22px] text-[#F57059]">
                         <CircularProgress
                           className="!w-[22px] !h-[22px]"
                           color="inherit"
                         />
                       </Box>
-                    )}
+                    )} */}
                     Login With Unstoppable Domains
                   </div>
 
                   <Image
-                    src={wallcon}
-                    alt="Wallet Connect"
+                    src={unstop}
+                    alt="Unstoppable Wallet Connect"
                     width={40}
                     height={40}
                   />
                 </button>
-
               </div>
               {/*footer*/}
               <div className="flex items-center justify-end p-2 border-t border-solid border-slate-200 rounded-b">
