@@ -38,6 +38,7 @@ import { BiCoinStack } from "react-icons/bi";
 import Image from "next/image";
 
 const Onetime = () => {
+  
   const router = useRouter();
 
   const { slug, type } = router.query;

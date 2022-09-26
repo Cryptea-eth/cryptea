@@ -2,24 +2,15 @@ import {
   // BiSearch,
   BiBell,
 } from "react-icons/bi";
-import Sidebar from '../../app/components/elements/dashboard/sidebar'
-
-// import "../../assets/styles/dash.css";
+import Sidebar from './sidebar'
 import { Avatar, Popover } from "@mui/material";
-import DashHome from "../../app/components/elements/dashboard/home";
-import DashLinks from "../../app/components/elements/dashboard/links";
-import DashPages from "../../app/components/elements/dashboard/pages";
-import DashSettings from "../../app/components/elements/dashboard/settings";
-import Loader from "../../app/components/elements/loader";
-import Head from "next/head";
+import Loader from "../loader";
 import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
-import { useMoralis } from "react-moralis";
-import { dash, DashContext } from "../../app/contexts/GenContext";
-import { useCryptea } from "../../app/contexts/Cryptea";
+import { dash, DashContext } from "../../../contexts/GenContext";
+import { useCryptea } from "../../../contexts/Cryptea";
 
-
-const Dashboard = () => {
+const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
 
   const { user, isAuthenticated } = useCryptea();
 
@@ -72,7 +63,7 @@ const Dashboard = () => {
   
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>
           {Boolean(page)
             ? String(page).charAt(0).toUpperCase() +
@@ -86,7 +77,7 @@ const Dashboard = () => {
           content={`Receive Payments Instantly With Ease`}
         />
         <link rel="icon" href="/favicon.ico" />
-      </Head>
+      </Head> */}
 
       {loading && <Loader />}
 
@@ -195,28 +186,7 @@ const Dashboard = () => {
               </div>
             </div>
               
-            {(page === "settings" || page === "setting") && <DashSettings />}
-
-            {(page === "home" || page === undefined) && <DashHome />}
-
-            {(page === "links" || page === "link") && <DashLinks />}
-
-            {(page === "userpages" || page === "pages" || page === "page") && (
-              <DashPages />
-            )}
-
-            {page !== undefined &&
-              ![
-                "settings",
-                "setting",
-                "home",
-                "links",
-                "link",
-                "userpages",
-                "pages",
-                "page",
-              ].includes(page.toString()) &&
-              router.replace("/404")}
+                {children}
 
               </>
           </div>
@@ -227,4 +197,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Page;

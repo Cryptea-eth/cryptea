@@ -74,7 +74,8 @@ export const AuthUser = async ({
   address,
   signMessageAsync,
   isSuccess,
-  connectAsync
+  connectAsync,
+  main
 }: authenticateUserExtended): Promise<userData | undefined> => {
   
 
@@ -82,12 +83,12 @@ export const AuthUser = async ({
 
   if(!isConnected){
      await connectAsync({ connector: type });
-     console.log(isConnected)
   }
 
+
+  if (!main) {
   const data = await signMessageAsync({ message });
 
-  console.log(isConnected)
 
   if (data.length && isConnected) {
     try {
@@ -103,6 +104,7 @@ export const AuthUser = async ({
   }else { 
       console.log(isConnected, data.length)
    }
+  }
 };
 
 export const AuthContextMain = createContext<AuthContext>({});

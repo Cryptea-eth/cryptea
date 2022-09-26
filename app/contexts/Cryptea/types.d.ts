@@ -50,6 +50,7 @@ export interface authenticateUserExtended extends authenticateUserDefault {
   isConnected: boolean;
   isSuccess: boolean;
   address: string | undefined;
+  main: boolean;
   signMessageAsync: (
     args?: import("@wagmi/core").SignMessageArgs | undefined
   ) => Promise<string>;

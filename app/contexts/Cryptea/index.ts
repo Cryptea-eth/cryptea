@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { AuthContextMain, AuthAddress, AuthUser } from "./Auth";
 import { authenticateUserDefault, mainAppManager, userData } from "./types";
 import { HomeContext } from "../HomeContext";
@@ -24,7 +24,11 @@ export function useCryptea(): mainAppManager {
     console.log(error)
   } });
 
+  let cache = useRef<null | string | undefined>();
 
+  useEffect(() => {
+    cache.current = localStorage.getItem('userToken');
+  }, [])
 
   const { disconnect } = useDisconnect();
 
@@ -52,6 +56,7 @@ export function useCryptea(): mainAppManager {
         type,
         signMessage,
         isSuccess,
+        main: Boolean(cache.current)
       }),
     connectWall: async (type) => await connectAsync({ connector: type }),
     chainId: chainId !== undefined ? chainId.id : undefined,

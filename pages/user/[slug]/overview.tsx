@@ -19,10 +19,11 @@ import sortData, { totSub } from "../../../app/components/elements/dashboard/lin
 import { TbApiApp } from 'react-icons/tb';
 import { AiOutlineUser } from 'react-icons/ai'
 import ShareLink from "../../../app/components/elements/dashboard/linkOverview/share";
+import { useCryptea } from "../../../app/contexts/Cryptea";
 
 const Overview = () => {
 
-    const { isAuthenticated, isInitialized, user } = useMoralis();
+    const { isAuthenticated } = useCryptea();
 
 
     const [isLoading, setLoading] = useState<boolean>(true);
@@ -50,6 +51,7 @@ const Overview = () => {
         const { link:mDx, user, onetime, sub, views } = await initD(String(slug).toLowerCase());
 
         setUserLk(`${window.location.origin}/user/${slug}`); 
+        
 
         if(user['owner']){
          
@@ -96,16 +98,17 @@ const Overview = () => {
     };
 
     if (isAuthenticated !== undefined && router.isReady) {
-      
+
             if (!isAuthenticated) {
-                router.push('/auth');
+
+                router.push('/auth');   
+
             }else{
                 init();
-            }
-         
-      }
+            }         
+        }
 
-    }, [isAuthenticated, isInitialized, user, slug, router.isReady, router]);
+    }, [isAuthenticated, slug, router.isReady, router]);
   
    
       return (
