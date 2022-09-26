@@ -121,6 +121,7 @@ const rules: { [index: string]: any } = {
       if (color !== undefined) {
         data.colorScheme = color;
         data.linkImage = { ...data.linkImage, borderColor: color };
+        data.image = { ...data.image, bgcolor: color }
         data.workState = {
           ...data.workState,
           backgroundColor:

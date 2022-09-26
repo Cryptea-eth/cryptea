@@ -24,7 +24,6 @@ import React, { useState, useEffect, useContext, Suspense } from "react";
 import validator from "validator";
 import style from "../../../styles/custom.module.css";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { useMoralis } from "react-moralis";
 import ReactCrop, { PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { makeStorageClient } from "../../../app/functions/clients";

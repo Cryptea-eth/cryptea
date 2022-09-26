@@ -1,4 +1,3 @@
-import { useMoralis } from "react-moralis";
 import { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import Loader from "../../../app/components/elements/loader";

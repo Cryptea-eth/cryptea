@@ -25,7 +25,6 @@ import copy from "copy-to-clipboard";
 import sortData, { totSub } from "../../../app/components/elements/dashboard/linkOverview/generateData";
 import { initD } from "../../../app/components/elements/dashboard/link/data";
 import { dash, DashContext } from "../../../app/contexts/GenContext";
-import { useMoralis } from "react-moralis";
 import TypePayment from "../../../app/components/elements/dashboard/link/typePayment";
 import { FiSettings, FiShare2 } from "react-icons/fi";
 import { RiCoinLine } from "react-icons/ri";
