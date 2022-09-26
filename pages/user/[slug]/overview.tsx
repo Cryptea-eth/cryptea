@@ -73,9 +73,9 @@ const Overview = () => {
                 setData({
                   src,
 
-                  title: mDx.title == undefined ? mDx.title : "",
+                  title: mDx.title,
 
-                  desc: mDx.desc == undefined ? mDx.desc : "",
+                  desc: mDx.desc,
 
                   template,
 
@@ -202,7 +202,7 @@ const Overview = () => {
                       style={{
                         maxWidth: !sidebar?.openPage ? "1031px" : "861px",
                       }}
-                      className="text-[0.875rem] text-[rgb(95,99,104)]  truncate leading-[1.25rem] block"
+                      className="text-[0.915rem] text-[rgb(95,99,104)] truncate leading-[1.25rem] text-center mx-auto block"
                     >
                       {data.desc}
                     </p>
@@ -231,10 +231,20 @@ const Overview = () => {
                         <div className="absolute top-[47px] font-[400] text-[1.5rem]">
                           <NumberFormat
                             value={[
-                              ...sortData(data.subscribers, "24h", false)[
-                                "data"
-                              ],
-                              ...sortData(data.onetime, "24h", false)["data"],
+                              ...sortData(
+                                data.subscribers.length
+                                  ? data.subscribers
+                                  : [{ amount: 0, date: 0 }],
+                                "24h",
+                                false
+                              )["data"],
+                              ...sortData(
+                                data.onetime.length
+                                  ? data.onetime
+                                  : [{ amount: 0, date: 0 }],
+                                "24h",
+                                false
+                              )["data"],
                             ].reduce((a, b) => {
                               return a + b;
                             }, 0)}
