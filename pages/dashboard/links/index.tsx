@@ -280,7 +280,9 @@ const Links = () => {
                               width: "100%",
                               height: 183,
                               margin: "auto",
-                              backgroundColor: "#f5705982",
+                              backgroundColor: !Boolean(src)
+                                ? "#f5705982"
+                                : undefined,
                             }}
                             className="text-[50px] font-bold"
                             variant="rounded"

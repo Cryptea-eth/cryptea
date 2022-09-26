@@ -809,7 +809,7 @@ const DashHome = () => {
                           <Avatar sx={{
                             width: 40,
                             height: 40,
-                            backgroundColor: '#f57059',
+                            backgroundColor: !Boolean(source) ? "#f57059" : undefined,
                           }} src={source} variant='rounded'>{(
                             String(link).charAt(0) +
                             String(link).charAt(1)

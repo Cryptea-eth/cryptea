@@ -181,7 +181,11 @@ useEffect(() => {
                 </div>
                 <Avatar
                   src={data?.img}
-                  sx={{ width: 40, height: 40, bgcolor: "#F57059" }}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    bgcolor: !Boolean(data.img) ? "#f57059" : undefined,
+                  }}
                   alt={data?.username}
                 >
                   {String(data?.username).charAt(0).toUpperCase()}

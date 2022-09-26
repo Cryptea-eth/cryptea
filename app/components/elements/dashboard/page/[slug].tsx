@@ -214,14 +214,18 @@ function EditPage() {
               }}
             ></div>
             <div className="absolute border-solid border-[4px] p-1 border-[#f57059] rounded-[50%] left-0 right-0 m-auto bottom-[-29px] w-fit">
-                <Avatar
-                  src={typeof img == 'string' ? img : undefined}
-                  className="!font-bold !text-[35px]"
-                  sx={{ width: 140, bgcolor: "#F57059", height: 140 }}
-                  alt={usern}
-                >
-                  {usern?.charAt(0).toUpperCase()}
-                </Avatar>
+              <Avatar
+                src={typeof img == "string" ? img : undefined}
+                className="!font-bold !text-[35px]"
+                sx={{
+                  width: 140,
+                  bgcolor: typeof img != 'string' ? "#f57059" : undefined,
+                  height: 140,
+                }}
+                alt={usern}
+              >
+                {usern?.charAt(0).toUpperCase()}
+              </Avatar>
             </div>
           </div>
           <div className="flex flex-row usm:flex-col">

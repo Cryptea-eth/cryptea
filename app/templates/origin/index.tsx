@@ -44,7 +44,6 @@ import { useCryptea } from "../../contexts/Cryptea";
 import { get_request, post_request } from "../../contexts/Cryptea/requests";
 import AuthModal from "../../components/elements/modal";
 import * as ethers from 'ethers';
-import { provider } from "../../contexts/Cryptea/connectors/chains";
 import { useSwitchNetwork } from "wagmi";
 
 const contractAddress: {
@@ -62,7 +61,6 @@ const contractAddress: {
     "42261": "0x672cc5A511bB9E6EFCbeb11Fa3DdbABc31671776"
   },
 };
-
 
 
 function a11yProps(index: number) {

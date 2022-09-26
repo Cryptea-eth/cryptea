@@ -110,7 +110,7 @@ const Pages = () => {
                         sx={{
                           width: 60,
                           height: 60,
-                          backgroundColor: "#F57059",
+                          backgroundColor: !Boolean(realS) ? "#f57059" : undefined,
                           marginRight: "10px",
                         }}
                         src={realS}

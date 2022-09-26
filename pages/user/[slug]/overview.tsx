@@ -148,7 +148,7 @@ const Overview = () => {
                         width: 120,
                         height: 120,
                         margin: "1pc auto",
-                        backgroundColor: "#f57059",
+                        backgroundColor: !Boolean(data.src) ? "#f57059" : undefined,
                       }}
                       className="text-[50px] font-bold"
                       variant="circular"
@@ -220,7 +220,7 @@ const Overview = () => {
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
-                            Payments Today
+                            Payments
                           </h2>
 
                           <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
@@ -309,7 +309,7 @@ const Overview = () => {
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
-                            Page Views Today
+                            Page Views
                           </h2>
 
                           <span className="font-[400] text-[1.0rem] leading-[1.75rem]">

@@ -36,9 +36,10 @@ import ShareLink from "../../../app/components/elements/dashboard/linkOverview/s
 import { defineType, types } from "../../../app/components/elements/dashboard/linkOverview/linkTypes";
 import { BiCoinStack } from "react-icons/bi";
 import Image from "next/image";
+import { useCryptea } from '../../../app/contexts/Cryptea';
 
 const Onetime = () => {
-  
+
   const router = useRouter();
 
   const { slug, type } = router.query;
@@ -101,7 +102,7 @@ const Onetime = () => {
 
   const [isLoading, setLoader] = useState<boolean>(true);
 
-  const { isAuthenticated, isInitialized, user } = useMoralis();
+  const { isAuthenticated, user } = useCryptea();
 
   const [amountInfo, setAmountInfo] = useState<string>(``);
 
@@ -135,218 +136,242 @@ const Onetime = () => {
   useEffect(() => {
     const init = async () => {
 
-      const oDx = await initD(String(slug).toLowerCase());
+      const { link:oDx, user, onetime, sub, views } = await initD(String(slug).toLowerCase());
 
-      const logic = linkType == 'sub' ? 'subscribers' : linkType;
 
-      if (user !== null) {
-        if (user.id === oDx.attributes.user.id) {
+      if (user["owner"]) {
+
           let src = "";
 
-          if (oDx.get("template_data") !== undefined) {
-            const { data: tdata } = JSON.parse(oDx.get("template_data"));
+          if (oDx.template_data !== undefined) {
+
+            const { data: tdata } = JSON.parse(oDx.template_data);
 
             const { src: srcc } = tdata.image;
 
             src = srcc;
           }
-          
-          const dd =
-            oDx.get(logic) !== undefined
-              ? JSON.parse(oDx.get(logic))
-              : [];
 
-          const amount = oDx.get('amount');
+          const dd = linkType == 'sub' ? sub : onetime;
 
-          const extra = oDx.get('rdata') !== undefined ? JSON.parse(oDx.get('rdata')) : {};
+          const amount = oDx.amount;
+
+          const extra =
+            oDx.rdata !== undefined ? JSON.parse(oDx.rdata) : {};
+
           let addColumn = [...dcolumns];
 
-        if (Boolean(Number(amount))) {
-          addColumn.forEach((v: any) => {
-              if(v.id == 'amount'){
-                  delete v.id;
+          if (Boolean(Number(amount))) {
+            addColumn.forEach((v: any) => {
+              if (v.id == "amount") {
+                delete v.id;
               }
-          })
-        }
+            });
+          }
 
-        if(extra[linkType] !== undefined){
-          extra[linkType].forEach((v:string) => {
-              if(v != 'Name'){
-
-                  addColumn.push({
-                    id: v.toLowerCase(),
-                    label: v,
-                    minWidth: 100,
-                  });
+          if (extra[linkType] !== undefined) {
+            extra[linkType].forEach((v: string) => {
+              if (v != "Name") {
+                addColumn.push({
+                  id: v.toLowerCase(),
+                  label: v,
+                  minWidth: 100,
+                });
               }
-          });
-        }
+            });
+          }
 
-        setColumns(addColumn);
+          setColumns(addColumn);
 
-        const rowx: any = [];
-        
+          const rowx: any = [];
 
-    if(dd.length) {
-      let sdd:any[] = dd.sort((a:any, b:any) => b.date - a.date);
+          if (dd.length) {
+            let sdd: any[] = dd.sort((a: any, b: any) => b.date - a.date);
 
-      if(paymentS == 'top'){
-
-        sdd = dd.sort((a:any, b:any) => b.amount - a.amount);
-
-      }else if(paymentS == 'expired') {
-
-        sdd = dd.map((v:any) => v.expired !== undefined ? v : undefined);
-        
-      }
-
-      if(sdd.length){
-
-      sdd.forEach((vmain:{[index: string]: string | number} | undefined, ii: number) => {
-        if (vmain !== undefined) {
-         const supply:{[index: string]: string | number} = {};
-
-         supply['name'] = vmain.name === undefined ? 'anonymous' :  vmain.name;
-         supply['token'] = vmain.token === undefined ? "matic" : vmain.token;
-         const msupply = {...supply, ...vmain};
-
-
-        const date = new Date(msupply.date);
-
-        const hrx = date.getHours() % 12 || 12;
-        const rowD: { [index: string]: any } = {};
-
-        addColumn.forEach((v:{[index:string]: string | number}) => {
-            const ddx = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            
-            if (v['id'] == 'name') {
-                rowD["name"] = (
-                  <div className="flex items-center">
-                    <Avatar
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        marginRight: "10px",
-                        backgroundColor: ii > 9 ? pcols[ii%10] : pcols[ii],
-                        fontSize: "18px",
-                      }}
-                    >
-                      {String(msupply.name).charAt(0).toUpperCase()}
-                    </Avatar>
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-truncate text-[#4d4d4d]">
-                        {msupply.name}
-                      </span>
-                      <span className="block text-[#858585] font-normal">
-                        {ddx[date.getMonth()]}{" "}
-                        {String(date.getDate()).length == 1
-                          ? "0" + date.getDate()
-                          : date.getDate()}{" "}
-                        {date.getFullYear()} {hrx}:{date.getMinutes()}{" "}
-                        {hrx > 12 ? "pm" : "am"}
-                      </span>
-                    </div>
-                  </div>
-                );
-            }else if(v['id'] == 'address'){
-                  rowD["address"] = (
-                    <ClickAwayListener onClickAway={() => mainCopy(ii, false)}>
-                      <Tooltip
-                        placement="top"
-                        onClose={() => mainCopy(ii, false)}
-                        open={Boolean(copied[ii])}
-                        disableFocusListener
-                        disableHoverListener
-                        disableTouchListener
-                        PopperProps={{
-                          disablePortal: true,
-                        }}
-                        arrow
-                        title="Copied"
-                      >
-                        <div
-                          onClick={() => {
-                            mainCopy(ii, true);
-                            copy(String(msupply.address));
-                          }}
-                          className="flex cursor-pointer items-center relative"
-                        >
-                          {" "}
-                          <span className="text-[#4d4d4d]">
-                            {String(msupply.address).substring(0, 6)}...
-                            {String(msupply.address).substring(38, 42)}
-                          </span>{" "}
-                          <MdContentCopy
-                            className="left-1 relative cursor-pointer"
-                            size={14}
-                          />
-                        </div>
-                      </Tooltip>
-                    </ClickAwayListener>
-                  );
-            }else if(v['id'] == 'amount'){
-              const renewal = msupply['renewal'] !== undefined ? msupply['renewal'] : '';
-
-              rowD['amount'] = Number((Number(msupply['amount'])).toFixed(5)) + ' ' + renewal;
-
-            }else if(v['id'] == 'asset'){
-              rowD['asset'] = msupply['token'];
-            }else if(v['id'] == 'email'){
-              rowD['email'] = msupply['mail'];
-            }else{
-              rowD[v['id']] = msupply[v['id']];
+            if (paymentS == "top") {
+              sdd = dd.sort((a: any, b: any) => b.amount - a.amount);
+            } else if (paymentS == "expired") {
+              sdd = dd.map((v: any) =>
+                Boolean(v.expired) ? v : undefined
+              );
             }
-        })
 
-        rowx.push(rowD);
-      }
-      })
-    }
-      
-      setRows([...rowx])
+            if (sdd.length) {
+              sdd.forEach(
+                (
+                  vmain: { [index: string]: string | number } | undefined,
+                  ii: number
+                ) => {
+                  if (vmain !== undefined) {
+                    const supply: { [index: string]: string | number } = {};
 
-    }
+                    supply["name"] =
+                      vmain.name === undefined ? "anonymous" : vmain.name;
+                    supply["token"] =
+                      vmain.token === undefined ? "matic" : vmain.token;
+                    const msupply = { ...supply, ...vmain };
+
+                    const date = new Date(msupply.created_at);
+
+                    const hrx = date.getHours() % 12 || 12;
+                    const rowD: { [index: string]: any } = {};
+
+                    addColumn.forEach(
+                      (v: { [index: string]: string | number }) => {
+                        const ddx = [
+                          "Jan",
+                          "Feb",
+                          "Mar",
+                          "Apr",
+                          "May",
+                          "Jun",
+                          "Jul",
+                          "Aug",
+                          "Sep",
+                          "Oct",
+                          "Nov",
+                          "Dec",
+                        ];
+
+                        if (v["id"] == "name") {
+                          rowD["name"] = (
+                            <div className="flex items-center">
+                              <Avatar
+                                sx={{
+                                  width: 30,
+                                  height: 30,
+                                  marginRight: "10px",
+                                  backgroundColor:
+                                    ii > 9 ? pcols[ii % 10] : pcols[ii],
+                                  fontSize: "18px",
+                                }}
+                              >
+                                {String(msupply.name).charAt(0).toUpperCase()}
+                              </Avatar>
+                              <div className="flex flex-col">
+                                <span className="font-semibold text-truncate text-[#4d4d4d]">
+                                  {msupply.name}
+                                </span>
+                                <span className="block text-[#858585] font-normal">
+                                  {ddx[date.getMonth()]}{" "}
+                                  {String(date.getDate()).length == 1
+                                    ? "0" + date.getDate()
+                                    : date.getDate()}{" "}
+                                  {date.getFullYear()} {hrx}:{date.getMinutes()}{" "}
+                                  {hrx > 12 ? "pm" : "am"}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        } else if (v["id"] == "address") {
+                          rowD["address"] = (
+                            <ClickAwayListener
+                              onClickAway={() => mainCopy(ii, false)}
+                            >
+                              <Tooltip
+                                placement="top"
+                                onClose={() => mainCopy(ii, false)}
+                                open={Boolean(copied[ii])}
+                                disableFocusListener
+                                disableHoverListener
+                                disableTouchListener
+                                PopperProps={{
+                                  disablePortal: true,
+                                }}
+                                arrow
+                                title="Copied"
+                              >
+                                <div
+                                  onClick={() => {
+                                    mainCopy(ii, true);
+                                    copy(String(msupply.address));
+                                  }}
+                                  className="flex cursor-pointer items-center relative"
+                                >
+                                  {" "}
+                                  <span className="text-[#4d4d4d]">
+                                    {String(msupply.address).substring(0, 6)}...
+                                    {String(msupply.address).substring(38, 42)}
+                                  </span>{" "}
+                                  <MdContentCopy
+                                    className="left-1 relative cursor-pointer"
+                                    size={14}
+                                  />
+                                </div>
+                              </Tooltip>
+                            </ClickAwayListener>
+                          );
+                        } else if (v["id"] == "amount") {
+                          const renewal =
+                            msupply["renewal"] !== undefined
+                              ? msupply["renewal"]
+                              : "";
+
+                          rowD["amount"] =
+                            Number(msupply["amount"]).toFixed(2) +
+                            " " +
+                            renewal;
+                        } else if (v["id"] == "asset") {
+                          rowD["asset"] = msupply["token"];
+                        } else if (v["id"] == "email") {
+                          rowD["email"] = msupply["mail"];
+                        } else {
+                          rowD[v["id"]] = msupply[v["id"]];
+                        }
+                      }
+                    );
+
+                    rowx.push(rowD);
+                  }
+                }
+              );
+            }
+
+            setRows([...rowx]);
+          }
 
 
           setData({
-            src,
+                src,
 
-            title: oDx.get("title") == undefined ? oDx.get("title") : "",
+                username: user.username,
 
-            desc: oDx.get("desc") == undefined ? oDx.get("desc") : "",
+                img: user.img,
 
-            link: oDx.get("link"),
+                title: oDx.title,
 
-            type: oDx.get("type"),
+                desc: oDx.desc,
 
-            main: dd,
+                link: oDx.link,
 
-            amount: oDx.get('amount'),
+                type: oDx.type,
 
-            views:
-              oDx.get("views") !== undefined
-                ? JSON.parse(oDx.get("views"))
-                : [],
-          });
+                main: dd,
 
-        
+                amount: oDx.amount,
+
+                views
+                });
+
           setAmountInfo(
-            `$${(sortData(
+            `$${sortData(
               dd.length ? dd : [{ amount: 0, date: 0 }],
-              '24h',
+              "24h",
               false
-            )["data"].reduce((a, b) => a + b, 0)).toFixed(2)} - ${
-              interText['24h']
-            }`
+            )
+              ["data"].reduce((a, b) => a + b, 0)
+              .toFixed(2)} - ${interText["24h"]}`
           );
 
-        }
+      setLoader(false);
+
+      }else {
+           router.push(`/user/${String(slug).toLowerCase()}`);
       }
 
-      setLoader(false);
     };
 
-    if (router.isReady && isInitialized) {
+    if (router.isReady && isAuthenticated !== undefined) {
       if (isAuthenticated) {
         const ctypes = defineType(String(type).toLowerCase());
 
@@ -365,8 +390,6 @@ const Onetime = () => {
     }
   }, [
     isAuthenticated,
-    isInitialized,
-    user,
     slug,
     type,
     linkType,
@@ -428,7 +451,7 @@ const Onetime = () => {
             <ShareLink
               data={{
                 src: data.src,
-                usrc: user?.get("img"),
+                usrc: data.img,
                 title: data.title,
                 desc: data.desc,
                 userLk: `${window.location.origin}/user/${slug}`,
@@ -456,8 +479,8 @@ const Onetime = () => {
                   </IconButton>
                 </Tooltip>
                 <Avatar
-                  alt={user?.get("username")}
-                  src={user?.get("img") !== undefined ? user?.get("img") : ""}
+                  alt={data.username}
+                  src={Boolean(data.img) ? data.img : ""}
                   sx={{ width: 45, height: 45, marginLeft: "10px" }}
                 />
               </div>

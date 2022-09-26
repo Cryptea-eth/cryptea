@@ -600,7 +600,7 @@ const Settings = () => {
                               sx={{
                                 width: 190,
                                 height: 190,
-                                bgcolor: "#F57059",
+                                bgcolor: !Boolean(dp) ? "#f57059" : undefined,
                               }}
                               alt={username}
                             >
