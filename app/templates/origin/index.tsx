@@ -31,13 +31,12 @@ import {
   Select,
   ToggleButtonGroup,
   TextField,
-  Button,
-  InputLabel,
+  Button
 } from "@mui/material";
 
-import { useMoralis } from "react-moralis";
+import Moralis from "moralis"
 import Loader from "../../components/elements/loader";
-import { useState, useEffect, SetStateAction, useContext } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import { makeNFTClient } from "../../functions/clients";
 import { initD } from "../../components/elements/dashboard/link/data";
 import { useCryptea } from "../../contexts/Cryptea";
@@ -94,7 +93,6 @@ function getStyles(name: string, blockchainName: string | any[], theme: Theme) {
 }
 
  
-
 const Origin = ({
   className,
   editMode = false,
@@ -124,11 +122,7 @@ const Origin = ({
     setAlignment(newAlignment);
   };
 
-  const {
-    Moralis,
-  } = useMoralis();
-
-  const { isAuthenticated, connected, authenticate, signer, chainId, account } = useCryptea();
+  const { connected, authenticate, signer, chainId, account } = useCryptea();
 
   const [data, setData] = useState(temp_x.data);
 
@@ -137,8 +131,6 @@ const Origin = ({
   const [userD, setUserD] = useState<{ [index: string]: any }>({});
 
   const [pemail, setPemail] = useState<string[]>([]);
-
-  const [name, setName] = useState<string>("");
 
   const [loadingText, setLoadingText] = useState<any>("");
   const [transferSuccess, setTransferSuccess] = useState<boolean>(false);
@@ -446,9 +438,7 @@ const Origin = ({
 
     const { chains, error, pendingChainId, switchNetwork, switchNetworkAsync } =
       useSwitchNetwork();
-
-  console.log(token, signer)
-
+      
   const beginPayment = async (
     price: number,
     type: "subscription" | "onetime" = "onetime"

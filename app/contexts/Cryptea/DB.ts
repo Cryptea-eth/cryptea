@@ -33,7 +33,7 @@ const allowed: CrypteaDBS = {
   },
   templates: {
     supports: ["get"],
-    endpoint: "/template",
+    endpoint: "/templates",
   },
 };
 

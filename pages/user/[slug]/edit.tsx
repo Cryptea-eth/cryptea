@@ -31,9 +31,12 @@ import { makeStorageClient } from "../../../app/functions/clients";
 import dynamic from "next/dynamic";
 import Loader from "../../../app/components/elements/loader";
 import tmp from '../../../styles/temp.module.css'
+import { get_request } from "../../../app/contexts/Cryptea/requests";
+import { useCryptea } from "../../../app/contexts/Cryptea";
 
 const Edit = () => {
-  const { Moralis, isInitialized, isAuthenticated, user } = useMoralis();
+
+  const { isAuthenticated } = useCryptea();
 
   const [ndata, setData] = useState<string>("");
   const [rules, setRules] = useState<any>({});
@@ -84,6 +87,7 @@ const Edit = () => {
 useEffect(() => {
   const init = async () => {
     if (isAuthenticated !== undefined) {
+
       if (isAuthenticated) {
         const linkx: any = await `links/${String(usern).toLowerCase()}`.get(
           "link",
@@ -137,6 +141,7 @@ useEffect(() => {
   };
 
   init();
+  
 }, [usern, router, isAuthenticated]);
 
 let times: any;
@@ -278,8 +283,10 @@ const [isSaving, saveChanges] = useState<{
       }
     };
 
+    const token = await get_request('/storagekey');
+
     const client = makeStorageClient(
-      await Moralis.Cloud.run("getWeb3StorageKey")
+      token.data
     );
 
     return client.put(files, { onRootCidReady, onStoredChunk });
