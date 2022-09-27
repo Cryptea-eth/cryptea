@@ -352,13 +352,8 @@ const Settings = () => {
   return (
     <Page>
       <Head>
-        <title>
-          Settings | Dashboard | Cryptea
-        </title>
-        <meta
-          name="description"
-          content={`Change User Settings Easily`}
-        />
+        <title>Settings | Dashboard | Cryptea</title>
+        <meta name="description" content={`Change User Settings Easily`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <>
@@ -456,7 +451,7 @@ const Settings = () => {
               </Box>
             </Modal>
 
-            <div className="w-[80%] usm:w-[90%] sm:w-full">
+            <div className="w-full">
               <div>
                 <form
                   onSubmit={(e) => {
@@ -496,7 +491,7 @@ const Settings = () => {
                       )}
                       <div className="username w-full">
                         <div className="flex mmd:flex-col-reverse mmd:items-center justify-between items-start">
-                          <div className="w-full">
+                          <div className="w-[54%] mmd:w-full">
                             <div className="font-semibold mt-5 mb-4 text-[#777]">
                               Change Username
                             </div>

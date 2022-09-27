@@ -22,7 +22,7 @@ import { useContext } from 'react';
 import { useCryptea } from '../../../contexts/Cryptea';
 
 
-const Sidebar = ({page}: {page: string | string[] | undefined}) => {
+const Sidebar = ({ page }: {page: string | string[] | undefined}) => {
 
   const { logout, authenticate } = useCryptea();
 

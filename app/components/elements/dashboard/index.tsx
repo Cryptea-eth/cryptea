@@ -20,7 +20,8 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
 
   const [data, setData] = useState<any>({ username: '', img: ''});
 
-  const page = router.query['page'];
+  const page = (router.pathname).split('/')[2];
+
 
   const [loading, isLoading] = useState<boolean>(true); 
   

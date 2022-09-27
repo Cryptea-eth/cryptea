@@ -21,7 +21,6 @@ import { useEffect, useState } from "react";
 import Loader from "../../loader";
 import TabPanel from "./TabPanel";
 import Router from "next/router";
-import validator from 'validator';
 import { AxiosError } from "axios";
 import { useCryptea } from "../../../../contexts/Cryptea";
 
@@ -107,7 +106,7 @@ const MenuProps = {
     };
   }
 
-  const { isAuthenticated, account } = useCryptea();
+  const { isAuthenticated, account, validator } = useCryptea();
 
   const [loadpage, isloadPage] = useState<boolean>(true);
 
