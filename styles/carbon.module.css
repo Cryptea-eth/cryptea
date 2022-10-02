@@ -1,0 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Baloo+Bhaijaan|Ubuntu');
+
+.wrapper * {
+    font-family: 'ubuntu', sans-serif !important;
+}

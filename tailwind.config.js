@@ -38,6 +38,10 @@ module.exports = {
       },
       backgroundSize: {
         patternsize: "160px"
+      },
+      fontFamily: {
+        ubuntu: "'Ubuntu', sans-serif",
+        bajan: "'Baloo Bhaijaan', cursive"
       }
     },
   },

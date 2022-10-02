@@ -20,8 +20,7 @@ import {
 } from "react-icons/fi";
 import Color from "@uiw/react-color-colorful";
 import Image from "next/image";
-import React, { useState, useEffect, useContext, Suspense } from "react";
-import validator from "validator";
+import React, { useState, useEffect, Suspense } from "react";
 import style from "../../../styles/custom.module.css";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import ReactCrop, { PixelCrop } from "react-image-crop";
@@ -32,10 +31,11 @@ import Loader from "../../../app/components/elements/loader";
 import tmp from '../../../styles/temp.module.css'
 import { get_request } from "../../../app/contexts/Cryptea/requests";
 import { useCryptea } from "../../../app/contexts/Cryptea";
+import { PaymentProvider } from "../../../app/contexts/PaymentContext";
 
 const Edit = () => {
 
-  const { isAuthenticated } = useCryptea();
+  const { isAuthenticated, validator } = useCryptea();
 
   const [ndata, setData] = useState<string>("");
   const [rules, setRules] = useState<any>({});
@@ -71,7 +71,6 @@ const Edit = () => {
   const [simg, setsImg] = useState<string | undefined>("");
   const [isLoading, setLoader] = useState<boolean>(true);
 
-
   const router = useRouter();
 
   const [linkx, setLinkx] = useState<any>();
@@ -93,7 +92,7 @@ useEffect(() => {
           true
         );
 
-        const temx:any = await ('templates').get('*');
+        const temx:any = await ('templates').get('data', true);
 
         setTemplates(temx);
 
@@ -120,6 +119,7 @@ useEffect(() => {
             }
           }
 
+          
           setEditable(edx);
 
           const Utemplate = dynamic(
@@ -144,6 +144,7 @@ useEffect(() => {
 }, [usern, router, isAuthenticated]);
 
 let times: any;
+
 
 const saveSets = async () => {
   clearTimeout(times);
@@ -196,7 +197,10 @@ const [isSaving, saveChanges] = useState<{
   const [isUploading, setIsUploading] = useState<number>(0);
 
    const setXTemplates = async (name: string) => {
-     const { rules, getData } = await import(
+
+    setLoader(true);     
+
+     const { rules, data: newData } = await import(
        `../../../app/templates/${name}/data`
      );
 
@@ -204,7 +208,17 @@ const [isSaving, saveChanges] = useState<{
        suspense: true,
      });
 
-     setRules({ ...rules, change_template: {} });
+     setRules(rules);
+
+     const { data: Olddata } = JSON.parse(linkx.template_data);
+
+    const cache = localStorage.getItem(`${String(usern)}-oldlink`) !== null;
+
+     await (`links/${linkx.id}`).update({
+      template_data: JSON.stringify({name, data: cache ? localStorage.getItem(`${String(usern)}-oldlink`) : { ...newData, colorScheme: Olddata.colorScheme, errorColor: Olddata.errorColor || '' }})
+     });
+
+     localStorage.setItem(`${String(usern)}-oldlink`, JSON.stringify(Olddata));
 
      setData(name);
 
@@ -216,11 +230,13 @@ const [isSaving, saveChanges] = useState<{
        }
      }
 
-     setEditable([...edx, "change_template"]);
+     setEditable(edx);
 
      setTemplate(Utemplate);
 
      setPart("");
+
+     setLoader(false)
    };
 
   const imgCrop = (
@@ -230,7 +246,9 @@ const [isSaving, saveChanges] = useState<{
     setViewColor("imgMChange");
     if (event.target.files !== null) {
       const fil = event.target.files[0];
+      
       const { type, size } = fil;
+
       const ee = ["image/jpeg", "image/jpg", "image/png"];
 
       if (!ee.includes(type)) {
@@ -255,15 +273,19 @@ const [isSaving, saveChanges] = useState<{
       setError("");
 
       const src = `https://${cid}.ipfs.dweb.link/${usern}.${type}`;
+
       updateMe(src);
 
       const dataSent = rules[Boolean(getRules.length) ? getRules : "body"];
 
+      const { display, width: size, borderColor } = dataSent.imgChange();
+
       dataSent.imgChange({
-        borderColor: dataSent.imgChange().borderColor,
-        size: dataSent.imgChange().width,
-        display: dataSent.imgChange().display == "block",
-        src,
+        borderColor,
+        size,
+        text: '',
+        display: display == "block",
+        src
       });
     };
 
@@ -331,7 +353,6 @@ const [isSaving, saveChanges] = useState<{
     }
   };
 
-
   return (
     <div>
       <Head>
@@ -358,12 +379,14 @@ const [isSaving, saveChanges] = useState<{
       {!isLoading && (
         <div className="flex items-start">
           {Template !== undefined && (
-            <Suspense fallback={<Loader />}>
-              <Template
-                editMode={true}
-                className="overflow-y-scroll cusscroller overflow-x-hidden w-[calc(100%-258px)] z-[100] h-full fixed max-h-screen"
-              />
-            </Suspense>
+            <PaymentProvider editMode={true}>
+              <Suspense fallback={<Loader />}>
+                <Template
+                  editMode={true}
+                  className="overflow-y-scroll cusscroller overflow-x-hidden w-[calc(100%-258px)] z-[100] h-full fixed max-h-screen"
+                />
+              </Suspense>
+            </PaymentProvider>
           )}
 
           {
@@ -401,6 +424,73 @@ const [isSaving, saveChanges] = useState<{
                     )}
 
                     <div className="components mt-2 bg-white">
+                      {Boolean(
+                        rules[Boolean(getRules.length) ? getRules : "body"]
+                          .colorScheme
+                      ) && (
+                        <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                          <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                            Color Scheme
+                          </span>
+
+                          <div className="flex relative cursor-pointer items-center">
+                            {viewColor == "colorScheme" && (
+                              <Color
+                                color={rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ].colorScheme()}
+                                className="right-[120%] !absolute"
+                                onChange={(color) => {
+                                  updateMe(color);
+
+                                  rules[
+                                    Boolean(getRules.length) ? getRules : "body"
+                                  ].colorScheme(color.hexa);
+                                }}
+                              />
+                            )}
+
+                            <div
+                              onClick={(e: any) => {
+                                if (viewColor == "colorScheme") {
+                                  setViewColor("");
+                                } else {
+                                  setViewColor("colorScheme");
+                                }
+                              }}
+                              className="border w-fit h-fit p-[3px] border-solid mr-[3px] border-[#bbbbbb24]"
+                            >
+                              <div
+                                style={{
+                                  backgroundColor:
+                                    rules[
+                                      Boolean(getRules.length)
+                                        ? getRules
+                                        : "body"
+                                    ].colorScheme(),
+                                }}
+                                className="h-[22px] w-[22px]"
+                              ></div>
+                            </div>
+
+                            <div
+                              onClick={(e: any) => {
+                                if (viewColor == "colorScheme") {
+                                  setViewColor("");
+                                } else {
+                                  setViewColor("colorScheme");
+                                }
+                              }}
+                              className="text-[#9d9d9d] min-w-[100px] p-2 font-bold"
+                            >
+                              {rules[
+                                Boolean(getRules.length) ? getRules : "body"
+                              ].colorScheme()}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       {Boolean(
                         rules[Boolean(getRules.length) ? getRules : "body"]
                           .colorChange
@@ -893,7 +983,7 @@ const [isSaving, saveChanges] = useState<{
                                 )}
                                 <div className="bg-[#979797] h-fit w-fit">
                                   <img
-                                    alt="upload image"
+                                    alt=""
                                     width="30"
                                     src={
                                       rules[
@@ -923,30 +1013,98 @@ const [isSaving, saveChanges] = useState<{
                                 onChange={imgCrop}
                                 className="!hidden updatelink"
                               />
-                              <Button
-                                sx={{
-                                  transition: "all .5s",
-                                  textTransform: "capitalize",
-                                  fontSize: "13px",
-                                  lineHeight: "15px",
-                                  backgroundColor: "#979797 !important",
-                                  padding: "4px 8px",
-                                  color: "#fff",
-                                  borderRadius: "0px !important",
-                                  fontWeight: "semibold",
-                                  ":hover": {
-                                    backgroundColor: "#818181 !importan",
-                                  },
-                                }}
-                                onClick={(eee: any) => {
-                                  const elem = eee.target?.previousSibling;
 
-                                  elem.click();
-                                }}
-                              >
-                                update
-                              </Button>
+                              <div className="flex items-center">
+                                <Button
+                                  sx={{
+                                    transition: "all .5s",
+                                    textTransform: "capitalize",
+                                    fontSize: "13px",
+                                    lineHeight: "15px",
+                                    backgroundColor: "#979797 !important",
+                                    padding: "4px 8px",
+                                    color: "#fff",
+                                    borderRadius: "3px !important",
+                                    fontWeight: "semibold",
+                                    ":hover": {
+                                      backgroundColor: "#818181 !importan",
+                                    },
+                                  }}
+                                  onClick={(eee: any) => {
+                                    const elem = eee.target?.previousSibling;
+
+                                    elem.click();
+                                  }}
+                                >
+                                  update
+                                </Button>
+                              </div>
                             </div>
+                          </div>
+
+                          <div className="mt-3 w-full">
+                            <span className="text-[#979797] mr-[11px] font-bold text-[13px] mb-[4px] block">
+                              Character Text Image
+                            </span>
+
+                            <TextField
+                              type="text"
+                              defaultValue={
+                                rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ].imgChange().text.length
+                                  ? rules[
+                                      Boolean(getRules.length)
+                                        ? getRules
+                                        : "body"
+                                    ].imgChange().text
+                                  : ""
+                              }
+                              onChange={(xx: any) => {
+                                updateMe(xx.target.value);
+
+                                if (validator.isAlphanumeric(xx.target.value)) {
+                                  const text = xx.target.value;
+
+                                  const dataSent =
+                                    rules[
+                                      Boolean(getRules.length)
+                                        ? getRules
+                                        : "body"
+                                    ];
+                                  const { borderColor, width, display, src } =
+                                    dataSent.imgChange();
+
+                                  dataSent.imgChange({
+                                    borderColor,
+                                    size: width,
+                                    display: display == "block",
+                                    src,
+                                    text,
+                                  });
+                                }
+                              }}
+                              sx={{
+                                "& .Mui-focused.MuiFormLabel-root": {
+                                  color: "#bbbbbbc8",
+                                },
+                                "& .MuiInputBase-root": {
+                                  borderRadius: "0px",
+                                },
+                                "& .MuiInputBase-input": {
+                                  padding: "3px",
+                                  lineHeight: "17px",
+                                  fontSize: "13px",
+                                },
+                                "& .Mui-focused .MuiOutlinedInput-notchedOutline":
+                                  {
+                                    borderColor: "#bbbbbbc8 !important",
+                                    borderWidth: "1px !important",
+                                  },
+                              }}
+                              placeholder="TEXT..."
+                              fullWidth
+                            />
                           </div>
 
                           <div className="mt-[7px]">
@@ -974,12 +1132,19 @@ const [isSaving, saveChanges] = useState<{
                                           : "body"
                                       ];
 
+                                    const {
+                                      width: size,
+                                      display,
+                                      text,
+                                      src,
+                                    } = dataSent.imgChange();
+
                                     dataSent.imgChange({
                                       borderColor: color.hexa,
-                                      size: dataSent.imgChange().width,
-                                      display:
-                                        dataSent.imgChange().display == "block",
-                                      src: dataSent.imgChange().src,
+                                      size,
+                                      display: display == "block",
+                                      src,
+                                      text,
                                     });
                                   }}
                                 />
@@ -1032,7 +1197,7 @@ const [isSaving, saveChanges] = useState<{
                             </span>
 
                             <Slider
-                              min={40}
+                              min={80}
                               size="small"
                               max={156}
                               value={
@@ -1044,11 +1209,15 @@ const [isSaving, saveChanges] = useState<{
                                 const dx =
                                   rules[getRules.length ? getRules : "body"];
 
+                                const { borderColor, display, text, src } =
+                                  dx.imgChange();
+
                                 dx.imgChange({
-                                  borderColor: dx.imgChange().borderColor,
+                                  borderColor,
                                   size: xx.target.value,
-                                  display: dx.imgChange().display == "block",
-                                  src: dx.imgChange().src,
+                                  display: display == "block",
+                                  src,
+                                  text,
                                 });
                                 updateMe(xx);
                               }}
@@ -1104,17 +1273,71 @@ const [isSaving, saveChanges] = useState<{
                                   ];
                                 updateMe(exx.imgChange().display);
 
+                                const {
+                                  width: size,
+                                  borderColor,
+                                  text,
+                                  src,
+                                } = exx.imgChange();
+
                                 exx.imgChange({
-                                  borderColor: exx.imgChange().borderColor,
+                                  borderColor,
                                   display: !(
                                     exx.imgChange().display == "block"
                                   ),
-                                  size: exx.imgChange().width,
-                                  src: exx.imgChange().src,
+                                  size,
+                                  text,
+                                  src,
                                 });
                               }}
                             />
                           </div>
+                        </div>
+                      )}
+
+                      {Boolean(
+                        rules[Boolean(getRules.length) ? getRules : "body"]
+                          .width
+                      ) && (
+                        <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                          <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                            Width
+                          </span>
+
+                          <Slider
+                            min={120}
+                            size="small"
+                            max={300}
+                            value={rules[
+                              Boolean(getRules.length) ? getRules : "body"
+                            ].width()}
+                            onChange={(xx: any) => {
+                              const dx =
+                                rules[getRules.length ? getRules : "body"];
+
+                              dx.width(xx.target.value);
+
+                              updateMe(xx);
+                            }}
+                            sx={{
+                              color: "#979797",
+                              "& .MuiSlider-track, .MuiSlider-rail, .MuiSlider-thumb":
+                                {
+                                  backgroundColor: "#979797",
+                                },
+                              "& .MuiSlider-thumb:hover, .MuiSlider-thumb.Mui-focusVisible":
+                                {
+                                  boxShadow:
+                                    "0px 0px 0px 8px rgba(0, 0, 0, 16%)",
+                                },
+                              "& .MuiSlider-thumb.Mui-active": {
+                                boxShadow:
+                                  "0px 0px 0px 12px rgba(0, 0, 0, 16%)",
+                              },
+                            }}
+                            aria-label="Default"
+                            valueLabelDisplay="auto"
+                          />
                         </div>
                       )}
 
@@ -1678,10 +1901,11 @@ const [isSaving, saveChanges] = useState<{
                       {getRules == "change_template" && (
                         <div className="w-full flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
                           <>
-                            {templates.map(( attributes: any, i: number) => {
+                            {templates.map((attributes: any, i: number) => {
                               if (
-                                attributes.importance == "both" ||
-                                attributes.importance == linkx.type
+                                true
+                                // attributes.importance == "both" ||
+                                // attributes.importance == linkx.type
                               ) {
                                 return (
                                   <div
@@ -1713,73 +1937,6 @@ const [isSaving, saveChanges] = useState<{
                               }
                             })}
                           </>
-                        </div>
-                      )}
-
-                      {Boolean(
-                        rules[Boolean(getRules.length) ? getRules : "body"]
-                          .colorScheme
-                      ) && (
-                        <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
-                          <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
-                            Color Scheme
-                          </span>
-
-                          <div className="flex relative cursor-pointer items-center">
-                            {viewColor == "colorScheme" && (
-                              <Color
-                                color={rules[
-                                  Boolean(getRules.length) ? getRules : "body"
-                                ].colorScheme()}
-                                className="right-[120%] !absolute"
-                                onChange={(color) => {
-                                  updateMe(color);
-
-                                  rules[
-                                    Boolean(getRules.length) ? getRules : "body"
-                                  ].colorScheme(color.hexa);
-                                }}
-                              />
-                            )}
-
-                            <div
-                              onClick={(e: any) => {
-                                if (viewColor == "colorScheme") {
-                                  setViewColor("");
-                                } else {
-                                  setViewColor("colorScheme");
-                                }
-                              }}
-                              className="border w-fit h-fit p-[3px] border-solid mr-[3px] border-[#bbbbbb24]"
-                            >
-                              <div
-                                style={{
-                                  backgroundColor:
-                                    rules[
-                                      Boolean(getRules.length)
-                                        ? getRules
-                                        : "body"
-                                    ].colorScheme(),
-                                }}
-                                className="h-[22px] w-[22px]"
-                              ></div>
-                            </div>
-
-                            <div
-                              onClick={(e: any) => {
-                                if (viewColor == "colorScheme") {
-                                  setViewColor("");
-                                } else {
-                                  setViewColor("colorScheme");
-                                }
-                              }}
-                              className="text-[#9d9d9d] min-w-[100px] p-2 font-bold"
-                            >
-                              {rules[
-                                Boolean(getRules.length) ? getRules : "body"
-                              ].colorScheme()}
-                            </div>
-                          </div>
                         </div>
                       )}
 

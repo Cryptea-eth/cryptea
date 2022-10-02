@@ -1,11 +1,12 @@
-import { useEffect } from "react";
-import { get_request, post_request } from "../app/contexts/Cryptea/requests";
+import Carbon from "../app/templates/carbon";
+import { data } from "../app/templates/carbon/data";
+
+console.log(data)
 
 const XX = () => {
 
-
-
-    return <></>
+    return <>
+    </>
 
 }
 

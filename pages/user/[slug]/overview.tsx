@@ -97,7 +97,6 @@ const Overview = () => {
     };
 
     if (isAuthenticated !== undefined && router.isReady) {
-
             if (!isAuthenticated) {
 
                 router.push('/auth');   
@@ -105,7 +104,7 @@ const Overview = () => {
             }else{
                 init();
             }         
-        }
+    }
 
     }, [isAuthenticated, slug, router.isReady, router]);
   

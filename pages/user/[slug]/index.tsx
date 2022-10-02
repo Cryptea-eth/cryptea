@@ -5,6 +5,7 @@ import {
   initD,
   template,
 } from "../../../app/components/elements/dashboard/link/data";
+import { PaymentProvider } from '../../../app/contexts/PaymentContext';
 
 
 const User = () => {
@@ -35,7 +36,7 @@ const User = () => {
 
 
   return (
-    <>
+    <PaymentProvider editMode={false}>
       {Template !== undefined ? (
         <Suspense fallback={<Loader />}>
           <Template />
@@ -43,7 +44,7 @@ const User = () => {
       ) : (
         <Loader />
       )}
-    </>
+    </PaymentProvider>
   );
 }
 

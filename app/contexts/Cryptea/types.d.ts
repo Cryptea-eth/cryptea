@@ -91,6 +91,60 @@ export interface mainAppManager extends AuthContext {
   authenticate: (e?: boolean) => void;
 }
 
+type token = { value: string | number; label: string };
+type pdata = {
+  price: number;
+  type: "onetime" | "subscription";
+};
+
+
+export interface PaymentContext {
+  userD?: { [index: string]: any };
+  setUserD?: React.Dispatch<
+    React.SetStateAction<{
+      [index: string]: any;
+    }>
+  >;
+  token?: token;
+  setToken?: React.Dispatch<React.SetStateAction<token>>;
+  paymentData?: pdata;
+  setPaymentData?: React.Dispatch<React.SetStateAction<pdata | undefined>>;
+  data?: any;
+  setData?: React.Dispatch<any>;
+  isLoading?: boolean;
+  setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
+  beginSub?: () => void;
+  beginOne?: () => void;
+  reset?: () => void;
+  pemail?: string[];
+  setPemail?: React.Dispatch<React.SetStateAction<string[]>>;
+  loadingText?: string;
+  setLoadingText?: React.Dispatch<React.SetStateAction<string>>;
+  transferSuccess?: boolean;
+  setTransferSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
+  transferFail?: boolean;
+  setTransferFail?: React.Dispatch<React.SetStateAction<boolean>>;
+  failMessage?: string;
+  setFailMessage?: React.Dispatch<React.SetStateAction<string>>;
+  hash?: string;
+  setHash?: React.Dispatch<React.SetStateAction<string>>;
+  interval?: string;
+  options?: { value: string | number; label: string }[];
+  setTinterval?: React.Dispatch<React.SetStateAction<string>>;
+  is500?: boolean;
+  setIs500?: React.Dispatch<React.SetStateAction<boolean>>;
+  initMain?: (
+    price: number,
+    type?: "subscription" | "onetime"
+  ) => Promise<void>;
+  amount?: string | number;
+  setAmount?: React.Dispatch<React.SetStateAction<string | number>>;
+  subCheck?: boolean;
+  setSubCheck?: React.Dispatch<React.SetStateAction<boolean>>;
+  eSubscription?: string[];
+  setESubscription?: React.Dispatch<React.SetStateAction<string[]>>;
+}
+
 declare global {
   interface Window {
     jstz: any

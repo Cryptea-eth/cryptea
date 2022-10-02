@@ -1,8 +1,9 @@
-import '../styles/globals.css'
+import '../styles/globals.css';
 import '../styles/Home.css';
 import '../styles/Dash.css';
 import '../styles/Auth.css';
 import '../styles/Sett.css';
+
 import type { AppProps } from 'next/app'
 import React from 'react'
 import { GenProvider } from '../app/contexts/GenContext';
@@ -24,4 +25,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp
+export default MyApp;
