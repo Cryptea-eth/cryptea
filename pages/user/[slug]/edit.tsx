@@ -68,6 +68,7 @@ const Edit = () => {
     x: 0,
     y: 0,
   });
+  
   const [simg, setsImg] = useState<string | undefined>("");
   const [isLoading, setLoader] = useState<boolean>(true);
 
@@ -269,6 +270,8 @@ const [isSaving, saveChanges] = useState<{
   const beginUpload = async (files: File[], type: string) => {
     const { size: totalSize } = files[0];
 
+    setIsUploading(1);
+
     const onRootCidReady = (cid: string) => {
       setError("");
 
@@ -298,9 +301,10 @@ const [isSaving, saveChanges] = useState<{
 
       console.log(`Uploading... ${pct.toFixed(2)}% complete`);
 
-      setIsUploading(pct);
-      if (pct > 98) {
+
+      if (pct > 90) {
         setViewColor("");
+        setIsUploading(0);
       }
     };
 
@@ -957,16 +961,32 @@ const [isSaving, saveChanges] = useState<{
                                     </ReactCrop>
 
                                     <div className="flex mt-2 justify-between">
-                                      <Button
-                                        variant="contained"
-                                        className="!bg-[#979797] !w-fit !mr-2 !py-[3px] !font-bold !text-[13px] !capitalize"
-                                        style={{
-                                          fontFamily: "inherit",
-                                        }}
-                                        onClick={cropImg}
-                                      >
-                                        Update Image
-                                      </Button>
+                                      {Boolean(isUploading) ? (
+                                        <Button
+                                          className={
+                                            "!flex !items-center !bg-[#979797] !w-fit !mr-2 !py-[3px] !font-bold !text-[13px] !capitalize"
+                                          }
+                                        >
+                                          <div className="mr-3 h-[20px] text-[#fff]">
+                                            <CircularProgress
+                                              color={"inherit"}
+                                              className="!w-[20px] !h-[20px]"
+                                            />
+                                          </div>
+                                          <span className="text-white">updating...</span>
+                                        </Button>
+                                      ) : (
+                                        <Button
+                                          variant="contained"
+                                          className="!bg-[#979797] !w-fit !mr-2 !py-[3px] !font-bold !text-[13px] !capitalize"
+                                          style={{
+                                            fontFamily: "inherit",
+                                          }}
+                                          onClick={cropImg}
+                                        >
+                                          Update Image
+                                        </Button>
+                                      )}
 
                                       <Button
                                         onClick={() => setViewColor("")}
@@ -1014,30 +1034,30 @@ const [isSaving, saveChanges] = useState<{
                                 className="!hidden updatelink"
                               />
 
-                                <Button
-                                  sx={{
-                                    transition: "all .5s",
-                                    textTransform: "capitalize",
-                                    fontSize: "13px",
-                                    lineHeight: "15px",
-                                    backgroundColor: "#979797 !important",
-                                    padding: "4px 8px",
-                                    color: "#fff",
-                                    borderRadius: "3px !important",
-                                    fontWeight: "semibold",
-                                    ":hover": {
-                                      backgroundColor: "#818181 !importan",
-                                    },
-                                  }}
-                                  onClick={(eee: any) => {
-                                    const elem = eee.target?.previousSibling as HTMLInputElement;
+                              <Button
+                                sx={{
+                                  transition: "all .5s",
+                                  textTransform: "capitalize",
+                                  fontSize: "13px",
+                                  lineHeight: "15px",
+                                  backgroundColor: "#979797 !important",
+                                  padding: "4px 8px",
+                                  color: "#fff",
+                                  borderRadius: "3px !important",
+                                  fontWeight: "semibold",
+                                  ":hover": {
+                                    backgroundColor: "#818181 !importan",
+                                  },
+                                }}
+                                onClick={(eee: any) => {
+                                  const elem = eee.target
+                                    ?.previousSibling as HTMLInputElement;
 
-                                    elem.click();
-
-                                  }}
-                                >
-                                  update
-                                </Button>
+                                  elem.click();
+                                }}
+                              >
+                                update
+                              </Button>
                             </div>
                           </div>
 
@@ -1073,7 +1093,6 @@ const [isSaving, saveChanges] = useState<{
                                     ];
                                   const { borderColor, width, display, src } =
                                     dataSent.imgChange();
-
 
                                   dataSent.imgChange({
                                     borderColor,

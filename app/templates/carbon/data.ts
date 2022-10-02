@@ -25,6 +25,7 @@ data = {
     background: "#f8f8f8",
     height: "100px",
     lineHeight: "85px",
+    right: '-100px',
     width: "100px",
     display: 'flex',
     transform: "translateX(-50%)",
@@ -86,6 +87,7 @@ const rules: { [index: string]: any } = {
           display: newD?.display ? "flex" : "none",
           width: newD.size+'px',
           height: newD.size+'px',
+          right: '-'+newD.size+'px',
           "&::before": {
             ...data.avatar["&::before"],
             height: (newD.size - 10)+'px',
