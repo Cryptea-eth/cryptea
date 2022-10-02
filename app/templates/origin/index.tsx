@@ -1,24 +1,14 @@
-import PropTypes from "prop-types";
-import { Theme, useTheme } from "@mui/material/styles";
-import { useRouter } from "next/router";
-import Image from "next/image";
 import Head from "next/head";
 import Nav from "../../components/elements/Nav";
-import web3 from "web3";
-import bigimg from "../../../public/images/logobig.png";
-import PAYMENT from "../../../artifacts/contracts/payment.sol/Payment.json";
-import SUBSCRIPTION from "../../../artifacts/contracts/subscription.sol/Subscription.json";
-import validator from "validator";
-import * as temp_x from "./data";
 import TabPanel from "../../components/elements/dashboard/link/TabPanel";
 import {
   FaInstagram,
   FaFacebook,
   FaTwitter,
-  FaLinkedinIn,
-  FaLink,
+  FaLinkedinIn
 } from "react-icons/fa";
 import Link from "next/link";
+
 import {
   OutlinedInput,
   Box,
@@ -28,67 +18,26 @@ import {
   Tab,
   ToggleButton,
   FormControl,
-  Select,
   ToggleButtonGroup,
   TextField,
   Button
 } from "@mui/material";
 
-import Moralis from "moralis"
+import Select from 'react-select';
+
 import Loader from "../../components/elements/loader";
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect, useContext } from "react";
 import { makeNFTClient } from "../../functions/clients";
 import { initD } from "../../components/elements/dashboard/link/data";
 import { useCryptea } from "../../contexts/Cryptea";
 import { get_request, post_request } from "../../contexts/Cryptea/requests";
-import AuthModal from "../../components/elements/modal";
-import * as ethers from 'ethers';
-import { useSwitchNetwork } from "wagmi";
-
-const contractAddress: {
-  subscribe: string;
-  onetime: { [index: string]: string };
-} = {
-  // subscribe: "0xFBdB47e6A5D87E36A9adA55b2eD47DC1A7138457",
-  subscribe: "0xd328f64974b319b046cf36E41c945bb773Fed1d8",
-  // subscribe:"0x66e8a76240677A8fDd3a8318675446166685C940", //polygon
-  onetime: {
-    "80001": "0xBE6A162578e17D02F9c5F6b2167a62c6C01070ae",
-    "420": "0x672cc5A511bB9E6EFCbeb11Fa3DdbABc31671776",
-    "338": "0x672cc5A511bB9E6EFCbeb11Fa3DdbABc31671776",
-    "1313161555": "0x380FE6B54A035fC8EBF44fF7Ffc1d1F8fCE89533",
-    "42261": "0x672cc5A511bB9E6EFCbeb11Fa3DdbABc31671776"
-  },
-};
+import { PaymentContext } from "../../contexts/PaymentContext";
 
 
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
     "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
-const names = ["Polygon", "Avalanche", "Ethereum", "Binance Smart Chain"];
-
-
-function getStyles(name: string, blockchainName: string | any[], theme: Theme) {
-  return {
-    fontWeight:
-      blockchainName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
   };
 }
 
@@ -100,638 +49,73 @@ const Origin = ({
   className?: string;
   editMode: boolean;
 }) => {
-  const router = useRouter();
-
-  let username = router.query["slug"];
-
-  useEffect(() => {}, [username, router.isReady]);
-
-  const [paymentData, setPaymentData] = useState<
-    { price: number; type: "onetime" | "subscription" } | undefined
-  >();
-
-  
-  const [token, setToken] = useState<any>('80001')
-
-  const [alignment, setAlignment] = useState();
-
-  const changeAlignMent = (
-    event: any,
-    newAlignment: SetStateAction<undefined>
-  ) => {
-    setAlignment(newAlignment);
-  };
-
-  const { connected, authenticate, signer, chainId, account } = useCryptea();
-
-  const [data, setData] = useState(temp_x.data);
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const [userD, setUserD] = useState<{ [index: string]: any }>({});
-
-  const [pemail, setPemail] = useState<string[]>([]);
-
-  const [loadingText, setLoadingText] = useState<any>("");
-  const [transferSuccess, setTransferSuccess] = useState<boolean>(false);
-  const [transferFail, setTransferFail] = useState<boolean>(false);
-  const [failMessage, setFailMessage] = useState<string>("");
-  const [hash, setHash] = useState<string>("");
-  const [interval, setTinterval] = useState<string>("daily");
-  const [is500, setIs500] = useState<boolean>(false);
-
-  const getPrice = async (price: number, chain: string | number | undefined = 80001) => {
-    let final = 0
-    setLoadingText("Loading Price data...");
-
-    if(chain == 80001){
-    const e = await Moralis.Web3API.token.getTokenPrice({
-      address: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0", //matic public address
-    });
-
-    const priceCurrency = Number(e.usdPrice.toFixed(2));
-
-    final = price / priceCurrency;
-
-  }else if (chain == 42261) {
-      // oasis
-      final = price / 0.0608;
-
-  }else if (chain == 1313161555) {
-
-      final = price / 1.15;
-  }else if (chain == 338) {
-
-    final = price / 0.116;
-  }else if (chain == 420) {
-
-    final = price / 0.93;
-  }
 
 
-    return final.toFixed(6);
-  };
+    const [value, setValue] = useState<number>(0);
 
-  const initMain = async (
-    price: number,
-    type: "subscription" | "onetime" = "onetime"
-  ) => {
-    setAuth(false);
-    setLoadingText("Initializing Payment");
-    try {
-      if (Number(price)) {
-        await beginPayment(price, type);
-      } else {
-        setFailMessage("Your amount is invalid");
-      }
-    } catch (x) {
-      console.log(x);
-      setFailMessage("Something went wrong, Please try again");
-    }
-  };
-
-  const [amount, setAmount] = useState<string | number>("");
-
-  const [linkHook, setLinkHook] = useState<any>();
-
-  const text = {
-    "& .Mui-focused.MuiFormLabel-root": {
-      color: data.colorScheme,
-    },
-    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: `${data.colorScheme} !important`,
-    },
-  };
-
-  useEffect(() => {
-
-    const init = async () => {
-      try {
-        const { link: lQ, user: userl } = await initD(String(username).toLowerCase());
-
-        if (lQ !== undefined) {
-          setLinkHook(lQ);
-
-          if (lQ.template_data !== undefined && !editMode) {
-            const { data: udata } = JSON.parse(lQ.template_data);
-
-            setData(udata);
-
-          }
-
-        let linkAmount: string | object | undefined | number;
-
-        if (lQ.amount !== undefined) {
-          linkAmount =
-            lQ.amount === "variable"
-              ? "variable"
-              : JSON.parse(lQ.amount);
-
-          if (typeof linkAmount == "number") {
-            setAmount(linkAmount);
-          }
-        }
-
-        setUserD({
-          description: lQ.desc,
-          username: lQ.title !== undefined ? lQ.title : userl.username,
-          email: userl.email,
-          ethAddress: lQ.address,
-          img: userl.img !== undefined ? userl.img : undefined,
-          id: lQ.id,
-          linktype: lQ.type,
-          amountMultiple: Boolean(lQ.accountMulti)
-            ? JSON.parse(lQ.accountMulti)
-            : [],
-          linkAmount,
-          rdata: JSON.parse(lQ.rdata),
-        });
-
-        if (setIsLoading !== undefined) setIsLoading(false);
-           
-        } else {
-          router.push("/404");
-        }
-      } catch (err) {
-        const error = err as Error;
-        console.log(error);
-        setIs500(true);
-      }
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+      setValue(newValue);
     };
 
-    if (router.isReady) {
-      init();
-    }
+  const {
+    userD,
+    setUserD,
+    token,
+    setToken,
+    paymentData,
+    setPaymentData,
+    data,
+    isLoading,
+    setIsLoading,
+    beginSub,
+    pemail,
+    setPemail,
+    loadingText,
+    setLoadingText,
+    transferSuccess,
+    setTransferSuccess,
+    transferFail,
+    setTransferFail,
+    failMessage,
+    setFailMessage,
+    hash,
+    setHash,
+    beginOne,
+    interval,
+    setTinterval,
+    is500,
+    initMain,
+    amount,
+    reset,
+    setAmount,
+    setSubCheck,
+    options,
+    eSubscription
+  } = useContext(PaymentContext);
 
-
-  }, [router, username, router.isReady, editMode]);
-
-  
 
   const {
     username: usern,
     description,
-    img,
-    ethAddress,
-    id: linkId,
+    img
   }: {
     username?: string;
     description?: string;
     img?: string | null;
-    ethAddress?: string;
-    id?: string;
-  } = userD;
+  } = userD ?? {username: '', description: '', img: ''};
+
+    const text = {
+      "& .Mui-focused.MuiFormLabel-root": {
+        color: data.colorScheme,
+      },
+      "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: `${data.colorScheme} !important`,
+      },
+    };
 
-  const [subCheck, setSubCheck] = useState<boolean>(true);
-  if (!userD) {
-    window.location.href = "/404";
-  }
-
-
-  let nft: any = "";
-
-
-  const generateNftData = async (
-    name: string,
-    owner: string,
-    duration: number,
-    desc?: string
-  ) => {
-    const nfx = makeNFTClient(await get_request("/nftkey"));
-
-    const date = new Date();
-
-    const exdate = new Date(date.getTime() + duration * 1000);
-
-    const load: string = img?.length ? img : bigimg.src;
-
-    await fetch(load).then(async (x) => {
-      const blb = await x.blob();
-      nft = await nfx.store({
-        image: new File([blb], `${usern}`, {
-          type: blb.type,
-        }),
-        name,
-        description: `${
-          desc === undefined
-            ? `Subscription to ${name}${
-                name.indexOf("'s") == -1 ? "'s" : ""
-              } link`
-            : desc
-        }`,
-        attributes: [
-          {
-            owner,
-            id: linkId,
-            created: date.toDateString(),
-          },
-          {
-            expiry: exdate.toDateString(),
-            expirySeconds: exdate.getTime(),
-          },
-        ],
-      });
-    });
-    return nft.url;
-  };
-
-  const beginSubscription = async (
-    tokenURI: string,
-    receiver: string,
-    to: string,
-    value: ethers.BigNumber
-  ) => {
-
-
-     const signed: any = signer;
-
-     const nftContract = new ethers.Contract(
-       contractAddress["subscribe"],
-       SUBSCRIPTION.abi,
-       signed
-     );
-
-    try {
-    
-      const tx = {
-        from: receiver,
-        value
-      };
-
-      setLoadingText("Transferring Tokens...");
-
-      const trx = await nftContract
-        .mintTokens(receiver, to, value, tokenURI, tx)
-
-      setHash(trx["transactionHash"]);
-      setSubCheck(true);
-    } catch (err) {
-      console.log(err);
-      setTransferFail(true);
-      setLoadingText("");
-    }
-  };
-
-  const message: { [index: string]: string } = {
-    subscription: `Subscription To ${usern}`,
-    onetime: `Tipping ${usern} with crypto`,
-  };
-
-  const [eSubscription, setESubscription] = useState<string[]>([]);
-
-  const mainIx = (inter: string) => {
-    const date = new Date();
-
-    if (inter == "monthly") {
-      const datex: number = new Date(
-        date.getFullYear(),
-        date.getMonth() + 1,
-        0
-      ).getDate();
-
-      return datex * 86400;
-    } else if (inter == "yearly") {
-      const year = date.getFullYear();
-
-      return year % 4 ? 31536000 : 31622400;
-    } else if (inter == "daily") {
-      return 86400;
-    } else if (inter == "weekly") {
-      return 604800;
-    }
-
-    return 0;
-  };
-  
-
-  const reset = () => {
-    setTransferSuccess(false);
-    setFailMessage("");
-    setHash("");
-    setLoadingText("");
-    setTransferFail(false);
-    setPemail([]);
-    setTinterval("");
-
-    if (typeof userD.linkAmount != "number") {
-      setAmount("");
-    }
-  };
-
-  const support = ["name", "email", "phone"];
-  
-  const validForm = (value: string, valid: string) => {
-    if (valid == "email" && !validator.isEmail(value)) {
-      return false;
-    }
-
-    if (valid == "name" && !validator.isAlphanumeric(value)) {
-      return false;
-    }
-
-    if (support.indexOf(valid) == -1) {
-      return false;
-    }
-
-    return true;
-  };
-
-    const { chains, error, pendingChainId, switchNetwork, switchNetworkAsync } =
-      useSwitchNetwork();
-      
-  const beginPayment = async (
-    price: number,
-    type: "subscription" | "onetime" = "onetime"
-  ) => {
-
-    let from = "";
-
-    if(!connected || chainId != token) {
-      if(chainId != token){
-        
-        await switchNetworkAsync?.(token);
-
-         authenticate(true);
-
-      }else if (!connected) {
-           authenticate(true);
-      }    
-
-      setPaymentData({ price, type });
-     
-    } else {
-     
-     from = account || "";
-
-    setLoadingText("Pending...");
-
-    const ether = await getPrice(price, chainId);
-
-    
-
-    if (type == "subscription") {
-         
-
-      if (!subCheck) {
-        setLoadingText("Checking Wallet...");
-
-        const subdata = await fetch(
-          `https://api.covalenthq.com/v1/${Number(
-            chainId
-          )}/address/${from}/balances_v2/?quote-currency=USD&format=JSON&nft=true&no-nft-fetch=false&key=ckey_d8fd93851d6a4d57bdcf14a337d`
-        );
-
-        const mainx = await subdata.json()
-
-        const main = mainx.data.items;
-
-        let eSubs: string[] = [];
-     
-          for (let i = 0; i < main.length; i++) {
-            if (
-              contractAddress["subscribe"].toLowerCase() ==
-              main[i].contract_address
-            ) {
-              const { nft_data } = main[i];
-              if (nft_data.length) {
-                nft_data.forEach((add: any) => {
-                  const { attributes } = add["external_data"];
-
-                  if (attributes[0].id == linkId) {
-                    const { expiry, expirySeconds } = attributes[1];
-
-                    const date = new Date();
-                    const expDate = new Date(expirySeconds);
-
-                    const extSecs = Date.parse(
-                      `${expDate.getFullYear()}-${
-                        expDate.getMonth() + 1
-                      }-${expDate.getDate()}`
-                    );
-
-                    const curSecs = Date.parse(
-                      `${date.getFullYear()}-${
-                        date.getMonth() + 1
-                      }-${date.getDate()}`
-                    );
-
-                    if (date.getTime() <= expirySeconds && extSecs != curSecs) {
-                      eSubs.push(expiry);
-                    }
-                  }
-                });
-              }
-            }
-          }
-        
-
-        if (eSubs.length) {
-          setESubscription(eSubs);
-
-          return;
-        }
-      }
-
-      setLoadingText("Awaiting payment confirmation");
-
-      const suser: string =
-        typeof username == "string"
-          ? username
-          : usern === undefined
-          ? ""
-          : usern;
-
-      const seth: string = ethAddress === undefined ? "" : ethAddress;
-
-      setLoadingText("Initializing Subscription...");
-
-      const nft = await generateNftData(
-        suser,
-        seth,
-        mainIx(interval),
-        description ? (description.length ? description : undefined) : undefined
-      );
-      try {
-
-        await beginSubscription(
-          nft,
-          from,
-          ethAddress || "", //receiver
-          ethers.utils.parseEther(ether)
-        );
-        
-          const date = new Date().getTime();
-
-          const rx:{[index:string]: string | number} = {};
-
-          pemail.forEach((val: undefined | string, i: number) => {
-            if (val !== undefined && val.length) {
-              if (userD.rdata["sub"][i] !== undefined) {
-                     rx[(userD.rdata["sub"][i]).toLowerCase()] = val;
-              }
-            }
-          });
-
-
-        await post_request(`/link/payments/${linkId}`, {
-          ...rx,
-          date,
-          remind: date + mainIx(interval) * 1000,
-          address: from,
-          amount: price,
-          hash,
-          amountCrypto: ether,
-          token: "matic",
-          type: "sub",
-          renewal: interval,
-        });
-
-          console.log("done");
-        
-
-        setTransferSuccess(true);
-
-        setTimeout(reset, 3500);
-      } catch (err) {
-        console.log(err);
-        setTransferFail(true);
-        setLoadingText("");
-      }
-    } else if (type == "onetime") {
-  
-        const signed: any = signer;
-
-        const initContract = new ethers.Contract(
-          contractAddress["onetime"][chainId ?? 80001],
-          PAYMENT.abi,
-          signed
-        );
-
-      setLoadingText("Awaiting payment confirmation");
-
-      initContract
-        .transferToken(ethAddress || "", {
-          value: ethers.utils.parseEther(ether),
-        }) //receiver
-        .then(async (init: any) => {
-          console.log(init);
-
-          setHash(init.hash);
-
-        
-          const rx: { [index: string]: string | number } = {};
-
-          pemail.forEach((val: undefined | string, i: number) => {
-            if (val !== undefined && val.length) {
-              if (userD.rdata["onetime"][i] !== undefined) {
-                rx[userD.rdata["onetime"][i].toLowerCase()] = val;
-              }
-            }
-          });
-
-            await post_request(`/link/payments/${linkId}`, {
-              ...rx,
-              date: new Date().getTime(),
-              address: from,
-              type: "onetime",
-              amount: price,
-              hash: init.hash,
-              amountCrypto: ether,
-              token: "matic",
-            });
-          
-          setTransferSuccess(true);
-
-          setTimeout(reset, 3500);
-        })
-        .catch((err: any) => {
-          const error = err as Error;
-          if (error.message.length) {
-            setTransferFail(true);
-            console.log(err);
-            setLoadingText("");
-          }
-        });
-    }
-  }
-  };
-
-
-
-  useEffect(() => {
-
-    if (connected && paymentData !== undefined) {
-      
-    if (chainId == token) {
-      if(Boolean(signer)){
-      beginPayment(paymentData.price, paymentData.type);
-      setPaymentData(undefined);
-      }
-    }
-  }
-  }, [connected, chainId, token, signer]);
-
-  const [value, setValue] = useState<number>(0);
-
-  const [auth, setAuth] = useState<boolean>(true);
-
-  const beginSub = () => {
-
-    setFailMessage("");
-    setTransferFail(false);
-    setHash("");
-
-    if (Number(amount)) {
-      if (pemail.length) {
-        let proceed = true;
-
-        pemail.forEach((val: undefined | string, i: number) => {
-          if (val !== undefined && val.length) {
-            if (userD.rdata["sub"][i] !== undefined) {
-              if (!validForm(val, (userD.rdata["sub"][i]).toLowerCase())) {
-                proceed = false;
-              }
-            }
-          }
-        });
-
-        if (proceed) {
-          setESubscription([]);
-          initMain(Number(amount), "subscription");
-        } else {
-          setFailMessage(
-            "Please enter the correct details required in available fields"
-          );
-        }
-      } else {
-        setFailMessage("Your email is required");
-      }
-    } else {
-      setFailMessage("The amount set is invalid");
-    }
-  };
-
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-
-  const handleSelectChange = (event: { target: { value: any } }) => {
-    const {
-      target: { value },
-    } = event;
-    setBlockchainName(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
-
-  const theme = useTheme();
-  const [blockchainName, setBlockchainName] = useState([]);
 
   return (
     <div className={`origin ${className}`}>
-      <AuthModal userAuth={false} />
       {isLoading ? (
         <Loader fixed={false} />
       ) : (
@@ -812,11 +196,19 @@ const Origin = ({
 
                     <Avatar
                       className="imgx_page !font-bold !text-[35px]"
-                      src={data.image.src.length ? data.image.src : img}
+                      src={
+                        data.image.text.length
+                          ? undefined
+                          : data.image.src.length
+                          ? data.image.src
+                          : img
+                      }
                       sx={data.image}
                       alt={usern}
                     >
-                      {usern?.charAt(0).toUpperCase()}
+                      {data.image.text.length
+                        ? data.image.text.substr(0, 7)
+                        : usern?.charAt(0).toUpperCase()}
                     </Avatar>
                   </div>
                 </div>
@@ -986,13 +378,13 @@ const Origin = ({
                               style={data.error}
                               className="rounded-md w-[95%] font-bold mt-2 mx-auto p-3"
                             >
-                              {failMessage.length
+                              {failMessage?.length
                                 ? failMessage
                                 : "Something went wrong with the transaction, please try again"}
                             </div>
                           )}
 
-                          {Boolean(eSubscription.length) && (
+                          {Boolean(eSubscription!.length) && (
                             <div className="h-full left-0 bg-white top-0 z-[100] flex flex-col px-9 justify-center items-center w-full absolute">
                               <div className="text-black font-bold text-3xl mx-auto mt-24">
                                 Hmm... a little conflict
@@ -1013,7 +405,7 @@ const Origin = ({
                               <div className="mt-11 flex justify-center items-center">
                                 <Button
                                   onClick={() => {
-                                    setFailMessage(
+                                    setFailMessage?.(
                                       "Transaction cancelled by user"
                                     );
                                   }}
@@ -1038,13 +430,13 @@ const Origin = ({
 
                                 <Button
                                   onClick={() => {
-                                    setTransferSuccess(false);
-                                    setFailMessage("");
-                                    setHash("");
-                                    setLoadingText("");
-                                    setTransferFail(false);
-                                    setSubCheck(false);
-                                    beginSub();
+                                    setTransferSuccess?.(false);
+                                    setFailMessage?.("");
+                                    setHash?.("");
+                                    setLoadingText?.("");
+                                    setTransferFail?.(false);
+                                    setSubCheck?.(false);
+                                    beginSub?.();
                                   }}
                                   sx={{
                                     transition: "all .5s",
@@ -1162,67 +554,47 @@ const Origin = ({
                                 <div className="py-3 font-bold">Token</div>
 
                                 <Select
-                                  id="token"
-                                  sx={{
-                                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                      borderColor: data.colorScheme,
+                                  isClearable={false}
+                                  name="colors"
+                                  placeholder={"Tokens..."}
+                                  options={options!}
+                                  styles={{
+                                    option: (provided, state) => {
+                                      return {
+                                        ...provided,
+                                        backgroundColor: state.isSelected
+                                          ? data.colorScheme
+                                          : "transparent",
+                                        "&:active": {
+                                          backgroundColor: data.colorScheme,
+                                        },
+                                        "&:hover": {
+                                          backgroundColor: state.isSelected
+                                            ? undefined
+                                            : `${data.colorScheme}29`,
+                                        },
+                                      };
                                     },
-                                    width: "100%",
+                                    container: (provided, state) => ({
+                                      ...provided,
+                                      height: '58px',
+                                      "& .select__value-container": {
+                                        padding: "11.5px 14px",
+                                      },
+                                      "& .select__control:hover": {
+                                        borderColor: "#121212",
+                                      },
+                                      "& .select__control--is-focused": {
+                                        borderWidth: "2px",
+                                        borderColor: `${data.colorScheme} !important`,
+                                        boxShadow: "none",
+                                      },
+                                    }),
                                   }}
                                   value={token}
-                                  onChange={(e) => setToken(e.target.value)}
-                                >
-                                  <MenuItem
-                                    sx={{
-                                      "&.Mui-selected": {
-                                        backgroundColor: `${data.colorScheme}14  !important`,
-                                      },
-                                    }}
-                                    value={80001}
-                                  >
-                                    Matic (Testnet)
-                                  </MenuItem>
-                                  <MenuItem
-                                    sx={{
-                                      "&.Mui-selected": {
-                                        backgroundColor: `${data.colorScheme}14  !important`,
-                                      },
-                                    }}
-                                    value={338}
-                                  >
-                                    Cronos (Test Cronos)
-                                  </MenuItem>
-                                  <MenuItem
-                                    sx={{
-                                      "&.Mui-selected": {
-                                        backgroundColor: `${data.colorScheme}14  !important`,
-                                      },
-                                    }}
-                                    value={1313161555}
-                                  >
-                                    Aurora Testnet
-                                  </MenuItem>
-                                  <MenuItem
-                                    sx={{
-                                      "&.Mui-selected": {
-                                        backgroundColor: `${data.colorScheme}14  !important`,
-                                      },
-                                    }}
-                                    value={420}
-                                  >
-                                    Optimism testnet
-                                  </MenuItem>
-                                  <MenuItem
-                                    sx={{
-                                      "&.Mui-selected": {
-                                        backgroundColor: `${data.colorScheme}14  !important`,
-                                      },
-                                    }}
-                                    value={42261}
-                                  >
-                                    Rose Testnet
-                                  </MenuItem>
-                                </Select>
+                                  onChange={(e) => setToken?.(e!)}
+                                  classNamePrefix="select"
+                                />
 
                                 {userD.rdata["onetime"].map(
                                   (ixn: string, i: number) => {
@@ -1239,8 +611,8 @@ const Origin = ({
                                           variant="outlined"
                                           sx={text}
                                           value={
-                                            pemail[i] !== undefined
-                                              ? pemail[i]
+                                            pemail![i] !== undefined
+                                              ? pemail![i]
                                               : ""
                                           }
                                           onChange={(
@@ -1249,12 +621,12 @@ const Origin = ({
                                               | HTMLTextAreaElement
                                             >
                                           ) => {
-                                            setTransferFail(false);
-                                            setLoadingText("");
+                                            setTransferFail?.(false);
+                                            setLoadingText?.("");
                                             const val = e.target.value;
-                                            pemail[i] = val;
+                                            pemail![i] = val;
 
-                                            setPemail([...pemail]);
+                                            setPemail?.([...pemail!]);
                                           }}
                                         />
                                       </>
@@ -1284,7 +656,7 @@ const Origin = ({
                                           marginRight: "0px !important",
                                           marginLeft: "0px !important",
                                         },
-                                        "& .MuiButtonBase-root": {
+                                        "&.MuiButtonBase-root": {
                                           marginRight: "15px !important",
                                         },
                                         "& .MuiToggleButtonGroup-grouped": {
@@ -1298,10 +670,10 @@ const Origin = ({
                                       exclusive
                                       className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
                                       onChange={(e: any) => {
-                                        setTransferFail(false);
-                                        setLoadingText("");
+                                        setTransferFail?.(false);
+                                        setLoadingText?.("");
                                         const val = e.target.value;
-                                        setAmount(val.replace(/[^\d.]/g, ""));
+                                        setAmount?.(val.replace(/[^\d.]/g, ""));
                                       }}
                                     >
                                       {userD?.amountMultiple.map(
@@ -1349,10 +721,10 @@ const Origin = ({
                                         HTMLInputElement | HTMLTextAreaElement
                                       >
                                     ) => {
-                                      setTransferFail(false);
-                                      setLoadingText("");
+                                      setTransferFail?.(false);
+                                      setLoadingText?.("");
                                       const val = e.target.value;
-                                      setAmount(val.replace(/[^\d.]/g, ""));
+                                      setAmount?.(val.replace(/[^\d.]/g, ""));
                                     }}
                                   />
                                 )}
@@ -1366,51 +738,10 @@ const Origin = ({
                                   style={{
                                     fontFamily: "inherit",
                                   }}
-                                  onClick={() => {
-                                    setFailMessage("");
-                                    setTransferFail(false);
-                                    setHash("");
-                                    if (Number(amount)) {
-                                      let proceed = true;
-
-                                      pemail.forEach(
-                                        (
-                                          val: undefined | string,
-                                          i: number
-                                        ) => {
-                                          if (val !== undefined && val.length) {
-                                            if (
-                                              userD.rdata["onetime"][i] !==
-                                              undefined
-                                            ) {
-                                              if (
-                                                !validForm(
-                                                  val,
-                                                  userD.rdata["onetime"][
-                                                    i
-                                                  ].toLowerCase()
-                                                )
-                                              ) {
-                                                proceed = false;
-                                              }
-                                            }
-                                          }
-                                        }
-                                      );
-                                      if (proceed) initMain(Number(amount));
-                                      else
-                                        setFailMessage(
-                                          "Please enter the correct details required in available fields"
-                                        );
-                                    } else {
-                                      setFailMessage(
-                                        "The amount set is invalid"
-                                      );
-                                    }
-                                  }}
+                                  onClick={() => beginOne?.()}
                                   fullWidth
                                 >
-                                  Send
+                                  Pay
                                 </Button>
                               </FormControl>
                             )}
@@ -1419,9 +750,7 @@ const Origin = ({
                             {(userD?.linktype == "sub" ||
                               userD?.linktype == "both") && (
                               <FormControl fullWidth>
-                                <div className="py-3 font-bold">
-                                  Subscription Duration
-                                </div>
+                                <div className="py-3 font-bold">Billed</div>
                                 <ToggleButtonGroup
                                   value={interval}
                                   exclusive
@@ -1432,18 +761,22 @@ const Origin = ({
                                       backgroundColor: `${data.colorScheme} !important`,
                                       color: `${data.white} !important`,
                                     },
+                                    "& .MuiButtonBase-root": {
+                                      marginRight: "15px !important",
+                                    },
                                     "& .MuiToggleButtonGroup-grouped": {
                                       borderRadius: "4px !important",
-                                      minWidth: 55,
+                                      minWidth: 70,
                                       border:
                                         "1px solid rgba(0, 0, 0, 0.12) !important",
                                     },
                                   }}
+                                  className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
                                   onChange={(e: any) => {
-                                    setTransferFail(false);
-                                    setLoadingText("");
+                                    setTransferFail?.(false);
+                                    setLoadingText?.("");
                                     const val = e.target.value;
-                                    setTinterval(val);
+                                    setTinterval?.(val);
                                   }}
                                 >
                                   <ToggleButton
@@ -1497,8 +830,8 @@ const Origin = ({
                                           sx={text}
                                           helperText={help}
                                           value={
-                                            pemail[i] !== undefined
-                                              ? pemail[i]
+                                            pemail![i] !== undefined
+                                              ? pemail![i]
                                               : ""
                                           }
                                           onChange={(
@@ -1507,12 +840,12 @@ const Origin = ({
                                               | HTMLTextAreaElement
                                             >
                                           ) => {
-                                            setTransferFail(false);
-                                            setLoadingText("");
+                                            setTransferFail?.(false);
+                                            setLoadingText?.("");
                                             const val = e.target.value;
-                                            pemail[i] = val;
+                                            pemail![i] = val;
 
-                                            setPemail([...pemail]);
+                                            setPemail?.([...pemail!]);
                                           }}
                                         />
                                       </>
@@ -1544,7 +877,7 @@ const Origin = ({
                                               marginRight: "0px !important",
                                               marginLeft: "0px !important",
                                             },
-                                          "& .MuiButtonBase-root": {
+                                          "&.MuiButtonBase-root": {
                                             marginRight: "15px !important",
                                           },
                                           "& .MuiToggleButtonGroup-grouped": {
@@ -1558,11 +891,13 @@ const Origin = ({
                                         exclusive
                                         className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
                                         onChange={(e: any) => {
-                                          setTransferFail(false);
-                                          setLoadingText("");
+                                          setTransferFail?.(false);
+                                          setLoadingText?.("");
                                           const val = e.target.value;
 
-                                          setAmount(val.replace(/[^\d.]/g, ""));
+                                          setAmount?.(
+                                            val.replace(/[^\d.]/g, "")
+                                          );
                                         }}
                                       >
                                         {userD?.amountMultiple.map(
@@ -1611,10 +946,10 @@ const Origin = ({
                                         HTMLInputElement | HTMLTextAreaElement
                                       >
                                     ) => {
-                                      setTransferFail(false);
-                                      setLoadingText("");
+                                      setTransferFail?.(false);
+                                      setLoadingText?.("");
                                       const val = e.target.value;
-                                      setAmount(val.replace(/[^\d.]/g, ""));
+                                      setAmount?.(val.replace(/[^\d.]/g, ""));
                                     }}
                                   />
                                 )}
