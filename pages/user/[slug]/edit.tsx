@@ -284,7 +284,7 @@ const [isSaving, saveChanges] = useState<{
         borderColor,
         size,
         text: '',
-        display: display == "block",
+        display: display != "none",
         src
       });
     };
@@ -1014,7 +1014,6 @@ const [isSaving, saveChanges] = useState<{
                                 className="!hidden updatelink"
                               />
 
-                              <div className="flex items-center">
                                 <Button
                                   sx={{
                                     transition: "all .5s",
@@ -1031,14 +1030,14 @@ const [isSaving, saveChanges] = useState<{
                                     },
                                   }}
                                   onClick={(eee: any) => {
-                                    const elem = eee.target?.previousSibling;
+                                    const elem = eee.target?.previousSibling as HTMLInputElement;
 
                                     elem.click();
+
                                   }}
                                 >
                                   update
                                 </Button>
-                              </div>
                             </div>
                           </div>
 
@@ -1075,10 +1074,11 @@ const [isSaving, saveChanges] = useState<{
                                   const { borderColor, width, display, src } =
                                     dataSent.imgChange();
 
+
                                   dataSent.imgChange({
                                     borderColor,
                                     size: width,
-                                    display: display == "block",
+                                    display: display != "none",
                                     src,
                                     text,
                                   });
@@ -1142,7 +1142,7 @@ const [isSaving, saveChanges] = useState<{
                                     dataSent.imgChange({
                                       borderColor: color.hexa,
                                       size,
-                                      display: display == "block",
+                                      display: display != "none",
                                       src,
                                       text,
                                     });
@@ -1215,7 +1215,7 @@ const [isSaving, saveChanges] = useState<{
                                 dx.imgChange({
                                   borderColor,
                                   size: xx.target.value,
-                                  display: display == "block",
+                                  display: display != "none",
                                   src,
                                   text,
                                 });

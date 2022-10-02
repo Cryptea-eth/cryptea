@@ -144,7 +144,7 @@ const Carbon = ({
                 style={data.box}
               >
                 <Avatar
-                  className="imgx_page shadow-[0_0_5px_rgba(0,0,0,0.2)] before:content-[''] before:-z-[1] font-bold text-[40px] text-center absolute before:block left-0 -right-[100px] before:absolute before:top-[5px] mx-auto before:left-[5px]"
+                  className="imgx_page shadow-[0_0_5px_rgba(0,0,0,0.2)] before:content-[''] before:-z-[1] font-bold text-[40px] text-center absolute items-center justify-center before:block left-0 -right-[100px] before:absolute before:top-[5px] mx-auto before:left-[5px]"
                   sx={data.avatar}
                   src={
                     !Boolean(data.avatar.text)

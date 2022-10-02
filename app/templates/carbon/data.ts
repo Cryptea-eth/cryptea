@@ -16,7 +16,7 @@ data = {
     fontSize: "24px",
     color: "#353535",
     textAlign: "center",
-    text: "Payment Gateway",
+    text: "",
     fontWeight: "bold",
   },
   avatar: {
@@ -26,6 +26,7 @@ data = {
     height: "100px",
     lineHeight: "85px",
     width: "100px",
+    display: 'flex',
     transform: "translateX(-50%)",
     src: '',
     text: '',
@@ -81,23 +82,24 @@ const rules: { [index: string]: any } = {
       if (newD !== undefined) {
         data.avatar = {
           ...data.avatar,
-          backgroundColor: newD.borderColor,
-          display: newD?.display ? "block" : "none",
-          width: newD.size,
-          height: newD.size,
+          background: newD.borderColor,
+          display: newD?.display ? "flex" : "none",
+          width: newD.size+'px',
+          height: newD.size+'px',
           "&::before": {
             ...data.avatar["&::before"],
-            height: newD.size - 10,
-            width: newD.size - 10,
+            height: (newD.size - 10)+'px',
+            width: (newD.size - 10)+'px',
           },
           text: newD?.text,
           src: newD?.src,
         };
       } else {
+
         return {
           ...data.avatar,
           width: data.avatar.width.substring(0, data.avatar.width.length - 2),
-          borderColor: data.avatar.backgroundColor,
+          borderColor: data.avatar.background
         };
       }
     },
