@@ -145,17 +145,17 @@ const Carbon = ({
               >
                 <Avatar
                   className="imgx_page shadow-[0_0_5px_rgba(0,0,0,0.2)] before:content-[''] before:-z-[1] font-bold text-[40px] text-center absolute items-center justify-center before:block left-0 before:absolute before:top-[5px] mx-auto before:left-[5px]"
-                  sx={data.avatar}
+                  sx={data.image}
                   src={
-                    !Boolean(data.avatar.text)
-                      ? Boolean(data.avatar.src)
-                        ? data.avatar.src
+                    !Boolean(data.image.text)
+                      ? Boolean(data.image.src)
+                        ? data.image.src
                         : img
                       : undefined
                   }
                   alt={usern}
                 >
-                  {Boolean(data.avatar.text) ? data.avatar.text : usern}
+                  {Boolean(data.image.text) ? data.image.text : usern}
                 </Avatar>
 
                 <h2

@@ -19,7 +19,7 @@ data = {
     text: "",
     fontWeight: "bold",
   },
-  avatar: {
+  image: {
     top: "-50px",
     borderRadius: "50%",
     background: "#f8f8f8",
@@ -60,10 +60,10 @@ const rules: { [index: string]: any } = {
           ...data.body,
           backgroundColor: color,
         };
-        data.avatar = {
-          ...data.avatar,
+        data.image = {
+          ...data.image,
           "&::before": {
-            ...data.avatar["&::before"],
+            ...data.image["&::before"],
             backgroundColor: color,
           },
         };
@@ -72,7 +72,7 @@ const rules: { [index: string]: any } = {
       }
     },
   },
-  avatar: {
+  image: {
     imgChange: (newD?: {
       borderColor: string;
       size: number;
@@ -81,15 +81,15 @@ const rules: { [index: string]: any } = {
       src?: string;
     }) => {
       if (newD !== undefined) {
-        data.avatar = {
-          ...data.avatar,
+        data.image = {
+          ...data.image,
           background: newD.borderColor,
           display: newD?.display ? "flex" : "none",
           width: newD.size+'px',
           height: newD.size+'px',
           right: '-'+newD.size+'px',
           "&::before": {
-            ...data.avatar["&::before"],
+            ...data.image["&::before"],
             height: (newD.size - 10)+'px',
             width: (newD.size - 10)+'px',
           },
@@ -99,20 +99,20 @@ const rules: { [index: string]: any } = {
       } else {
 
         return {
-          ...data.avatar,
-          width: data.avatar.width.substring(0, data.avatar.width.length - 2),
-          borderColor: data.avatar.background
+          ...data.image,
+          width: data.image.width.substring(0, data.image.width.length - 2),
+          borderColor: data.image.background
         };
       }
     },
     BgColorChange: (col?: string) => {
       if (col !== undefined) {
-        data.avatar = {
-          ...data.avatar,
-          "&::before": { ...data.avatar["&::before"], backgroundColor: col },
+        data.image = {
+          ...data.image,
+          "&::before": { ...data.image["&::before"], backgroundColor: col },
         };
       } else {
-        return data.avatar["&::before"].backgroundColor;
+        return data.image["&::before"].backgroundColor;
       }
     },
   },
