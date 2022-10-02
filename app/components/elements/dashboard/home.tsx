@@ -799,8 +799,8 @@ const DashHome = () => {
                   let source = '';
                   if (template_data !== undefined) {
                     const { data: temp } = JSON.parse(template_data);
-                    const { image } = temp;
-                    source = image.src
+                    const { image = { src: '' } } = temp;
+                    source = image.src;
                   }
                   return (<div key={i}>
                     <div className="border-b-[#f57059] border-b flex justify-between py-2">

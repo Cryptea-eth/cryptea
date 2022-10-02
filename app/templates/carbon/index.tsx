@@ -6,13 +6,14 @@ import {
   ToggleButton,
 } from "@mui/material";
 import Link from "next/link";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Select from "react-select";
 import style from "../../../styles/carbon.module.css";
 import Loader from "../../components/elements/loader";
 import { PaymentContext } from "../../contexts/PaymentContext";
 import Head from 'next/head';
 import Nav from "../../components/elements/Nav";
+import { useRouter } from "next/router";
 
 const Carbon = ({
   className,
@@ -56,6 +57,17 @@ const Carbon = ({
     options,
     eSubscription,
   } = useContext(PaymentContext);
+
+
+    const { pathname } = useRouter();
+
+   useEffect(() => {
+      const elem = document.querySelector(".carbon") as HTMLDivElement;
+
+     if ((elem?.scrollHeight == document.body.scrollHeight) && pathname.indexOf('[slug]/edit') !== -1) {
+        elem.style.width = 'calc(100% - 249px)'  
+     } 
+   });
 
   const {
     username: usern,
@@ -102,14 +114,14 @@ const Carbon = ({
                 <Nav />
 
                 <div className="w-full h-fit flex flex-col justify-items-center my-8">
-                  <div className="text-black font-bold text-4xl mx-auto mt-24">
+                  <div className="text-black font-[500] text-4xl mx-auto mt-24">
                     500 Internal Server Error
                   </div>
                   <div
                     style={{
                       color: data.colorScheme,
                     }}
-                    className="font-semibold text-lg mx-auto mt-12"
+                    className="font-semibold text-lg mx-auto mt-12 px-[10px] text-center"
                   >
                     Opps... Refresh this page, if error persist contact support
                     or check your internet access
@@ -117,10 +129,10 @@ const Carbon = ({
 
                   <Link href={window.location.href}>
                     <a className="text-center mt-3">
-                       <Button
+                      <Button
                         sx={{
                           backgroundColor: `${data.colorScheme} !important`,
-                          color: `${data.white} !important`,
+                          color: `#FFF !important`,
                           ":hover": {
                             backgroundColor: `${data.hoverColorScheme} !important`,
                           },
@@ -155,7 +167,9 @@ const Carbon = ({
                   }
                   alt={usern}
                 >
-                  {Boolean(data.image.text) ? data.image.text : usern}
+                  {Boolean(data.image.text)
+                    ? data.image.text.substr(0, 6)
+                    : usern?.charAt(0)!.toUpperCase()}
                 </Avatar>
 
                 <h2
@@ -165,7 +179,7 @@ const Carbon = ({
                     letterSpacing: "2px",
                   }}
                 >
-                  {data.header.text}
+                  {Boolean(data.header.text) ? data.header.text : usern}
                 </h2>
                 <div className="form">
                   {/* error */}

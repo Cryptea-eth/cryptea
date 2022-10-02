@@ -34,7 +34,6 @@ const User = () => {
    }, [linkUser, router.isReady, router]);
 
 
-
   return (
     <PaymentProvider editMode={false}>
       {Template !== undefined ? (

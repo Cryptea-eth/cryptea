@@ -24,13 +24,9 @@ import {
 } from "@mui/material";
 
 import Select from 'react-select';
-
+import { useRouter } from 'next/router';
 import Loader from "../../components/elements/loader";
 import { useState, useEffect, useContext } from "react";
-import { makeNFTClient } from "../../functions/clients";
-import { initD } from "../../components/elements/dashboard/link/data";
-import { useCryptea } from "../../contexts/Cryptea";
-import { get_request, post_request } from "../../contexts/Cryptea/requests";
 import { PaymentContext } from "../../contexts/PaymentContext";
 
 
@@ -112,7 +108,19 @@ const Origin = ({
         borderColor: `${data.colorScheme} !important`,
       },
     };
+    
+    const { pathname } = useRouter();
 
+    useEffect(() => {
+      const elem = document.querySelector(".origin") as HTMLDivElement;
+
+      if (
+        elem?.scrollHeight == document.body.scrollHeight &&
+        pathname.indexOf("[slug]/edit") !== -1
+      ) {
+        elem.style.width = "calc(100% - 249px)";
+      }
+    });
 
   return (
     <div className={`origin ${className}`}>
@@ -136,14 +144,14 @@ const Origin = ({
                 <Nav />
 
                 <div className="w-full h-fit flex flex-col justify-items-center my-8">
-                  <div className="text-black font-bold text-4xl mx-auto mt-24">
+                  <div className="text-black font-[500] text-4xl mx-auto mt-24">
                     500 Internal Server Error
                   </div>
                   <div
                     style={{
                       color: data.colorScheme,
                     }}
-                    className="font-semibold text-lg mx-auto mt-12"
+                    className="font-semibold text-lg mx-auto mt-12  px-[10px] text-center"
                   >
                     Opps... Refresh this page, if error persist contact support
                     or check your internet access
@@ -154,10 +162,7 @@ const Origin = ({
                       <Button
                         sx={{
                           backgroundColor: `${data.colorScheme} !important`,
-                          color: `${data.white} !important`,
-                          ":hover": {
-                            backgroundColor: `${data.hoverColorScheme} !important`,
-                          },
+                          color: `#FFF !important`,
                         }}
                         className="!ml-2 !transition-all !delay-500 !text-sm !capitalize !rounded-lg !font-semibold !py-4 !px-4 !mx-auto"
                       >
@@ -577,7 +582,7 @@ const Origin = ({
                                     },
                                     container: (provided, state) => ({
                                       ...provided,
-                                      height: '58px',
+                                      height: "58px",
                                       "& .select__value-container": {
                                         padding: "11.5px 14px",
                                       },

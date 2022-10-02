@@ -302,7 +302,7 @@ const [isSaving, saveChanges] = useState<{
       console.log(`Uploading... ${pct.toFixed(2)}% complete`);
 
 
-      if (pct > 90) {
+      if (pct > 93) {
         setViewColor("");
         setIsUploading(0);
       }
@@ -397,21 +397,20 @@ const [isSaving, saveChanges] = useState<{
             <div className="flex relative z-[130] left-[calc(100%-257px)] right-0 flex-row">
               <div className="max-w-[257px] w-[257px] h-screen bg-[white]">
                 <div>
-                  <div className="flex flex-row w-full bg-[#bbbbbb24] py-4">
-                    <div
-                      onClick={() => {
+                  <div className="flex flex-row items-center w-full bg-[#bbbbbb24] py-2">
+                    
+                      <IconButton onClick={() => {
                         if (!getRules.length) {
                           router.push("/dashboard/pages");
                         } else {
                           setPart("");
                           setViewColor("");
                         }
-                      }}
-                      className="w-1/4 cursor-pointer"
-                    >
-                      <MdChevronLeft color="#838383" size={24} />
-                    </div>
-                    <div className="text-[#838383] text-[17px] font-[300] w-3/4">
+                      }} className="ml-1">
+                        <MdChevronLeft color="#838383" size={24} />
+                      </IconButton>
+
+                    <div className="text-[#838383] text-center text-[17px] font-[300] w-3/4">
                       {getRules.length
                         ? getRules.replace("_", " ")
                         : "Overview"}
@@ -973,7 +972,9 @@ const [isSaving, saveChanges] = useState<{
                                               className="!w-[20px] !h-[20px]"
                                             />
                                           </div>
-                                          <span className="text-white">updating...</span>
+                                          <span className="text-white">
+                                            updating...
+                                          </span>
                                         </Button>
                                       ) : (
                                         <Button
