@@ -98,7 +98,6 @@ const Overview = () => {
 
     if (isAuthenticated !== undefined && router.isReady) {
             if (!isAuthenticated) {
-              // console.log('here')
                 router.push('/auth');
             }else{
                 init();

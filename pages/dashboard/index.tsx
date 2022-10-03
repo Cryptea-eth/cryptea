@@ -26,7 +26,7 @@ const DashboardIndex = () => {
 
   const router = useRouter();
 
-  const { sidebar }: dash = useContext(DashContext);
+  const { sidebar, logout: { active } }: dash = useContext(DashContext);
   
   const u = async (column: string) => {
       let ex = '';
@@ -39,11 +39,15 @@ const DashboardIndex = () => {
 
   const [data, setData] = useState<any>({ username: "", img: "" });
 
+  
+
 useEffect(() => {
 
     if(isAuthenticated !== undefined){
       if(!isAuthenticated){
-          router.push('/auth');
+        if(!active){
+          router.push('/auth')
+        }
       } else {
          "user".get("*", true).then((e) => {
            if (e !== null) {

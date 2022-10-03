@@ -144,6 +144,7 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
         if (lQ !== undefined) {
           if(lQ.template_data !== undefined){
             const { name, data: udata } = JSON.parse(lQ.template_data);
+
           if (!editMode) {
 
             setData(udata);

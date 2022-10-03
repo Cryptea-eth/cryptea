@@ -9,16 +9,14 @@ import React from 'react'
 import { GenProvider } from '../app/contexts/GenContext';
 import { HomeProvider } from '../app/contexts/HomeContext';
 import '../app/contexts/Cryptea/types.d.ts';
-import { AuthGlob, CrypteaProvider } from "../app/contexts/Cryptea/Auth";
+import { CrypteaProvider } from "../app/contexts/Cryptea/Auth";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
       <CrypteaProvider>
         <GenProvider>
           <HomeProvider>
-            <AuthGlob>
           <Component {...pageProps} />
-          </AuthGlob>
           </HomeProvider>
         </GenProvider>
       </CrypteaProvider>

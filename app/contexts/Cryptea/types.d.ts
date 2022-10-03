@@ -46,11 +46,15 @@ export interface authenticateUserDefault {
   signMessage?: string;
 }
 
+export type configType = import("@wagmi/core").ConnectResult<
+  import("@wagmi/core").Provider
+>;
+
 export interface authenticateUserExtended extends authenticateUserDefault {
   isConnected: boolean;
   isSuccess: boolean;
   address: string | undefined;
-  main: boolean;
+  mainx: boolean;
   signMessageAsync: (
     args?: import("@wagmi/core").SignMessageArgs | undefined
   ) => Promise<string>;

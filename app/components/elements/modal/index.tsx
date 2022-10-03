@@ -10,12 +10,14 @@ import { CircularProgress, Box } from "@mui/material";
 import Router, { useRouter } from "next/router";
 import { supported } from "../../../contexts/Cryptea/connectors";
 import UAuth from "@uauth/js";
+import { DashContext } from "../../../contexts/GenContext";
 
 const uauth = new UAuth({
   clientID: "76943570-6aaa-43d2-b826-e6bb87736e09",
   redirectUri: "http://localhost:3000",
   scope: "openid wallet",
-})
+});
+
 
 const Ulogin = async () => {
   try {
@@ -38,6 +40,8 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
   const router = useRouter();
 
   const modal = useContext(HomeContext);
+
+  const { logout: { update: updateLogin } } = useContext(DashContext);
 
   const {
     isAuthenticated,
@@ -65,13 +69,29 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
     walletconnect: false,
   });
 
+
+
   const useclose = () => {
     if (modal.close !== undefined) modal?.close();
 
     updAuthError("");
   };
 
+  const isMainAuth = () => {
+    let b: boolean = true;
+      for (let a in isAuth) {
+          if (isAuth[a]) {
+              b = false;
+          }
+      }
+
+      return b;
+  }
+
   const actionAuth = (email?: string) => {
+
+    updateLogin?.(false);
+
     if (pathname == "/") {
       if (!Boolean(email)) {
         router.push("/signup");
@@ -116,6 +136,9 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
 
 
   const login = async () => {
+
+    if(isMainAuth){
+
     updAuthError("");
     setIsAuth({ ...isAuth, metamask: true });
 
@@ -174,6 +197,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
 
       setIsAuth({ ...isAuth, metamask: false });
     }
+  }
   };
 
 

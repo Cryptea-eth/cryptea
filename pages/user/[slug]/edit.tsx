@@ -410,7 +410,7 @@ const [isSaving, saveChanges] = useState<{
                         <MdChevronLeft color="#838383" size={24} />
                       </IconButton>
 
-                    <div className="text-[#838383] text-center text-[17px] font-[300] w-3/4">
+                    <div className="text-[#838383] capitalize text-center text-[17px] font-[300] w-3/4">
                       {getRules.length
                         ? getRules.replace("_", " ")
                         : "Overview"}

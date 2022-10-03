@@ -22,12 +22,17 @@ export interface dash {
     isLoading?: boolean,
     toggle?: (e: boolean) => void
   },
-  chartData: Chartx
+  chartData: Chartx,
+  logout: {
+      active?: boolean,
+      update?: (e: boolean) => void
+  }
 }
 
 
 export const DashContext = createContext<dash>({
   sidebar: {},
+  logout: {}, 
   template: {},
   chartData: {}
 })
@@ -39,6 +44,8 @@ export const GenProvider = ({children}: {children: JSX.Element }) => {
           const [isOpen3, close3] = useState(false);        
 
         const [tLoading, setTloading] = useState<boolean>(true);
+
+        const [islogout, setIsLogout] = useState<boolean>(false);
 
         const [chartx, updChart] = useState<ChartParam>({
           amount: 0,
@@ -68,18 +75,20 @@ export const GenProvider = ({children}: {children: JSX.Element }) => {
                 openDelay: isOpen3,
                 openPage: isOpen2,
               },
+              logout: {
+                active: islogout,
+                update: (e: boolean) => setIsLogout(e),
+              },
               template: {
                 isLoading: tLoading,
-                toggle: (e: boolean) => {
-                  setTloading(e)
-                },
+                toggle: (e: boolean) => setTloading(e),
               },
               chartData: {
                 amount: chartx.amount,
                 date: chartx.date,
                 hide: chartx.hide,
-                update: (opt: ChartParam) => updChart(opt)
-              }
+                update: (opt: ChartParam) => updChart(opt),
+              },
             }}
           >
             {children}

@@ -26,9 +26,9 @@ const Sidebar = ({ page }: {page: string | string[] | undefined}) => {
 
   const { logout, authenticate } = useCryptea();
 
-  const router = useRouter()
+  const router = useRouter();
 
-  const { sidebar }: dash = useContext(DashContext);
+  const { sidebar, logout: { update } }: dash = useContext(DashContext);
 
 
 
@@ -186,7 +186,8 @@ const Sidebar = ({ page }: {page: string | string[] | undefined}) => {
               className="text-inherit flex items-center text-[14px]"
               onClick={async () => {
                 await logout();
-                authenticate(false)
+                authenticate(false);
+                update?.(true);
                 router.push("/");
               }}
             >

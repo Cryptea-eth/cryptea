@@ -14,9 +14,11 @@ export function useCryptea(): mainAppManager {
  
   const { chain: chainId , chains } = useNetwork();
 
-  const { address, isConnected } = useAccount();
+  const eee = useAccount();
 
-  const { connectors, isLoading, connectAsync } = useConnect();
+  const { address, isConnected, connector: activeConnector } = eee;
+
+  const { connectors, isLoading, connectAsync, connect } = useConnect();
 
   const { isSuccess, signMessageAsync } = useSignMessage()
 
@@ -47,8 +49,8 @@ export function useCryptea(): mainAppManager {
       } else if (e && open !== undefined) open();
       else if (!e && close !== undefined) close();
     },
-    authenticateUser: ({ signMessage, type }: authenticateUserDefault) =>
-      AuthUser({
+    authenticateUser: ({ signMessage, type }: authenticateUserDefault) => {
+      return AuthUser({
         connectAsync,
         address,
         isConnected,
@@ -56,12 +58,13 @@ export function useCryptea(): mainAppManager {
         type,
         signMessage,
         isSuccess,
-        main: Boolean(cache.current)
-      }),
+        mainx: Boolean(cache.current),
+      });
+    },
     connectWall: async (type) => await connectAsync({ connector: type }),
     chainId: chainId !== undefined ? chainId.id : undefined,
     isAuthenticating: isLoading,
-    validator: { ...validator },
+    validator,
     isAuthenticated: isAuthenticated && isConnected,
     AuthAddress,
     logout: async () => {

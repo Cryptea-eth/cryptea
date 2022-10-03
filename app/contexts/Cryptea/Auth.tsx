@@ -6,10 +6,9 @@ import { AxiosError } from 'axios';
 import connectors from "./connectors";
 import { webSocketProvider } from './connectors/chains';
 import * as ethers from "ethers";
-import { AuthContext, authData, authenticateUserDefault, authenticateUserExtended, userData } from "./types";
+import { AuthContext, authData, authenticateUserDefault, authenticateUserExtended, configType, userData } from "./types";
 import './DB';
 import { post_request } from "./requests";
-import router  from "next/router";
 import { createClient, useAccount, WagmiConfig } from "wagmi";
 
 const getLibrary = (provider: any) => {
@@ -27,9 +26,8 @@ export const AuthAddress = async (address: string, signature: string) => {
   try {
     
       const userx = await post_request(`/login/walletAuth`, {
-                address, signature
+            address, signature
       });
-
 
       console.log(userx, 'Here')
 
@@ -62,10 +60,10 @@ export const AuthAddress = async (address: string, signature: string) => {
         throw "Invalid Login Details";
       }
     }
-
   return user;
-
 };
+
+let config: undefined | configType;
 
 export const AuthUser = async ({
   type,
@@ -75,35 +73,35 @@ export const AuthUser = async ({
   signMessageAsync,
   isSuccess,
   connectAsync,
-  main
+  mainx,
 }: authenticateUserExtended): Promise<userData | undefined> => {
-  
-
   if (signMessage !== undefined) message = signMessage;
 
-  if(!isConnected){
-     await connectAsync({ connector: type });
+
+  if (!isConnected) {
+    
+    config = await connectAsync({ connector: type });
+
   }
 
+  if (!mainx) {
 
-  if (!main) {
-  const data = await signMessageAsync({ message });
+    const data = await signMessageAsync({ message });
 
-
-  if (data.length && isConnected) {
-    try {
-
-      const main = await AuthAddress(String(address), data);
-
-      return main;
-
-    } catch (err) {
-      console.log(err)
-      throw "Something went wrong, please try again";
+    if (data.length) {
+      try {
+        const main = await AuthAddress(
+          (address || config?.account) as string,
+          data
+        );
+        return main;
+      } catch (err) {
+        console.log(err);
+        throw "Something went wrong, please try again";
+      }
+    } else {
+      console.log(isConnected, data.length);
     }
-  }else { 
-      console.log(isConnected, data.length)
-   }
   }
 };
 
@@ -116,13 +114,10 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
     const [context, setContext] = useState<userData | undefined>(user);
 
     useEffect(() => {
-
         const cache:string | null = localStorage.getItem("userToken");
 
         setAuth(cache !== null);
-
-    }, [context])
-
+    })
 
     const client = createClient({
       autoConnect: true,
@@ -149,13 +144,3 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
     );
 }
 
-
-export const AuthGlob = ({ children }: { children: JSX.Element }) => {
-  
-  const { active } = useWeb3React();
-
-  const { isAuthenticated } = useContext(AuthContextMain);
-
-  
-  return <>{children}</>
-};
