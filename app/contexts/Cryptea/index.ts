@@ -5,6 +5,7 @@ import { HomeContext } from "../HomeContext";
 import validator from "validator";
 import { useAccount, useConnect, useDisconnect, useNetwork, useSignMessage, useSigner } from "wagmi";
 import { get_request } from "./requests";
+import { DashContext, dash } from "../GenContext";
 
 export function useCryptea(): mainAppManager {
 
@@ -12,6 +13,8 @@ export function useCryptea(): mainAppManager {
 
   const { open, close, show } = useContext(HomeContext);
  
+  const { logout: { update: updateLogout } }: dash = useContext(DashContext);
+
   const { chain: chainId , chains } = useNetwork();
 
   const eee = useAccount();
@@ -50,6 +53,7 @@ export function useCryptea(): mainAppManager {
       else if (!e && close !== undefined) close();
     },
     authenticateUser: ({ signMessage, type }: authenticateUserDefault) => {
+      updateLogout?.(false)
       return AuthUser({
         connectAsync,
         address,
@@ -68,6 +72,7 @@ export function useCryptea(): mainAppManager {
     isAuthenticated: isAuthenticated && isConnected,
     AuthAddress,
     logout: async () => {
+      updateLogout?.(true);
       await get_request("/logout");
       disconnect();
       const remove = [

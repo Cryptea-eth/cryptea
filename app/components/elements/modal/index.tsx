@@ -66,6 +66,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
   }>({
     metamask: false,
     coinbase: false,
+    uauth: false,
     walletconnect: false,
   });
 
@@ -86,6 +87,26 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
       }
 
       return b;
+  }
+
+
+  const blurAuth = (index: string) => {
+    if(!isMainAuth()){
+    if (isAuth[index]) {
+        return {
+            cursor: 'default'
+        }
+    } else{
+        return {
+          cursor: "default",
+          opacity: 0.5,
+          color: "#575757 !important",
+          borderColor: "#575757 !important",
+        };
+    }
+  } else {
+      return {}
+  }
   }
 
   const actionAuth = (email?: string) => {
@@ -137,7 +158,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
 
   const login = async () => {
 
-    if(isMainAuth){
+    if(isMainAuth()){
 
     updAuthError("");
     setIsAuth({ ...isAuth, metamask: true });
@@ -198,10 +219,12 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
       setIsAuth({ ...isAuth, metamask: false });
     }
   }
-  };
+};
 
 
   const walletconnect = async () => {
+    if (isMainAuth()) {
+
     updAuthError("");
     setIsAuth({ ...isAuth, walletconnect: true });
 
@@ -255,6 +278,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
     } else {
       setIsAuth({ ...isAuth, walletconnect: false });
     }
+  }
   };
 
   return (
@@ -300,6 +324,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                     fontFamily: "inherit",
                     borderColor: isAuth["metamask"] ? "#f57059" : undefined,
                     color: isAuth["metamask"] ? "#f57059" : undefined,
+                    ...blurAuth("metamask"),
                   }}
                   className="transition-all rounded-md delay-500 hover:border-[#F57059] hover:text-[#F57059] items-center text-[16px] flex justify-between border-[1px] text-[#575757] w-full py-4 min-w-[320px] px-4"
                 >
@@ -324,6 +349,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                       ? "#f57059"
                       : undefined,
                     color: isAuth["walletconnect"] ? "#f57059" : undefined,
+                    ...blurAuth("walletconnect"),
                   }}
                   className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
                 >
@@ -350,22 +376,23 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                   onClick={Ulogin}
                   style={{
                     fontFamily: "inherit",
-                    // borderColor: isAuth["walletconnect"]
-                    //   ? "#f57059"
-                    //   : undefined,
-                    // color: isAuth["walletconnect"] ? "#f57059" : undefined,
+                    borderColor: isAuth["uauth"]
+                      ? "#f57059"
+                      : undefined,
+                    color: isAuth["uauth"] ? "#f57059" : undefined,
+                    ...blurAuth("uauth")
                   }}
                   className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
                 >
                   <div className="flex items-center">
-                    {/* {isAuth["walletconnect"] && (
+                    {isAuth["uauth"] && (
                       <Box className="mr-2 h-[22px] text-[#F57059]">
                         <CircularProgress
                           className="!w-[22px] !h-[22px]"
                           color="inherit"
                         />
                       </Box>
-                    )} */}
+                    )}
                     Login With Unstoppable Domains
                   </div>
 
@@ -378,15 +405,18 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                 </button>
               </div>
               {/*footer*/}
-              <div className="flex items-center justify-end p-2 border-t border-solid border-slate-200 rounded-b">
-                <button
-                  className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                  type="button"
-                  onClick={useclose}
-                >
-                  Close
-                </button>
-              </div>
+
+              {pathname != "/auth" && (
+                <div className="flex items-center justify-end p-2 border-t border-solid border-slate-200 rounded-b">
+                  <button
+                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={useclose}
+                  >
+                    Close
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

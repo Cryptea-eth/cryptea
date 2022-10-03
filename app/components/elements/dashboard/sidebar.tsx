@@ -187,7 +187,9 @@ const Sidebar = ({ page }: {page: string | string[] | undefined}) => {
               onClick={async () => {
                 await logout();
                 authenticate(false);
+                
                 update?.(true);
+
                 router.push("/");
               }}
             >
