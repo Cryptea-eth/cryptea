@@ -19,22 +19,6 @@ const uauth = new UAuth({
 });
 
 
-const Ulogin = async () => {
-  try {
-    const authorization = await uauth.loginWithPopup()
-
-    console.log(authorization)
-    console.log(authorization.idToken)
-    console.log(authorization.accessToken)
-    console.log(authorization.idToken.wallet_address)
-    console.log(authorization.idToken.sub)
-    console.log(authorization.idToken.proof.signature)
-
-  } catch (error) {
-    console.error(error)
-  }
-}
-
 const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { message?: string, userAuth?: boolean, blur?: boolean, openM?: boolean }) => {
 
   const router = useRouter();
@@ -49,6 +33,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
     connectWall,
     connectors,
     chainId,
+    AuthAddress,
     logout,
     user,
     update,
@@ -139,7 +124,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
         router.push('/signup');
       }
     } else {
-      setIsAuth({ metamask: false, coinbase: false, walletconnect: false });
+      setIsAuth({ metamask: false, uauth: false, coinbase: false, walletconnect: false });
       useclose();
     }
   }
@@ -155,6 +140,54 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isNotSupported, user]);
 
+
+  const Ulogin = async () => {
+    if(isMainAuth()){
+      updAuthError("");
+      setIsAuth({ ...isAuth, uauth: true });
+
+      if (!isAuthenticated) {
+        setSupport(false);
+    try {
+      const authorization = await uauth.loginWithPopup();
+
+      console.log(authorization);
+      console.log(authorization.idToken);
+      console.log(authorization.accessToken);
+      console.log(authorization.idToken.wallet_address);
+      console.log(authorization.idToken.sub);
+      console.log(authorization.idToken.proof[1].signature);
+
+  if (Boolean(authorization)) {
+
+    const main = await AuthAddress(
+        authorization.idToken.wallet_address as string,
+        authorization.idToken.verified_addresses[1].proof.signature
+      );
+
+      if (Boolean(main)) {
+        if (userAuth) {
+          const email = await "user".get("email");
+
+          setIsAuth({ ...isAuth, uauth: false });
+
+          update?.(main);
+
+          actionAuth(email as string);
+
+        } else {
+            // come here later for visiting user auth
+        }   
+      }
+
+    }
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  }
+};
 
   const login = async () => {
 
@@ -192,10 +225,10 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
 
               }
 
-              actionAuth(String(email));
+              actionAuth(email as string);
 
             } else {
-              setIsAuth({ metamask: false, coinbase: false, walletconnect: false });
+              setIsAuth({ metamask: false, coinbase: false, walletconnect: false, uauth: false });
               useclose();
             }
           } else {
@@ -252,7 +285,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                 update(isAuthing);
               }
 
-              actionAuth(String(email));
+              actionAuth(email as string);
             } else {
               setIsAuth({
                 walletconnect: false,
@@ -393,7 +426,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                         />
                       </Box>
                     )}
-                    Login With Unstoppable Domains
+                    Login With Unstoppable
                   </div>
 
                   <Image
