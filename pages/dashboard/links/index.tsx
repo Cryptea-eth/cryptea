@@ -238,41 +238,7 @@ const Links = () => {
                 return (
                   <Link href={`/user/${link}/overview`} key={i}>
                     <a>
-                      <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(240,240,240)] transition-all delay-300 cursor-pointer">
-                        {/* <div className="flex mt-4 justify-between items-center w-full">
-                  <a
-                    target="_blank"
-                    href={`/user/${attributes.link.toLowerCase()}`}
-                    rel="noreferrer"
-                  >
-                    <a>
-                      <Button className="!py-2 !font-bold !px-4 !capitalize !flex !items-center !text-white hover:!bg-[#ff8c78b8] !bg-[#f36e57b8] !transition-all !delay-500 !rounded-lg">
-                        <RiPagesLine size={19} className="mr-1" /> View Page
-                      </Button>
-                    </a>
-                  </a>
-
-                  <div>
-                    <IconButton
-                      color="inherit"
-                      size={"large"}
-                      sx={{ color: "#f36e57b8" }}
-                    >
-                      <MdModeEditOutline size={20}></MdModeEditOutline>
-                    </IconButton>
-                  </div>
-                  <div onClick={() => setShowLinkModal(attributes.link)}>
-                    <IconButton
-                      color="inherit"
-                      size={"large"}
-                      sx={{
-                        color: "#f36e57b8",
-                      }}
-                    >
-                      <MdDeleteOutline size={20} />
-                    </IconButton>
-                  </div>
-                </div> */}
+                      <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(248,248,248)] transition-all delay-300 cursor-pointer">
 
                         <div className="mb-4">
                           <Avatar
@@ -300,7 +266,7 @@ const Links = () => {
                               <MdLink size={21} />
                             </div>
                             <div>
-                              <h3 className="truncate text-[17px] leading-[20px] font-[900] text-[#121212]">
+                              <h3 className="truncate text-[17px] leading-[20px] font-[500] text-[#121212]">
                                 {link}
                               </h3>
                               <span className="block text-[14px] leading-[1.2] truncate w-full text-[#575757]">
