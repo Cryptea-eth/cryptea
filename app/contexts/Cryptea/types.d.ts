@@ -77,6 +77,7 @@ export interface mainAppManager extends AuthContext {
   chainId: number | undefined;
   logout: () => Promise<void>;
   isAuthenticating: boolean;
+  isTokenAuthenticated: boolean | undefined;
   connectors: import("@wagmi/core").Connector<any, any, any>[];
   connectWall: (
     type: import("@wagmi/core").Connector<any, any, any>

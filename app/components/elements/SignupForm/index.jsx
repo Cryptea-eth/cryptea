@@ -19,6 +19,7 @@ const SignupForm = () => {
   const {
     validator,
     isAuthenticated,
+    isTokenAuthenticated,
     account,
     authenticate
   } = useCryptea();
@@ -32,109 +33,97 @@ const SignupForm = () => {
 
   const submitForm = async () => {
 
-    if(!isAuthenticated){
+    if (!isTokenAuthenticated) {
+      authenticate(true);
 
-     authenticate(true);
+      setLoading(false);
+    } else {
+      window.scrollTo(0, 0);
+      setLoading(true);
+      let more = true;
+      [userDescription, userEmail, userInfo].forEach((val) => {
+        if (!val.length) {
+          setError("Data Incomplete, Please required fields should be field");
+          setLoading(false);
+          more = false;
+        }
+      });
 
-     setLoading(false);
-
-    }else{
-  
-    window.scrollTo(0, 0);
-    setLoading(true);
-    let more = true;
-    [userDescription, userEmail, userInfo].forEach((val) => {
-      if (!val.length) {
-        setError("Data Incomplete, Please required fields should be field");
-        setLoading(false);
-        more = false;
-      }
-    });
-
-    if(!validator.isAlphanumeric(userInfo)){
+      if (!validator.isAlphanumeric(userInfo)) {
         setError("Username cannot contain spaces or special characters");
         setLoading(false);
         more = false;
-    }
+      }
 
-    if (!validator.isEmail(validator.normalizeEmail(userEmail))) {
+      if (!validator.isEmail(validator.normalizeEmail(userEmail))) {
+        setError("The email provided is incorrect");
+        setLoading(false);
+        more = false;
+      }
 
-      setError("The email provided is incorrect");
-      setLoading(false);
-      more = false;
+      if (more) {
+        try {
+          const email = await "user".get("email", true);
 
-    }
+          if (!Boolean(email)) {
+            try {
+              const templateData = { name: "origin", data };
 
-  if (more) {
+              await "user".update({
+                username: userInfo,
+                email: validator.normalizeEmail(userEmail),
+              });
 
-    try {
+              await "links".save({
+                slug: userInfo.toLowerCase(),
+                amount: "variable",
+                desc: userDescription,
+                onetime: "[]",
+                subscribers: "[]",
+                address: account,
+                views: "[]",
+                type: "both",
+                accountMulti: JSON.stringify([0.1, 10, 50, 100]),
+                title: userInfo,
+                template_data: JSON.stringify(templateData),
+                rdata: '{"sub":[],"onetime":[]}',
+              });
+            } catch (err) {
+              console.log(err);
+              if (err.message) {
+                setError(err.response.message);
+              } else {
+                setError("Something Went Wrong Please Try Again Later");
+              }
+              setLoading(false);
+              return;
+            }
 
-    const email = await ('user').get("email", true);
-
-    if (!Boolean(email)) {
-  
-      try {
-      
-        const templateData = { name: 'origin', data}
-
-          await ("user").update({
-            "username": userInfo,
-            "email": validator.normalizeEmail(userEmail),
-          })
-
-         await "links".save({
-           slug: userInfo.toLowerCase(),
-           amount: "variable",
-           desc: userDescription,
-           onetime: "[]",
-           subscribers: "[]",
-           address: account,
-           views: "[]",
-           type: "both",
-           accountMulti: JSON.stringify([0.1, 10, 50, 100]),
-           title: userInfo,
-           template_data: JSON.stringify(templateData),
-           rdata: '{"sub":[],"onetime":[]}',
-         });
-
+            Router.push("/dashboard");
+          } else {
+            Router.push("/dashboard");
+            setLoading(false);
+          }
         } catch (err) {
           console.log(err);
-          if (err.message) {
-              setError(err.response.message);
-          }else{
-             setError("Something Went Wrong Please Try Again Later");
-          }
-          setLoading(false);
-          return;
-        }
-
-        Router.push('/dashboard');
-
-      } else {
-
-        Router.push('/dashboard');
-        setLoading(false);
-
-      }
-    }catch(err) {
-        console.log(err);
           if (err.response) {
-              setError(err.response.message);
-          }else{
-             setError("Something Went Wrong Please Try Again Later");
+            setError(err.response.message);
+          } else {
+            setError("Something Went Wrong Please Try Again Later");
           }
           setLoading(false);
+        }
       }
     }
-  }
 };
 
 useEffect(() => {
   if(isAuthenticated !== undefined){
-    console.log(isAuthenticated, account)
-    if(!isAuthenticated){
+
+    if(!isTokenAuthenticated){
       authenticate(true);
     }
+
     setMLoader(false);
   }
     

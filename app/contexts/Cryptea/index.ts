@@ -70,6 +70,7 @@ export function useCryptea(): mainAppManager {
     isAuthenticating: isLoading,
     validator,
     isAuthenticated: isAuthenticated && isConnected,
+    isTokenAuthenticated: isAuthenticated,
     AuthAddress,
     logout: async () => {
       updateLogout?.(true);
