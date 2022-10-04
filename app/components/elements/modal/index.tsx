@@ -156,7 +156,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
       console.log(authorization.accessToken);
       console.log(authorization.idToken.wallet_address);
       console.log(authorization.idToken.sub);
-      console.log(authorization.idToken.proof[1].signature);
+      console.log(authorization.idToken.verified_addresses[1].proof.signature);
 
   if (Boolean(authorization)) {
 
