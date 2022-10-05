@@ -43,6 +43,7 @@ export const AuthAddress = async ({address, signature, message }: AuthAddressTyp
 
         const { email, img, accounts, username, id }: { username: string, img: string,email : string, accounts: string[], id: number|string } = userx.data.data;
 
+
          user = {
            id,
            email,
@@ -58,14 +59,14 @@ export const AuthAddress = async ({address, signature, message }: AuthAddressTyp
          isAuth = true;
 
       }else{
-          throw "Invalid Login Details";
+          throw "Invalid Login Dextails";
       }
       
   }catch (err) {
       const error = err as AxiosError;
       console.log(err);
       if (error.response) {
-        throw "Invalid Login Details";
+        throw "Invalid Logxin Details";
       }
     }
   return user;
