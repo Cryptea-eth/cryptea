@@ -158,12 +158,16 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
       console.log(authorization.idToken.sub);
       console.log(authorization.idToken.verified_addresses[1].proof.signature);
 
-  if (Boolean(authorization)) {
+      if (Boolean(authorization)) {
 
-    const main = await AuthAddress(
-        authorization.idToken.wallet_address as string,
-        authorization.idToken.verified_addresses[1].proof.signature
-      );
+        const { signature, message } =
+          authorization.idToken.verified_addresses[1].proof;
+
+        const main = await AuthAddress({
+            signature,
+            message,
+            address: authorization.idToken.wallet_address as string
+        });
 
       if (Boolean(main)) {
         if (userAuth) {

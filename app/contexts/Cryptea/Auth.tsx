@@ -6,7 +6,15 @@ import { AxiosError } from 'axios';
 import connectors from "./connectors";
 import { webSocketProvider } from './connectors/chains';
 import * as ethers from "ethers";
-import { AuthContext, authData, authenticateUserDefault, authenticateUserExtended, configType, userData } from "./types";
+import {
+  AuthAddressType,
+  AuthContext,
+  authData,
+  authenticateUserDefault,
+  authenticateUserExtended,
+  configType,
+  userData,
+} from "./types";
 import './DB';
 import { post_request } from "./requests";
 import { createClient, useAccount, WagmiConfig } from "wagmi";
@@ -21,16 +29,16 @@ let message = 'Welcome to Cryptea';
 
 let isAuth = false;
 
-export const AuthAddress = async (address: string, signature: string) => {
+
+export const AuthAddress = async ({address, signature, message }: AuthAddressType) => {
 
   try {
     
       const userx = await post_request(`/login/walletAuth`, {
-            address, signature
+            address, signature, message 
       });
 
-      console.log(userx, 'Here')
-
+      
       if(!userx.data.error){
 
         const { email, img, accounts, username, id }: { username: string, img: string,email : string, accounts: string[], id: number|string } = userx.data.data;
@@ -90,10 +98,11 @@ export const AuthUser = async ({
 
     if (data.length) {
       try {
-        const main = await AuthAddress(
-          (address || config?.account) as string,
-          data
-        );
+        const main = await AuthAddress({
+          signature: data,
+          message,
+          address: (address || config?.account) as string,
+        });
         return main;
       } catch (err) {
         console.log(err);

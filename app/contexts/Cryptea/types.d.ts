@@ -69,6 +69,13 @@ export interface AuthContext {
   update?: (e: userData | undefined) => any;
 }
 
+export interface AuthAddressType {
+  address: string;
+  signature: string;
+  message: string | number;
+}
+
+
 export interface mainAppManager extends AuthContext {
   signer:
     | import("@wagmi/core").FetchSignerResult<import("@wagmi/core").Signer>
@@ -85,10 +92,7 @@ export interface mainAppManager extends AuthContext {
     import("@wagmi/core").ConnectResult<import("@wagmi/core").Provider>
   >;
   connected: boolean;
-  AuthAddress: (
-    address: string,
-    signature: string
-  ) => Promise<userData | undefined>;
+  AuthAddress: (data: AuthAddressType) => Promise<userData | undefined>;
   validator: typeof validator;
   authenticateUser: (
     obj: authenticateUserDefault
