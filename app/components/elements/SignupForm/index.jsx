@@ -19,7 +19,6 @@ const SignupForm = () => {
   const {
     validator,
     isAuthenticated,
-    isTokenAuthenticated,
     account,
     authenticate
   } = useCryptea();
@@ -33,7 +32,7 @@ const SignupForm = () => {
 
   const submitForm = async () => {
 
-    if (!isTokenAuthenticated) {
+    if (!isAuthenticated) {
       authenticate(true);
 
       setLoading(false);
@@ -120,7 +119,7 @@ const SignupForm = () => {
 useEffect(() => {
   if(isAuthenticated !== undefined){
 
-    if(!isTokenAuthenticated){
+    if(!isAuthenticated){
       authenticate(true);
     }
 

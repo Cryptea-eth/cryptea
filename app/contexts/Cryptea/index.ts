@@ -6,6 +6,7 @@ import validator from "validator";
 import { useAccount, useConnect, useDisconnect, useNetwork, useSignMessage, useSigner } from "wagmi";
 import { get_request } from "./requests";
 import { DashContext, dash } from "../GenContext";
+import { uauth_connector } from "./connectors";
 
 export function useCryptea(): mainAppManager {
 
@@ -17,9 +18,7 @@ export function useCryptea(): mainAppManager {
 
   const { chain: chainId , chains } = useNetwork();
 
-  const eee = useAccount();
-
-  const { address, isConnected, connector: activeConnector } = eee;
+  const { address, isConnected } = useAccount();
 
   const { connectors, isLoading, connectAsync, connect } = useConnect();
 
@@ -30,15 +29,23 @@ export function useCryptea(): mainAppManager {
   } });
 
   let cache = useRef<null | string | undefined>();
+  let altAddress = useRef<string | undefined>()
 
   useEffect(() => {
     cache.current = localStorage.getItem('userToken');
-  }, [])
+
+    if (isAuthenticated) {
+    ('user').get('accounts').then((e: any) => {
+      const acct = JSON.parse(e)
+        altAddress.current = acct[0];
+    });
+  }
+  }, [isAuthenticated])
 
   const { disconnect } = useDisconnect();
 
   return {
-    account: address,
+    account: address || altAddress.current,
     user,
     connected: isConnected,
     connectors,
@@ -69,13 +76,25 @@ export function useCryptea(): mainAppManager {
     chainId: chainId !== undefined ? chainId.id : undefined,
     isAuthenticating: isLoading,
     validator,
-    isAuthenticated: isAuthenticated && isConnected,
-    isTokenAuthenticated: isAuthenticated,
+    isAuthenticated,
+    isTokenAuthenticated: isAuthenticated && isConnected,
     AuthAddress,
     logout: async () => {
       updateLogout?.(true);
       await get_request("/logout");
-      disconnect();
+      const uaux = localStorage.getItem('username');
+
+      if (!Boolean(uaux)) {
+        disconnect();
+      } else {
+
+        const userx = JSON.parse(uaux as string);
+
+        await uauth_connector.logout({
+          username: userx.value,
+        });
+      }
+
       const remove = [
         "user",
         "links",
@@ -83,6 +102,7 @@ export function useCryptea(): mainAppManager {
         "views",
         "payments",
         "userToken",
+        "uauth"
       ];
       for (let i: number = 0; i < remove.length; i++) {
         localStorage.removeItem(remove[i]);

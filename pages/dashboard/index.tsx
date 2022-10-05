@@ -29,13 +29,6 @@ const DashboardIndex = () => {
 
   const { sidebar, logout: { active } }: dash = useContext(DashContext);
   
-  const u = async (column: string) => {
-      let ex = '';
-
-     return await ('user').get(column)
-
-  }
-
   const [loading, isLoading] = useState<Boolean>(true);
 
   const [data, setData] = useState<any>({ username: "", img: "" });
@@ -50,7 +43,10 @@ useEffect(() => {
           router.push('/auth')
         }
       } else {
-         "user".get("*", true).then((e) => {
+         "user".get("*", true).then((e: any) => {
+           if(!Boolean(e.email)) {
+              router.push('/signup')
+           }
            if (e !== null) {
              setData(typeof e == "object" ? e : { username: "", img: "" });
            }

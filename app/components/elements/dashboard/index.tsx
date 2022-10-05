@@ -28,18 +28,23 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
   
 
   useEffect(() => {
-    
-    "user".get("*", true).then((e) => {
-      if (e !== null) {
-        setData(typeof e == "object" ? e : {});
-      }
-    });
 
     if (isAuthenticated !== undefined) {
       if (!isAuthenticated) {
         router.push("/auth");
       } else {
-        isLoading(false);
+        ('user').get('*', true).then((e: any) => {
+          
+            if (!Boolean(e.email)) {
+                router.push('/signup');
+            }else{
+
+              setData(typeof e == "object" ? e : {});
+
+              isLoading(false);
+            }
+        });
+  
       }
     }   
     
@@ -81,7 +86,7 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
             >
               <>
                 <DashHeader username={data.username} dp={dp}/>
-                
+
                 {children}
               </>
             </div>

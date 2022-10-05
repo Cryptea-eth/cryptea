@@ -27,6 +27,7 @@ import {
 import { data } from "autoprefixer";
 import Link from 'next/link'
 import { useCryptea } from "../../../contexts/Cryptea";
+import { useRouter } from "next/router";
 
 const DashHome = () => {
 
@@ -36,7 +37,8 @@ const DashHome = () => {
     chainId
    } = useCryptea();
 
-   
+
+   const router = useRouter();   
 
   const [links, addLinks] = useState<any>([]);
 
@@ -76,7 +78,7 @@ const DashHome = () => {
 
       fetch(
         `https://api.covalenthq.com/v1/${Number(
-          chainId
+          80001
         )}/address/${userAddress}/balances_v2/?quote-currency=USD&format=JSON&nft=true&no-nft-fetch=false&key=ckey_d8fd93851d6a4d57bdcf14a337d`
       )
         .then(async (d) => {
@@ -88,7 +90,7 @@ const DashHome = () => {
           setWData(data);
           setLoading2(false);
 
-          const { items } = data;
+          const { items } = data || { items: [] };
 
           setrows(
             items.map(
@@ -158,9 +160,11 @@ const DashHome = () => {
             )
           );
         });
+      }else {
+        router.push('/auth');
       }
 
-  }, [chainId, isAuthenticated, loading2, userAddress]);
+  }, [chainId, isAuthenticated, loading2, userAddress, router]);
 
 
 
@@ -196,7 +200,6 @@ const DashHome = () => {
   //     }
   //   }
   // }
-
 
 
   const balance: {

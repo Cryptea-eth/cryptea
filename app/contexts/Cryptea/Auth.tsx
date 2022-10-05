@@ -18,6 +18,7 @@ import {
 import './DB';
 import { post_request } from "./requests";
 import { createClient, useAccount, WagmiConfig } from "wagmi";
+import { useRouter } from "next/router";
 
 const getLibrary = (provider: any) => {
   return new web3(provider);
@@ -123,11 +124,13 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
 
     const [context, setContext] = useState<userData | undefined>(user);
 
+    const router = useRouter();
+
     useEffect(() => {
         const cache:string | null = localStorage.getItem("userToken");
-
-        setAuth(cache !== null);
-    })
+        
+        setAuth(Boolean(cache));
+    });
 
     const client = createClient({
       autoConnect: true,

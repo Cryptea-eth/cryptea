@@ -28,11 +28,13 @@ const connectors = [
       shimDisconnect: true,
     },
   }),
-  // new UAuth({
-  //   clientID: "76943570-6aaa-43d2-b826-e6bb87736e09",
-  //   redirectUri: "http://localhost:3000",
-  //   scope: "openid wallet",
-  // }),
 ];
+
+export const uauth_connector = new UAuth({
+  clientID: "76943570-6aaa-43d2-b826-e6bb87736e09",
+  redirectUri: "http://localhost:3000",
+  scope: "openid wallet",
+});
+
 
 export default connectors;

@@ -8,15 +8,8 @@ import wallcon from "../../../../public/images/walletconnect.png";
 import unstop from "../../../../public/images/unstoppable.svg";
 import { CircularProgress, Box } from "@mui/material";
 import Router, { useRouter } from "next/router";
-import { supported } from "../../../contexts/Cryptea/connectors";
-import UAuth from "@uauth/js";
+import { supported, uauth_connector } from "../../../contexts/Cryptea/connectors";
 import { DashContext } from "../../../contexts/GenContext";
-
-const uauth = new UAuth({
-  clientID: "76943570-6aaa-43d2-b826-e6bb87736e09",
-  redirectUri: "http://localhost:3000",
-  scope: "openid wallet",
-});
 
 
 const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { message?: string, userAuth?: boolean, blur?: boolean, openM?: boolean }) => {
@@ -46,15 +39,11 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
   const [authError, updAuthError] = useState<string>("");
   const [isNotSupported, setSupport] = useState<boolean>(false);
 
+  const defaultIsAuth = { metamask: false, uauth: false, coinbase: false, walletconnect: false };
+
   const [isAuth, setIsAuth] = useState<{
     [ix: string]: boolean;
-  }>({
-    metamask: false,
-    coinbase: false,
-    uauth: false,
-    walletconnect: false,
-  });
-
+  }>(defaultIsAuth);
 
 
   const useclose = () => {
@@ -124,7 +113,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
         router.push('/signup');
       }
     } else {
-      setIsAuth({ metamask: false, uauth: false, coinbase: false, walletconnect: false });
+      setIsAuth(defaultIsAuth);
       useclose();
     }
   }
@@ -136,7 +125,6 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
         logout();
       }
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isNotSupported, user]);
 
@@ -149,7 +137,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
       if (!isAuthenticated) {
         setSupport(false);
     try {
-      const authorization = await uauth.loginWithPopup();
+      const authorization = await uauth_connector.loginWithPopup();
 
       console.log(authorization);
       console.log(authorization.idToken);
@@ -171,6 +159,9 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
 
       if (Boolean(main)) {
         if (userAuth) {
+
+          localStorage.setItem('uauth', "yes");
+
           const email = await "user".get("email");
 
           setIsAuth({ ...isAuth, uauth: false });
@@ -179,15 +170,18 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
 
           actionAuth(email as string);
 
-        } else {
-            // come here later for visiting user auth
-        }   
+        }  
       }
 
+    } else {
+      updAuthError("Something went wrong please try again");
+      setIsAuth({ ...isAuth, uauth: false });
     }
 
     } catch (error) {
       console.error(error);
+      updAuthError("Something went wrong please try again");
+      setIsAuth({ ...isAuth, uauth: false });
     }
   }
   }
@@ -232,7 +226,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
               actionAuth(email as string);
 
             } else {
-              setIsAuth({ metamask: false, coinbase: false, walletconnect: false, uauth: false });
+              setIsAuth(defaultIsAuth);
               useclose();
             }
           } else {
@@ -291,11 +285,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
 
               actionAuth(email as string);
             } else {
-              setIsAuth({
-                walletconnect: false,
-                coinbase: false,
-                metamask: false,
-              });
+              setIsAuth(defaultIsAuth);
               useclose();
             }
           } else {
@@ -409,7 +399,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                     height={40}
                   />
                 </button>
-                <button
+                {userAuth && <button
                   onClick={Ulogin}
                   style={{
                     fontFamily: "inherit",
@@ -439,7 +429,7 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                     width={40}
                     height={40}
                   />
-                </button>
+                </button>}
               </div>
               {/*footer*/}
 
