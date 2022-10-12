@@ -49,8 +49,9 @@ const Overview = () => {
 
         const { link:mDx, user, onetime, sub, views } = await initD(String(slug).toLowerCase());
 
+        console.log(views)
+
         setUserLk(`${window.location.origin}/user/${slug}`); 
-        
 
         if(user['owner']){
          
@@ -326,7 +327,6 @@ const Overview = () => {
                         <LineChart
                           label={["data"]}
                           name="views"
-                          prefix="$"
                           dataList={[
                             sortData(
                               data.views.length

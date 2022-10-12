@@ -191,7 +191,7 @@ const generateDataSub = ({
   let gen; let secondary: number[]; 
 
   if(!sub){
-   secondary = xdata.map((v) => Number(v.amount));
+   secondary = xdata.map((v) => v.amount !== undefined ? Number(v.amount) : 1);
 
   gen = {
     data,
@@ -241,9 +241,9 @@ const generateDataSub = ({
 
     if(!sub){
     results = generateData(data);
-  }else {
+    }else {
     results = generateDataSub(data);
-  }
+    }
   return results;
 }
 

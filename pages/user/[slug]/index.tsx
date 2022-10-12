@@ -6,6 +6,7 @@ import {
   template,
 } from "../../../app/components/elements/dashboard/link/data";
 import { PaymentProvider } from '../../../app/contexts/PaymentContext';
+import { time } from '../../../app/contexts/Cryptea/DB';
 
 
 const User = () => {
@@ -16,15 +17,29 @@ const User = () => {
 
    const [Template, setTemplate] = useState<React.ComponentType<{}>>();
   
+
    useEffect(() => {
       const init = async () => {
-           await initD(String(linkUser));
+        const {
+          link: { id: linkId },
+        } = await initD(String(linkUser));
 
-            setTemplate(template)
-            
-            if(template() === undefined){
-                router.push("/404");
-            }
+        const mainT:number = await time();
+        const cache = localStorage.getItem('blockexpiry');
+
+        if((cache === null || mainT > Number(cache))){
+        
+         await(`views/${linkId}`).save({});
+
+         localStorage.setItem('blockexpiry', String(mainT + 600000));
+
+        }
+        
+        setTemplate(template);
+
+        if (template() === undefined) {
+          router.push("/404");
+        }
       }
 
       if(router.isReady){
