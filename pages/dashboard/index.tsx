@@ -46,11 +46,12 @@ useEffect(() => {
          "user".get("*", true).then((e: any) => {
            if(!Boolean(e.email)) {
               router.push('/signup')
-           }
+           }else{
            if (e !== null) {
              setData(typeof e == "object" ? e : { username: "", img: "" });
            }
             isLoading(false);
+          }
          });
       }
     }

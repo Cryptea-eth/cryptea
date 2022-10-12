@@ -97,9 +97,11 @@ const SignupForm = () => {
               setLoading(false);
               return;
             }
-
+            console.log("sz");
             Router.push("/dashboard");
+
           } else {
+            console.log('s')
             Router.push("/dashboard");
             setLoading(false);
           }
@@ -120,13 +122,17 @@ useEffect(() => {
   if(isAuthenticated !== undefined){
 
     if(!isAuthenticated){
+
       authenticate(true);
+
+    }else{
+      authenticate(false);
     }
 
     setMLoader(false);
   }
     
-  }, [isAuthenticated])
+  }, [isAuthenticated, authenticate])
 
 
   return (

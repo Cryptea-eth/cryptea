@@ -34,7 +34,7 @@ export function useCryptea(): mainAppManager {
   useEffect(() => {
     cache.current = localStorage.getItem('userToken');
 
-    if (isAuthenticated) {
+    if (localStorage.getItem('userToken') !== null) {
     ('user').get('accounts').then((e: any) => {
       const acct = JSON.parse(e)
         altAddress.current = acct[0];
@@ -101,8 +101,7 @@ export function useCryptea(): mainAppManager {
         "templates",
         "views",
         "payments",
-        "userToken",
-        "uauth"
+        "userToken"
       ];
       for (let i: number = 0; i < remove.length; i++) {
         localStorage.removeItem(remove[i]);

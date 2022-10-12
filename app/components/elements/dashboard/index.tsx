@@ -36,11 +36,13 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
         ('user').get('*', true).then((e: any) => {
           
             if (!Boolean(e.email)) {
+
                 router.push('/signup');
+
             }else{
 
               setData(typeof e == "object" ? e : {});
-
+              // console.log('here')
               isLoading(false);
             }
         });

@@ -73,14 +73,13 @@ function Nav() {
         <div className="right mmd:hidden">
           <div>
             {isAuthenticated! ? (
-              <button
-                onClick={() => {
-                  router.push('/dashboard');
-                }}
-                className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4"
+              <Link href={"/dashboard"}>
+              <a 
+                className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] block text-white font-semibold py-4 px-4"
               >
                 Dashboard
-              </button>
+              </a>
+              </Link>
             ) : (
               <div>
                 <button

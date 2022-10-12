@@ -124,11 +124,11 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
 
     const [context, setContext] = useState<userData | undefined>(user);
 
-    const router = useRouter();
 
     useEffect(() => {
         const cache:string | null = localStorage.getItem("userToken");
-        
+      
+
         setAuth(Boolean(cache));
     });
 

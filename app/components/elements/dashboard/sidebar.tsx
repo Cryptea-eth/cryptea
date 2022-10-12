@@ -31,7 +31,6 @@ const Sidebar = ({ page }: {page: string | string[] | undefined}) => {
   const { sidebar, logout: { update } }: dash = useContext(DashContext);
 
 
-
   const active = "!border-l-[#F57059] !text-[#F57059]";
 
 
@@ -79,24 +78,24 @@ const Sidebar = ({ page }: {page: string | string[] | undefined}) => {
             <IoIosArrowDropleftCircle
               onClick={sidebar?.toggle}
               className={`transition-all cursor-pointer delay-500 text-[#F57059] absolute right-[-15px] m-auto z-50 top-0 bottom-0`}
-              size={30}
+              size={25}
               style={{
                 backgroundColor: "#ffffff",
                 borderRadius: "15px",
-                height: "30px",
-                width: "30px",
+                height: "25px",
+                width: "25px",
               }}
             />
           ) : (
             <IoIosArrowDroprightCircle
               onClick={sidebar?.toggle}
               className={`transition-all cursor-pointer delay-500 text-[#F57059] absolute right-[-15px] m-auto z-50 top-0 bottom-0`}
-              size={30}
+              size={25}
               style={{
                 backgroundColor: "#ffffff",
                 borderRadius: "15px",
-                height: "30px",
-                width: "30px",
+                height: "25px",
+                width: "25px",
               }}
             />
           )}
@@ -186,7 +185,7 @@ const Sidebar = ({ page }: {page: string | string[] | undefined}) => {
               className="text-inherit flex items-center text-[14px]"
               onClick={async () => {
                 await logout();
-                
+
                 authenticate(false);
 
                 update?.(true);

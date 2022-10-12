@@ -1,24 +1,37 @@
 import { useCryptea } from "../../../contexts/Cryptea";
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from "react";
 import { HomeContext } from "../../../contexts/HomeContext";
-import Image from 'next/image';
+import Image from "next/image";
 import LogoSpace from "../logo";
 import meta from "../../../../public/images/metamask.png";
 import wallcon from "../../../../public/images/walletconnect.png";
 import unstop from "../../../../public/images/unstoppable.svg";
 import { CircularProgress, Box } from "@mui/material";
 import Router, { useRouter } from "next/router";
-import { supported, uauth_connector } from "../../../contexts/Cryptea/connectors";
+import {
+  supported,
+  uauth_connector,
+} from "../../../contexts/Cryptea/connectors";
 import { DashContext } from "../../../contexts/GenContext";
 
-
-const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { message?: string, userAuth?: boolean, blur?: boolean, openM?: boolean }) => {
-
+const AuthModal = ({
+  message,
+  blur = true,
+  openM = false,
+  userAuth = true,
+}: {
+  message?: string;
+  userAuth?: boolean;
+  blur?: boolean;
+  openM?: boolean;
+}) => {
   const router = useRouter();
 
   const modal = useContext(HomeContext);
 
-  const { logout: { update: updateLogin } } = useContext(DashContext);
+  const {
+    logout: { update: updateLogin },
+  } = useContext(DashContext);
 
   const {
     isAuthenticated,
@@ -32,19 +45,26 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
     update,
   } = useCryptea();
 
-
   const { pathname } = router;
-
 
   const [authError, updAuthError] = useState<string>("");
   const [isNotSupported, setSupport] = useState<boolean>(false);
 
-  const defaultIsAuth = { metamask: false, uauth: false, coinbase: false, walletconnect: false };
+  const defaultIsAuth = {
+    metamask: false,
+    uauth: true,
+    coinbase: false,
+    walletconnect: false
+  };
 
   const [isAuth, setIsAuth] = useState<{
     [ix: string]: boolean;
-  }>(defaultIsAuth);
-
+  }>({
+    metamask: false,
+    uauth: false,
+    coinbase: false,
+    walletconnect: false,
+  });
 
   const useclose = () => {
     if (modal.close !== undefined) modal?.close();
@@ -54,42 +74,41 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
 
   const isMainAuth = () => {
     let b: boolean = true;
-      for (let a in isAuth) {
-          if (isAuth[a]) {
-              b = false;
-          }
+    for (let a in isAuth) {
+      if (isAuth[a]) {
+        b = false;
       }
+    }
 
-      return b;
-  }
-
+    return b;
+  };
 
   const blurAuth = (index: string) => {
-    if(!isMainAuth()){
-    if (isAuth[index]) {
+    if (!isMainAuth()) {
+      if (isAuth[index]) {
         return {
-            cursor: 'default'
-        }
-    } else{
+          cursor: "default",
+        };
+      } else {
         return {
           cursor: "default",
           opacity: 0.5,
           color: "#575757 !important",
           borderColor: "#575757 !important",
         };
+      }
+    } else {
+      return {};
     }
-  } else {
-      return {}
-  }
-  }
+  };
 
   const actionAuth = (email?: string) => {
-
     updateLogin?.(false);
 
     if (pathname == "/") {
+        console.log(router.isReady)
       if (!Boolean(email)) {
-        router.push("/signup");
+        Router.push("/signup");
       } else {
         if (String(email).length) {
           router.push("/dashboard");
@@ -97,216 +116,335 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
           router.push("/signup");
         }
       }
-    } else if (pathname == '/auth') {
+    } else if (pathname == "/auth") {
       if (Boolean(email)) {
-
-        const paths = Object.keys(Router.router?.components !== undefined ? Router.router?.components : {});
+        const paths = Object.keys(
+          Router.router?.components !== undefined
+            ? Router.router?.components
+            : {}
+        );
 
         if (paths.length > 2) {
-
           router.back();
-
         } else {
-          router.push('/dashboard')
+          router.push("/dashboard");
         }
       } else {
-        router.push('/signup');
+        router.push("/signup");
       }
     } else {
       setIsAuth(defaultIsAuth);
       useclose();
     }
-  }
+  };
+
+  const storeAuth = (authMethod: string) => {
+    const cache = localStorage.getItem(authMethod);
+
+    if (cache !== null) {
+      const increment = Number(cache) + 1;
+
+      localStorage.setItem(authMethod, String(increment));
+    } else {
+      localStorage.setItem(authMethod, "1");
+    }
+  };
 
   useEffect(() => {
-
     if (isAuthenticated) {
       if (isNotSupported) {
         logout();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, isNotSupported, user]);
-
+  }, [isAuthenticated, isNotSupported, user, router.isReady]);
 
   const Ulogin = async () => {
-    if(isMainAuth()){
+    if (isMainAuth()) {
       updAuthError("");
-      setIsAuth({ ...isAuth, uauth: true });
+  
+      if (!isAuthenticated) {
+
+        setIsAuth({ ...isAuth, uauth: true });
+
+        setSupport(false);
+        try {
+
+          const authorization = await uauth_connector.loginWithPopup();
+
+          if (Boolean(authorization)) {
+            const { signature, message } =
+              authorization.idToken.verified_addresses[1].proof;
+
+            const main = await AuthAddress({
+              signature,
+              message,
+              address: authorization.idToken.wallet_address as string,
+            });
+
+            if (Boolean(main)) {
+              if (userAuth) {
+                storeAuth("uauth");
+
+                const email = await "user".get("email");
+
+                setIsAuth({ ...isAuth, uauth: false });
+
+                update?.(main);
+              
+                actionAuth(email as string);
+              }
+            }
+          } else {
+            updAuthError("Something went wrong please try again");
+            setIsAuth({ ...isAuth, uauth: false });
+          }
+        } catch (error) {
+          console.log(error);
+          updAuthError("Something went wrong please try again");
+          setIsAuth({ ...isAuth, uauth: false });
+        }
+      }else{
+        console.log('here authenticated', isAuthenticated, localStorage.getItem('userToken'))
+      }
+    }
+  };
+
+  const login = async () => {
+    if (isMainAuth()) {
+      updAuthError("");
+      setIsAuth({ ...isAuth, metamask: true });
 
       if (!isAuthenticated) {
         setSupport(false);
-    try {
-      const authorization = await uauth_connector.loginWithPopup();
+        try {
+          let isAuthing: any;
 
-      console.log(authorization);
-      console.log(authorization.idToken);
-      console.log(authorization.accessToken);
-      console.log(authorization.idToken.wallet_address);
-      console.log(authorization.idToken.sub);
-      console.log(authorization.idToken.verified_addresses[1].proof.signature);
-
-      if (Boolean(authorization)) {
-
-        const { signature, message } =
-          authorization.idToken.verified_addresses[1].proof;
-
-        const main = await AuthAddress({
-            signature,
-            message,
-            address: authorization.idToken.wallet_address as string
-        });
-
-      if (Boolean(main)) {
-        if (userAuth) {
-
-          localStorage.setItem('uauth', "yes");
-
-          const email = await "user".get("email");
-
-          setIsAuth({ ...isAuth, uauth: false });
-
-          update?.(main);
-
-          actionAuth(email as string);
-
-        }  
-      }
-
-    } else {
-      updAuthError("Something went wrong please try again");
-      setIsAuth({ ...isAuth, uauth: false });
-    }
-
-    } catch (error) {
-      console.error(error);
-      updAuthError("Something went wrong please try again");
-      setIsAuth({ ...isAuth, uauth: false });
-    }
-  }
-  }
-};
-
-  const login = async () => {
-
-    if(isMainAuth()){
-
-    updAuthError("");
-    setIsAuth({ ...isAuth, metamask: true });
-
-    if (!isAuthenticated) {
-      setSupport(false);
-      try {
-        let isAuthing: any;
-        if (userAuth) {
-          isAuthing = await authenticateUser({
-            signMessage: message ?? "Welcome to Cryptea",
-            type: connectors[2],
-          });
-        } else {
-          isAuthing = await connectWall(connectors[2]);
-        }
-
-        if (supported.includes(chainId ? Number(chainId) : 137)) {
-
-          console.log(chainId)
-
-          if (isAuthing !== undefined) {
-
-            if (userAuth) {
-              const email = await "user".get("email");
-
-              setIsAuth({ ...isAuth, metamask: false });
-              if (update) {
-
-                update(isAuthing);
-
-              }
-
-              actionAuth(email as string);
-
-            } else {
-              setIsAuth(defaultIsAuth);
-              useclose();
-            }
+          if (userAuth) {
+            isAuthing = await authenticateUser({
+              signMessage: message ?? "Welcome to Cryptea",
+              type: connectors[2],
+            });
           } else {
-            updAuthError("Something went wrong please try again");
-            setIsAuth({ ...isAuth, metamask: false });
+            isAuthing = await connectWall(connectors[2]);
           }
 
-        } else {
-          setSupport(true);
-          throw "Only Polygon network is supported";
+          storeAuth("metaauth");
+
+          if (supported.includes(chainId ? Number(chainId) : 137)) {
+            console.log(chainId);
+
+            if (isAuthing !== undefined) {
+              if (userAuth) {
+                const email = await "user".get("email");
+
+                setIsAuth({ ...isAuth, metamask: false });
+                if (update) {
+                  update(isAuthing);
+                }
+
+                actionAuth(email as string);
+              } else {
+                setIsAuth(defaultIsAuth);
+                useclose();
+              }
+            } else {
+              updAuthError("Something went wrong please try again");
+              setIsAuth({ ...isAuth, metamask: false });
+            }
+          } else {
+            setSupport(true);
+            throw "Only Polygon network is supported";
+          }
+        } catch (err) {
+          const error = err as Error;
+          console.log(error);
+          updAuthError("Something went wrong please try again");
+          setIsAuth({ ...isAuth, metamask: false });
         }
-      } catch (err) {
-        const error = err as Error;
-        console.log(error)
-        updAuthError("Something went wrong please try again");
+      } else {
+        updAuthError("Please refresh the page");
+
         setIsAuth({ ...isAuth, metamask: false });
       }
-    } else {
-      updAuthError("Please refresh the page");
-
-      setIsAuth({ ...isAuth, metamask: false });
     }
-  }
-};
-
+  };
 
   const walletconnect = async () => {
     if (isMainAuth()) {
+      updAuthError("");
+      setIsAuth({ ...isAuth, walletconnect: true });
 
-    updAuthError("");
-    setIsAuth({ ...isAuth, walletconnect: true });
+      if (!isAuthenticated) {
+        setSupport(false);
+        try {
+          let isAuthing: any;
+          if (userAuth) {
+            isAuthing = await authenticateUser({
+              signMessage: message ?? "Welcome to Cryptea",
+              type: connectors[1],
+            });
+          } else {
+            isAuthing = await connectWall(connectors[1]);
+          }
+          storeAuth("walletconnectauth");
+          if (supported.includes(chainId ? Number(chainId) : 137)) {
+            if (isAuthing !== undefined) {
+              if (userAuth) {
+                const email = await "user".get("email");
 
-    if (!isAuthenticated) {
-      setSupport(false);
-      try {
-        let isAuthing: any;
-        if (userAuth) {
-          isAuthing = await authenticateUser({
-            signMessage: message ?? "Welcome to Cryptea",
-            type: connectors[1],
-          });
-        } else {
-          isAuthing = await connectWall(connectors[1]);
-        }
+                setIsAuth({ ...isAuth, walletconnect: false });
 
-        if (supported.includes(chainId ? Number(chainId) : 137)) {
-          if (isAuthing !== undefined) {
-            if (userAuth) {
-              const email = await "user".get("email");
+                if (update) {
+                  update(isAuthing);
+                }
 
-              setIsAuth({ ...isAuth, walletconnect: false });
-
-              if (update) {
-                update(isAuthing);
+                actionAuth(email as string);
+              } else {
+                setIsAuth(defaultIsAuth);
+                useclose();
               }
-
-              actionAuth(email as string);
             } else {
-              setIsAuth(defaultIsAuth);
-              useclose();
+              updAuthError("Something went wrong please try again");
+              setIsAuth({ ...isAuth, walletconnect: false });
             }
           } else {
-            updAuthError("Something went wrong please try again");
-            setIsAuth({ ...isAuth, walletconnect: false });
+            setSupport(true);
+            throw "Only Polygon network is supported";
           }
-        } else {
-          setSupport(true);
-          throw "Only Polygon network is supported";
+        } catch (err) {
+          const error = err as Error;
+          console.log(error);
+          updAuthError("Something went wrong please try again");
+          setIsAuth({ ...isAuth, walletconnect: false });
         }
-      } catch (err) {
-        const error = err as Error;
-        console.log(error);
-        updAuthError("Something went wrong please try again");
+      } else {
         setIsAuth({ ...isAuth, walletconnect: false });
       }
-    } else {
-      setIsAuth({ ...isAuth, walletconnect: false });
     }
-  }
   };
+
+  const [arrange, setArrange] = useState<
+    {
+      button: JSX.Element;
+      strength: number;
+    }[]
+  >([]);
+
+
+
+  useEffect(() => {
+
+      const buttons: {
+        [index: string]: JSX.Element | boolean;
+      } = {
+        metaauth: (
+          <button
+            onClick={login}
+            key={0}
+            style={{
+              fontFamily: "inherit",
+              borderColor: isAuth["metamask"] ? "#f57059" : undefined,
+              color: isAuth["metamask"] ? "#f57059" : undefined,
+              ...blurAuth("metamask"),
+            }}
+            className="transition-all rounded-md delay-500 hover:border-[#F57059] hover:text-[#F57059] items-center text-[16px] flex justify-between border-[1px] text-[#575757] w-full py-4 min-w-[320px] px-4"
+          >
+            <div className="flex items-center">
+              {isAuth["metamask"] && (
+                <Box className="mr-2 h-[22px] text-[#F57059]">
+                  <CircularProgress
+                    className="!w-[22px] !h-[22px]"
+                    color="inherit"
+                  />
+                </Box>
+              )}
+              Metamask
+            </div>
+            <Image src={meta} alt="Metamask" width={40} height={40} />
+          </button>
+        ),
+        walletconnectauth: (
+          <button
+            onClick={walletconnect}
+            key={1}
+            style={{
+              fontFamily: "inherit",
+              borderColor: isAuth["walletconnect"] ? "#f57059" : undefined,
+              color: isAuth["walletconnect"] ? "#f57059" : undefined,
+              ...blurAuth("walletconnect"),
+            }}
+            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
+          >
+            <div className="flex items-center">
+              {isAuth["walletconnect"] && (
+                <Box className="mr-2 h-[22px] text-[#F57059]">
+                  <CircularProgress
+                    className="!w-[22px] !h-[22px]"
+                    color="inherit"
+                  />
+                </Box>
+              )}
+              Walletconnect
+            </div>
+
+            <Image src={wallcon} alt="Wallet Connect" width={40} height={40} />
+          </button>
+        ),
+        uauth: userAuth && (
+          <button
+            onClick={Ulogin}
+            key={2}
+            style={{
+              fontFamily: "inherit",
+              borderColor: isAuth["uauth"] ? "#f57059" : undefined,
+              color: isAuth["uauth"] ? "#f57059" : undefined,
+              ...blurAuth("uauth"),
+            }}
+            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
+          >
+            <div className="flex items-center">
+              {isAuth["uauth"] && (
+                <Box className="mr-2 h-[22px] text-[#F57059]">
+                  <CircularProgress
+                    className="!w-[22px] !h-[22px]"
+                    color="inherit"
+                  />
+                </Box>
+              )}
+              Login With Unstoppable
+            </div>
+
+            <Image
+              src={unstop}
+              alt="Unstoppable Wallet Connect"
+              width={40}
+              height={40}
+            />
+          </button>
+        ),
+      };
+
+    const auths = Object.keys(buttons);
+
+    setArrange(
+      auths.map((e: string) => {
+        const cache = localStorage.getItem(e);
+       
+        if (cache === null) {
+          return {
+            strength: 0,
+            button: buttons[e] as JSX.Element,
+          };
+        }
+
+        return {
+          strength: Number(cache),
+          button: buttons[e] as JSX.Element,
+        };
+      })
+    );
+  }, [isAuth, userAuth, isAuthenticated]);
 
   return (
     <>
@@ -345,91 +483,9 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
                 }}
                 className="relative p-6 grid gap-2 grid-flow-dense"
               >
-                <button
-                  onClick={login}
-                  style={{
-                    fontFamily: "inherit",
-                    borderColor: isAuth["metamask"] ? "#f57059" : undefined,
-                    color: isAuth["metamask"] ? "#f57059" : undefined,
-                    ...blurAuth("metamask"),
-                  }}
-                  className="transition-all rounded-md delay-500 hover:border-[#F57059] hover:text-[#F57059] items-center text-[16px] flex justify-between border-[1px] text-[#575757] w-full py-4 min-w-[320px] px-4"
-                >
-                  <div className="flex items-center">
-                    {isAuth["metamask"] && (
-                      <Box className="mr-2 h-[22px] text-[#F57059]">
-                        <CircularProgress
-                          className="!w-[22px] !h-[22px]"
-                          color="inherit"
-                        />
-                      </Box>
-                    )}
-                    Metamask
-                  </div>
-                  <Image src={meta} alt="Metamask" width={40} height={40} />
-                </button>
-                <button
-                  onClick={walletconnect}
-                  style={{
-                    fontFamily: "inherit",
-                    borderColor: isAuth["walletconnect"]
-                      ? "#f57059"
-                      : undefined,
-                    color: isAuth["walletconnect"] ? "#f57059" : undefined,
-                    ...blurAuth("walletconnect"),
-                  }}
-                  className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
-                >
-                  <div className="flex items-center">
-                    {isAuth["walletconnect"] && (
-                      <Box className="mr-2 h-[22px] text-[#F57059]">
-                        <CircularProgress
-                          className="!w-[22px] !h-[22px]"
-                          color="inherit"
-                        />
-                      </Box>
-                    )}
-                    Walletconnect
-                  </div>
 
-                  <Image
-                    src={wallcon}
-                    alt="Wallet Connect"
-                    width={40}
-                    height={40}
-                  />
-                </button>
-                {userAuth && <button
-                  onClick={Ulogin}
-                  style={{
-                    fontFamily: "inherit",
-                    borderColor: isAuth["uauth"]
-                      ? "#f57059"
-                      : undefined,
-                    color: isAuth["uauth"] ? "#f57059" : undefined,
-                    ...blurAuth("uauth")
-                  }}
-                  className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
-                >
-                  <div className="flex items-center">
-                    {isAuth["uauth"] && (
-                      <Box className="mr-2 h-[22px] text-[#F57059]">
-                        <CircularProgress
-                          className="!w-[22px] !h-[22px]"
-                          color="inherit"
-                        />
-                      </Box>
-                    )}
-                    Login With Unstoppable
-                  </div>
+                {arrange.sort((a, b) => b.strength - a.strength).map(e => e.button)}
 
-                  <Image
-                    src={unstop}
-                    alt="Unstoppable Wallet Connect"
-                    width={40}
-                    height={40}
-                  />
-                </button>}
               </div>
               {/*footer*/}
 
@@ -450,6 +506,6 @@ const AuthModal = ({ message, blur = true, openM = false, userAuth = true }: { m
       )}
     </>
   );
-}
+};
 
 export default AuthModal;

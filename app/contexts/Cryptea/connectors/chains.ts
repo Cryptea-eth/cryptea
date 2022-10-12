@@ -1,6 +1,5 @@
 import { configureChains, defaultChains, chain, Chain } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
-import { alchemyProvider } from "wagmi/providers/alchemy";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 
 const avalancheChain: Chain = {
