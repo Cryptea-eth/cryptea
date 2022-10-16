@@ -67,7 +67,7 @@ export const AuthAddress = async ({address, signature, message }: AuthAddressTyp
       const error = err as AxiosError;
       console.log(err);
       if (error.response) {
-        throw "Invalid Logxin Details";
+        throw "Invalid Login Details";
       }
     }
   return user;

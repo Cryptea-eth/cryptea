@@ -814,7 +814,7 @@ const Carbon = ({
                           backgroundColor: `${data.colorScheme} !important`,
                         },
                       }}
-                      onClick={() => beginOne?.()}
+                      onClick={() => beginSub?.()}
                     >
                       Pay
                     </Button>

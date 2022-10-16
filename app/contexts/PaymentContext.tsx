@@ -18,7 +18,6 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
 
       const router = useRouter();
 
-
       let username = router.query["slug"];
 
       const [is500, setIs500] = useState<boolean>(false);
@@ -576,7 +575,8 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
 
            setTransferSuccess(true);
 
-           setTimeout(reset, 3500);
+           setTimeout(reset, 10000);
+
          } catch (err) {
            console.log(err);
            setTransferFail(true);
