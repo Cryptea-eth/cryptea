@@ -10,7 +10,7 @@ import { uauth_connector } from "./connectors";
 
 export function useCryptea(): mainAppManager {
 
-  const { isAuthenticated, user, update } = useContext(AuthContextMain);
+  const { user, isAuthenticated, update } = useContext(AuthContextMain);
 
   const { open, close, show } = useContext(HomeContext);
  
@@ -20,13 +20,11 @@ export function useCryptea(): mainAppManager {
 
   const { address, isConnected } = useAccount();
 
-  const { connectors, isLoading, connectAsync, connect } = useConnect();
+  const { connectors, isLoading, connectAsync } = useConnect();
 
   const { isSuccess, signMessageAsync } = useSignMessage()
 
-  const { data: signer } = useSigner({ onError: (error) => {
-    console.log(error)
-  } });
+  const { data: signer } = useSigner();
 
   let cache = useRef<null | string | undefined>();
   let altAddress = useRef<string | undefined>()
@@ -35,12 +33,12 @@ export function useCryptea(): mainAppManager {
     cache.current = localStorage.getItem('userToken');
 
     if (localStorage.getItem('userToken') !== null) {
-    ('user').get('accounts').then((e: any) => {
-      const acct = JSON.parse(e)
-        altAddress.current = acct[0];
-    });
-  }
-  }, [isAuthenticated])
+        ('user').get('accounts').then((e: any) => {
+          const acct = JSON.parse(e)
+            altAddress.current = acct[0];
+        });
+    }
+  })
 
   const { disconnect } = useDisconnect();
 
@@ -76,7 +74,7 @@ export function useCryptea(): mainAppManager {
     chainId: chainId !== undefined ? chainId.id : undefined,
     isAuthenticating: isLoading,
     validator,
-    isAuthenticated,
+    isAuthenticated: isAuthenticated,
     isTokenAuthenticated: isAuthenticated && isConnected,
     AuthAddress,
     logout: async () => {

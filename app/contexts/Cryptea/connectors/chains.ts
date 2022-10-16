@@ -204,7 +204,7 @@ export const { chains, provider, webSocketProvider } = configureChains(
   [
     publicProvider(),
     jsonRpcProvider({
-      rpc: (chain) => {
+      rpc: (chain: Chain) => {
         if (
           chain.id !== avalancheChain.id ||
           chain.id !== CronosTest.id ||

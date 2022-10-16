@@ -87,11 +87,8 @@ export const AuthUser = async ({
 }: authenticateUserExtended): Promise<userData | undefined> => {
   if (signMessage !== undefined) message = signMessage;
 
-
   if (!isConnected) {
-    
     config = await connectAsync({ connector: type });
-
   }
 
   if (!mainx) {
@@ -99,6 +96,7 @@ export const AuthUser = async ({
     const data = await signMessageAsync({ message });
 
     if (data.length) {
+
       try {
         const main = await AuthAddress({
           signature: data,
@@ -119,41 +117,40 @@ export const AuthUser = async ({
 export const AuthContextMain = createContext<AuthContext>({});
 
 export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
+  const [isAuthenticated, setAuth] = useState<boolean | undefined>();
 
-    const [ isAuthenticated, setAuth ] = useState<boolean | undefined>();
-
-    const [context, setContext] = useState<userData | undefined>(user);
+  const [context, setContext] = useState<userData | undefined>(user);
 
 
-    useEffect(() => {
-        const cache:string | null = localStorage.getItem("userToken");
-      
+  useEffect(() => {
+    if (localStorage.getItem('userToken') !== null) {
+        setAuth(true);
+    }else{
+       setAuth(false)
+    }
+  })
 
-        setAuth(Boolean(cache));
-    });
+  const client = createClient({
+    autoConnect: true,
+    connectors,
+    webSocketProvider,
+    provider: ethers.getDefaultProvider(),
+  });
 
-    const client = createClient({
-      autoConnect: true,
-      connectors,
-      webSocketProvider,
-      provider: ethers.getDefaultProvider()
-    });
-  
-
-    return (
-      <Web3ReactProvider getLibrary={getLibrary}>
-        <WagmiConfig client={client}>
-          <AuthContextMain.Provider
-            value={{
-              user: context,
-              isAuthenticated,
-              update: (e: userData | undefined) => setContext(e),
-            }}
-          >
-            {children}
-          </AuthContextMain.Provider>
-        </WagmiConfig>
-      </Web3ReactProvider>
-    );
+  return (
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <WagmiConfig client={client}>
+        <AuthContextMain.Provider
+          value={{
+            user: context,
+            isAuthenticated,
+            update: (e: userData | undefined) => setContext(e),
+          }}
+        >
+          {children}
+        </AuthContextMain.Provider>
+      </WagmiConfig>
+    </Web3ReactProvider>
+  );
 }
 

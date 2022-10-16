@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react'
+import { useCryptea } from './Cryptea';
 
 export const HomeContext = createContext<{
   show?: boolean;
@@ -7,6 +8,7 @@ export const HomeContext = createContext<{
 }>({}); 
 
 export const HomeProvider = ({ children }: { children: JSX.Element }) => {
+
 
     const [showModal, setShowModal] = useState(false);
 

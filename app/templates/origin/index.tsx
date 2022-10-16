@@ -28,7 +28,7 @@ import { useRouter } from 'next/router';
 import Loader from "../../components/elements/loader";
 import { useState, useEffect, useContext } from "react";
 import { PaymentContext } from "../../contexts/PaymentContext";
-
+import { useCryptea } from "../../contexts/Cryptea";
 
 function a11yProps(index: number) {
   return {
@@ -39,11 +39,9 @@ function a11yProps(index: number) {
 
  
 const Origin = ({
-  className,
-  editMode = false,
+  className
 }: {
   className?: string;
-  editMode: boolean;
 }) => {
 
 
@@ -86,8 +84,17 @@ const Origin = ({
     setAmount,
     setSubCheck,
     options,
-    eSubscription
+    eSubscription,
+    setSigner
   } = useContext(PaymentContext);
+
+  const {
+    signer
+  } = useCryptea();
+
+  useEffect(() => {
+      setSigner?.(signer);
+  }, [signer])
 
 
   const {
@@ -123,7 +130,7 @@ const Origin = ({
     });
 
   return (
-    <div className={`origin ${className}`}>
+      <div className={`origin ${className}`}>
       {isLoading ? (
         <Loader fixed={false} />
       ) : (
@@ -220,8 +227,10 @@ const Origin = ({
                 <div className="flex flex-row usm:flex-col">
                   <div className="w-3/5 usm:mb-4 usm:w-full px-8">
                     {/* Header */}
-
-                    <div style={data.header} className="mt-8 header_page">
+                    <div
+                      style={data.header}
+                      className="mt-8 header_page"
+                    >
                       {Boolean(data.header.text.length)
                         ? data.header.text
                         : `${usern}`}
@@ -552,6 +561,8 @@ const Origin = ({
                             </div>
                           )}
 
+                          
+
                           <TabPanel value={value} index={0}>
                             {(userD?.linktype == "both" ||
                               userD?.linktype == "onetime") && (
@@ -813,15 +824,7 @@ const Origin = ({
                                 </ToggleButtonGroup>
 
                                 {userD.rdata["sub"].map(
-                                  (ixn: string, i: number) => {
-                                    let help: string = "";
-
-                                    if (ixn == "Email") {
-                                      help =
-                                        "Required to send reminders when your subscription expires";
-                                    }
-
-                                    return (
+                                  (ixn: string, i: number) => (
                                       <>
                                         <div className="py-3 font-bold">
                                           {ixn}
@@ -833,7 +836,6 @@ const Origin = ({
                                           placeholder={`Your ${ixn}`}
                                           variant="outlined"
                                           sx={text}
-                                          helperText={help}
                                           value={
                                             pemail![i] !== undefined
                                               ? pemail![i]
@@ -854,8 +856,7 @@ const Origin = ({
                                           }}
                                         />
                                       </>
-                                    );
-                                  }
+                                    )
                                 )}
 
                                 <div className="my-2">
@@ -968,7 +969,7 @@ const Origin = ({
                                   style={{
                                     fontFamily: "inherit",
                                   }}
-                                  onClick={beginSub}
+                                  onClick={() => beginSub?.()}
                                   fullWidth
                                 >
                                   Subscribe
@@ -986,7 +987,7 @@ const Origin = ({
           )}
         </>
       )}
-    </div>
+      </div>
   );
 };
 

@@ -22,7 +22,8 @@ const DashboardIndex = () => {
   const { 
     user,
     connected,
-    isAuthenticated
+    isAuthenticated,
+    signer
   } = useCryptea();
 
   const router = useRouter();
@@ -32,10 +33,9 @@ const DashboardIndex = () => {
   const [loading, isLoading] = useState<Boolean>(true);
 
   const [data, setData] = useState<any>({ username: "", img: "" });
-
   
 
-useEffect(() => {
+  useEffect(() => {
 
     if(isAuthenticated !== undefined){
       if(!isAuthenticated){

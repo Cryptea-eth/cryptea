@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <CrypteaProvider>
         <GenProvider>
           <HomeProvider>
-          <Component {...pageProps} />
+            <Component {...pageProps} />
           </HomeProvider>
         </GenProvider>
       </CrypteaProvider>

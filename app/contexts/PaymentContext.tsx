@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useCryptea } from "./Cryptea";
 import { useRouter } from "next/router";
-import Moralis from "moralis";
 import { post_request, get_request } from "./Cryptea/requests";
 import * as ethers from 'ethers';
 import bigimg from "../../public/images/logobig.png";
@@ -18,6 +17,7 @@ import AuthModal from "../components/elements/modal";
 export const PaymentProvider = ({ children, editMode }: { children: JSX.Element, editMode: boolean }) => {
 
       const router = useRouter();
+
 
       let username = router.query["slug"];
 
@@ -44,16 +44,18 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
       useEffect(() => {}, [username, router.isReady]);
 
       const [paymentData, setPaymentData] = useState<
-        { price: number; type: "onetime" | "subscription" } | undefined
-      >();
+        { price: number; type: "onetime" | "subscription"}>();
 
       const [token, setToken] = useState<any>({
         value: 80001,
         label: "Matic (Testnet)",
       });
 
-      const { connected, authenticate, signer, chainId, account, validator } =
-        useCryptea();
+      const { connected, authenticate, chainId, signer: nullSigner, account, validator } = useCryptea();
+
+      const [signer, setSigner] = useState(nullSigner);
+
+      console.log(signer, 'new stuff')
 
       const [data, setData] = useState({});
 
@@ -82,37 +84,83 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
          price: number,
          chain: string | number | undefined = 80001
        ) => {
-         let final = 0;
+         let final:number = 0;
          setLoadingText("Loading Price data...");
 
-         if (chain == 80001) {
-          
-           await Moralis.start({
-                appId: process.env.NEXT_PUBLIC_MORALIS_APP_ID,
-                serverUrl: process.env.NEXT_PUBLIC_MORALIS_SERVER
-           });
+        const prices: { [index: string]: () => Promise<number> } = {
+          "80001": async () => {
+            const response = await post_request("/token/price", {
+              currency: 'usd',
+              token: 'matic-network'
+            });
 
-           const e = await Moralis.Web3API.token.getTokenPrice({
-             address: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0", //matic public address
-           });
+            const e = response.data as { [index: string]: any };
 
-           const priceCurrency = Number(e.usdPrice.toFixed(2));
+            const priceCurrency = Number(e["matic-network"]["usd"]);
 
-           final = price / priceCurrency;
-         } else if (chain == 42261) {
-           // oasis
-           final = price / 0.0608;
-         } else if (chain == 1313161555) {
-           final = price / 1.15;
-         } else if (chain == 338) {
-           final = price / 0.116;
-         } else if (chain == 420) {
-           final = price / 0.93;
-         }
+            return price / priceCurrency;
+          },
+
+          "42261": async () => {
+            const response = await post_request("/token/price", {
+              currency: "usd",
+              token: "oasis-network",
+            });
+
+            const e = response.data as { [index: string]: any };
+
+            const priceCurrency = Number(e["oasis-network"]["usd"]);
+
+            return price / priceCurrency;
+          },
+
+          "1313161555": async () => {
+
+            const response = await post_request("/token/price", {
+              currency: "usd",
+              token: "auroratoken",
+            });
+
+            const e = response.data as { [index: string]: any };
+
+            const priceCurrency = Number(e["auroratoken"]["usd"]);
+
+            return price / priceCurrency;
+          },
+
+          "338": async () => {
+              const response = await post_request("/token/price", {
+                currency: "usd",
+                token: "crypto-com-chain",
+              });
+
+            const e = response.data as { [index: string]: any };
+
+            const priceCurrency = Number(e["crypto-com-chain"]["usd"]);
+
+            return price / priceCurrency;
+          },
+          "420": async () => {
+              const response = await post_request("/token/price", {
+              currency: "usd",
+              token: "optimism",
+            });
+
+
+              const e = response as { [index: string]: any };
+
+              const priceCurrency = Number(e["optimism"]["usd"]);
+
+              return price / priceCurrency; 
+          }
+        };
+
+        
+         final = await prices[chain]();
 
          return final.toFixed(6);
-       };
 
+      };
        
   const initMain = async (
     price: number,
@@ -124,10 +172,12 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
       if (Number(price)) {
         await beginPayment(price, type);
       } else {
+        setTransferFail(true);
         setFailMessage("Your amount is invalid");
       }
     } catch (x) {
       console.log(x);
+      setTransferFail(true);
       setFailMessage("Something went wrong, Please try again");
     }
   };
@@ -167,6 +217,13 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
             }
           }
 
+          // Custom inputs
+          const rdata = JSON.parse(lQ.rdata);
+
+          if (rdata['sub'] !== undefined && rdata['sub'].indexOf('Email') == -1) {
+              rdata['sub'].push('Email')
+          }
+
           setUserD({
             description: lQ.desc,
             username: lQ.title !== undefined ? lQ.title : userl.username,
@@ -179,7 +236,7 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
               ? JSON.parse(lQ.accountMulti)
               : [],
             linkAmount,
-            rdata: JSON.parse(lQ.rdata),
+            rdata,
           });
 
           if (setIsLoading !== undefined) setIsLoading(false);
@@ -268,7 +325,7 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
      tokenURI: string,
      receiver: string,
      to: string,
-     value: ethers.BigNumber
+     value: ethers.BigNumber,
    ) => {
      const signed: any = signer;
 
@@ -366,8 +423,11 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
      return true;
    };
 
+
    const { chains, error, pendingChainId, switchNetworkAsync } =
      useSwitchNetwork();
+
+
 
    const beginPayment = async (
      price: number,
@@ -376,6 +436,8 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
      let from = "";
 
      if (!connected || chainId != token.value) {
+       setLoadingText("");
+
        if (chainId != token.value) {
          await switchNetworkAsync?.(token.value);
 
@@ -384,7 +446,8 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
          authenticate(true);
        }
 
-       setPaymentData({ price, type });
+       setPaymentData({ price, type});
+
      } else {
        from = account || "";
 
@@ -578,11 +641,12 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
 
    useEffect(() => {
      if (connected && paymentData !== undefined) {
-       if (chainId == token) {
-         if (Boolean(signer)) {
+
+       if (chainId == token.value) {
+          if(Boolean(signer)){
            beginPayment(paymentData.price, paymentData.type);
            setPaymentData(undefined);
-         }
+          }
        }
      }
    }, [connected, chainId, token, signer]);
@@ -590,7 +654,8 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
 
    const [auth, setAuth] = useState<boolean>(true);
 
-   const beginSub = () => {
+   const beginSub = (signer?: import("@wagmi/core").FetchSignerResult<import("@wagmi/core").Signer>
+     ) => {
      setFailMessage("");
      setTransferFail(false);
      setHash("");
@@ -641,7 +706,7 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
            }
          }
        });
-       if (proceed) initMain(Number(amount));
+       if (proceed) initMain(Number(amount), undefined);
        else
          setFailMessage(
            "Please enter the correct details required in available fields"
@@ -691,6 +756,7 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
         eSubscription,
         options,
         setESubscription,
+        setSigner,
       }}
     >
       <AuthModal userAuth={false} />

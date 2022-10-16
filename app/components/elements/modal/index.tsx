@@ -38,6 +38,7 @@ const AuthModal = ({
     authenticateUser,
     connectWall,
     connectors,
+    connected,
     chainId,
     AuthAddress,
     logout,
@@ -46,6 +47,7 @@ const AuthModal = ({
   } = useCryptea();
 
   const { pathname } = router;
+
 
   const [authError, updAuthError] = useState<string>("");
   const [isNotSupported, setSupport] = useState<boolean>(false);
@@ -138,16 +140,32 @@ const AuthModal = ({
     }
   };
 
+
+  const methods = ["metaauth", "walletconnectauth" , "uauth"];
+
   const storeAuth = (authMethod: string) => {
-    const cache = localStorage.getItem(authMethod);
+    const cache = localStorage.getItem('auths');
+
+    let list: string[] = [];
 
     if (cache !== null) {
-      const increment = Number(cache) + 1;
 
-      localStorage.setItem(authMethod, String(increment));
+      cache.split(",").forEach((e: string) => {
+        if (methods.indexOf(e) != -1 && e !== authMethod) list.push(e);
+      });
+
     } else {
-      localStorage.setItem(authMethod, "1");
+      
+      methods.forEach((e: string) => {
+        if (e !== authMethod) list.push(e);
+      });
+
     }
+
+    list.push(authMethod);
+
+    localStorage.setItem("auths", list.join(","));
+
   };
 
   useEffect(() => {
@@ -157,7 +175,7 @@ const AuthModal = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, isNotSupported, user, router.isReady]);
+  }, [isAuthenticated, connected, isNotSupported, user, router.isReady]);
 
   const Ulogin = async () => {
     if (isMainAuth()) {
@@ -215,7 +233,7 @@ const AuthModal = ({
       updAuthError("");
       setIsAuth({ ...isAuth, metamask: true });
 
-      if (!isAuthenticated) {
+      if (!isAuthenticated || !userAuth) {
         setSupport(false);
         try {
           let isAuthing: any;
@@ -245,7 +263,9 @@ const AuthModal = ({
 
                 actionAuth(email as string);
               } else {
-                setIsAuth(defaultIsAuth);
+                
+                setIsAuth({ ...isAuth, metamask: false });
+
                 useclose();
               }
             } else {
@@ -254,6 +274,7 @@ const AuthModal = ({
             }
           } else {
             setSupport(true);
+            setIsAuth({ ...isAuth, metamask: false });
             throw "Only Polygon network is supported";
           }
         } catch (err) {
@@ -275,7 +296,7 @@ const AuthModal = ({
       updAuthError("");
       setIsAuth({ ...isAuth, walletconnect: true });
 
-      if (!isAuthenticated) {
+      if (!isAuthenticated || !userAuth) {
         setSupport(false);
         try {
           let isAuthing: any;
@@ -287,6 +308,7 @@ const AuthModal = ({
           } else {
             isAuthing = await connectWall(connectors[1]);
           }
+
           storeAuth("walletconnectauth");
           if (supported.includes(chainId ? Number(chainId) : 137)) {
             if (isAuthing !== undefined) {
@@ -301,7 +323,7 @@ const AuthModal = ({
 
                 actionAuth(email as string);
               } else {
-                setIsAuth(defaultIsAuth);
+                setIsAuth({...defaultIsAuth});
                 useclose();
               }
             } else {
@@ -309,6 +331,7 @@ const AuthModal = ({
               setIsAuth({ ...isAuth, walletconnect: false });
             }
           } else {
+            setIsAuth({ ...isAuth, walletconnect: false });
             setSupport(true);
             throw "Only Polygon network is supported";
           }
@@ -319,17 +342,14 @@ const AuthModal = ({
           setIsAuth({ ...isAuth, walletconnect: false });
         }
       } else {
+        updAuthError("Please refresh the page");
+
         setIsAuth({ ...isAuth, walletconnect: false });
       }
     }
   };
 
-  const [arrange, setArrange] = useState<
-    {
-      button: JSX.Element;
-      strength: number;
-    }[]
-  >([]);
+  const [arrange, setArrange] = useState<(JSX.Element | boolean)[]>([]);
 
 
 
@@ -427,23 +447,25 @@ const AuthModal = ({
 
     const auths = Object.keys(buttons);
 
-    setArrange(
-      auths.map((e: string) => {
-        const cache = localStorage.getItem(e);
-       
-        if (cache === null) {
-          return {
-            strength: 0,
-            button: buttons[e] as JSX.Element,
-          };
-        }
+    const cache = localStorage.getItem('auths');
 
-        return {
-          strength: Number(cache),
-          button: buttons[e] as JSX.Element,
-        };
-      })
-    );
+    const list: (JSX.Element | boolean)[] = []
+
+    if (cache !== null) {
+        cache.split(',').forEach((ix: string) => {
+            if (auths.indexOf(ix) != -1) {
+                list.push(buttons[ix])
+            }
+        });
+
+        setArrange(list)
+
+    }else{
+
+      setArrange(Object.values(buttons));
+
+    }
+    
   }, [isAuth, userAuth, isAuthenticated]);
 
   return (
@@ -483,9 +505,7 @@ const AuthModal = ({
                 }}
                 className="relative p-6 grid gap-2 grid-flow-dense"
               >
-
-                {arrange.sort((a, b) => b.strength - a.strength).map(e => e.button)}
-
+                {arrange}
               </div>
               {/*footer*/}
 

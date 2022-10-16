@@ -152,6 +152,7 @@ export interface PaymentContext {
   setSubCheck?: React.Dispatch<React.SetStateAction<boolean>>;
   eSubscription?: string[];
   setESubscription?: React.Dispatch<React.SetStateAction<string[]>>;
+  setSigner?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 declare global {

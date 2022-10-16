@@ -68,6 +68,7 @@ const DashHome = () => {
 
 
   useEffect(() => {
+    if(isAuthenticated !== undefined){
     if(isAuthenticated){
     const mlink = ('links').get('*',true);
 
@@ -160,9 +161,10 @@ const DashHome = () => {
             )
           );
         });
-      }else {
+      } else {
         router.push('/auth');
       }
+    }
 
   }, [chainId, isAuthenticated, loading2, userAddress, router]);
 

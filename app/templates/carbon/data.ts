@@ -7,6 +7,10 @@ data = {
   body: {
     backgroundColor: data.colorScheme,
   },
+  error: {
+    backgroundColor: data.errorColor,
+    color: '#fff',
+  },
   box: {
     background: "#f8f8f8",
     maxWidth: "360px",
@@ -25,12 +29,12 @@ data = {
     background: "#f8f8f8",
     height: "100px",
     lineHeight: "85px",
-    right: '-100px',
+    right: "-100px",
     width: "100px",
-    display: 'flex',
+    display: "flex",
     transform: "translateX(-50%)",
-    src: '',
-    text: '',
+    src: "",
+    text: "",
     "&::before": {
       background: data.colorScheme,
       height: "90px",

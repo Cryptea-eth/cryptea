@@ -35,7 +35,8 @@ import { PaymentProvider } from "../../../app/contexts/PaymentContext";
 
 const Edit = () => {
 
-  const { isAuthenticated, validator } = useCryptea();
+  const { isAuthenticated, validator, signer } = useCryptea();
+
 
   const [ndata, setData] = useState<string>("");
   const [rules, setRules] = useState<any>({});
@@ -46,6 +47,8 @@ const Edit = () => {
       editMode?: boolean;
     }>
   >();
+
+
 
   const [templates, setTemplates] = useState<any[]>([]);
 

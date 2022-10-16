@@ -7,7 +7,8 @@ import {
 } from "../../../app/components/elements/dashboard/link/data";
 import { PaymentProvider } from '../../../app/contexts/PaymentContext';
 import { time } from '../../../app/contexts/Cryptea/DB';
-
+import { useFormControlUnstyledContext } from '@mui/base';
+import { useCryptea } from '../../../app/contexts/Cryptea';
 
 const User = () => {
 
@@ -17,6 +18,8 @@ const User = () => {
 
    const [Template, setTemplate] = useState<React.ComponentType<{}>>();
   
+   const { signer } = useCryptea()
+
 
    useEffect(() => {
       const init = async () => {
@@ -47,6 +50,8 @@ const User = () => {
       }
 
    }, [linkUser, router.isReady, router]);
+
+   
 
 
   return (
