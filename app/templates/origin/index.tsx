@@ -130,9 +130,9 @@ const Origin = ({
     });
 
   return (
-      <div className={`origin ${className}`}>
+    <div className={`origin ${className}`}>
       {isLoading ? (
-        <Loader fixed={false} />
+        <Loader color={data.colorScheme} fixed={false} />
       ) : (
         <>
           {is500 ? (
@@ -227,10 +227,7 @@ const Origin = ({
                 <div className="flex flex-row usm:flex-col">
                   <div className="w-3/5 usm:mb-4 usm:w-full px-8">
                     {/* Header */}
-                    <div
-                      style={data.header}
-                      className="mt-8 header_page"
-                    >
+                    <div style={data.header} className="mt-8 header_page">
                       {Boolean(data.header.text.length)
                         ? data.header.text
                         : `${usern}`}
@@ -320,6 +317,7 @@ const Origin = ({
                         }}
                         fixed={false}
                         text={loadingText}
+                        color={data.colorScheme}
                         incLogo={false}
                       />
                     )}
@@ -560,8 +558,6 @@ const Origin = ({
                               </Button>
                             </div>
                           )}
-
-                          
 
                           <TabPanel value={value} index={0}>
                             {(userD?.linktype == "both" ||
@@ -825,38 +821,38 @@ const Origin = ({
 
                                 {userD.rdata["sub"].map(
                                   (ixn: string, i: number) => (
-                                      <>
-                                        <div className="py-3 font-bold">
-                                          {ixn}
-                                        </div>
+                                    <>
+                                      <div className="py-3 font-bold">
+                                        {ixn}
+                                      </div>
 
-                                        <TextField
-                                          fullWidth
-                                          id="outlined-basic"
-                                          placeholder={`Your ${ixn}`}
-                                          variant="outlined"
-                                          sx={text}
-                                          value={
-                                            pemail![i] !== undefined
-                                              ? pemail![i]
-                                              : ""
-                                          }
-                                          onChange={(
-                                            e: React.ChangeEvent<
-                                              | HTMLInputElement
-                                              | HTMLTextAreaElement
-                                            >
-                                          ) => {
-                                            setTransferFail?.(false);
-                                            setLoadingText?.("");
-                                            const val = e.target.value;
-                                            pemail![i] = val;
+                                      <TextField
+                                        fullWidth
+                                        id="outlined-basic"
+                                        placeholder={`Your ${ixn}`}
+                                        variant="outlined"
+                                        sx={text}
+                                        value={
+                                          pemail![i] !== undefined
+                                            ? pemail![i]
+                                            : ""
+                                        }
+                                        onChange={(
+                                          e: React.ChangeEvent<
+                                            | HTMLInputElement
+                                            | HTMLTextAreaElement
+                                          >
+                                        ) => {
+                                          setTransferFail?.(false);
+                                          setLoadingText?.("");
+                                          const val = e.target.value;
+                                          pemail![i] = val;
 
-                                            setPemail?.([...pemail!]);
-                                          }}
-                                        />
-                                      </>
-                                    )
+                                          setPemail?.([...pemail!]);
+                                        }}
+                                      />
+                                    </>
+                                  )
                                 )}
 
                                 <div className="my-2">
@@ -987,7 +983,7 @@ const Origin = ({
           )}
         </>
       )}
-      </div>
+    </div>
   );
 };
 

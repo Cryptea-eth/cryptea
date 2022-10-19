@@ -43,7 +43,7 @@ export function useCryptea(): mainAppManager {
   const { disconnect } = useDisconnect();
 
   return {
-    account: address || altAddress.current,
+    account: isAuthenticated ? altAddress.current : (address || altAddress.current),
     user,
     connected: isConnected,
     connectors,
@@ -74,7 +74,7 @@ export function useCryptea(): mainAppManager {
     chainId: chainId !== undefined ? chainId.id : undefined,
     isAuthenticating: isLoading,
     validator,
-    isAuthenticated: isAuthenticated,
+    isAuthenticated,
     isTokenAuthenticated: isAuthenticated && isConnected,
     AuthAddress,
     logout: async () => {

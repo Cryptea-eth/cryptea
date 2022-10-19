@@ -46,6 +46,7 @@
     "react-router-dom": "^6.3.0",
     "react-select": "^5.4.0",
     "react-share": "^4.4.0",
+    "react-swipeable-views": "^0.14.0",
     "recharts": "2.1.10",
     "validator": "^13.7.0",
     "wagmi": "^0.6.6",

@@ -1,37 +1,65 @@
 import empty from "../../../public/images/coming-soon.svg";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   Typography,
   Box,
   Button,
+  ToggleButton,
   Avatar,
   IconButton,
   Modal,
+  ToggleButtonGroup,
+  Tooltip,
+  TextField,
+  CircularProgress,
 } from "@mui/material";
+import SwipeableViews from "react-swipeable-views";
 import {
   MdAddLink,
+  MdClose,
   MdDeleteOutline,
   MdInfo,
   MdLink,
-  MdModeEditOutline,
 } from "react-icons/md";
 import { FaCoins } from "react-icons/fa";
 import Link from "next/link";
 import Loader from "../../../app/components/elements/loader";
-import { RiDeleteBin2Line, RiPagesLine } from "react-icons/ri";
+import { RiDeleteBin2Line } from "react-icons/ri";
 import { BiCheck } from "react-icons/bi";
-import { BsPeopleFill } from "react-icons/bs";
 import { FiTrash2 } from "react-icons/fi";
 import { useCryptea } from "../../../app/contexts/Cryptea";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import Page from "../../../app/components/elements/dashboard";
+import { GiTwoCoins } from "react-icons/gi";
+import {
+  DashContext,
+  dash,
+  Link as Linkx,
+} from "../../../app/contexts/GenContext";
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
+
+const text = {
+  "& .Mui-focused.MuiFormLabel-root": {
+    color: "#f57059",
+  },
+  "& .MuiInputLabel-root": {
+    fontWeight: "600",
+    color: "#121212",
+  },
+  "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
+    {
+      borderColor: `#f57059 !important`,
+    },
+  "& .MuiInputBase-input": {
+    color: "#666666",
+  },
+};
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -45,7 +73,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 2 }}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -53,18 +81,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+const styleInit = {
   minWidth: 300,
   width: "70%",
   maxWidth: 800,
@@ -73,19 +90,42 @@ const style = {
   p: 4,
 };
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  ...styleInit,
+};
+
 const Links = () => {
+
   const [showLinkModal, setShowLinkModal] = useState<string | number>("");
+
+  const [linkAdd, showLinkAdd] = useState<boolean>(false);
 
   const [isLoading, loading] = useState<boolean>(true);
 
-  const { isAuthenticated } = useCryptea();
+  const [linkLoading, setLoading] = useState<boolean>(false);
+
+  const [genError, setGenError] = useState<string>("");
+
+  const { isAuthenticated, validator, account } = useCryptea();
+
+  const [stage, setStage] = useState<0 | 1>(0);
 
   const [links, addLinks] = useState<any>([]);
+
+  const router = useRouter();
+
+  useEffect(() => {
+
+  },[router.isReady])
 
   useEffect(() => {
     if (isAuthenticated !== undefined) {
       if (!isAuthenticated) {
-        Router.push("/auth");
+        router.push("/auth");
       } else {
         "links".get("*", true).then((e) => {
           addLinks(e);
@@ -109,7 +149,146 @@ const Links = () => {
     loading(false);
   };
 
+  const { newLink: formLink }: dash = useContext(DashContext);
+
+  const { errors: LinkErr } = formLink as Linkx;
+
   const handleClose = () => setShowLinkModal("");
+
+  const handleClose2 = () => showLinkAdd(false);
+
+  const errorExists = (arr?: string[]) => {
+    const { errors } = formLink as Linkx;
+
+    if (errors !== undefined) {
+      let values: string[] = Object.values(errors);
+
+      if (arr !== undefined) {
+        values = arr.map((f) => errors[f] || "");
+      }
+
+      const valid = values.filter((e) => e.length);
+
+      if (valid.length) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  const validateForm = async () => {
+      
+    const { title, desc, type, errors, slug, amount, redirect } =
+      formLink as Linkx;
+
+    if (linkLoading) return;
+
+    if (!stage) {
+      if (!Boolean(title)) {
+        errors?.update?.({ title: "Title is required" });
+        return;
+      }
+
+      errors?.refresh?.();
+      setStage(1);
+    } else {
+
+      if (Boolean(slug)) {
+        if (!/[a-z]/gi.test(String(slug)?.charAt(0))) {
+          errors?.update?.({ slug: "Link Slug must start with an alphabet" });
+          return;
+        }
+
+        if (!validator.isAlphanumeric(slug as string)) {
+          errors?.update?.({
+            slug: "Link Slug should not contain any special characters",
+          });
+
+          return;
+        }
+      } else {
+        errors?.update?.({
+          slug: "Link Slug should not be empty",
+        });
+
+        return;
+      }
+
+      if (Boolean(amount)) {
+        if (!validator.isNumeric(String(amount))) {
+          errors?.update?.({
+            amount: "Amount should contain a valid number",
+          });
+          return;
+        }
+      }
+
+      if (Boolean(redirect)) {
+        if (!validator.isURL(redirect as string)) {
+          errors?.update?.({
+            redirect: "Redirect Url should contain a valid link",
+          });
+          return;
+        }
+      }
+    
+
+    setLoading(true);
+
+    let name = "origin";
+
+    if (!Boolean(desc)) name = "carbon";
+    
+
+    const { data: template_data } = await import(
+      `../../../app/templates/${name}/data`
+    );
+
+    const templateData = { name, data: template_data };
+
+    const accountMulti = JSON.stringify([0.1, 10, 50, 100]);
+
+    const rinputs = {
+      onetime: [],
+      sub: [],
+    };
+
+    const newData = {
+      slug: String(slug).toLowerCase(),
+      desc,
+      title,
+      amount: Boolean(amount) ? amount : "variable",
+      address: account,
+      redirect,
+      accountMulti,
+      type: Boolean(type) ? type : "onetime",
+      rdata: JSON.stringify(rinputs),
+      template_data: JSON.stringify(templateData),
+    };
+
+    try {
+
+      await "links".save(newData);
+
+      router.push(`/user/${newData.slug}/overview`);
+      
+    } catch (e) {
+      const errorObject = e as any;
+
+      console.log(errorObject)
+
+      if (errorObject.error) {
+
+        setGenError(errorObject.message);
+
+      } else {
+        setGenError("Something went wrong, please try again");
+      }
+      setLoading(false);
+      }
+    }
+  };
 
   return (
     <Page>
@@ -119,8 +298,8 @@ const Links = () => {
         <Modal
           open={Boolean(showLinkModal)}
           onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
+          aria-labelledby="Delete Link"
+          aria-describedby="Remove Link From List"
         >
           <Box sx={style}>
             <div className="px-4 w-full items-center bg-white flex flex-col pt-[4rem] pb-5">
@@ -201,10 +380,378 @@ const Links = () => {
           </div>
         )}
 
+        {linkAdd && (
+          <>
+            <Modal
+              open={linkAdd}
+              sx={{
+                "&& .MuiBackdrop-root": {
+                  backdropFilter: "blur(5px)",
+                },
+              }}
+              onClose={handleClose2}
+              className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+              aria-labelledby="add new link"
+              aria-describedby="New Link Short Cut"
+            >
+              <Box
+                className="sm:w-full h-fit 3mdd:px-[2px]"
+                sx={{ ...styleInit, position: "relative", margin: "auto" }}
+              >
+                <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+                  <div className="mb-5 flex items-start justify-between">
+                    <div>
+                      <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                        Create New Link
+                      </h2>
+                      <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
+                        Easily Receive Payments with Links!
+                      </span>
+                    </div>
+
+                    <IconButton size={"medium"} onClick={handleClose2}>
+                      <MdClose
+                        size={20}
+                        color={"rgb(32,33,36)"}
+                        className="cursor-pointer"
+                      />
+                    </IconButton>
+                  </div>
+
+                  {Boolean(genError) && (
+                    <div className="bg-[#ff8f33] text-white rounded-md w-[95%] font-bold mt-2 mx-auto p-3">
+                      {genError}
+                    </div>
+                  )}
+
+                  <SwipeableViews index={stage}>
+                    <TabPanel index={0} value={stage}>
+                      <form
+                        encType="multipart/form-data"
+                        onSubmit={(f) => {
+                          f.preventDefault();
+                          validateForm();
+                        }}
+                        action="#"
+                      >
+                        <div className="py-3">
+                          <label className="text-[#565656] mb-2 font-[600]">
+                            Type
+                          </label>
+
+                          <ToggleButtonGroup
+                            value={formLink.type}
+                            sx={{
+                              justifyContent: "space-between",
+                              width: "100%",
+                              "& .Mui-selected": {
+                                backgroundColor: `#f57059 !important`,
+                                color: `#fff !important`,
+                              },
+                              "& .MuiButtonBase-root:first-of-type": {
+                                marginRight: "0px !important",
+                                marginLeft: "0px !important",
+                              },
+                              "& .MuiButtonBase-root": {
+                                padding: "10px 15px !important",
+                              },
+                              "& .MuiToggleButtonGroup-grouped": {
+                                borderRadius: "4px !important",
+                                minWidth: 55,
+                                marginLeft: 3,
+                                border:
+                                  "1px solid rgba(0, 0, 0, 0.12) !important",
+                              },
+                              "& .MuiToggleButtonGroup-grouped.Mui-selected": {
+                                borderColor: "#f57059 !important",
+                              },
+                            }}
+                            exclusive
+                            className="w-full cusscroller overflow-y-hidden justify-around mb-2 pb-1"
+                            onChange={(e: any) => {
+                              if (e.target.value !== undefined) {
+                                setGenError("");
+                                formLink?.update?.({ type: e.target.value });
+                              }
+                            }}
+                          >
+                            <ToggleButton
+                              sx={{
+                                textTransform: "capitalize",
+                                fontWeight: "bold",
+                              }}
+                              value={"onetime"}
+                            >
+                              <GiTwoCoins className="mr-2" size={20} /> Onetime
+                            </ToggleButton>
+                            <ToggleButton
+                              sx={{
+                                textTransform: "capitalize",
+                                fontWeight: "bold",
+                              }}
+                              value={"sub"}
+                            >
+                              <FaCoins className="mr-2" size={20} />{" "}
+                              Subscription
+                            </ToggleButton>
+                          </ToggleButtonGroup>
+                        </div>
+
+                        <div className="py-3">
+                          <label className="text-[#565656] mb-2 font-[600]">
+                            Title
+                          </label>
+
+                          <TextField
+                            fullWidth
+                            id="outlined-basic"
+                            variant="standard"
+                            sx={text}
+                            value={formLink?.title}
+                            helperText={
+                              Boolean(LinkErr?.title)
+                                ? LinkErr?.title
+                                : "Required*"
+                            }
+                            error={Boolean(LinkErr?.title)}
+                            onChange={(
+                              e: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) => {
+                              setGenError("");
+
+                              formLink?.update?.({ title: e.target.value });
+                            }}
+                          />
+                        </div>
+
+                        <div className="py-3">
+                          <label className="text-[#565656] mb-2 font-[600]">
+                            Description
+                          </label>
+
+                          <TextField
+                            fullWidth
+                            id="outlined-basic"
+                            variant="standard"
+                            sx={text}
+                            multiline
+                            className={"cusscroller"}
+                            maxRows={3}
+                            helperText={
+                              Boolean(LinkErr?.desc) ? LinkErr?.desc : ""
+                            }
+                            error={Boolean(LinkErr?.desc)}
+                            value={formLink?.desc}
+                            onChange={(
+                              e: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) => {
+                              setGenError("");
+                              formLink?.update?.({ desc: e.target.value });
+                            }}
+                          />
+                        </div>
+                      </form>
+                    </TabPanel>
+
+                    <TabPanel index={1} value={stage}>
+                      <form
+                        action="#"
+                        encType="multipart/form-data"
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                        }}
+                      >
+                        <div className="py-3">
+                          <Tooltip
+                            arrow
+                            title="eg. https://user.cryptea.me/your-link-slug"
+                          >
+                            <label className="text-[#565656] mb-2 font-[600]">
+                              Link Slug
+                            </label>
+                          </Tooltip>
+
+                          <TextField
+                            fullWidth
+                            id="outlined-basic"
+                            variant="standard"
+                            sx={text}
+                            value={formLink?.slug}
+                            helperText={
+                              Boolean(LinkErr?.slug)
+                                ? LinkErr?.slug
+                                : "Required*"
+                            }
+                            error={Boolean(LinkErr?.slug)}
+                            onChange={(
+                              e: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) => {
+                              setGenError("");
+                              formLink?.update?.({
+                                slug: e.target.value.toLowerCase(),
+                              });
+                            }}
+                          />
+                        </div>
+
+                        <div className="py-3">
+                          <Tooltip
+                            arrow
+                            title="If left empty, any amount above zero is valid"
+                          >
+                            <label className="text-[#565656] w-fit flex items-center mb-2 font-[600]">
+                              Amount{" "}
+                              <MdInfo
+                                className={"ml-1 cursor-pointer"}
+                                size={18}
+                              />
+                            </label>
+                          </Tooltip>
+
+                          <TextField
+                            fullWidth
+                            id="outlined-basic"
+                            variant="standard"
+                            sx={text}
+                            value={formLink?.amount}
+                            helperText={
+                              Boolean(LinkErr?.amount) ? LinkErr?.amount : ""
+                            }
+                            error={Boolean(LinkErr?.amount)}
+                            onChange={(
+                              e: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) => {
+                              const val = e.target.value;
+                              setGenError("");
+                              formLink?.update?.({
+                                amount: val.replace(/[^\d.]/g, ""),
+                              });
+                            }}
+                          />
+                        </div>
+
+                        <div className="py-3">
+                          <Tooltip
+                            arrow
+                            title="A link to redirect to after people pay through your link, this can be left empty for now if none is available"
+                          >
+                            <label className="text-[#565656] w-fit flex items-center mb-2 font-[600]">
+                              Redirect to{" "}
+                              <MdInfo
+                                className={"ml-1 cursor-pointer"}
+                                size={18}
+                              />
+                            </label>
+                          </Tooltip>
+
+                          <TextField
+                            fullWidth
+                            id="outlined-basic"
+                            variant="standard"
+                            sx={text}
+                            helperText={
+                              Boolean(LinkErr?.redirect)
+                                ? LinkErr?.redirect
+                                : ""
+                            }
+                            error={Boolean(LinkErr?.redirect)}
+                            value={formLink?.redirect}
+                            onChange={(
+                              e: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) => {
+                              setGenError("");
+                              formLink?.update?.({ redirect: e.target.value });
+                            }}
+                          />
+                        </div>
+                      </form>
+                    </TabPanel>
+                  </SwipeableViews>
+                </div>
+
+                <div
+                  style={{
+                    justifyContent: linkLoading ? "flex-end" : undefined,
+                    WebkitJustifyContent: linkLoading ? "flex-end" : undefined,
+                  }}
+                  className="bg-[#efefef] flex justify-between items-center rounded-b-[.9rem] px-6 py-4"
+                >
+                  {!linkLoading && (
+                    <Link href={"/dashboard/links/new"}>
+                      <a>
+                        <Button className="!w-fit !items-center !flex !rounded-md !text-[#5f5f5f] font-bold !bg-[#d6d6d6] !capitalize !border-none">
+                          <MdAddLink size={20} className="mr-1" />
+                          Advanced
+                        </Button>
+                      </a>
+                    </Link>
+                  )}
+
+                  <div className="flex items-center">
+                    {Boolean(stage) && !linkLoading && (
+                      <Button
+                        sx={{
+                          color: `${
+                            errorExists(["desc", "type", "title"])
+                              ? "#ff3a3a"
+                              : "#5f5f5f"
+                          } !important`,
+                        }}
+                        onClick={() => setStage(0)}
+                        className="!w-fit !items-center !flex !rounded-md font-[400] !px-0 !capitalize !border-none"
+                      >
+                        Back
+                      </Button>
+                    )}
+
+                    <Button
+                      onClick={validateForm}
+                      className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                    >
+                      {linkLoading && (
+                        <CircularProgress
+                          className="mr-2"
+                          color={"inherit"}
+                          size={20}
+                        />
+                      )}
+
+                      {linkLoading
+                        ? "Creating..."
+                        : stage
+                        ? "Create Link"
+                        : "Next"}
+                    </Button>
+                  </div>
+                </div>
+              </Box>
+            </Modal>
+          </>
+        )}
+
         {Boolean(links.length) && !isLoading && (
           <>
-            <h2 className="font-bold text-[20px] mt-6 mb-[9px]">
-              Active Links
+            <h2 className="font-bold flex items-center justify-between text-[20px] mt-[10px] mb-[7px]">
+              <span className="">Active Links</span>
+              <Tooltip arrow title="Create a link">
+                <IconButton onClick={() => showLinkAdd(true)} size={"medium"}>
+                  <MdAddLink
+                    size={30}
+                    color={"#242424"}
+                    className="cursor-pointer"
+                  />
+                </IconButton>
+              </Tooltip>
             </h2>
             <div
               style={{
@@ -239,7 +786,6 @@ const Links = () => {
                   <Link href={`/user/${link}/overview`} key={i}>
                     <a>
                       <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(248,248,248)] transition-all delay-300 cursor-pointer">
-
                         <div className="mb-4">
                           <Avatar
                             sx={{

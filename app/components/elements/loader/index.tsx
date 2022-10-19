@@ -6,10 +6,12 @@ const Loader = ({
   incLogo = true,
   text = '',
   fixed = true,
+  color = undefined,
   sx = {},
 }: {
   incLogo?: boolean;
   text?: any;
+  color?: string | undefined;
   fixed?: boolean;
   sx?: object;
 }) => {
@@ -31,7 +33,7 @@ const Loader = ({
       )}
       <Box
         className="text-[#F57059] mt-11 justify-center "
-        sx={{ display: "flex" }}
+        sx={{ display: "flex", color }}
       >
         <CircularProgress
           size={text ? 80 : 60}
@@ -39,7 +41,7 @@ const Loader = ({
         />
       </Box>
       {text !== "" && (
-        <div className="text-[#f57059] text-xl font-bold">{text}</div>
+        <div style={{ color }} className="text-[#f57059] text-xl font-bold">{text}</div>
       )}
     </div>
   );

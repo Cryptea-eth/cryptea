@@ -54,8 +54,6 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
 
       const [signer, setSigner] = useState(nullSigner);
 
-      console.log(signer, 'new stuff')
-
       const [data, setData] = useState({});
 
       const [isLoading, setIsLoading] = useState<boolean>(true);

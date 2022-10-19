@@ -78,7 +78,6 @@ const MenuProps = {
     onetime: string;
   }
 
-
   interface data {
     title: Strings;
     amount: {
@@ -363,7 +362,7 @@ const MenuProps = {
       if(rinputs['sub'].indexOf('Email') == -1){
           rinputs['sub'].push('Email')
       }
-      
+
           
       const newData = {
             slug: data.slug[index].toLowerCase(),
@@ -399,7 +398,6 @@ const MenuProps = {
             document.querySelector(".linkadd")?.scrollIntoView();
             
           }
-
     }
   };
 

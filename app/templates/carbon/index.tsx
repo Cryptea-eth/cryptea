@@ -123,7 +123,7 @@ const Carbon = ({
   return (
     <div className={`carbon ${className}`}>
       {isLoading ? (
-        <Loader fixed={false} />
+        <Loader color={data.colorScheme} fixed={false} />
       ) : (
         <>
           {is500 ? (
