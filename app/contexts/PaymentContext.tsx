@@ -229,8 +229,8 @@ export const PaymentProvider = ({ children, editMode }: { children: JSX.Element,
             img: userl.img !== undefined ? userl.img : undefined,
             id: lQ.id,
             linktype: lQ.type,
-            amountMultiple: Boolean(lQ.accountMulti)
-              ? JSON.parse(lQ.accountMulti)
+            amountMultiple: Boolean(lQ.amountMulti)
+              ? JSON.parse(lQ.amountMulti)
               : [],
             linkAmount,
             rdata,

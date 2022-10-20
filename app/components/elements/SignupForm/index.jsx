@@ -82,7 +82,7 @@ const SignupForm = () => {
                 address: account,
                 views: "[]",
                 type: "both",
-                accountMulti: JSON.stringify([0.1, 10, 50, 100]),
+                amountMulti: JSON.stringify([0.1, 10, 50, 100]),
                 title: userInfo,
                 template_data: JSON.stringify(templateData),
                 rdata: '{"sub":[],"onetime":[]}',

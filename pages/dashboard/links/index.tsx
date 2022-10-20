@@ -133,7 +133,7 @@ const Links = () => {
         });
       }
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, router]);
 
   const deleteLink = async () => {
     loading(true);
@@ -247,7 +247,7 @@ const Links = () => {
 
     const templateData = { name, data: template_data };
 
-    const accountMulti = JSON.stringify([0.1, 10, 50, 100]);
+    const amountMulti = JSON.stringify([0.1, 10, 50, 100]);
 
     const rinputs = {
       onetime: [],
@@ -261,7 +261,7 @@ const Links = () => {
       amount: Boolean(amount) ? amount : "variable",
       address: account,
       redirect,
-      accountMulti,
+      amountMulti,
       type: Boolean(type) ? type : "onetime",
       rdata: JSON.stringify(rinputs),
       template_data: JSON.stringify(templateData),
@@ -273,6 +273,8 @@ const Links = () => {
 
       router.push(`/user/${newData.slug}/overview`);
       
+      showLinkAdd(false);
+
     } catch (e) {
       const errorObject = e as any;
 
@@ -370,13 +372,10 @@ const Links = () => {
                 You have no links yet, Click the button below to create links
               </span>
             </div>
-            <Link href="/dashboard/links/new">
-              <a>
-                <Button className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
+            
+                <Button onClick={() => showLinkAdd(true)} className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
                   <MdAddLink size={25} className="mr-1" /> Create Link
                 </Button>
-              </a>
-            </Link>
           </div>
         )}
 
@@ -687,14 +686,20 @@ const Links = () => {
                   className="bg-[#efefef] flex justify-between items-center rounded-b-[.9rem] px-6 py-4"
                 >
                   {!linkLoading && (
+                    
                     <Link href={"/dashboard/links/new"}>
+                      <Tooltip
+                      arrow
+                      title="Click here if you want to be able to change more things about your link"
+                    >
                       <a>
                         <Button className="!w-fit !items-center !flex !rounded-md !text-[#5f5f5f] font-bold !bg-[#d6d6d6] !capitalize !border-none">
                           <MdAddLink size={20} className="mr-1" />
                           Advanced
                         </Button>
-                      </a>
+                      </a></Tooltip>
                     </Link>
+                   
                   )}
 
                   <div className="flex items-center">
@@ -831,7 +836,7 @@ const Links = () => {
                               color="inherit"
                               size={"large"}
                               sx={{
-                                color: "#F57059",
+                                color: "#6b6b6b",
                               }}
                             >
                               <FiTrash2 size={20} />
