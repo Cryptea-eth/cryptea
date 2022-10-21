@@ -1,15 +1,15 @@
 let data: { [index: string]: any } = {
-  colorScheme: "#2196f3",
-  errorColor: "#ff8f33"
+  colorScheme: "#696969",
+  errorColor: "#ff8f33",
 };
 
 data = {
   body: {
-    backgroundColor: data.colorScheme,
+    backgroundColor: "#d9d9d9",
   },
   error: {
     backgroundColor: data.errorColor,
-    color: '#fff',
+    color: "#fff",
   },
   box: {
     background: "#f8f8f8",
@@ -60,10 +60,7 @@ const rules: { [index: string]: any } = {
     colorScheme: (color?: string) => {
       if (color !== undefined) {
         data.colorScheme = color;
-        data.body = {
-          ...data.body,
-          backgroundColor: color,
-        };
+        
         data.image = {
           ...data.image,
           "&::before": {

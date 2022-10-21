@@ -1290,7 +1290,7 @@ const NewLink = () => {
                     >
                       <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
                         <span className="uppercase font-bold mr-3">
-                          Template
+                          Custom Template
                         </span>
                         <div className="flex items-center">
                           <span className="mr-2 text-sm">

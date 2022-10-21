@@ -4,10 +4,16 @@ interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
     value: number;
+    padding?: number;
   }
 
 const TabPanel = (props: TabPanelProps) => {
-  const { children, value, index, ...other } = props;
+  const { children, padding, value, index, ...other } = props;
+
+  const pc = {
+      p: padding,
+      py: padding ? undefined : 2
+  }
 
   return (
     <div
@@ -18,7 +24,7 @@ const TabPanel = (props: TabPanelProps) => {
       {...other}
     >
       {value === index && (
-        <Box sx={{ py: 2 }}>
+        <Box sx={pc}>
           {children}
         </Box>
       )}
