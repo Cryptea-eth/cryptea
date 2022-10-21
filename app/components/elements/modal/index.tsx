@@ -6,6 +6,7 @@ import LogoSpace from "../logo";
 import meta from "../../../../public/images/metamask.png";
 import wallcon from "../../../../public/images/walletconnect.png";
 import unstop from "../../../../public/images/unstoppable.svg";
+import coinbse from "../../../../public/images/coinbase.png"; 
 import { CircularProgress, Box } from "@mui/material";
 import Router, { useRouter } from "next/router";
 import {
@@ -140,8 +141,7 @@ const AuthModal = ({
     }
   };
 
-
-  const methods = ["metaauth", "walletconnectauth" , "uauth"];
+  const methods = ["metaauth", "walletconnectauth", "coinbaseauth", "uauth"];
 
   const storeAuth = (authMethod: string) => {
     const cache = localStorage.getItem('auths');
@@ -275,7 +275,7 @@ const AuthModal = ({
           } else {
             setSupport(true);
             setIsAuth({ ...isAuth, metamask: false });
-            throw "Only Polygon network is supported";
+            throw "Network not supported";
           }
         } catch (err) {
           const error = err as Error;
@@ -287,6 +287,69 @@ const AuthModal = ({
         updAuthError("Please refresh the page");
 
         setIsAuth({ ...isAuth, metamask: false });
+      }
+    }
+  };
+
+  const clogin = async () => {
+    if (isMainAuth()) {
+      updAuthError("");
+      setIsAuth({ ...isAuth, coinbase: true });
+
+      if (!isAuthenticated || !userAuth) {
+        setSupport(false);
+        try {
+          let isAuthing: any;
+
+          if (userAuth) {
+            isAuthing = await authenticateUser({
+              signMessage: message ?? "Welcome to Cryptea",
+              type: connectors[0],
+            });
+          } else {
+            isAuthing = await connectWall(connectors[0]);
+          }
+
+          storeAuth("coinbaseauth");
+
+          if (supported.includes(chainId ? Number(chainId) : 137)) {
+            console.log(chainId);
+
+            if (isAuthing !== undefined) {
+              if (userAuth) {
+                const email = await "user".get("email");
+
+                setIsAuth({ ...isAuth, coinbase: false });
+                if (update) {
+                  update(isAuthing);
+                }
+
+                actionAuth(email as string);
+              } else {
+                
+                setIsAuth({ ...isAuth, coinbase: false });
+
+                useclose();
+              }
+            } else {
+              updAuthError("Something went wrong please try again");
+              setIsAuth({ ...isAuth, coinbase: false });
+            }
+          } else {
+            setSupport(true);
+            setIsAuth({ ...isAuth, coinbase: false });
+            throw "Network not supported";
+          }
+        } catch (err) {
+          const error = err as Error;
+          console.log(error);
+          updAuthError("Something went wrong please try again");
+          setIsAuth({ ...isAuth, coinbase: false });
+        }
+      } else {
+        updAuthError("Please refresh the page");
+
+        setIsAuth({ ...isAuth, coinbase: false });
       }
     }
   };
@@ -333,7 +396,7 @@ const AuthModal = ({
           } else {
             setIsAuth({ ...isAuth, walletconnect: false });
             setSupport(true);
-            throw "Only Polygon network is supported";
+            throw "Network not supported";
           }
         } catch (err) {
           const error = err as Error;
@@ -409,6 +472,33 @@ const AuthModal = ({
             </div>
 
             <Image src={wallcon} alt="Wallet Connect" width={40} height={40} />
+          </button>
+        ),
+        coinbaseauth: (
+          <button
+            onClick={clogin}
+            key={1}
+            style={{
+              fontFamily: "inherit",
+              borderColor: isAuth["coinbase"] ? "#f57059" : undefined,
+              color: isAuth["coinbase"] ? "#f57059" : undefined,
+              ...blurAuth("coinbase"),
+            }}
+            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
+          >
+            <div className="flex items-center">
+              {isAuth["coinbase"] && (
+                <Box className="mr-2 h-[22px] text-[#F57059]">
+                  <CircularProgress
+                    className="!w-[22px] !h-[22px]"
+                    color="inherit"
+                  />
+                </Box>
+              )}
+              Coinbase
+            </div>
+
+            <Image src={coinbse} alt="Coinbase auth" width={40} height={40} />
           </button>
         ),
         uauth: userAuth && (

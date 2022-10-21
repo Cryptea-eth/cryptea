@@ -12,7 +12,7 @@ import {
   ToggleButtonGroup,
   Tooltip,
   TextField,
-  CircularProgress,
+  CircularProgress
 } from "@mui/material";
 import SwipeableViews from "react-swipeable-views";
 import {

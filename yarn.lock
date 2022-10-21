@@ -2246,6 +2246,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-swipeable-views@^0.13.1":
+  "integrity" "sha512-Nuvywkv9CkwcUgItOCBszkc/pc8YSdiKV5E1AzOJ/p32Db50LgwhJFi5b1ANPgyWxB0Q5yn69aMURHyGi3MLyg=="
+  "resolved" "https://registry.npmjs.org/@types/react-swipeable-views/-/react-swipeable-views-0.13.1.tgz"
+  "version" "0.13.1"
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-transition-group@^4.4.0", "@types/react-transition-group@^4.4.5":
   "integrity" "sha512-juKD/eiSM3/xZYzjuzH6ZwpP+/lejltmiS3QEzV/vmb/Q8+HfDmxu+Baga8UEMGBqV88Nbg4l2hY/K2DkyaLLA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/@types/react-transition-group/-/react-transition-group-4.4.5.tgz"
