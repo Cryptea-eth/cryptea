@@ -10,17 +10,31 @@ const headers = {
 
 export const get_request = async (
   url: string,
-  config: AxiosRequestConfig<any> = {}
-): Promise<AxiosResponse<any, any>> => {
+  config: AxiosRequestConfig<any> = {},
+  key: number | undefined = 0
+): Promise<AxiosResponse<any, any> | undefined> => {
+  
+  const token: string = localStorage.getItem("userToken") ?? "";
 
-  const token:string = localStorage.getItem("userToken") ?? '';
-
-  return axios.get("/sanctum/csrf-cookie").then(async (e) => {
-    return await axios.get(url, {
-      ...config,
-      headers: { ...headers, Authorization: `Bearer ${token}` },
+  return axios
+    .get("/sanctum/csrf-cookie")
+    .then(async (e) => {
+      try {
+        return await axios.get(url, {
+          ...config,
+          headers: { ...headers, Authorization: `Bearer ${token}` },
+        });
+      } catch (ee) {
+        if (key < 4) {
+          return get_request(url, config, key++);
+        }
+      }
+    })
+    .catch((e) => {
+      if (key < 4) {
+        return get_request(url, config, key++);
+      }
     });
-  });
 };
 
 export const post_request = async (

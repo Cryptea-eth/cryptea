@@ -18,8 +18,6 @@ const User = () => {
 
    const [Template, setTemplate] = useState<React.ComponentType<{}>>();
   
-   const { signer } = useCryptea()
-
 
    useEffect(() => {
       const init = async () => {
