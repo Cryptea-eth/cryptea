@@ -16,7 +16,7 @@ const getKey = (key: string, obj: {[index: string]: any}): string | undefined =>
     }
 }
 
-export const time = async () => await (await get_request(`/time`, { params: { timezone: window.jstz.determine().name() } })).data;
+export const time = async () => await (await get_request(`/time`, { params: { timezone: window.jstz.determine().name() } }) as any).data;
 
 const allowed: CrypteaDBS = {
   links: { supports: ["get", "delete", 'save', "id", "update"], endpoint: "/link" },
@@ -89,7 +89,7 @@ String.prototype.get = async function (this:string, column: string, fresh: boole
 
         if (fresh || cache === null) {
 
-           const res = await get_request(`${allowP.endpoint}${extra}`);
+           const res:any = await get_request(`${allowP.endpoint}${extra}`);
 
             const { data } = res;
 
