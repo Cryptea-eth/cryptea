@@ -36,6 +36,7 @@ import { defineType, types } from "../../../app/components/elements/dashboard/li
 import { BiCoinStack } from "react-icons/bi";
 import Image from "next/image";
 import { useCryptea } from '../../../app/contexts/Cryptea';
+import { time } from '../../../app/contexts/Cryptea/DB';
 
 const Onetime = () => {
 
@@ -180,6 +181,8 @@ const Onetime = () => {
             });
           }
 
+          const currentTime = await time();
+
           setColumns(addColumn);
 
           const rowx: any = [];
@@ -191,7 +194,7 @@ const Onetime = () => {
               sdd = dd.sort((a: any, b: any) => b.amount - a.amount);
             } else if (paymentS == "expired") {
               sdd = dd.map((v: any) =>
-                Boolean(v.expired) ? v : undefined
+                currentTime >= v.expired ? v : undefined
               );
             }
 
