@@ -101,9 +101,10 @@ export interface mainAppManager extends AuthContext {
 }
 
 type token = { value: string | number; label: string };
+
 type pdata = {
   price: number;
-  type: "onetime" | "subscription";
+  type: "onetime" | "sub";
 };
 
 
@@ -144,7 +145,7 @@ export interface PaymentContext {
   setIs500?: React.Dispatch<React.SetStateAction<boolean>>;
   initMain?: (
     price: number,
-    type?: "subscription" | "onetime"
+    type?: "sub" | "onetime"
   ) => Promise<void>;
   amount?: string | number;
   setAmount?: React.Dispatch<React.SetStateAction<string | number>>;

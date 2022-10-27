@@ -1,46 +1,37 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.7;
-import 'hardhat/console.sol';
 
-contract Payment{
+import "./main.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+contract Payment {
+
         event TransferReceived(address indexed _to, address indexed _from, uint indexed _amount);
+
         event TransferSent(address indexed _from, address indexed _desAddr , uint indexed _amount);
 
-        address public owner;
+        Main parentContract = Main(0xA1C059147C14c69736c6EF79cD799B9D7fe85a42);
+
+        address public owner = parentContract.owner();
         address public contractAddress = address(this);
         uint256 public contractBalance;
         uint256 public wallet;  
-        uint256 public percent = 5;
+        uint256 public percent = parentContract.cut();
+
         constructor () {
-              owner = msg.sender;
-              wallet = 0;
+             
         }
 
-        modifier onlyOwners {
-             require(owner == msg.sender, "Only owners please");
-             _;
-        }
-
-        function changeCut(uint256 _percent) public onlyOwners {
-            percent = _percent;
-        }
-
-        function sendToken (address to) external payable {
-            wallet += msg.value;
-            contractBalance = address(this).balance;
-            
-            emit TransferReceived(to, msg.sender, msg.value);
-        }
 
         receive () external payable {
-            wallet += msg.value;
 
             emit TransferReceived(contractAddress, msg.sender, msg.value);
+
         }
 
-        function transferToken (address payable to) payable external {
+        function transferNative (address payable to) payable external {
             require(msg.value > 0, "balance is insufficient");
-            
+
             uint256 cut = (msg.value * percent) / 100;
 
             uint256 amount = msg.value - cut;
@@ -49,14 +40,27 @@ contract Payment{
 
             contractBalance = address(this).balance;
 
-            wallet += cut;
+            payable(owner).transfer(cut);
 
             emit TransferSent(msg.sender, to, amount);
+            
         }
 
-        function withdraw () public onlyOwners {   
-            payable(owner).transfer(wallet);
-            wallet = 0;
-            contractBalance = address(this).balance;
+        function transferToken (address payable to, uint256 value, bytes32 symbol) external {
+
+            require (owner == msg.sender, "unauthorized");
+
+             uint256 balance = IERC20(parentContract.whitelist(symbol)).balanceOf(contractAddress);
+
+             require (balance > 0, "Balance low");
+
+            uint256 cut = (value * percent) / 100;
+
+            uint256 amount = value - cut;
+
+            IERC20(parentContract.whitelist(symbol)).transfer(to, amount);
+
+            IERC20(parentContract.whitelist(symbol)).transfer(owner, cut);
+             
         }
 }

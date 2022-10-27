@@ -140,6 +140,7 @@ const generateDataSub = ({
   const edata = [];
   const label = [];
   let upd = false;
+
   for (let z = 0; z <= hourx; z += hourly) {
     const i = z / hourx;
 
@@ -201,7 +202,7 @@ const generateDataSub = ({
   };
   
 }else {
-   secondary = xdata.map((v) => Number(v.remind));
+   secondary = xdata.map((v) => Number(v.expire));
 
   gen = {
       data,
