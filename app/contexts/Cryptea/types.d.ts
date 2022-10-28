@@ -133,6 +133,7 @@ export interface PaymentContext {
   transferSuccess?: boolean;
   setTransferSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
   transferFail?: boolean;
+  explorer?: { name: string; link: string };
   setTransferFail?: React.Dispatch<React.SetStateAction<boolean>>;
   failMessage?: string;
   setFailMessage?: React.Dispatch<React.SetStateAction<string>>;
@@ -143,10 +144,9 @@ export interface PaymentContext {
   setTinterval?: React.Dispatch<React.SetStateAction<string>>;
   is500?: boolean;
   setIs500?: React.Dispatch<React.SetStateAction<boolean>>;
-  initMain?: (
-    price: number,
-    type?: "sub" | "onetime"
-  ) => Promise<void>;
+  subValue?: number;
+  setSubValue?: React.Dispatch<React.SetStateAction<number>>;
+  initMain?: (price: number, type?: "sub" | "onetime") => Promise<void>;
   amount?: string | number;
   setAmount?: React.Dispatch<React.SetStateAction<string | number>>;
   subCheck?: boolean;

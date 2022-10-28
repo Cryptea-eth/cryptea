@@ -12,10 +12,11 @@ const TabPanel = (props: TabPanelProps) => {
 
   const pc = {
       p: padding,
-      py: padding ? undefined : 2
+      py: padding !== undefined ? undefined : 2
   }
 
   return (
+    
     <div
       role="tabpanel"
       hidden={value !== index}

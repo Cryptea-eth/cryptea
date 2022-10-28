@@ -11,9 +11,7 @@ import SwipeableViews from "react-swipeable-views";
 import Link from "next/link";
 
 import {
-  OutlinedInput,
   Box,
-  MenuItem,
   Avatar,
   Tabs,
   Tab,
@@ -49,17 +47,12 @@ const Origin = ({
 
     const [value, setValue] = useState<number>(0);
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-      setValue(newValue);
-    };
 
   const {
     userD,
     setUserD,
     token,
     setToken,
-    paymentData,
-    setPaymentData,
     data,
     isLoading,
     setIsLoading,
@@ -79,6 +72,7 @@ const Origin = ({
     beginOne,
     interval,
     setTinterval,
+    explorer,
     is500,
     initMain,
     amount,
@@ -87,8 +81,19 @@ const Origin = ({
     setSubCheck,
     options,
     eSubscription,
-    setSigner
+    setSigner,
+    subValue,
+    setSubValue
   } = useContext(PaymentContext);
+
+   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+     setValue(newValue);
+     if (
+       userD!.rdata[!newValue ? "onetime" : "sub"].length <= 1
+     ) {
+       setSubValue?.(1);
+     }
+   };
 
   const {
     signer
@@ -535,13 +540,13 @@ const Origin = ({
                               </h2>
 
                               <Link
-                                href={`https://mumbai.polygonscan.com/tx/${hash}`}
+                                href={`${explorer!.link}${hash}`}
                               >
                                 <a
                                   target={"_blank"}
                                   className="text-[#5a5a5a] cursor-pointer mb-1 font-normal"
                                 >
-                                  View transaction on polygonscan
+                                  View transaction on {explorer!.name}
                                 </a>
                               </Link>
 
@@ -564,57 +569,18 @@ const Origin = ({
                             <TabPanel padding={4} value={value} index={0}>
                               {(userD?.linktype == "both" ||
                                 userD?.linktype == "onetime") && (
-                                <FormControl fullWidth>
-                                  <div className="py-3 font-bold">Token</div>
-
-                                  <Select
-                                    isClearable={false}
-                                    name="colors"
-                                    placeholder={"Tokens..."}
-                                    options={options!}
-                                    styles={{
-                                      option: (provided, state) => {
-                                        return {
-                                          ...provided,
-                                          backgroundColor: state.isSelected
-                                            ? data.colorScheme
-                                            : "transparent",
-                                          "&:active": {
-                                            backgroundColor: data.colorScheme,
-                                          },
-                                          "&:hover": {
-                                            backgroundColor: state.isSelected
-                                              ? undefined
-                                              : `${data.colorScheme}29`,
-                                          },
-                                        };
-                                      },
-                                      container: (provided, state) => ({
-                                        ...provided,
-                                        height: "58px",
-                                        "& .select__value-container": {
-                                          padding: "11.5px 14px",
-                                        },
-                                        "& .select__control:hover": {
-                                          borderColor: "#121212",
-                                        },
-                                        "& .select__control--is-focused": {
-                                          borderWidth: "2px",
-                                          borderColor: `${data.colorScheme} !important`,
-                                          boxShadow: "none",
-                                        },
-                                      }),
-                                    }}
-                                    value={token}
-                                    onChange={(e) => setToken?.(e!)}
-                                    classNamePrefix="select"
-                                  />
-
-                                  {userD.rdata["onetime"].map(
-                                    (ixn: string, i: number) => {
-                                      return (
+                                <>
+                                  <TabPanel
+                                    value={subValue as number}
+                                    index={0}
+                                    padding={0}
+                                  >
+                                    {["Name", "Email", "Phone"].map(
+                                      (ixn: string, i: number) => (
                                         <>
-                                          <div className="py-3 font-bold">
+                                          <div style={{
+                                            paddingTop: (!i && 0) || undefined
+                                          }} className="py-3 font-bold">
                                             {ixn}
                                           </div>
 
@@ -644,130 +610,243 @@ const Origin = ({
                                             }}
                                           />
                                         </>
-                                      );
-                                    }
-                                  )}
-
-                                  <div className="py-3 font-bold">
-                                    Amount (USD)
-                                    {typeof userD?.linkAmount == "number"
-                                      ? ` - $${userD?.linkAmount}`
-                                      : ""}
-                                  </div>
-
-                                  {Boolean(userD?.amountMultiple.length) &&
-                                    typeof userD?.linkAmount != "number" && (
-                                      <ToggleButtonGroup
-                                        value={amount}
-                                        sx={{
-                                          justifyContent: "space-between",
-                                          width: "100%",
-                                          "& .Mui-selected": {
-                                            backgroundColor: `${data.colorScheme} !important`,
-                                            color: `${data.white} !important`,
-                                          },
-                                          "& .MuiButtonBase-root:first-of-type":
-                                            {
-                                              marginRight: "0px !important",
-                                              marginLeft: "0px !important",
-                                            },
-                                          "&.MuiButtonBase-root": {
-                                            marginRight: "15px !important",
-                                          },
-                                          "& .MuiToggleButtonGroup-grouped": {
-                                            borderRadius: "4px !important",
-                                            minWidth: 55,
-                                            marginLeft: 3,
-                                            border:
-                                              "1px solid rgba(0, 0, 0, 0.12) !important",
-                                          },
-                                        }}
-                                        exclusive
-                                        className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                                        onChange={(e: any) => {
-                                          setTransferFail?.(false);
-                                          setLoadingText?.("");
-                                          const val = e.target.value;
-                                          setAmount?.(
-                                            val.replace(/[^\d.]/g, "")
-                                          );
-                                        }}
-                                      >
-                                        {userD?.amountMultiple.map(
-                                          (amount: number, i: number) => (
-                                            <ToggleButton
-                                              key={i}
-                                              sx={{
-                                                textTransform: "capitalize",
-                                                fontWeight: "bold",
-                                              }}
-                                              value={`${amount}`}
-                                            >
-                                              {amount}
-                                            </ToggleButton>
-                                          )
-                                        )}
-                                      </ToggleButtonGroup>
+                                      )
                                     )}
 
-                                  {Boolean(userD?.amountMultiple.length) &&
-                                    typeof userD?.linkAmount != "number" && (
-                                      <div className="py-3 font-bold">
-                                        Or input Amount manually
-                                      </div>
-                                    )}
-
-                                  {typeof userD?.linkAmount != "number" && (
-                                    <TextField
-                                      fullWidth
-                                      id="outlined-basic"
-                                      variant="outlined"
+                                    <Button
                                       sx={{
-                                        "& .Mui-focused.MuiFormLabel-root": {
-                                          color: data.colorScheme,
-                                        },
-                                        "& .Mui-focused .MuiOutlinedInput-notchedOutline":
-                                          {
-                                            borderColor: `${data.colorScheme} !important`,
-                                          },
+                                        backgroundColor: `${data.colorScheme} !important`,
                                       }}
-                                      placeholder="Amount"
-                                      value={amount}
-                                      onChange={(
-                                        e: React.ChangeEvent<
-                                          HTMLInputElement | HTMLTextAreaElement
-                                        >
-                                      ) => {
-                                        setTransferFail?.(false);
-                                        setLoadingText?.("");
-                                        const val = e.target.value;
-                                        setAmount?.(val.replace(/[^\d.]/g, ""));
+                                      variant="contained"
+                                      className="!mt-4 !py-[13px] !font-medium !capitalize"
+                                      style={{
+                                        fontFamily: "inherit",
                                       }}
-                                    />
-                                  )}
-
-                                  <Button
-                                    sx={{
-                                      backgroundColor: `${data.colorScheme} !important`,
-                                    }}
-                                    variant="contained"
-                                    className="!mt-4 !py-[13px] !font-medium !capitalize"
-                                    style={{
-                                      fontFamily: "inherit",
-                                    }}
-                                    onClick={() => beginOne?.()}
-                                    fullWidth
+                                      onClick={() => beginOne?.()}
+                                      fullWidth
+                                    >
+                                      Next
+                                    </Button>
+                                  </TabPanel>
+                                  <TabPanel
+                                    padding={0}
+                                    value={subValue as number}
+                                    index={1}
                                   >
-                                    Pay
-                                  </Button>
-                                </FormControl>
+                                    <FormControl fullWidth>
+                                      <div className="pb-3 font-bold">
+                                        Token
+                                      </div>
+
+                                      <Select
+                                        isClearable={false}
+                                        name="colors"
+                                        placeholder={"Tokens..."}
+                                        options={options!}
+                                        styles={{
+                                          option: (provided, state) => {
+                                            return {
+                                              ...provided,
+                                              backgroundColor: state.isSelected
+                                                ? data.colorScheme
+                                                : "transparent",
+                                              "&:active": {
+                                                backgroundColor:
+                                                  data.colorScheme,
+                                              },
+                                              "&:hover": {
+                                                backgroundColor:
+                                                  state.isSelected
+                                                    ? undefined
+                                                    : `${data.colorScheme}29`,
+                                              },
+                                            };
+                                          },
+                                          container: (provided, state) => ({
+                                            ...provided,
+                                            height: "58px",
+                                            "& .select__value-container": {
+                                              padding: "11.5px 14px",
+                                            },
+                                            "& .select__control:hover": {
+                                              borderColor: "#121212",
+                                            },
+                                            "& .select__control--is-focused": {
+                                              borderWidth: "2px",
+                                              borderColor: `${data.colorScheme} !important`,
+                                              boxShadow: "none",
+                                            },
+                                          }),
+                                        }}
+                                        value={token}
+                                        onChange={(e) => setToken?.(e!)}
+                                        classNamePrefix="select"
+                                      />
+
+                                      {userD.rdata["onetime"].length == 1 && (
+                                        <>
+                                          <div className="py-3 font-bold">
+                                            {userD.rdata["onetime"][0]}
+                                          </div>
+
+                                          <TextField
+                                            fullWidth
+                                            id="outlined-basic"
+                                            placeholder={`Your ${userD.rdata["onetime"][0]}`}
+                                            variant="outlined"
+                                            sx={text}
+                                            value={
+                                              pemail![0] !== undefined
+                                                ? pemail![0]
+                                                : ""
+                                            }
+                                            onChange={(
+                                              e: React.ChangeEvent<
+                                                | HTMLInputElement
+                                                | HTMLTextAreaElement
+                                              >
+                                            ) => {
+                                              setTransferFail?.(false);
+                                              setLoadingText?.("");
+                                              const val = e.target.value;
+                                              pemail![0] = val;
+
+                                              setPemail?.([...pemail!]);
+                                            }}
+                                          />
+                                        </>
+                                      )}
+
+                                      <div className="py-3 font-bold">
+                                        Amount (USD)
+                                        {typeof userD?.linkAmount == "number"
+                                          ? ` - $${userD?.linkAmount}`
+                                          : ""}
+                                      </div>
+
+                                      {Boolean(userD?.amountMultiple.length) &&
+                                        typeof userD?.linkAmount !=
+                                          "number" && (
+                                          <ToggleButtonGroup
+                                            value={amount}
+                                            sx={{
+                                              justifyContent: "space-between",
+                                              width: "100%",
+                                              "& .Mui-selected": {
+                                                backgroundColor: `${data.colorScheme} !important`,
+                                                color: `${data.white} !important`,
+                                              },
+                                              "& .MuiButtonBase-root:first-of-type":
+                                                {
+                                                  marginRight: "0px !important",
+                                                  marginLeft: "0px !important",
+                                                },
+                                              "&.MuiButtonBase-root": {
+                                                marginRight: "15px !important",
+                                              },
+                                              "& .MuiToggleButtonGroup-grouped":
+                                                {
+                                                  borderRadius:
+                                                    "4px !important",
+                                                  minWidth: 55,
+                                                  marginLeft: 3,
+                                                  border:
+                                                    "1px solid rgba(0, 0, 0, 0.12) !important",
+                                                },
+                                            }}
+                                            exclusive
+                                            className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                            onChange={(e: any) => {
+                                              setTransferFail?.(false);
+                                              setLoadingText?.("");
+                                              const val = e.target.value;
+                                              setAmount?.(
+                                                val.replace(/[^\d.]/g, "")
+                                              );
+                                            }}
+                                          >
+                                            {userD?.amountMultiple.map(
+                                              (amount: number, i: number) => (
+                                                <ToggleButton
+                                                  key={i}
+                                                  sx={{
+                                                    textTransform: "capitalize",
+                                                    fontWeight: "bold",
+                                                  }}
+                                                  value={`${amount}`}
+                                                >
+                                                  {amount}
+                                                </ToggleButton>
+                                              )
+                                            )}
+                                          </ToggleButtonGroup>
+                                        )}
+
+                                      {Boolean(userD?.amountMultiple.length) &&
+                                        typeof userD?.linkAmount !=
+                                          "number" && (
+                                          <div className="py-3 font-bold">
+                                            Or input Amount manually
+                                          </div>
+                                        )}
+
+                                      {typeof userD?.linkAmount != "number" && (
+                                        <TextField
+                                          fullWidth
+                                          id="outlined-basic"
+                                          variant="outlined"
+                                          sx={{
+                                            "& .Mui-focused.MuiFormLabel-root":
+                                              {
+                                                color: data.colorScheme,
+                                              },
+                                            "& .Mui-focused .MuiOutlinedInput-notchedOutline":
+                                              {
+                                                borderColor: `${data.colorScheme} !important`,
+                                              },
+                                          }}
+                                          placeholder="Amount"
+                                          value={amount}
+                                          onChange={(
+                                            e: React.ChangeEvent<
+                                              | HTMLInputElement
+                                              | HTMLTextAreaElement
+                                            >
+                                          ) => {
+                                            setTransferFail?.(false);
+                                            setLoadingText?.("");
+                                            const val = e.target.value;
+                                            setAmount?.(
+                                              val.replace(/[^\d.]/g, "")
+                                            );
+                                          }}
+                                        />
+                                      )}
+
+                                      <Button
+                                        sx={{
+                                          backgroundColor: `${data.colorScheme} !important`,
+                                        }}
+                                        variant="contained"
+                                        className="!mt-4 !py-[13px] !font-medium !capitalize"
+                                        style={{
+                                          fontFamily: "inherit",
+                                        }}
+                                        onClick={() => beginOne?.()}
+                                        fullWidth
+                                      >
+                                        Pay
+                                      </Button>
+                                    </FormControl>
+                                  </TabPanel>
+                                </>
                               )}
                             </TabPanel>
                             <TabPanel padding={4} value={value} index={1}>
                               {(userD?.linktype == "sub" ||
                                 userD?.linktype == "both") && (
                                 <FormControl fullWidth>
-                                  <div className="py-3 font-bold">Billed</div>
+                                  <div className="pb-3 font-bold">Billed</div>
                                   <ToggleButtonGroup
                                     value={interval}
                                     exclusive

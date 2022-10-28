@@ -53,6 +53,8 @@ export const PaymentProvider = ({
 
   const [data, setData] = useState({});
 
+  const [subValue, setSubValue] = useState<number>(0);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [userD, setUserD] = useState<{ [index: string]: any }>({});
@@ -64,6 +66,30 @@ export const PaymentProvider = ({
   const [transferFail, setTransferFail] = useState<boolean>(false);
   const [failMessage, setFailMessage] = useState<string>("");
   const [hash, setHash] = useState<string>("");
+
+  const tokenTrackers: { [index: string]: { name: string; link: string } } =
+    {
+      80001: {
+        name: "polygonscan",
+        link: "https://mumbai.polygonscan.com/tx/",
+      },
+      338: {
+        name: "Cronos Explorer",
+        link: "https://cronos.org/explorer/testnet3/tx/",
+      },
+      1313161555: {
+        name: "Aurora Explorer",
+        link: "https://explorer.testnet.aurora.dev/tx/",
+      },
+      420: {
+        name: "Optimism Explorer",
+        link: "https://goerli-optimistic.etherscan.io/tx/",
+      },
+      42261: {
+        name: "Oasis Explorer",
+        link: "https://testnet.explorer.emerald.oasis.dev/tx/",
+      },
+    };
 
   const [options, setOptions] = useState<
     { value: string | number; label: string }[]
@@ -417,7 +443,7 @@ export const PaymentProvider = ({
 
           if (type == "sub") setSubCheck(true);
 
-          setTimeout(reset, 3500);
+          setTimeout(reset, 12000);
 
         })
         .catch((err: any) => {
@@ -484,7 +510,8 @@ export const PaymentProvider = ({
     setFailMessage("");
     setTransferFail(false);
     setHash("");
-    if (Number(amount)) {
+
+    if (userD.rdata["onetime"].length > 1 && !subValue) {
       let proceed = true;
 
       pemail.forEach((val: undefined | string, i: number) => {
@@ -496,11 +523,20 @@ export const PaymentProvider = ({
           }
         }
       });
-      if (proceed) initMain(Number(amount), undefined);
-      else
-        setFailMessage(
-          "Please enter the correct details required in available fields"
-        );
+
+      if (proceed) setSubValue(1); else setFailMessage("Please enter the correct details required in available fields");
+
+    }else if (Number(amount) || subValue == 2) {
+      
+      if (!validForm(pemail[0], userD.rdata["onetime"][0].toLowerCase()) && userD.rdata["onetime"].length == 1) {
+          
+          setFailMessage("Please enter the correct details required in available fields");
+    
+          return;
+      }
+
+      initMain(Number(amount), undefined);
+      
     } else {
       setFailMessage("The amount set is invalid");
     }
@@ -519,6 +555,7 @@ export const PaymentProvider = ({
         setData,
         isLoading,
         setIsLoading,
+        explorer: tokenTrackers[token.value],
         pemail,
         setPemail,
         loadingText,
@@ -543,6 +580,8 @@ export const PaymentProvider = ({
         subCheck,
         setSubCheck,
         beginOne,
+        subValue,
+        setSubValue,
         eSubscription,
         options,
         setESubscription,
