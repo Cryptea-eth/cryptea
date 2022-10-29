@@ -243,7 +243,7 @@ const Settings = () => {
     };
     const token = await get_request("/storagekey");
     
-    const client = makeStorageClient(token.data);
+    const client = makeStorageClient(token!.data);
 
     return client.put(files, { onRootCidReady, onStoredChunk });
   };
