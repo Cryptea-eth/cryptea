@@ -314,7 +314,7 @@ const [isSaving, saveChanges] = useState<{
     const token = await get_request('/storagekey');
 
     const client = makeStorageClient(
-      token.data
+      token!.data
     );
 
     return client.put(files, { onRootCidReady, onStoredChunk });

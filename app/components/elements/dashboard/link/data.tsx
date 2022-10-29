@@ -6,8 +6,6 @@ export const initD = async (link: string) => {
   
    xd = await (`links/${link}`).get('*', true);
 
-   console.log(xd)
-
   return xd.data;
 };
 

@@ -15,7 +15,6 @@ const User = () => {
    let linkUser = router.query["slug"];
 
    const [Template, setTemplate] = useState<React.ComponentType<{}>>();
-  
 
    useEffect(() => {
       const init = async () => {

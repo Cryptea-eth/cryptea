@@ -6,7 +6,8 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Tab,
-  Tabs
+  Tabs,
+  IconButton
 } from "@mui/material";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
@@ -21,6 +22,8 @@ import { useRouter } from "next/router";
 import { useCryptea } from "../../contexts/Cryptea";
 import TabPanel from "../../components/elements/dashboard/link/TabPanel";
 import Secured from "../../components/elements/secured";
+import { subValueType } from "../../contexts/Cryptea/types";
+import { MdChevronLeft } from "react-icons/md";
 
 const Carbon = ({
   className,
@@ -33,13 +36,10 @@ const Carbon = ({
     setUserD,
     token,
     setToken,
-    paymentData,
-    setPaymentData,
     data,
     setData,
     isLoading,
     setIsLoading,
-    beginSub,
     pemail,
     setPemail,
     loadingText,
@@ -53,7 +53,7 @@ const Carbon = ({
     setFailMessage,
     hash,
     setHash,
-    beginOne,
+    begin,
     interval,
     setTinterval,
     is500,
@@ -65,6 +65,8 @@ const Carbon = ({
     options,
     eSubscription,
     setSigner,
+    subValue,
+    setSubValue,
   } = useContext(PaymentContext);
 
 
@@ -113,6 +115,14 @@ const Carbon = ({
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    setFailMessage?.("");
+    const subV = { ...subValue };
+
+    subV[newValue ? 'onetime' : 'sub'] = 0;
+
+    setSubValue?.(subV as subValueType);
+
+    setPemail?.([]);
   };
 
    const { signer } = useCryptea();
@@ -122,6 +132,16 @@ const Carbon = ({
      setSigner?.(signer);
 
    }, [signer]);
+
+   useEffect(() => {
+     if (userD!.rdata[!value ? "onetime" : "sub"].length <= 1) {
+       const nsVal = { ...subValue };
+
+       nsVal[!value ? "onetime" : "sub"] = 1;
+
+       setSubValue?.(nsVal as subValueType);
+     }
+   }, [value, userD]);
 
   return (
     <div className={`carbon ${className}`}>
@@ -203,15 +223,33 @@ const Carbon = ({
                     : usern?.charAt(0)!.toUpperCase()}
                 </Avatar>
 
-                <h2
-                  className="!font-ubuntu header mb-9"
-                  style={{
-                    ...data.header,
-                    letterSpacing: "2px",
-                  }}
-                >
-                  {Boolean(data.header.text) ? data.header.text : usern}
-                </h2>
+                <div className="items-center w-full flex mb-7">
+                  {userD!.rdata[!value ? "onetime" : "sub"].length > 1 &&
+                    subValue![!value ? "onetime" : "sub"] == 1 && (
+                      <IconButton
+                        className="mr-[6px]"
+                        onClick={() => {
+                          const nsVal = { ...subValue };
+                          nsVal[!value ? "onetime" : "sub"] = 0;
+
+                          setFailMessage?.("");
+
+                          setSubValue?.(nsVal as subValueType);
+                        }}
+                      >
+                        <MdChevronLeft color="#302f2f" size={24} />
+                      </IconButton>
+                    )}
+                  <h2
+                    className="!font-ubuntu w-full header"
+                    style={{
+                      ...data.header,
+                      letterSpacing: "2px",
+                    }}
+                  >
+                    {Boolean(data.header.text) ? data.header.text : usern}
+                  </h2>
+                </div>
                 <div className="form">
                   {/* error */}
                   {(transferFail || Boolean(failMessage)) && (
@@ -274,7 +312,7 @@ const Carbon = ({
                             setLoadingText?.("");
                             setTransferFail?.(false);
                             setSubCheck?.(false);
-                            beginSub?.();
+                            begin?.("sub");
                           }}
                           sx={{
                             transition: "all .5s",
@@ -437,274 +475,216 @@ const Carbon = ({
 
                   <SwipeableViews index={value}>
                     <TabPanel padding={4} value={value} index={0}>
-                      <div className="mb-5">
-                        <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                          Token
-                        </label>
+                      <SwipeableViews index={subValue?.onetime as number}>
+                        <TabPanel value={subValue?.onetime as number} index={0}>
+                          {userD!.rdata["onetime"].map(
+                            (ixn: string, i: number) => {
+                              return (
+                                <div key={i} className="mb-5">
+                                  <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                                    {ixn}
+                                  </div>
 
-                        <Select
-                          isClearable={false}
-                          value={token}
-                          onChange={(e) => setToken?.(e!)}
-                          name="colors"
-                          placeholder={"Tokens..."}
-                          options={options}
-                          styles={{
-                            option: (provided, state) => {
-                              return {
-                                ...provided,
-                                backgroundColor: state.isSelected
-                                  ? data.colorScheme
-                                  : "transparent",
-                                "&:active": {
-                                  backgroundColor: data.colorScheme,
-                                },
-                                "&:hover": {
-                                  backgroundColor: state.isSelected
-                                    ? undefined
-                                    : `${data.colorScheme}29`,
-                                },
-                              };
-                            },
-                            container: (provided, state) => ({
-                              ...provided,
-                              "& .select__control": {
-                                borderWidth: "0px",
-                                borderRadius: "0px",
-                                backgroundColor: "transparent",
-                                borderBottomWidth: "1px",
-                              },
-                              "& .select__value-container": {
-                                paddingLeft: "0px",
-                              },
-                              "& .select__control:hover": {
-                                borderBottomWidth: "2px",
-                                borderBottomColor: "#121212",
-                              },
-                              "& .select__control--is-focused": {
-                                borderWidth: "0px",
-                                borderBottomWidth: "2px",
-                                borderBottomColor: `${data.colorScheme} !important`,
-                                boxShadow: "none",
-                              },
-                            }),
-                          }}
-                          classNamePrefix="select"
-                        />
-                      </div>
+                                  <TextField
+                                    fullWidth
+                                    id="outlined-basic"
+                                    placeholder={`Your ${ixn}`}
+                                    variant="standard"
+                                    sx={text}
+                                    value={
+                                      pemail![i] !== undefined ? pemail![i] : ""
+                                    }
+                                    onChange={(
+                                      e: React.ChangeEvent<
+                                        HTMLInputElement | HTMLTextAreaElement
+                                      >
+                                    ) => {
+                                      setTransferFail?.(false);
+                                      setLoadingText?.("");
+                                      const val = e.target.value;
+                                      pemail![i] = val;
 
-                      {userD!.rdata["onetime"].map((ixn: string, i: number) => {
-                        return (
-                          <div key={i} className="mb-5">
-                            <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                              {ixn}
-                            </div>
-
-                            <TextField
-                              fullWidth
-                              id="outlined-basic"
-                              placeholder={`Your ${ixn}`}
-                              variant="standard"
-                              sx={text}
-                              value={pemail![i] !== undefined ? pemail![i] : ""}
-                              onChange={(
-                                e: React.ChangeEvent<
-                                  HTMLInputElement | HTMLTextAreaElement
-                                >
-                              ) => {
-                                setTransferFail?.(false);
-                                setLoadingText?.("");
-                                const val = e.target.value;
-                                pemail![i] = val;
-
-                                setPemail?.([...pemail!]);
-                              }}
-                            />
-                          </div>
-                        );
-                      })}
-
-                      <div className="mb-5">
-                        <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                          Amount (USD)
-                        </label>
-
-                        {Boolean(userD?.amountMultiple.length) &&
-                          typeof userD?.linkAmount != "number" && (
-                            <ToggleButtonGroup
-                              sx={{
-                                justifyContent: "space-between",
-                                width: "100%",
-                                "& .Mui-selected": {
-                                  backgroundColor: `${data.colorScheme} !important`,
-                                  color: `#fff !important`,
-                                },
-                                "& .MuiButtonBase-root:first-of-type": {
-                                  marginRight: "0px !important",
-                                  marginLeft: "0px !important",
-                                },
-
-                                "& .MuiToggleButtonGroup-grouped": {
-                                  borderRadius: "4px !important",
-                                  minWidth: 55,
-                                  padding: "5px",
-                                  marginLeft: 3,
-                                  border:
-                                    "1px solid rgba(0, 0, 0, 0.12) !important",
-                                },
-                              }}
-                              exclusive
-                              className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                              value={amount}
-                              onChange={(e: any) => {
-                                setTransferFail?.(false);
-                                setLoadingText?.("");
-                                const val = e.target.value;
-                                setAmount?.(val.replace(/[^\d.]/g, ""));
-                              }}
-                            >
-                              {userD?.amountMultiple.map(
-                                (amount: number, i: number) => (
-                                  <ToggleButton
-                                    key={i}
-                                    sx={{
-                                      textTransform: "capitalize",
-                                      fontWeight: "bold",
+                                      setPemail?.([...pemail!]);
                                     }}
-                                    value={`${amount}`}
-                                  >
-                                    {amount}
-                                  </ToggleButton>
-                                )
-                              )}
-                            </ToggleButtonGroup>
+                                  />
+                                </div>
+                              );
+                            }
                           )}
-
-                        <TextField
-                          sx={text}
-                          value={amount}
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            setTransferFail?.(false);
-                            setLoadingText?.("");
-                            const val = e.target.value;
-                            setAmount?.(val.replace(/[^\d.]/g, ""));
-                          }}
-                          variant="standard"
-                          name="amount"
-                          fullWidth
-                          placeholder="0.00"
-                        />
-                      </div>
-
-                      <Button
-                        sx={{
-                          marginTop: "10px",
-                          backgroundColor: `${data.colorScheme} !important`,
-                          padding: "12px !important",
-                          textAlign: "center",
-                          fontWeight: "bold !important",
-                          lineHeight: "18px",
-                          fontSize: "16px",
-                          fontFamily: "'ubuntu', sans-serif !important",
-                          width: "100%",
-                          color: "#fff",
-                          borderRadius: "5px",
-                          textTransform: "none",
-                          cursor: "pointer",
-                          "&:hover": {
-                            backgroundColor: `${data.colorScheme} !important`,
-                          },
-                        }}
-                        onClick={() => beginOne?.()}
-                      >
-                        Pay
-                      </Button>
-                    </TabPanel>
-                    <TabPanel padding={4} value={value} index={1}>
-                      <div className="mb-5">
-                        <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                          Billed
-                        </label>
-
-                        <ToggleButtonGroup
-                          value={interval}
-                          exclusive
-                          sx={{
-                            justifyContent: "space-between",
-                            width: "100%",
-                            "& .Mui-selected": {
+                          <Button
+                            sx={{
+                              marginTop: "10px",
                               backgroundColor: `${data.colorScheme} !important`,
-                              color: `#fff !important`,
-                            },
-                            "& .MuiButtonBase-root:first-of-type": {
-                              marginRight: "0px !important",
-                              marginLeft: "0px !important",
-                            },
-
-                            "& .MuiToggleButtonGroup-grouped": {
-                              borderRadius: "4px !important",
-                              minWidth: 55,
-                              padding: "5px",
-                              marginLeft: 3,
-                              border:
-                                "1px solid rgba(0, 0, 0, 0.12) !important",
-                            },
-                          }}
-                          className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                          onChange={(e: any) => {
-                            setTransferFail?.(false);
-                            setLoadingText?.("");
-                            const val = e.target.value;
-                            setTinterval?.(val);
-                          }}
-                        >
-                          <ToggleButton
-                            className="capitalize font-bold"
-                            value="daily"
+                              padding: "12px !important",
+                              textAlign: "center",
+                              fontWeight: "bold !important",
+                              lineHeight: "18px",
+                              fontSize: "16px",
+                              fontFamily: "'ubuntu', sans-serif !important",
+                              width: "100%",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              textTransform: "none",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: `${data.colorScheme} !important`,
+                              },
+                            }}
+                            onClick={() => begin?.("onetime")}
                           >
-                            Daily
-                          </ToggleButton>
+                            Next
+                          </Button>
+                        </TabPanel>
 
-                          <ToggleButton
-                            className="capitalize font-bold"
-                            value="weekly"
-                          >
-                            Weekly
-                          </ToggleButton>
-                          <ToggleButton
-                            className="capitalize font-bold"
-                            value="monthly"
-                          >
-                            Monthly
-                          </ToggleButton>
+                        <TabPanel value={subValue?.onetime as number} index={1}>
+                          <div className="mb-5">
+                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                              Token
+                            </label>
 
-                          <ToggleButton
-                            className="capitalize font-bold"
-                            value="yearly"
-                          >
-                            Yearly
-                          </ToggleButton>
-                        </ToggleButtonGroup>
-                      </div>
+                            <Select
+                              isClearable={false}
+                              value={token}
+                              onChange={(e) => setToken?.(e!)}
+                              name="colors"
+                              placeholder={"Tokens..."}
+                              options={options}
+                              styles={{
+                                option: (provided, state) => {
+                                  return {
+                                    ...provided,
+                                    backgroundColor: state.isSelected
+                                      ? data.colorScheme
+                                      : "transparent",
+                                    "&:active": {
+                                      backgroundColor: data.colorScheme,
+                                    },
+                                    "&:hover": {
+                                      backgroundColor: state.isSelected
+                                        ? undefined
+                                        : `${data.colorScheme}29`,
+                                    },
+                                  };
+                                },
+                                container: (provided, state) => ({
+                                  ...provided,
+                                  "& .select__control": {
+                                    borderWidth: "0px",
+                                    borderRadius: "0px",
+                                    backgroundColor: "transparent",
+                                    borderBottomWidth: "1px",
+                                  },
+                                  "& .select__value-container": {
+                                    paddingLeft: "0px",
+                                  },
+                                  "& .select__control:hover": {
+                                    borderBottomWidth: "2px",
+                                    borderBottomColor: "#121212",
+                                  },
+                                  "& .select__control--is-focused": {
+                                    borderWidth: "0px",
+                                    borderBottomWidth: "2px",
+                                    borderBottomColor: `${data.colorScheme} !important`,
+                                    boxShadow: "none",
+                                  },
+                                }),
+                              }}
+                              classNamePrefix="select"
+                            />
+                          </div>
 
-                      {userD!.rdata["sub"].map((ixn: string, i: number) => {
-                        return (
-                          <div key={i} className="mb-5">
-                            <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                              {ixn}
+                          {userD!.rdata["onetime"].length == 1 && (
+                            <div className="mb-5">
+                              <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                                {userD!.rdata["onetime"][0]}
+                              </div>
+
+                              <TextField
+                                fullWidth
+                                id="outlined-basic"
+                                placeholder={`Your ${
+                                  userD!.rdata["onetime"][0]
+                                }`}
+                                variant="standard"
+                                sx={text}
+                                value={
+                                  pemail![0] !== undefined ? pemail![0] : ""
+                                }
+                                onChange={(
+                                  e: React.ChangeEvent<
+                                    HTMLInputElement | HTMLTextAreaElement
+                                  >
+                                ) => {
+                                  setTransferFail?.(false);
+                                  setLoadingText?.("");
+                                  const val = e.target.value;
+                                  pemail![0] = val;
+
+                                  setPemail?.([...pemail!]);
+                                }}
+                              />
                             </div>
+                          )}
+
+                          <div className="mb-5">
+                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                              Amount (USD)
+                            </label>
+
+                            {Boolean(userD?.amountMultiple.length) &&
+                              typeof userD?.linkAmount != "number" && (
+                                <ToggleButtonGroup
+                                  sx={{
+                                    justifyContent: "space-between",
+                                    width: "100%",
+                                    "& .Mui-selected": {
+                                      backgroundColor: `${data.colorScheme} !important`,
+                                      color: `#fff !important`,
+                                    },
+                                    "& .MuiButtonBase-root:first-of-type": {
+                                      marginRight: "0px !important",
+                                      marginLeft: "0px !important",
+                                    },
+
+                                    "& .MuiToggleButtonGroup-grouped": {
+                                      borderRadius: "4px !important",
+                                      minWidth: 55,
+                                      padding: "5px",
+                                      marginLeft: 3,
+                                      border:
+                                        "1px solid rgba(0, 0, 0, 0.12) !important",
+                                    },
+                                  }}
+                                  exclusive
+                                  className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                  value={amount}
+                                  onChange={(e: any) => {
+                                    setTransferFail?.(false);
+                                    setLoadingText?.("");
+                                    const val = e.target.value;
+                                    setAmount?.(val.replace(/[^\d.]/g, ""));
+                                  }}
+                                >
+                                  {userD?.amountMultiple.map(
+                                    (amount: number, i: number) => (
+                                      <ToggleButton
+                                        key={i}
+                                        sx={{
+                                          textTransform: "capitalize",
+                                          fontWeight: "bold",
+                                        }}
+                                        value={`${amount}`}
+                                      >
+                                        {amount}
+                                      </ToggleButton>
+                                    )
+                                  )}
+                                </ToggleButtonGroup>
+                              )}
 
                             <TextField
-                              fullWidth
-                              id="outlined-basic"
-                              placeholder={`Your ${ixn}`}
-                              variant="standard"
                               sx={text}
-                              value={pemail![i] !== undefined ? pemail![i] : ""}
+                              value={amount}
                               onChange={(
                                 e: React.ChangeEvent<
                                   HTMLInputElement | HTMLTextAreaElement
@@ -713,23 +693,112 @@ const Carbon = ({
                                 setTransferFail?.(false);
                                 setLoadingText?.("");
                                 const val = e.target.value;
-                                pemail![i] = val;
-
-                                setPemail?.([...pemail!]);
+                                setAmount?.(val.replace(/[^\d.]/g, ""));
                               }}
+                              variant="standard"
+                              name="amount"
+                              fullWidth
+                              placeholder="0.00"
                             />
                           </div>
-                        );
-                      })}
 
-                      <div className="mb-5">
-                        <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                          Amount (USD)
-                        </label>
+                          <Button
+                            sx={{
+                              marginTop: "10px",
+                              backgroundColor: `${data.colorScheme} !important`,
+                              padding: "12px !important",
+                              textAlign: "center",
+                              fontWeight: "bold !important",
+                              lineHeight: "18px",
+                              fontSize: "16px",
+                              fontFamily: "'ubuntu', sans-serif !important",
+                              width: "100%",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              textTransform: "none",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: `${data.colorScheme} !important`,
+                              },
+                            }}
+                            onClick={() => begin?.("onetime")}
+                          >
+                            Pay
+                          </Button>
+                        </TabPanel>
+                      </SwipeableViews>
+                    </TabPanel>
 
-                        {Boolean(userD?.amountMultiple.length) &&
-                          typeof userD?.linkAmount != "number" && (
+                    <TabPanel padding={4} value={value} index={1}>
+                      <SwipeableViews index={subValue?.sub as number}>
+                        <TabPanel value={subValue?.sub as number} index={0}>
+                          {userD!.rdata["sub"].map((ixn: string, i: number) => {
+                            return (
+                              <div key={i} className="mb-5">
+                                <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                                  {ixn}
+                                </div>
+
+                                <TextField
+                                  fullWidth
+                                  id="outlined-basic"
+                                  placeholder={`Your ${ixn}`}
+                                  variant="standard"
+                                  sx={text}
+                                  value={
+                                    pemail![i] !== undefined ? pemail![i] : ""
+                                  }
+                                  onChange={(
+                                    e: React.ChangeEvent<
+                                      HTMLInputElement | HTMLTextAreaElement
+                                    >
+                                  ) => {
+                                    setTransferFail?.(false);
+                                    setLoadingText?.("");
+                                    const val = e.target.value;
+                                    pemail![i] = val;
+
+                                    setPemail?.([...pemail!]);
+                                  }}
+                                />
+                              </div>
+                            );
+                          })}
+
+                          <Button
+                            sx={{
+                              marginTop: "10px",
+                              backgroundColor: `${data.colorScheme} !important`,
+                              padding: "12px !important",
+                              textAlign: "center",
+                              fontWeight: "bold !important",
+                              lineHeight: "18px",
+                              fontSize: "16px",
+                              fontFamily: "'ubuntu', sans-serif !important",
+                              width: "100%",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              textTransform: "none",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: `${data.colorScheme} !important`,
+                              },
+                            }}
+                            onClick={() => begin?.("sub")}
+                          >
+                            Next
+                          </Button>
+                        </TabPanel>
+
+                        <TabPanel value={subValue?.sub as number} index={1}>
+                          <div className="mb-5">
+                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                              Billed
+                            </label>
+
                             <ToggleButtonGroup
+                              value={interval}
+                              exclusive
                               sx={{
                                 justifyContent: "space-between",
                                 width: "100%",
@@ -751,82 +820,182 @@ const Carbon = ({
                                     "1px solid rgba(0, 0, 0, 0.12) !important",
                                 },
                               }}
-                              exclusive
                               className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                              value={amount}
                               onChange={(e: any) => {
+                                setTransferFail?.(false);
+                                setLoadingText?.("");
+                                const val = e.target.value;
+                                setTinterval?.(val);
+                              }}
+                            >
+                              <ToggleButton
+                                className="capitalize font-bold"
+                                value="daily"
+                              >
+                                Daily
+                              </ToggleButton>
+
+                              <ToggleButton
+                                className="capitalize font-bold"
+                                value="weekly"
+                              >
+                                Weekly
+                              </ToggleButton>
+                              <ToggleButton
+                                className="capitalize font-bold"
+                                value="monthly"
+                              >
+                                Monthly
+                              </ToggleButton>
+
+                              <ToggleButton
+                                className="capitalize font-bold"
+                                value="yearly"
+                              >
+                                Yearly
+                              </ToggleButton>
+                            </ToggleButtonGroup>
+                          </div>
+
+                          {userD!.rdata["sub"].length == 1 &&
+                            userD!.rdata["sub"][0] == "Email" && (
+                              <div className="mb-5">
+                                <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                                  {userD!.rdata["onetime"][0]}
+                                </div>
+
+                                <TextField
+                                  fullWidth
+                                  id="outlined-basic"
+                                  placeholder={`Your ${
+                                    userD!.rdata["onetime"][0]
+                                  }`}
+                                  variant="standard"
+                                  sx={text}
+                                  value={
+                                    pemail![0] !== undefined ? pemail![0] : ""
+                                  }
+                                  onChange={(
+                                    e: React.ChangeEvent<
+                                      HTMLInputElement | HTMLTextAreaElement
+                                    >
+                                  ) => {
+                                    setTransferFail?.(false);
+                                    setLoadingText?.("");
+                                    const val = e.target.value;
+                                    pemail![0] = val;
+
+                                    setPemail?.([...pemail!]);
+                                  }}
+                                />
+                              </div>
+                            )}
+
+                          <div className="mb-5">
+                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                              Amount (USD)
+                            </label>
+
+                            {Boolean(userD?.amountMultiple.length) &&
+                              typeof userD?.linkAmount != "number" && (
+                                <ToggleButtonGroup
+                                  sx={{
+                                    justifyContent: "space-between",
+                                    width: "100%",
+                                    "& .Mui-selected": {
+                                      backgroundColor: `${data.colorScheme} !important`,
+                                      color: `#fff !important`,
+                                    },
+                                    "& .MuiButtonBase-root:first-of-type": {
+                                      marginRight: "0px !important",
+                                      marginLeft: "0px !important",
+                                    },
+
+                                    "& .MuiToggleButtonGroup-grouped": {
+                                      borderRadius: "4px !important",
+                                      minWidth: 55,
+                                      padding: "5px",
+                                      marginLeft: 3,
+                                      border:
+                                        "1px solid rgba(0, 0, 0, 0.12) !important",
+                                    },
+                                  }}
+                                  exclusive
+                                  className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                  value={amount}
+                                  onChange={(e: any) => {
+                                    setTransferFail?.(false);
+                                    setLoadingText?.("");
+                                    const val = e.target.value;
+                                    setAmount?.(val.replace(/[^\d.]/g, ""));
+                                  }}
+                                >
+                                  {userD?.amountMultiple.map(
+                                    (amount: number, i: number) => (
+                                      <ToggleButton
+                                        key={i}
+                                        sx={{
+                                          textTransform: "capitalize",
+                                          fontWeight: "bold",
+                                        }}
+                                        value={`${amount}`}
+                                      >
+                                        {amount}
+                                      </ToggleButton>
+                                    )
+                                  )}
+                                </ToggleButtonGroup>
+                              )}
+
+                            <TextField
+                              sx={text}
+                              value={amount}
+                              onChange={(
+                                e: React.ChangeEvent<
+                                  HTMLInputElement | HTMLTextAreaElement
+                                >
+                              ) => {
                                 setTransferFail?.(false);
                                 setLoadingText?.("");
                                 const val = e.target.value;
                                 setAmount?.(val.replace(/[^\d.]/g, ""));
                               }}
-                            >
-                              {userD?.amountMultiple.map(
-                                (amount: number, i: number) => (
-                                  <ToggleButton
-                                    key={i}
-                                    sx={{
-                                      textTransform: "capitalize",
-                                      fontWeight: "bold",
-                                    }}
-                                    value={`${amount}`}
-                                  >
-                                    {amount}
-                                  </ToggleButton>
-                                )
-                              )}
-                            </ToggleButtonGroup>
-                          )}
+                              variant="standard"
+                              name="amount"
+                              fullWidth
+                              placeholder="0.00"
+                            />
+                          </div>
 
-                        <TextField
-                          sx={text}
-                          value={amount}
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            setTransferFail?.(false);
-                            setLoadingText?.("");
-                            const val = e.target.value;
-                            setAmount?.(val.replace(/[^\d.]/g, ""));
-                          }}
-                          variant="standard"
-                          name="amount"
-                          fullWidth
-                          placeholder="0.00"
-                        />
-                      </div>
-
-                      <Button
-                        sx={{
-                          marginTop: "10px",
-                          backgroundColor: `${data.colorScheme} !important`,
-                          padding: "12px !important",
-                          textAlign: "center",
-                          fontWeight: "bold !important",
-                          lineHeight: "18px",
-                          fontSize: "16px",
-                          fontFamily: "'ubuntu', sans-serif !important",
-                          width: "100%",
-                          color: "#fff",
-                          borderRadius: "5px",
-                          textTransform: "none",
-                          cursor: "pointer",
-                          "&:hover": {
-                            backgroundColor: `${data.colorScheme} !important`,
-                          },
-                        }}
-                        onClick={() => beginSub?.()}
-                      >
-                        Pay
-                      </Button>
+                          <Button
+                            sx={{
+                              marginTop: "10px",
+                              backgroundColor: `${data.colorScheme} !important`,
+                              padding: "12px !important",
+                              textAlign: "center",
+                              fontWeight: "bold !important",
+                              lineHeight: "18px",
+                              fontSize: "16px",
+                              fontFamily: "'ubuntu', sans-serif !important",
+                              width: "100%",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              textTransform: "none",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: `${data.colorScheme} !important`,
+                              },
+                            }}
+                            onClick={() => begin?.("sub")}
+                          >
+                            Pay
+                          </Button>
+                        </TabPanel>
+                      </SwipeableViews>
                     </TabPanel>
                   </SwipeableViews>
 
                   <Secured />
-
-
                 </div>
               </div>
             </div>

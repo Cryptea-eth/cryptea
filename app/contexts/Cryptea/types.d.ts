@@ -107,6 +107,10 @@ type pdata = {
   type: "onetime" | "sub";
 };
 
+export interface subValueType {
+  [index: string]: number;
+  onetime: number; sub: number
+}
 
 export interface PaymentContext {
   userD?: { [index: string]: any };
@@ -123,8 +127,7 @@ export interface PaymentContext {
   setData?: React.Dispatch<any>;
   isLoading?: boolean;
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
-  beginSub?: () => void;
-  beginOne?: () => void;
+  begin?: (type: 'onetime' | 'sub') => void;
   reset?: () => void;
   pemail?: string[];
   setPemail?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -144,8 +147,8 @@ export interface PaymentContext {
   setTinterval?: React.Dispatch<React.SetStateAction<string>>;
   is500?: boolean;
   setIs500?: React.Dispatch<React.SetStateAction<boolean>>;
-  subValue?: number;
-  setSubValue?: React.Dispatch<React.SetStateAction<number>>;
+  subValue?: subValueType;
+  setSubValue?: React.Dispatch<React.SetStateAction<subValueType>>;
   initMain?: (price: number, type?: "sub" | "onetime") => Promise<void>;
   amount?: string | number;
   setAmount?: React.Dispatch<React.SetStateAction<string | number>>;

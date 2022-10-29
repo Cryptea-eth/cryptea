@@ -6,7 +6,7 @@ import * as ethers from "ethers";
 import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
 import { initD } from "../components/elements/dashboard/link/data";
 import { useSwitchNetwork } from "wagmi";
-import { PaymentContext as PaymentCont } from "./Cryptea/types";
+import { PaymentContext as PaymentCont, subValueType } from "./Cryptea/types";
 import AuthModal from "../components/elements/modal";
 
 export const PaymentContext = createContext<PaymentCont>({});
@@ -26,7 +26,7 @@ export const PaymentProvider = ({
 
   const [interval, setTinterval] = useState<string>("daily");
 
-  const contractAddress: string= "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43";
+  const contractAddress: string = "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43";
 
   useEffect(() => {}, [username, router.isReady]);
 
@@ -53,7 +53,10 @@ export const PaymentProvider = ({
 
   const [data, setData] = useState({});
 
-  const [subValue, setSubValue] = useState<number>(0);
+  const [subValue, setSubValue] = useState<subValueType>({
+    onetime: 0,
+    sub: 0,
+  });
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -67,29 +70,28 @@ export const PaymentProvider = ({
   const [failMessage, setFailMessage] = useState<string>("");
   const [hash, setHash] = useState<string>("");
 
-  const tokenTrackers: { [index: string]: { name: string; link: string } } =
-    {
-      80001: {
-        name: "polygonscan",
-        link: "https://mumbai.polygonscan.com/tx/",
-      },
-      338: {
-        name: "Cronos Explorer",
-        link: "https://cronos.org/explorer/testnet3/tx/",
-      },
-      1313161555: {
-        name: "Aurora Explorer",
-        link: "https://explorer.testnet.aurora.dev/tx/",
-      },
-      420: {
-        name: "Optimism Explorer",
-        link: "https://goerli-optimistic.etherscan.io/tx/",
-      },
-      42261: {
-        name: "Oasis Explorer",
-        link: "https://testnet.explorer.emerald.oasis.dev/tx/",
-      },
-    };
+  const tokenTrackers: { [index: string]: { name: string; link: string } } = {
+    80001: {
+      name: "polygonscan",
+      link: "https://mumbai.polygonscan.com/tx/",
+    },
+    338: {
+      name: "Cronos Explorer",
+      link: "https://cronos.org/explorer/testnet3/tx/",
+    },
+    1313161555: {
+      name: "Aurora Explorer",
+      link: "https://explorer.testnet.aurora.dev/tx/",
+    },
+    420: {
+      name: "Optimism Explorer",
+      link: "https://goerli-optimistic.etherscan.io/tx/",
+    },
+    42261: {
+      name: "Oasis Explorer",
+      link: "https://testnet.explorer.emerald.oasis.dev/tx/",
+    },
+  };
 
   const [options, setOptions] = useState<
     { value: string | number; label: string }[]
@@ -287,7 +289,6 @@ export const PaymentProvider = ({
     id?: string;
   } = userD;
 
-
   if (!userD) {
     router.push("/404");
   }
@@ -338,14 +339,24 @@ export const PaymentProvider = ({
 
   const validForm = (value: string, valid: string) => {
     if (valid == "email" && !validator.isEmail(value)) {
+      if (!failMessage.length)
+        setFailMessage("A valid email address is required");
+
       return false;
     }
 
     if (valid == "name" && !validator.isAlphanumeric(value)) {
+      if (!failMessage.length) setFailMessage("A valid name is required");
+
       return false;
     }
 
     if (support.indexOf(valid) == -1) {
+      if (!failMessage.length)
+        setFailMessage(
+          "Please enter the correct details required in available fields"
+        );
+
       return false;
     }
 
@@ -359,7 +370,6 @@ export const PaymentProvider = ({
     price: number,
     type: "sub" | "onetime" = "onetime"
   ) => {
-
     let from = "";
 
     if (!connected || chainId != token.value) {
@@ -396,7 +406,6 @@ export const PaymentProvider = ({
           value: ethers.utils.parseEther(ether),
         }) //receiver
         .then(async (init: any) => {
-
           console.log(init);
 
           setHash(init.hash);
@@ -444,7 +453,6 @@ export const PaymentProvider = ({
           if (type == "sub") setSubCheck(true);
 
           setTimeout(reset, 12000);
-
         })
         .catch((err: any) => {
           const error = err as Error;
@@ -455,8 +463,8 @@ export const PaymentProvider = ({
             setLoadingText("");
           }
         });
-      }
-    };
+    }
+  };
 
   useEffect(() => {
     if (connected && paymentData !== undefined) {
@@ -471,72 +479,36 @@ export const PaymentProvider = ({
 
   const [auth, setAuth] = useState<boolean>(true);
 
-  const beginSub = () => {
+  const begin = (type: "onetime" | "sub") => {
     setFailMessage("");
     setTransferFail(false);
     setHash("");
 
-    if (Number(amount)) {
-      if (pemail.length) {
-        let proceed = true;
-
-        pemail.forEach((val: undefined | string, i: number) => {
-          if (val !== undefined && val.length) {
-            if (userD.rdata["sub"][i] !== undefined) {
-              if (!validForm(val, userD.rdata["sub"][i].toLowerCase())) {
-                proceed = false;
-              }
-            }
-          }
-        });
-
-        if (proceed) {
-          setESubscription([]);
-          initMain(Number(amount), "sub");
-        } else {
-          setFailMessage(
-            "Please enter the correct details required in available fields"
-          );
-        }
-      } else {
-        setFailMessage("Your email is required");
-      }
-    } else {
-      setFailMessage("The amount set is invalid");
-    }
-  };
-
-  const beginOne = () => {
-    setFailMessage("");
-    setTransferFail(false);
-    setHash("");
-
-    if (userD.rdata["onetime"].length > 1 && !subValue) {
+    if (userD.rdata[type].length > 1 && !subValue[type]) {
       let proceed = true;
 
-      pemail.forEach((val: undefined | string, i: number) => {
-        if (val !== undefined && val.length) {
-          if (userD.rdata["onetime"][i] !== undefined) {
-            if (!validForm(val, userD.rdata["onetime"][i].toLowerCase())) {
-              proceed = false;
-            }
-          }
-        }
+      userD.rdata[type].forEach((val: string, i: number) => {
+        if (!validForm(Boolean(pemail[i]) ? pemail[i] : "", val.toLowerCase()))
+          proceed = false;
       });
 
-      if (proceed) setSubValue(1); else setFailMessage("Please enter the correct details required in available fields");
 
-    }else if (Number(amount) || subValue == 2) {
-      
-      if (!validForm(pemail[0], userD.rdata["onetime"][0].toLowerCase()) && userD.rdata["onetime"].length == 1) {
-          
-          setFailMessage("Please enter the correct details required in available fields");
-    
-          return;
+      if (proceed) {
+         subValue[type] = 1;
+        setSubValue({ ...subValue });
+      } else {
+        return;
       }
 
-      initMain(Number(amount), undefined);
-      
+    } else if (Number(amount) || subValue[type] == 1) {
+      if (
+        !validForm(pemail[0], userD.rdata[type][0].toLowerCase()) &&
+        userD.rdata[type].length == 1
+      ) {
+        return;
+      }
+
+      initMain(Number(amount), type);
     } else {
       setFailMessage("The amount set is invalid");
     }
@@ -576,10 +548,9 @@ export const PaymentProvider = ({
         initMain,
         amount,
         setAmount,
-        beginSub,
         subCheck,
         setSubCheck,
-        beginOne,
+        begin,
         subValue,
         setSubValue,
         eSubscription,
