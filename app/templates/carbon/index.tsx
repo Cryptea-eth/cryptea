@@ -57,7 +57,6 @@ const Carbon = ({
     interval,
     setTinterval,
     is500,
-    initMain,
     amount,
     reset,
     setAmount,
@@ -188,7 +187,7 @@ const Carbon = ({
                             backgroundColor: `${data.hoverColorScheme} !important`,
                           },
                         }}
-                        className="!ml-2 !transition-all !delay-500 !text-sm !capitalize !rounded-lg !font-semibold !py-4 !px-4 !mx-auto"
+                        className="!ml-2 !transition-all !delay-500 !text-sm !capitalize !rounded-lg !font-semibold !py-3 !px-4 !mx-auto"
                       >
                         Refresh Page
                       </Button>

@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import Router from 'next/router';
 
 axios.defaults.baseURL = "https://ab.cryptea.me";
 axios.defaults.withCredentials = true;
@@ -7,6 +8,8 @@ const headers = {
   accept: "application/json",
   "Content-Type": "application/json",
 };
+
+axios.defaults.timeout = 6000;
 
 export const get_request = async (
   url: string,
@@ -25,15 +28,20 @@ export const get_request = async (
           headers: { ...headers, Authorization: `Bearer ${token}` },
         });
       } catch (ee) {
-        if (key < 4) {
-          return get_request(url, config, key++);
+
+        if (key <= 6) {
+          return get_request(url, config, key + 1);
+        } else {
+          Router.push('/timeout');
         }
       }
     })
     .catch((e) => {
-      if (key < 4) {
-        return get_request(url, config, key++);
-      }
+      if (key <= 6) {
+        return get_request(url, config, key + 1);
+      } else {
+          Router.push('/timeout');
+      } 
     });
 };
 

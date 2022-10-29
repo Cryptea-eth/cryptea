@@ -243,7 +243,7 @@ useEffect(() => {
                 <Button
                   variant="contained"
                   type="submit"
-                  className="!text-sm !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-4 !px-10"
+                  className="!text-sm !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-10"
                 >
                   Save
                 </Button>

@@ -76,7 +76,6 @@ const Origin = ({
     setTinterval,
     explorer,
     is500,
-    initMain,
     amount,
     reset,
     setAmount,
@@ -190,7 +189,7 @@ const Origin = ({
                           backgroundColor: `${data.colorScheme} !important`,
                           color: `#FFF !important`,
                         }}
-                        className="!ml-2 !transition-all !delay-500 !text-sm !capitalize !rounded-lg !font-semibold !py-4 !px-4 !mx-auto"
+                        className="!ml-2 !transition-all !delay-500 !text-sm !capitalize !rounded-lg !font-semibold !py-3 !px-4 !mx-auto"
                       >
                         Refresh Page
                       </Button>
