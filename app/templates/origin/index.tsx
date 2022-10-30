@@ -102,6 +102,7 @@ const Origin = ({
   }, [signer])
 
   useEffect(() => {
+    if (userD!.rdata !== undefined) {
       if (userD!.rdata[!value ? "onetime" : "sub"].length <= 1) {
 
         const nsVal = { ...subValue }
@@ -111,6 +112,7 @@ const Origin = ({
         setSubValue?.(nsVal as subValueType);
 
       }
+    }
       
   }, [value, userD]);
 

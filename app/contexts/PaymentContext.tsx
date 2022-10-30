@@ -479,6 +479,12 @@ export const PaymentProvider = ({
 
   const [auth, setAuth] = useState<boolean>(true);
 
+  const beginManual = (type: "onetime" | "sub") => {
+
+    
+
+  }
+
   const begin = (type: "onetime" | "sub") => {
     setFailMessage("");
     setTransferFail(false);

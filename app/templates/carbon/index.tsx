@@ -132,14 +132,17 @@ const Carbon = ({
 
    }, [signer]);
 
+
    useEffect(() => {
-     if (userD!.rdata[!value ? "onetime" : "sub"].length <= 1) {
-       const nsVal = { ...subValue };
+    if (userD!.rdata !== undefined) {
+        if (userD!.rdata[!value ? "onetime" : "sub"].length <= 1) {
+          const nsVal = { ...subValue };
 
-       nsVal[!value ? "onetime" : "sub"] = 1;
+          nsVal[!value ? "onetime" : "sub"] = 1;
 
-       setSubValue?.(nsVal as subValueType);
-     }
+          setSubValue?.(nsVal as subValueType);
+        }
+    }
    }, [value, userD]);
 
   return (
