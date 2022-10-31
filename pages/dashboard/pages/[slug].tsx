@@ -746,7 +746,7 @@ useEffect(() => {
                               ].sortAlignment("left");
                             }}
                             className="flex h-[30px] transition-all delay-300 hover:bg-[#707070] cursor-pointer bg-[#9d9d9d] items-center justify-center"
-                            title="Alignt Left"
+                            title="Align Left"
                           >
                             <FiAlignLeft color={"#fff"} size={19} />
                           </button>
