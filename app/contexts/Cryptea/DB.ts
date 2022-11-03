@@ -16,9 +16,10 @@ const getKey = (key: string, obj: {[index: string]: any}): string | undefined =>
     }
 }
 
-export const time = async () => await (await get_request(`/time`, { params: { timezone: window.jstz.determine().name() } }) as any).data;
+export const time = async () => await (await get_request(`/time`, { params: { timezone: window.jstz.determine().name() } }) as any || { data: undefined }).data;
 
 const allowed: CrypteaDBS = {
+
   links: { supports: ["get", "delete", 'save', "id", "update"], endpoint: "/link" },
 
   user: { supports: ["get", "update"], endpoint: "/user" },
@@ -91,7 +92,7 @@ String.prototype.get = async function (this:string, column: string, fresh: boole
 
            const res:any = await get_request(`${allowP.endpoint}${extra}`);
 
-            const { data } = res;
+            const { data } = res || { data: { error: undefined } };
 
            if (!data.error || data.error == undefined) {
                 localStorage.setItem(pstring[0].toLowerCase(), JSON.stringify(data));
@@ -127,7 +128,7 @@ String.prototype.update = async function (this: string, obj: Object, id?: number
 
    const res = await patch_request(`${allowP.endpoint}${extra}`, obj);
 
-   const { data } = res;
+   const { data } = res || { data: { error: undefined } };
 
    if (!data.error || data.error == undefined) {
      return {
@@ -169,7 +170,7 @@ String.prototype.save = async function (this: string, obj: Object) {
 
       const res = await post_request(`${allowP.endpoint}${extra}`, obj);
 
-        const { data } = res;
+        const { data } = res || { data: { error: undefined } };
 
         if (!data.error || data.error == undefined) {
             return {
@@ -209,7 +210,7 @@ String.prototype.delete = async function (this: string, id?: number) {
       try {
         const res = await del_request(`${allowP.endpoint}${extra}`);
 
-        const { data } = res;
+        const { data } = res || { data: { error: undefined } };
 
         if (!data.error || data.error == undefined) {
           return {

@@ -68,8 +68,6 @@ const Carbon = ({
     setSubValue,
   } = useContext(PaymentContext);
 
-
-
   const { pathname } = useRouter();
 
   function a11yProps(index: number) {
@@ -314,7 +312,7 @@ const Carbon = ({
                             setLoadingText?.("");
                             setTransferFail?.(false);
                             setSubCheck?.(false);
-                            begin?.("sub");
+                            begin?.("sub", true);
                           }}
                           sx={{
                             transition: "all .5s",
@@ -532,7 +530,7 @@ const Carbon = ({
                                 backgroundColor: `${data.colorScheme} !important`,
                               },
                             }}
-                            onClick={() => begin?.("onetime")}
+                            onClick={() => begin?.("onetime", true)}
                           >
                             Next
                           </Button>
@@ -704,29 +702,54 @@ const Carbon = ({
                             />
                           </div>
 
-                          <Button
-                            sx={{
-                              marginTop: "10px",
-                              backgroundColor: `${data.colorScheme} !important`,
-                              padding: "12px !important",
-                              textAlign: "center",
-                              fontWeight: "bold !important",
-                              lineHeight: "18px",
-                              fontSize: "16px",
-                              fontFamily: "'ubuntu', sans-serif !important",
-                              width: "100%",
-                              color: "#fff",
-                              borderRadius: "5px",
-                              textTransform: "none",
-                              cursor: "pointer",
-                              "&:hover": {
+                          <div className="">
+                            <Button
+                              sx={{
+                                marginTop: "10px",
                                 backgroundColor: `${data.colorScheme} !important`,
-                              },
-                            }}
-                            onClick={() => begin?.("onetime")}
-                          >
-                            Pay
-                          </Button>
+                                padding: "12px !important",
+                                textAlign: "center",
+                                fontWeight: "bold !important",
+                                lineHeight: "18px",
+                                fontSize: "16px",
+                                fontFamily: "'ubuntu', sans-serif !important",
+                                width: "100%",
+                                color: "#fff",
+                                borderRadius: "5px",
+                                textTransform: "none",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  backgroundColor: `${data.colorScheme} !important`,
+                                },
+                              }}
+                              onClick={() => begin?.("onetime", false)}
+                            >
+                              Pay Manually
+                            </Button>
+                            <Button
+                              sx={{
+                                marginTop: "10px",
+                                backgroundColor: `${data.colorScheme} !important`,
+                                padding: "12px !important",
+                                textAlign: "center",
+                                fontWeight: "bold !important",
+                                lineHeight: "18px",
+                                fontSize: "16px",
+                                fontFamily: "'ubuntu', sans-serif !important",
+                                width: "100%",
+                                color: "#fff",
+                                borderRadius: "5px",
+                                textTransform: "none",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  backgroundColor: `${data.colorScheme} !important`,
+                                },
+                              }}
+                              onClick={() => begin?.("onetime", true)}
+                            >
+                              Pay
+                            </Button>
+                          </div>
                         </TabPanel>
                       </SwipeableViews>
                     </TabPanel>
@@ -786,7 +809,7 @@ const Carbon = ({
                                 backgroundColor: `${data.colorScheme} !important`,
                               },
                             }}
-                            onClick={() => begin?.("sub")}
+                            onClick={() => begin?.("sub", true)}
                           >
                             Next
                           </Button>
@@ -988,7 +1011,31 @@ const Carbon = ({
                                 backgroundColor: `${data.colorScheme} !important`,
                               },
                             }}
-                            onClick={() => begin?.("sub")}
+                            onClick={() => begin?.("sub", false)}
+                          >
+                            Pay Manually
+                          </Button>
+
+                          <Button
+                            sx={{
+                              marginTop: "10px",
+                              backgroundColor: `${data.colorScheme} !important`,
+                              padding: "12px !important",
+                              textAlign: "center",
+                              fontWeight: "bold !important",
+                              lineHeight: "18px",
+                              fontSize: "16px",
+                              fontFamily: "'ubuntu', sans-serif !important",
+                              width: "100%",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              textTransform: "none",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: `${data.colorScheme} !important`,
+                              },
+                            }}
+                            onClick={() => begin?.("sub", true)}
                           >
                             Pay
                           </Button>

@@ -372,10 +372,13 @@ const Links = () => {
                 You have no links yet, Click the button below to create links
               </span>
             </div>
-            
-                <Button onClick={() => showLinkAdd(true)} className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
-                  <MdAddLink size={25} className="mr-1" /> Create Link
-                </Button>
+
+            <Button
+              onClick={() => showLinkAdd(true)}
+              className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+            >
+              <MdAddLink size={25} className="mr-1" /> Create Link
+            </Button>
           </div>
         )}
 
@@ -386,6 +389,7 @@ const Links = () => {
               sx={{
                 "&& .MuiBackdrop-root": {
                   backdropFilter: "blur(5px)",
+                  width: "calc(100% - 8px)",
                 },
               }}
               onClose={handleClose2}
@@ -686,20 +690,19 @@ const Links = () => {
                   className="bg-[#efefef] flex justify-between items-center rounded-b-[.9rem] px-6 py-4"
                 >
                   {!linkLoading && (
-                    
                     <Link href={"/dashboard/links/new"}>
                       <Tooltip
-                      arrow
-                      title="Click here if you want to be able to change more things about your link"
-                    >
-                      <a>
-                        <Button className="!w-fit !items-center !flex !rounded-md !text-[#5f5f5f] font-bold !bg-[#d6d6d6] !capitalize !border-none">
-                          <MdAddLink size={20} className="mr-1" />
-                          Advanced
-                        </Button>
-                      </a></Tooltip>
+                        arrow
+                        title="Click here if you want to be able to change more things about your link"
+                      >
+                        <a>
+                          <Button className="!w-fit !items-center !flex !rounded-md !text-[#5f5f5f] font-bold !bg-[#d6d6d6] !capitalize !border-none">
+                            <MdAddLink size={20} className="mr-1" />
+                            Advanced
+                          </Button>
+                        </a>
+                      </Tooltip>
                     </Link>
-                   
                   )}
 
                   <div className="flex items-center">

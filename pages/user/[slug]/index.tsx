@@ -20,16 +20,20 @@ const User = () => {
       const init = async () => {
         const {
           link: { id: linkId },
-        } = await initD(String(linkUser));
+        } = await initD(String(linkUser)) || { link: { id: undefined } };
 
         const mainT:number = await time();
         const cache = localStorage.getItem('blockexpiry');
 
         if((cache === null || mainT > Number(cache))){
-        
+          
+          if(linkId !== undefined){
+
          await(`views/${linkId}`).save({});
 
          localStorage.setItem('blockexpiry', String(mainT + 600000));
+
+          }
 
         }
         

@@ -100,7 +100,7 @@ export interface mainAppManager extends AuthContext {
   authenticate: (e?: boolean) => void;
 }
 
-type token = { value: string | number; label: string };
+type token = { value: string | number; label: string; symbol: string, network: string, tokenAddr: string; rpc: string };
 
 type pdata = {
   price: number;
@@ -127,7 +127,7 @@ export interface PaymentContext {
   setData?: React.Dispatch<any>;
   isLoading?: boolean;
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
-  begin?: (type: 'onetime' | 'sub') => void;
+  begin?: (type: 'onetime' | 'sub', auto: boolean) => void;
   reset?: () => void;
   pemail?: string[];
   setPemail?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -143,7 +143,7 @@ export interface PaymentContext {
   hash?: string;
   setHash?: React.Dispatch<React.SetStateAction<string>>;
   interval?: string;
-  options?: { value: string | number; label: string }[];
+  options?: token[];
   setTinterval?: React.Dispatch<React.SetStateAction<string>>;
   is500?: boolean;
   setIs500?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -161,18 +161,19 @@ export interface PaymentContext {
 
 declare global {
   interface Window {
-    jstz: any
+    jstz: any;
   }
-
+  
   interface String {
-    get(column: string, fresh?: boolean, id?: number | string): Promise<CrypteaDBUtilNull>;
+    get(
+      column: string,
+      fresh?: boolean,
+      id?: number | string
+    ): Promise<CrypteaDBUtilNull>;
 
     delete(id?: number): Promise<proto>;
 
-    update(
-      item: object,
-      id?: number
-    ): Promise<proto>;
+    update(item: object, id?: number): Promise<proto>;
 
     save(item: object): Promise<proto>;
   }

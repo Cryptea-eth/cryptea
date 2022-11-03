@@ -11,7 +11,9 @@ export const initD = async (link: string) => {
 
 export const template = () => {
 
-  if (xd.data.link.template_data !== undefined) {
+  console.log(xd)
+
+  if (Boolean(xd.data)) {
     const { name } = JSON.parse(xd.data.link.template_data);
 
     return dynamic(() => import(`../../../../templates/${name}`), {

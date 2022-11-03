@@ -32,8 +32,8 @@ const Loader = ({
         </div>
       )}
       <Box
-        className="text-[#F57059] mt-11 justify-center "
-        sx={{ display: "flex", color }}
+        className="text-[#F57059] justify-center "
+        sx={{ display: "flex", color, marginTop: incLogo ? '44px' : 0 }}
       >
         <CircularProgress
           size={text ? 80 : 60}

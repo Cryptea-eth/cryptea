@@ -2,7 +2,7 @@ import { configureChains, defaultChains, chain, Chain } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 
-const avalancheChain: Chain = {
+export const avalancheChain: Chain = {
   id: 43_114,
   name: "Avalanche",
   network: "avalanche",
@@ -20,7 +20,7 @@ const avalancheChain: Chain = {
   testnet: false,
 };
 
-const avalancheTestnet: Chain = {
+export const avalancheTestnet: Chain = {
   id: 43_113,
   name: "Avalanche Testnet",
   network: "avalanche",
@@ -38,7 +38,7 @@ const avalancheTestnet: Chain = {
   testnet: true,
 };
 
-const Optimism: Chain = {
+export const Optimism: Chain = {
   id: 10,
   name: "Optimism",
   network: "optimism",
@@ -56,7 +56,7 @@ const Optimism: Chain = {
   testnet: false,
 };
 
-const OptimismGoerli: Chain = {
+export const OptimismGoerli: Chain = {
   id: 420,
   name: "Optimism Goerli",
   network: "optimism",
@@ -74,7 +74,7 @@ const OptimismGoerli: Chain = {
   testnet: true,
 }
 
-const Aurora: Chain = {
+export const Aurora: Chain = {
   id: 1313161554,
   name: "Aurora",
   network: "aurora",
@@ -92,7 +92,7 @@ const Aurora: Chain = {
   testnet: false,
 };
 
-const AuroraTestnet: Chain = {
+export const AuroraTestnet: Chain = {
   id: 1313161555,
   name: "Aurora Testnet",
   network: "aurora",
@@ -102,7 +102,7 @@ const AuroraTestnet: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    default: "https://testnet.aurora.dev",
+    default: process.env.AURORA_LINK || "https://testnet.aurora.dev",
   },
   blockExplorers: {
     default: { name: "Aurora", url: "https://explorer.testnet.aurora.dev" },
@@ -110,7 +110,7 @@ const AuroraTestnet: Chain = {
   testnet: true,
 };
 
-const OasisEmerald: Chain = {
+export const OasisEmerald: Chain = {
   id: 42262,
   name: "Oasis",
   network: "oasis",
@@ -128,7 +128,7 @@ const OasisEmerald: Chain = {
   testnet: false,
 };
 
-const OasisEmeraldTestnet: Chain = {
+export const OasisEmeraldTestnet: Chain = {
   id: 42261,
   name: "Oasis Testnet",
   network: "oasis",
@@ -149,7 +149,7 @@ const OasisEmeraldTestnet: Chain = {
   testnet: true,
 };
 
-const Cronos: Chain = {
+export const Cronos: Chain = {
   id: 25,
   name: "Cronos",
   network: "cronos mainnet",
@@ -167,7 +167,7 @@ const Cronos: Chain = {
   testnet: false,
 };
 
-const CronosTest: Chain = {
+export const CronosTest: Chain = {
   id: 338,
   name: "Cronos Testnet",
   network: "cronos",

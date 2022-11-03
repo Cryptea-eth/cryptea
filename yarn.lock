@@ -2490,6 +2490,11 @@
     "crypto-js" "^4.1.1"
     "elliptic" "^6.5.4"
 
+"@uqrcode/js@^3.6.0":
+  "integrity" "sha512-jcx5EFXtKMtf/ktBbMSwpuie4cigwekR/pIb8V/JzrfwPc70HP7hSXjpoxgi7aqaJvGN0h7su4cwgTRXMHNzvw=="
+  "resolved" "https://registry.npmjs.org/@uqrcode/js/-/js-3.6.0.tgz"
+  "version" "3.6.0"
+
 "@wagmi/core@^0.5.6":
   "integrity" "sha512-ZGvMVpcl5iN/fXqYxh+lngs980I4R/bMEMVcYjXw5PA67PB1I53paapsPUBt+0ID2QIShyyxZ/qKmhg7FstNWA=="
   "resolved" "https://registry.npmjs.org/@wagmi/core/-/core-0.5.6.tgz"
@@ -10954,9 +10959,9 @@
     "warning" "^4.0.1"
 
 "react-icons@^4.4.0":
-  "integrity" "sha512-fSbvHeVYo/B5/L4VhB7sBA1i2tS8MkT0Hb9t2H1AVPkwGfVHLJCqyr2Py9dKMxsyM63Eng1GkdZfbWj+Fmv8Rg=="
-  "resolved" "https://repo.huaweicloud.com/repository/npm/react-icons/-/react-icons-4.4.0.tgz"
-  "version" "4.4.0"
+  "integrity" "sha512-rR/L9m9340yO8yv1QT1QurxWQvWpbNHqVX0fzMln2HEb9TEIrQRGsqiNFQfiv9/JEUbyHmHPlNTB2LWm2Ttz0g=="
+  "resolved" "https://registry.npmjs.org/react-icons/-/react-icons-4.6.0.tgz"
+  "version" "4.6.0"
 
 "react-image-crop@^10.0.6":
   "integrity" "sha512-Mb7eKW1jAOnvRv8qpxARE26evl7Vw6VzFwM3jxpPRI9KmBs/akqWepot2tY+9FWWPhzclAoftgHNdhesPe/K4g=="

@@ -48,7 +48,7 @@ const Origin = ({
 }) => {
 
 
-    const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number>(0);
 
 
   const {
@@ -90,6 +90,11 @@ const Origin = ({
    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
      setValue(newValue);
      setFailMessage?.("");
+      const subV = { ...subValue };
+
+      subV[newValue ? "onetime" : "sub"] = 0;
+
+      setSubValue?.(subV as subValueType);
      setPemail?.([]);
    };
 
@@ -328,7 +333,7 @@ const Origin = ({
                     </div>
                   </div>
 
-                  <div className="w-2/5 2usm:w-full relative usm:w-[85%] usm:m-auto min-w-[340px] px-6 my-8 justify-items-center">
+                  <div className="w-2/5 2usm:w-full relative usm:w-[90%] usm:m-auto min-w-[340px] px-6 my-8 justify-items-center">
                     {Boolean(loadingText) && !transferFail && !transferSuccess && (
                       <Loader
                         sx={{
@@ -485,7 +490,7 @@ const Origin = ({
                                     setLoadingText?.("");
                                     setTransferFail?.(false);
                                     setSubCheck?.(false);
-                                    begin?.("sub");
+                                    begin?.("sub", true);
                                   }}
                                   sx={{
                                     transition: "all .5s",
@@ -657,7 +662,7 @@ const Origin = ({
                                       style={{
                                         fontFamily: "inherit",
                                       }}
-                                      onClick={() => begin?.("onetime")}
+                                      onClick={() => begin?.("onetime", true)}
                                       fullWidth
                                     >
                                       Next
@@ -864,20 +869,40 @@ const Origin = ({
                                         />
                                       )}
 
-                                      <Button
-                                        sx={{
-                                          backgroundColor: `${data.colorScheme} !important`,
-                                        }}
-                                        variant="contained"
-                                        className="!mt-4 !py-[13px] !font-medium !capitalize"
-                                        style={{
-                                          fontFamily: "inherit",
-                                        }}
-                                        onClick={() => begin?.("onetime")}
-                                        fullWidth
-                                      >
-                                        Pay
-                                      </Button>
+                                      <div className="2mmd:flex-col usm:flex usm:items-center">
+                                        <Button
+                                          sx={{
+                                            backgroundColor: `${data.colorScheme} !important`,
+                                          }}
+                                          variant="contained"
+                                          className="!mt-4 !py-[13px] !font-medium 2mmd:mr-0 usm:mr-2  !capitalize"
+                                          style={{
+                                            fontFamily: "inherit",
+                                          }}
+                                          onClick={() =>
+                                            begin?.("onetime", false)
+                                          }
+                                          fullWidth
+                                        >
+                                          Pay Manually
+                                        </Button>
+                                        <Button
+                                          sx={{
+                                            backgroundColor: `${data.colorScheme} !important`,
+                                          }}
+                                          variant="contained"
+                                          className="!mt-4 !py-[13px] !font-medium 2mmd:ml-0 usm:ml-2  !capitalize"
+                                          style={{
+                                            fontFamily: "inherit",
+                                          }}
+                                          onClick={() =>
+                                            begin?.("onetime", true)
+                                          }
+                                          fullWidth
+                                        >
+                                          Pay
+                                        </Button>
+                                      </div>
                                     </FormControl>
                                   </TabPanel>
                                 </SwipeableViews>
@@ -887,179 +912,253 @@ const Origin = ({
                               {(userD?.linktype == "sub" ||
                                 userD?.linktype == "both") && (
                                 <>
-                                <SwipeableViews
-                                  index={subValue?.sub as number}
-                                >
-                                  <TabPanel
-                                    value={subValue?.sub as number}
-                                    index={0}
-                                    padding={0}
+                                  <SwipeableViews
+                                    index={subValue?.sub as number}
                                   >
-                                    {userD!.rdata["sub"].map(
-                                      (ixn: string, i: number) => (
-                                        <>
-                                          <div
-                                            style={{
-                                              paddingTop: (!i && 0.001) || undefined,
-                                            }}
-                                            className="py-3 font-bold"
-                                          >
-                                            {ixn}
-                                          </div>
-
-                                          <TextField
-                                            fullWidth
-                                            id="outlined-basic"
-                                            placeholder={`Your ${ixn}`}
-                                            variant="outlined"
-                                            className="w-[calc(100%-1.1px)]"
-                                            sx={text}
-                                            value={
-                                              pemail![i] !== undefined
-                                                ? pemail![i]
-                                                : ""
-                                            }
-                                            onChange={(
-                                              e: React.ChangeEvent<
-                                                | HTMLInputElement
-                                                | HTMLTextAreaElement
-                                              >
-                                            ) => {
-                                              setTransferFail?.(false);
-                                              setFailMessage?.("");
-                                              setLoadingText?.("");
-                                              const val = e.target.value;
-                                              pemail![i] = val;
-                                              setPemail?.([...pemail!]);
-                                            }}
-                                          />
-                                        </>
-                                      )
-                                    )}
-
-                                    <Button
-                                      sx={{
-                                        backgroundColor: `${data.colorScheme} !important`,
-                                      }}
-                                      variant="contained"
-                                      className="!mt-4 !py-[13px] !font-medium !capitalize"
-                                      style={{
-                                        fontFamily: "inherit",
-                                      }}
-                                      onClick={() => begin?.("sub")}
-                                      fullWidth
+                                    <TabPanel
+                                      value={subValue?.sub as number}
+                                      index={0}
+                                      padding={0}
                                     >
-                                      Next
-                                    </Button>
-                                  </TabPanel>
+                                      {userD!.rdata["sub"].map(
+                                        (ixn: string, i: number) => (
+                                          <>
+                                            <div
+                                              style={{
+                                                paddingTop:
+                                                  (!i && 0.001) || undefined,
+                                              }}
+                                              className="py-3 font-bold"
+                                            >
+                                              {ixn}
+                                            </div>
 
-                                  <TabPanel
-                                    value={subValue?.sub as number}
-                                    index={1}
-                                    padding={0}
-                                  >
-                                    <FormControl fullWidth>
-                                      <div className="pb-3 font-bold">
-                                        Billed
-                                      </div>
-                                      <ToggleButtonGroup
-                                        value={interval}
-                                        exclusive
-                                        sx={{
-                                          justifyContent: "space-between",
-                                          width: "100%",
-                                          "& .Mui-selected": {
-                                            backgroundColor: `${data.colorScheme} !important`,
-                                            color: `${data.white} !important`,
-                                          },
-                                          "& .MuiButtonBase-root": {
-                                            marginRight: "15px !important",
-                                          },
-                                          "& .MuiToggleButtonGroup-grouped": {
-                                            borderRadius: "4px !important",
-                                            minWidth: 70,
-                                            border:
-                                              "1px solid rgba(0, 0, 0, 0.12) !important",
-                                          },
-                                        }}
-                                        className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                                        onChange={(e: any) => {
-                                          setTransferFail?.(false);
-                                          setFailMessage?.("");
-                                          setLoadingText?.("");
-                                          const val = e.target.value;
-                                          setTinterval?.(val);
-                                        }}
-                                      >
-                                        <ToggleButton
-                                          className="capitalize font-bold"
-                                          value="daily"
-                                        >
-                                          Daily
-                                        </ToggleButton>
-
-                                        <ToggleButton
-                                          className="capitalize font-bold"
-                                          value="weekly"
-                                        >
-                                          Weekly
-                                        </ToggleButton>
-                                        <ToggleButton
-                                          className="capitalize font-bold"
-                                          value="monthly"
-                                        >
-                                          Monthly
-                                        </ToggleButton>
-
-                                        <ToggleButton
-                                          className="capitalize font-bold"
-                                          value="yearly"
-                                        >
-                                          Yearly
-                                        </ToggleButton>
-                                      </ToggleButtonGroup>
-
-                                      {(userD.rdata["sub"].length == 1 && userD.rdata['sub'][0] == 'Email') && (
-                                        <>
-                                          <div className="py-3 font-bold">
-                                            {userD.rdata["sub"][0]}
-                                          </div>
-
-                                          <TextField
-                                            fullWidth
-                                            id="outlined-basic"
-                                            placeholder={`Your ${userD.rdata["sub"][0]}`}
-                                            variant="outlined"
-                                            sx={text}
-                                            value={
-                                              pemail![0] !== undefined
-                                                ? pemail![0]
-                                                : ""
-                                            }
-                                            onChange={(
-                                              e: React.ChangeEvent<
-                                                | HTMLInputElement
-                                                | HTMLTextAreaElement
-                                              >
-                                            ) => {
-                                              setTransferFail?.(false);
-                                              setLoadingText?.("");
-                                              setFailMessage?.("");
-                                              const val = e.target.value;
-                                              pemail![0] = val;
-
-                                              setPemail?.([...pemail!]);
-                                            }}
-                                          />
-                                        </>
+                                            <TextField
+                                              fullWidth
+                                              id="outlined-basic"
+                                              placeholder={`Your ${ixn}`}
+                                              variant="outlined"
+                                              className="w-[calc(100%-1.1px)]"
+                                              sx={text}
+                                              value={
+                                                pemail![i] !== undefined
+                                                  ? pemail![i]
+                                                  : ""
+                                              }
+                                              onChange={(
+                                                e: React.ChangeEvent<
+                                                  | HTMLInputElement
+                                                  | HTMLTextAreaElement
+                                                >
+                                              ) => {
+                                                setTransferFail?.(false);
+                                                setFailMessage?.("");
+                                                setLoadingText?.("");
+                                                const val = e.target.value;
+                                                pemail![i] = val;
+                                                setPemail?.([...pemail!]);
+                                              }}
+                                            />
+                                          </>
+                                        )
                                       )}
 
-                                      <div className="my-2">
-                                        <div className="py-3 font-bold">
-                                          Amount (USD)
-                                          {typeof userD?.linkAmount == "number"
-                                            ? ` - $${userD?.linkAmount}`
-                                            : ""}
+                                      <Button
+                                        sx={{
+                                          backgroundColor: `${data.colorScheme} !important`,
+                                        }}
+                                        variant="contained"
+                                        className="!mt-4 !py-[13px] !font-medium !capitalize"
+                                        style={{
+                                          fontFamily: "inherit",
+                                        }}
+                                        onClick={() => begin?.("sub", true)}
+                                        fullWidth
+                                      >
+                                        Next
+                                      </Button>
+                                    </TabPanel>
+
+                                    <TabPanel
+                                      value={subValue?.sub as number}
+                                      index={1}
+                                      padding={0}
+                                    >
+                                      <FormControl fullWidth>
+                                        <div className="pb-3 font-bold">
+                                          Billed
+                                        </div>
+                                        <ToggleButtonGroup
+                                          value={interval}
+                                          exclusive
+                                          sx={{
+                                            justifyContent: "space-between",
+                                            width: "100%",
+                                            "& .Mui-selected": {
+                                              backgroundColor: `${data.colorScheme} !important`,
+                                              color: `${data.white} !important`,
+                                            },
+                                            "& .MuiButtonBase-root": {
+                                              marginRight: "15px !important",
+                                            },
+                                            "& .MuiToggleButtonGroup-grouped": {
+                                              borderRadius: "4px !important",
+                                              minWidth: 70,
+                                              border:
+                                                "1px solid rgba(0, 0, 0, 0.12) !important",
+                                            },
+                                          }}
+                                          className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                          onChange={(e: any) => {
+                                            setTransferFail?.(false);
+                                            setFailMessage?.("");
+                                            setLoadingText?.("");
+                                            const val = e.target.value;
+                                            setTinterval?.(val);
+                                          }}
+                                        >
+                                          <ToggleButton
+                                            className="capitalize font-bold"
+                                            value="daily"
+                                          >
+                                            Daily
+                                          </ToggleButton>
+
+                                          <ToggleButton
+                                            className="capitalize font-bold"
+                                            value="weekly"
+                                          >
+                                            Weekly
+                                          </ToggleButton>
+                                          <ToggleButton
+                                            className="capitalize font-bold"
+                                            value="monthly"
+                                          >
+                                            Monthly
+                                          </ToggleButton>
+
+                                          <ToggleButton
+                                            className="capitalize font-bold"
+                                            value="yearly"
+                                          >
+                                            Yearly
+                                          </ToggleButton>
+                                        </ToggleButtonGroup>
+
+                                        {userD.rdata["sub"].length == 1 &&
+                                          userD.rdata["sub"][0] == "Email" && (
+                                            <>
+                                              <div className="py-3 font-bold">
+                                                {userD.rdata["sub"][0]}
+                                              </div>
+
+                                              <TextField
+                                                fullWidth
+                                                id="outlined-basic"
+                                                placeholder={`Your ${userD.rdata["sub"][0]}`}
+                                                variant="outlined"
+                                                sx={text}
+                                                value={
+                                                  pemail![0] !== undefined
+                                                    ? pemail![0]
+                                                    : ""
+                                                }
+                                                onChange={(
+                                                  e: React.ChangeEvent<
+                                                    | HTMLInputElement
+                                                    | HTMLTextAreaElement
+                                                  >
+                                                ) => {
+                                                  setTransferFail?.(false);
+                                                  setLoadingText?.("");
+                                                  setFailMessage?.("");
+                                                  const val = e.target.value;
+                                                  pemail![0] = val;
+
+                                                  setPemail?.([...pemail!]);
+                                                }}
+                                              />
+                                            </>
+                                          )}
+
+                                        <div className="my-2">
+                                          <div className="py-3 font-bold">
+                                            Amount (USD)
+                                            {typeof userD?.linkAmount ==
+                                            "number"
+                                              ? ` - $${userD?.linkAmount}`
+                                              : ""}
+                                          </div>
+
+                                          {Boolean(
+                                            userD?.amountMultiple.length
+                                          ) &&
+                                            typeof userD?.linkAmount !=
+                                              "number" && (
+                                              <ToggleButtonGroup
+                                                value={amount}
+                                                sx={{
+                                                  justifyContent:
+                                                    "space-between",
+                                                  width: "100%",
+                                                  "& .Mui-selected": {
+                                                    backgroundColor: `${data.colorScheme} !important`,
+                                                    color: `${data.white} !important`,
+                                                  },
+                                                  "& .MuiButtonBase-root:first-of-type":
+                                                    {
+                                                      marginRight:
+                                                        "0px !important",
+                                                      marginLeft:
+                                                        "0px !important",
+                                                    },
+                                                  "&.MuiButtonBase-root": {
+                                                    marginRight:
+                                                      "15px !important",
+                                                  },
+                                                  "& .MuiToggleButtonGroup-grouped":
+                                                    {
+                                                      borderRadius:
+                                                        "4px !important",
+                                                      minWidth: 55,
+                                                      marginLeft: 3,
+                                                      border:
+                                                        "1px solid rgba(0, 0, 0, 0.12) !important",
+                                                    },
+                                                }}
+                                                exclusive
+                                                className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                                onChange={(e: any) => {
+                                                  setTransferFail?.(false);
+                                                  setLoadingText?.("");
+                                                  setFailMessage?.("");
+                                                  const val = e.target.value;
+
+                                                  setAmount?.(
+                                                    val.replace(/[^\d.]/g, "")
+                                                  );
+                                                }}
+                                              >
+                                                {userD?.amountMultiple.map(
+                                                  (
+                                                    amount: number,
+                                                    i: number
+                                                  ) => (
+                                                    <ToggleButton
+                                                      key={i}
+                                                      sx={{
+                                                        textTransform:
+                                                          "capitalize",
+                                                        fontWeight: "bold",
+                                                      }}
+                                                      value={`${amount}`}
+                                                    >
+                                                      {amount}
+                                                    </ToggleButton>
+                                                  )
+                                                )}
+                                              </ToggleButtonGroup>
+                                            )}
                                         </div>
 
                                         {Boolean(
@@ -1067,129 +1166,83 @@ const Origin = ({
                                         ) &&
                                           typeof userD?.linkAmount !=
                                             "number" && (
-                                            <ToggleButtonGroup
-                                              value={amount}
-                                              sx={{
-                                                justifyContent: "space-between",
-                                                width: "100%",
-                                                "& .Mui-selected": {
-                                                  backgroundColor: `${data.colorScheme} !important`,
-                                                  color: `${data.white} !important`,
-                                                },
-                                                "& .MuiButtonBase-root:first-of-type":
-                                                  {
-                                                    marginRight:
-                                                      "0px !important",
-                                                    marginLeft:
-                                                      "0px !important",
-                                                  },
-                                                "&.MuiButtonBase-root": {
-                                                  marginRight:
-                                                    "15px !important",
-                                                },
-                                                "& .MuiToggleButtonGroup-grouped":
-                                                  {
-                                                    borderRadius:
-                                                      "4px !important",
-                                                    minWidth: 55,
-                                                    marginLeft: 3,
-                                                    border:
-                                                      "1px solid rgba(0, 0, 0, 0.12) !important",
-                                                  },
-                                              }}
-                                              exclusive
-                                              className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                                              onChange={(e: any) => {
-                                                setTransferFail?.(false);
-                                                setLoadingText?.("");
-                                                setFailMessage?.("");
-                                                const val = e.target.value;
-
-                                                setAmount?.(
-                                                  val.replace(/[^\d.]/g, "")
-                                                );
-                                              }}
-                                            >
-                                              {userD?.amountMultiple.map(
-                                                (amount: number, i: number) => (
-                                                  <ToggleButton
-                                                    key={i}
-                                                    sx={{
-                                                      textTransform:
-                                                        "capitalize",
-                                                      fontWeight: "bold",
-                                                    }}
-                                                    value={`${amount}`}
-                                                  >
-                                                    {amount}
-                                                  </ToggleButton>
-                                                )
-                                              )}
-                                            </ToggleButtonGroup>
+                                            <div className="py-3 font-bold">
+                                              Or input Amount manually
+                                            </div>
                                           )}
-                                      </div>
 
-                                      {Boolean(userD?.amountMultiple.length) &&
-                                        typeof userD?.linkAmount !=
+                                        {typeof userD.linkAmount !=
                                           "number" && (
-                                          <div className="py-3 font-bold">
-                                            Or input Amount manually
-                                          </div>
+                                          <TextField
+                                            fullWidth
+                                            id="outlined-basic"
+                                            variant="outlined"
+                                            sx={{
+                                              "& .Mui-focused.MuiFormLabel-root":
+                                                {
+                                                  color: data.colorScheme,
+                                                },
+                                              "& .Mui-focused .MuiOutlinedInput-notchedOutline":
+                                                {
+                                                  borderColor: `${data.colorScheme} !important`,
+                                                },
+                                            }}
+                                            placeholder="Amount"
+                                            value={amount}
+                                            onChange={(
+                                              e: React.ChangeEvent<
+                                                | HTMLInputElement
+                                                | HTMLTextAreaElement
+                                              >
+                                            ) => {
+                                              setTransferFail?.(false);
+                                              setFailMessage?.("");
+                                              setLoadingText?.("");
+                                              const val = e.target.value;
+                                              setAmount?.(
+                                                val.replace(/[^\d.]/g, "")
+                                              );
+                                            }}
+                                          />
                                         )}
 
-                                      {typeof userD.linkAmount != "number" && (
-                                        <TextField
-                                          fullWidth
-                                          id="outlined-basic"
-                                          variant="outlined"
-                                          sx={{
-                                            "& .Mui-focused.MuiFormLabel-root":
-                                              {
-                                                color: data.colorScheme,
-                                              },
-                                            "& .Mui-focused .MuiOutlinedInput-notchedOutline":
-                                              {
-                                                borderColor: `${data.colorScheme} !important`,
-                                              },
-                                          }}
-                                          placeholder="Amount"
-                                          value={amount}
-                                          onChange={(
-                                            e: React.ChangeEvent<
-                                              | HTMLInputElement
-                                              | HTMLTextAreaElement
-                                            >
-                                          ) => {
-                                            setTransferFail?.(false);
-                                            setFailMessage?.("");
-                                            setLoadingText?.("");
-                                            const val = e.target.value;
-                                            setAmount?.(
-                                              val.replace(/[^\d.]/g, "")
-                                            );
-                                          }}
-                                        />
-                                      )}
+                                        <div className="2mmd:flex-col usm:flex usm:items-center">
+                                          <Button
+                                            variant="contained"
+                                            sx={{
+                                              backgroundColor: `${data.colorScheme} !important`,
+                                            }}
+                                            className="!mt-4 !py-[13px] !font-medium 2mmd:mr-0 usm:mr-2 !capitalize"
+                                            style={{
+                                              fontFamily: "inherit",
+                                            }}
+                                            onClick={() =>
+                                              begin?.("sub", false)
+                                            }
+                                            fullWidth
+                                          >
+                                            Subscribe Manually
+                                          </Button>
 
-                                      <Button
-                                        variant="contained"
-                                        sx={{
-                                          backgroundColor: `${data.colorScheme} !important`,
-                                        }}
-                                        className="!mt-4 !py-[13px] !font-medium !capitalize"
-                                        style={{
-                                          fontFamily: "inherit",
-                                        }}
-                                        onClick={() => begin?.("sub")}
-                                        fullWidth
-                                      >
-                                        Subscribe
-                                      </Button>
-                                    </FormControl>
-                                  </TabPanel>
+                                          <Button
+                                            variant="contained"
+                                            sx={{
+                                              backgroundColor: `${data.colorScheme} !important`,
+                                            }}
+                                            className="!mt-4 !py-[13px] !font-medium 2mmd:ml-0 usm:ml-2 !capitalize"
+                                            style={{
+                                              fontFamily: "inherit",
+                                            }}
+                                            onClick={() => begin?.("sub", true)}
+                                            fullWidth
+                                          >
+                                            Subscribe
+                                          </Button>
+                                        </div>
+                                      </FormControl>
+                                    </TabPanel>
                                   </SwipeableViews>
                                 </>
-                                
                               )}
                             </TabPanel>
                           </SwipeableViews>
