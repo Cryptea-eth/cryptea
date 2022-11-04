@@ -653,6 +653,8 @@ export const PaymentProvider = ({
         
         setTransferSuccess(true);
 
+        openModal(false);
+
         setManLoader(false);
         setTimeCounted(0);
         if (type == "sub") setSubCheck(true);
@@ -665,6 +667,7 @@ export const PaymentProvider = ({
           setManLoader(false);
           openModal(false);
           console.log(trxx.data.message);
+          clearInterval(timer.current);
           setTransferFail(true);
           setTimeCounted(0);
           setFailMessage(trxx.data.message);
@@ -675,6 +678,7 @@ export const PaymentProvider = ({
         openModal(false);
         console.log(err);
         setTransferFail(true);
+        clearInterval(timer.current);
         setTimeCounted(0);
         setFailMessage("Something went wrong, Please try again");
       }
@@ -708,6 +712,7 @@ export const PaymentProvider = ({
       clearTimeout(timerTimeout);
       openModal(false);
       setTransferFail(true);
+      clearInterval(timer.current);
       setTimeCounted(0);
       setFailMessage("No crypto received, please try again");
   }

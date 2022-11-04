@@ -24,9 +24,11 @@ export default function handler(
         balance.balanceOf(body.account).then(async (mbalance: any) => {
             const currentBalance = Number(ethers.utils.formatEther(mbalance));
 
+            console.log(body.initial + Number(body.price), currentBalance);
+
             if (
               body.initial != currentBalance &&
-              body.initial + Number(body.price) == currentBalance
+              (body.initial + Number(body.price)).toFixed(6) == currentBalance.toFixed(6)
             ) {
               
                 return res.status(200).json({ proceed: true });
