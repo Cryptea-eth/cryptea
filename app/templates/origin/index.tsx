@@ -831,7 +831,7 @@ const Origin = ({
                                         typeof userD?.linkAmount !=
                                           "number" && (
                                           <div className="py-3 font-bold">
-                                            Or input Amount manually
+                                            Or input Amount
                                           </div>
                                         )}
 
@@ -1167,7 +1167,7 @@ const Origin = ({
                                           typeof userD?.linkAmount !=
                                             "number" && (
                                             <div className="py-3 font-bold">
-                                              Or input Amount manually
+                                              Or input Amount
                                             </div>
                                           )}
 

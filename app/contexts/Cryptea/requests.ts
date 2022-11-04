@@ -9,7 +9,7 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-axios.defaults.timeout = 9000;
+axios.defaults.timeout = 30000;
 
 export const get_request = async (
   url: string,

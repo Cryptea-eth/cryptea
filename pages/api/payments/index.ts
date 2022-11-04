@@ -20,12 +20,9 @@ export default function handler(
 
         let balance = new ethers.Contract(body.tokenAddr, balanceABI, provider);
 
-        console.log(body.account)
-
+        
         balance.balanceOf(body.account).then(async (mbalance: any) => {
             const currentBalance = Number(ethers.utils.formatEther(mbalance));
-
-            console.log(body.initial, currentBalance);
 
             if (
               body.initial != currentBalance &&

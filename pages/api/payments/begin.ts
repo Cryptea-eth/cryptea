@@ -46,19 +46,22 @@ export default function handler(
 
 
         axios
-          .get(`https://ab.cryptea.me/link/pay/account/${body.account}`, {
+          .get(`https://ab.cryptea.me/link/pay/accounts/${body.account}`, {
             headers: {
               Authorization: process.env.APP_KEY || '',
             },
           })
           .then(async ({ data }) => {
+
+            console.log(data);
+
             if (Boolean(data.private)) {
               try {
                 const provider = new ethers.providers.JsonRpcProvider(body.rpc);
 
                 const wallet = await ethers.Wallet.fromEncryptedJson(
                   data.private,
-                  "123456"
+                  process.env.KEY || ''
                 );
 
                 const walletConnect = wallet.connect(provider);
@@ -103,6 +106,7 @@ export default function handler(
                     headers: {
                       Authorization: process.env.APP_KEY || "",
                     },
+                    timeout: 600000
                   }
                 );
 

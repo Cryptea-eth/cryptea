@@ -25,7 +25,7 @@ import { FaRegClone } from "react-icons/fa";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { AuroraTestnet, CronosTest, OasisEmeraldTestnet, OptimismGoerli } from "./Cryptea/connectors/chains";
 import Loader from "../components/elements/loader";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 export const PaymentContext = createContext<PaymentCont>({});
 
@@ -637,6 +637,7 @@ export const PaymentProvider = ({
           { ...base, ...post, linkId, ethAddress },
           {
             baseURL: window.origin,
+            timeout: 600000
           }
         );
 
@@ -724,44 +725,63 @@ export const PaymentProvider = ({
 
     setLoadingText("Just a sec...");
   
-    const address = await axios.get("/api/payments/accounts", {
-      params: {
-        type: "evm",
-      },
-      baseURL: window.origin,
-    });
-
-    console.log(address, 'here');
-
-    let wallet:string = address!.data.data; 
-
-     setGenAddr(wallet);
      
-     const price = await getPrice(amount + (Number(amount) * 1) / 100, token.chain)
+    axios
+      .get("/api/payments/accounts", {
+        params: {
+          type: "evm",
+        },
+        baseURL: window.origin,
+      })
+      .then(async (address) => {
+        console.log(address, "here");
 
-     setAmountMn(Number(price));
+        let wallet: string = address!.data.data;
 
-     const provider = new ethers.providers.JsonRpcProvider(token.rpc);
+        setGenAddr(wallet);
 
-     const balance = new ethers.Contract(token.tokenAddr, balanceABI, provider);
+        const price = await getPrice(
+          amount + (Number(amount) * 1) / 100,
+          token.chain
+        );
 
-     const initialBalance = Number(ethers.utils.formatEther(await balance.balanceOf(wallet)));
+        setAmountMn(Number(price));
 
-     openModal(true);
+        const provider = new ethers.providers.JsonRpcProvider(token.rpc);
 
-     timer.current = setInterval(() => {
+        const balance = new ethers.Contract(
+          token.tokenAddr,
+          balanceABI,
+          provider
+        );
 
-        setTimeCounted( (timeCounted) => timeCounted + 1 );
+        const initialBalance = Number(
+          ethers.utils.formatEther(await balance.balanceOf(wallet))
+        );
 
-     }, 1000);   
+        openModal(true);
+
+        setLoadingText("");
+
+        timer.current = setInterval(() => {
+          setTimeCounted((timeCounted) => timeCounted + 1);
+        }, 1000);
+
+        await checkWallet({ initialBalance, type, price, wallet });
      
-     await checkWallet({ initialBalance, type, price, wallet });
+      }).catch((err) => {
+          const error = err as Error | AxiosError;
+
+          console.log(error);
+
+          beginManual(amount, type);
+
+      });
 
   };
 
   const begin = (type: "onetime" | "sub", auto: boolean) => {
     
-  // console.log(beginManual(10, 'onetime'));
 
     setFailMessage("");
     setTransferFail(false);

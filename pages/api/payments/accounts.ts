@@ -43,19 +43,32 @@ export default function handler(
 
           const selected: any = accounts.data.data;
 
+
           if (Boolean(selected.private)) {
             const encrypted = selected.private;
 
-            console.log(typeof encrypted);
 
-            let wallet = await ethers.Wallet.fromEncryptedJson(
+            try {
+
+            let wallet = ethers.Wallet.fromEncryptedJsonSync(
               encrypted,
-              "123456"
+              process.env.KEY || ""
             );
+
+            console.log(wallet.address);
 
             timeout(wallet.address);
 
             return res.status(200).json({ error: false, data: wallet.address });
+            
+            }catch (err) {
+              const error = err as Error;
+
+              return res.status(400).json({ error: true, message: error.message });
+            }
+
+          }else {
+              console.log('here')
           }
           // } else {
 
