@@ -615,9 +615,7 @@ const Onetime = () => {
                 }}
                 className="mt-4 mx-auto transition-all delay-500 grid gap-6"
               >
-                <div
-                  className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
-                >
+                <div className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="p-6 relative">
                     <LineChart
                       label={[linkType]}
@@ -978,12 +976,13 @@ const Onetime = () => {
                   </Link>
                 </div>
 
-                <div
-                  className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid"
-                >
+                <div className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="p-6 relative">
                     <div className="flex justify-between mb-[16px] items-center">
-                      <h2 className="text-[1.3rem] text-[rgb(32,33,36)] leading-[1.6rem] font-[400]">
+                      <h2
+                        data-value={(rows.length < 10 ? '0' : '') + rows.length}
+                        className="text-[1.3rem] text-[rgb(32,33,36)] leading-[1.6rem] font-[400] after:content-[attr(data-value)] after:absolute after:bg-[#f57059] after:w-fit after:text-white after:-right-[30px] after:font-bold after:text-[12px] after:rounded-md after:px-[5px] after:h-fit relative"
+                      >
                         {linkType == "onetime" ? "Payments" : "Subscribers"}
                       </h2>
 

@@ -42,6 +42,7 @@ const generateData = ({
   addAmt: boolean;
   hourly: number;
 }) => {
+
   const today = new Date().getTime();
 
   const time = today - 24 * 60 * 60 * 1000 * mday;
@@ -49,12 +50,14 @@ const generateData = ({
   const selAmount: number[] = [];
   const selected: number[] = [];
 
+
   data.forEach((v: number, i: number) => {
     if (v >= time) {
       selAmount.push(secondary[i]);
       selected.push(v);
     }
   });
+
 
   const edata = [];
   const label = [];
@@ -64,7 +67,7 @@ const generateData = ({
 
     const hr = i * 60 * 60 * 24 * 1000 * mday;
 
-    const hrp = (i + 1 / hourx) * 60 * 60 * 24 * 1000 * mday;
+    const hrp = (i + hourly / hourx) * 60 * 60 * 24 * 1000 * mday;
 
     const { day, hour, month } = eDate(time + hr);
 
@@ -82,9 +85,12 @@ const generateData = ({
 
     let count = 0;
 
+
     selected.forEach((v: number, ix: number) => {
       if (v >= time + hr && v <= time + hrp) {
+
         count += !addAmt ? selAmount[ix] / selAmount[ix] : selAmount[ix];
+
       }
     });
 
@@ -189,6 +195,7 @@ const generateDataSub = ({
   
   const data: number[] = xdata.map((v) => v.created_at !== undefined ? new Date(v.created_at).getTime() : Number(v.date));
 
+
   let gen; let secondary: number[]; 
 
   if(!sub){
@@ -210,7 +217,7 @@ const generateDataSub = ({
       h24,
       addAmt,
     };   
-  }
+}
 
   if (interval == "24h") {
     let results;
@@ -249,6 +256,7 @@ const generateDataSub = ({
 }
 
   if (interval == "all") {
+
     const sdata: number[] = data.sort((a, b) => b - a);
 
     const mainD: number = sdata[sdata.length - 1];
@@ -257,22 +265,21 @@ const generateDataSub = ({
 
     const mday = hourx / 24;
 
-    let hourly = 1;
+    let hourly = 4;
 
-    if (hourx >= 168) {
-      hourly = 3;
-    } else if (hourx >= 720) {
+   if (hourx >= 720) {
       hourly = 6;
     } else if (hourx >= 3085) {
       hourly = 12;
     }
+    
     let results;
 
     const tdata = {
       ...gen,
       hourx,
       mday,
-      hourly,
+      hourly
     };
 
   if(!sub){
@@ -285,12 +292,14 @@ const generateDataSub = ({
 
   if (interval == "30d") {
     let results;
+
     const tdata = {
       ...gen,
       hourx: 720,
       mday: 30,
-      hourly: 3,
+      hourly: 6,
     };
+
   if(!sub){
     results = generateData(tdata);
   }else{
