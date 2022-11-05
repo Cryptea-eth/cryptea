@@ -722,6 +722,10 @@ export const PaymentProvider = ({
 
       if (timeCounted >= 720) {
           clearInterval(timer.current)
+           setTimeCounted(0);
+           openModal(false);
+           setTransferFail(true);
+           setFailMessage("No crypto received, please try again");          
       }
       
   }, [timeCounted, timer]);
