@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
 import { useCryptea } from "./Cryptea";
 import { useRouter } from "next/router";
-import { post_request, get_request } from "./Cryptea/requests";
+import { post_request } from "./Cryptea/requests";
 import * as ethers from "ethers";
 import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
 import { initD } from "../components/elements/dashboard/link/data";

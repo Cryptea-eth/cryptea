@@ -43,7 +43,7 @@ const Timeout = () => {
 
             <li className="text-[#888888] list-item mb-1">
               {" "}
-              Contact customer care.
+              or Contact us.
             </li>
           </ul>
         </div>

@@ -26,7 +26,7 @@ export const time = async () =>
   await (
     ((await get_request(`/time`, {
       params: { timezone: window.jstz.determine().name() },
-    })) as any) || { data: undefined }
+    }, undefined, false)) as any) || { data: undefined }
   ).data;
 
 const allowed: CrypteaDBS = {

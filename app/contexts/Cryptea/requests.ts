@@ -14,7 +14,8 @@ axios.defaults.timeout = 30000;
 export const get_request = async (
   url: string,
   config: AxiosRequestConfig<any> = {},
-  key: number | undefined = 0
+  key: number | undefined = 0,
+  redirect: boolean | undefined = true
 ): Promise<AxiosResponse<any, any> | undefined> => {
   
   const token: string = localStorage.getItem("userToken") ?? "";
@@ -32,7 +33,11 @@ export const get_request = async (
         if (key <= 6) {
           return get_request(url, config, key + 1);
         } else {
-          Router.push('/timeout');
+          if (redirect) {
+            Router.push("/timeout");
+          } else {
+            throw "Something went wrong, please try again";
+          }
         }
       }
     })
@@ -40,7 +45,11 @@ export const get_request = async (
       if (key <= 6) {
         return get_request(url, config, key + 1);
       } else {
+          if(redirect){
           Router.push('/timeout');
+          }else{
+              throw "Something went wrong, please try again"
+          }
       } 
     });
 };

@@ -31,10 +31,10 @@ const DashHome = () => {
     setRand(Math.floor(Math.random() * 4));
 
     const init = async () => {
-      const dashmain = await get_request("/dashboard/home");
+
+      const dashmain = await get_request("/dashboard/home", {}, undefined, false);
 
       let { payments, views, links } = dashmain?.data;
-      
 
       const breakdown: {
         [index: string]: {

@@ -241,7 +241,8 @@ const Settings = () => {
 
       setLoading({ ...isLoading, progress: [pct, uploaded] });
     };
-    const token = await get_request("/storagekey");
+    
+    const token = await get_request("/storagekey", {}, undefined, false);
     
     const client = makeStorageClient(token!.data);
 
