@@ -1305,7 +1305,7 @@ const NewLink = () => {
                           {list.map((e: any, i: number) => {
                             if (!Boolean(e)) {
                               return (
-                                <div className="mr-3">
+                                <div key={i} className="mr-3">
                                   <Skeleton
                                     variant="rounded"
                                     sx={{ marginBottom: "4px" }}
@@ -1325,6 +1325,7 @@ const NewLink = () => {
 
                               return (
                                 <div
+                                  key={i}
                                   onClick={() => setTemplate(e.name)}
                                   className="mr-3 relative cursor-pointer"
                                 >

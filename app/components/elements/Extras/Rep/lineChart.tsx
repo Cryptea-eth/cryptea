@@ -36,6 +36,7 @@ const LineChart = ({
   name,
   gradient = true,
   exportLabel = true,
+  noLabel = false
 }: {
   styles?: object;
   color?: string[];
@@ -46,10 +47,14 @@ const LineChart = ({
   prefix?: string;
   name: string;
   exportLabel?: boolean;
+  noLabel ?: boolean;
 }) => {
   const { chartData }: { chartData: Chartx } = useContext<dash>(DashContext);
 
   const processTooltipModel = (model: any) => {
+
+    if (noLabel) return false;
+
     const tooltip = document.querySelector(`.tooltip${name}`) as HTMLDivElement;
 
     const tooltipModel = model.tooltip;
@@ -59,7 +64,9 @@ const LineChart = ({
         ".tooltiprep"
       ) as HTMLParagraphElement;
 
-      specialTip.innerHTML = `$${tooltipModel.dataPoints[0].raw.toFixed(2)} - ${
+      (
+        specialTip || { innerHTML: '' }
+      ).innerHTML = `$${tooltipModel.dataPoints[0].raw.toFixed(2)} - ${
         tooltipModel.dataPoints[0].label
       }`;
     }
@@ -189,7 +196,7 @@ const LineChart = ({
       >
         {" "}
         <Line options={options} data={data()} />{" "}
-        <div className={`${toolstype.tooltip} tooltip tooltip${name}`}>
+        {!noLabel && <div className={`${toolstype.tooltip} tooltip tooltip${name}`}>
           {exportLabel && (
             <>
               <div
@@ -212,7 +219,7 @@ const LineChart = ({
             <span className={`${toolstype.color_circle} color_circle`}></span>
             <span className={`${toolstype.value} value`}></span>
           </div>
-        </div>
+        </div>}
       </div>
     </>
   );

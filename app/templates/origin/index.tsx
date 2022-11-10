@@ -870,7 +870,7 @@ const Origin = ({
                                       )}
 
                                       <div className="2mmd:flex-col usm:flex usm:items-center">
-                                        <Button
+                                        {Boolean(token!.tokenAddr) && <Button
                                           sx={{
                                             backgroundColor: `${data.colorScheme} !important`,
                                           }}
@@ -885,7 +885,7 @@ const Origin = ({
                                           fullWidth
                                         >
                                           Pay Manually
-                                        </Button>
+                                        </Button>}
                                         <Button
                                           sx={{
                                             backgroundColor: `${data.colorScheme} !important`,

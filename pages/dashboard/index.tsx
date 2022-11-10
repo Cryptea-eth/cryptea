@@ -97,7 +97,7 @@ const DashboardIndex = () => {
           <div
             className={`body transition-all delay-500 ${
               sidebar?.openPage ? "pl-[247px]" : "pl-[77px]"
-            } w-full h-full 2sm:!pl-[77px]`}
+            } w-full h-full`}
           >
             <DashHeader
               className={

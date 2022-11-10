@@ -1,4 +1,4 @@
-import { Avatar, Popover } from "@mui/material";
+import { Avatar, IconButton, Popover } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { BiBell } from "react-icons/bi";
 import { dash, DashContext } from "../../../contexts/GenContext";
@@ -22,6 +22,8 @@ const DashHeader = ({className, username, dp} : { className?: string, username: 
     const nopen = Boolean(anchorEl);
     const id = nopen ? "Your Notifications" : undefined;
 
+    const active = "before:content-[''] before:bottom-[25px] before:left-[28px] before:bg-[#6a6a6a] before:h-[5px] before:rounded-[50%] before:w-[5px]";
+
     return (
       <>
         <div
@@ -42,32 +44,22 @@ const DashHeader = ({className, username, dp} : { className?: string, username: 
             <span>Looking good today..</span>
           </div>
           <div className="flex items-center">
-            {/* <form
-              className="relative min-w-[260px] mr-[10px] flex items-center"
-              method="get"
-              action=""
-            >
-              <BiSearch
-                className="absolute left-[9px]"
-                color="#626262"
-                size={22}
-              />
-              <input
-                className="rounded-lg border p-2 w-full pl-[35px] focus:outline-none focus:shadow-outline-blue text-[#A9A9A9] placeholder-[#A9A9A9]"
-                placeholder="Search..."
-                type="search"
-                name="username"
-              />
-            </form> */}
-
             <div className="h-full w-[20px] mx-2">
-              <BiBell
-                size={23}
-                aria-describedby={id}
-                onClick={handleNotes}
-                className="cursor-pointer"
-                color="#000"
-              />
+              <IconButton
+                className={
+                  `right-[14px] relative before:absolute ${active}`
+                }
+                size={"medium"}
+              >
+                <BiBell
+                  size={24}
+                  aria-describedby={id}
+                  onClick={handleNotes}
+                  className="cursor-pointer"
+                  color="#6a6a6a"
+                />
+              </IconButton>
+
               <Popover
                 id={id}
                 open={nopen}

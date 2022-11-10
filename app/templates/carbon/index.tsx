@@ -992,7 +992,7 @@ const Carbon = ({
                             />
                           </div>
 
-                          <Button
+                          {Boolean(token!.tokenAddr) && <Button
                             sx={{
                               marginTop: "10px",
                               backgroundColor: `${data.colorScheme} !important`,
@@ -1014,7 +1014,7 @@ const Carbon = ({
                             onClick={() => begin?.("sub", false)}
                           >
                             Pay Manually
-                          </Button>
+                          </Button>}
 
                           <Button
                             sx={{
