@@ -5676,6 +5676,16 @@
     "randombytes" "^2.0.0"
     "randomfill" "^1.0.3"
 
+"crypto-icons-plus-32@^1.0.1":
+  "integrity" "sha512-+m/KeWwt18Clh0+r530k4FvmFeLZFsP/tKZ21ghzoYl1ZJ/rKCmYZmJgkUirg73jlBofnp/TTOBrIWBcSRvgTA=="
+  "resolved" "https://registry.npmjs.org/crypto-icons-plus-32/-/crypto-icons-plus-32-1.0.1.tgz"
+  "version" "1.0.1"
+
+"crypto-icons-plus@^1.0.1":
+  "integrity" "sha512-IcgUUuCinyzPRmJAsVxfCswvIfjx2BbEiM6MegYw/RI8Jxejz5FaVdn+gDwK+nNXMcixq8TdLYWe2AisW0d4Rg=="
+  "resolved" "https://registry.npmjs.org/crypto-icons-plus/-/crypto-icons-plus-1.0.1.tgz"
+  "version" "1.0.1"
+
 "crypto-js@^4.1.1", "crypto-js@4.1.1":
   "integrity" "sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/crypto-js/-/crypto-js-4.1.1.tgz"
@@ -5685,11 +5695,6 @@
   "integrity" "sha512-/Sr2gEzUasyeErEWVtShUX7x3R9OnkboitSeLQkqCGEswuXvNWDYcEOf7DKqmeAvOQoW+kPHb81HnAZkCX6BVw=="
   "resolved" "https://registry.npmjs.org/crypto-symbol/-/crypto-symbol-3.5.221.tgz"
   "version" "3.5.221"
-
-"cryptocurrency-icons@^0.18.1":
-  "integrity" "sha512-dvR5O8JOmav3559Yb0Igpkia+3vpt/aeNvMu5ZIVUG2Bzpq9wNcOJRIQas49XJrPjtZ98GAEn3aDQO+w7uhS2w=="
-  "resolved" "https://registry.npmjs.org/cryptocurrency-icons/-/cryptocurrency-icons-0.18.1.tgz"
-  "version" "0.18.1"
 
 "css-unit-converter@^1.1.1":
   "integrity" "sha512-IiJwMC8rdZE0+xiEZHeru6YoONC4rfPMqGm2W85jMIbkFvv5nFTwJVFHam2eFrN6txmoUYFAFXiv8ICVeTO0MA=="

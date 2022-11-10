@@ -137,7 +137,7 @@ export const PaymentProvider = ({
   >([
     {
       value: 80001,
-      label: "Matic (Testnet)",
+      label: "Polygon (Testnet)",
       symbol: "matic",
       network: "polygon maticmum",
       tokenAddr: "0x0000000000000000000000000000000000001010",
@@ -146,7 +146,7 @@ export const PaymentProvider = ({
     {
       value: 338,
       label: "Cronos (Testnet)",
-      symbol: "cronos",
+      symbol: "tcro",
       network: CronosTest.network as string,
       tokenAddr: "",
       rpc: CronosTest.rpcUrls.default,
@@ -162,14 +162,14 @@ export const PaymentProvider = ({
     {
       value: 420,
       label: "Optimism (Testnet)",
-      symbol: "optimism",
+      symbol: "op",
       network: OptimismGoerli.network as string,
       tokenAddr: "",
       rpc: OptimismGoerli.rpcUrls.default,
     },
     {
       value: 42261,
-      label: "Rose (Testnet)",
+      label: "Oasis (Testnet)",
       symbol: "rose",
       network: OasisEmeraldTestnet.network as string,
       tokenAddr: "",

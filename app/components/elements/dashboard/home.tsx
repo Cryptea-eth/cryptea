@@ -8,6 +8,8 @@ import Image from "next/image";
 import Direction from "./direction";
 import { get_request } from "../../../contexts/Cryptea/requests";
 import { useEffect, useState } from "react";
+import { cryptoDeets } from "../../../functions/crypto";
+
 
 const DashHome = () => {
   const [dashData, setDashData] = useState<any>({
@@ -23,12 +25,16 @@ const DashHome = () => {
   const [rand, setRand] = useState<number>(0);
 
   useEffect(() => {
+
+     console.log(require("crypto-icons-plus-32/src/polygon.png"));
+
     setRand(Math.floor(Math.random() * 4));
 
     const init = async () => {
       const dashmain = await get_request("/dashboard/home");
 
       let { payments, views, links } = dashmain?.data;
+      
 
       const breakdown: {
         [index: string]: {
@@ -79,16 +85,26 @@ const DashHome = () => {
           }
         });
 
+        if (links[e]["views"] !== undefined) {
+          let sviews = sortData(links[e]["views"], "24h", false, false)["data"];
+
+          links[e]["prevViews"] = sviews[sviews.length - 1];
+        }
+
         links[e]["totalViews"] = ex;
+
       }
 
+      const psort = links.sort((a: any, b: any) => b.prevViews - a.prevViews);
+      
+
+      const tsort = links.sort((a: any, b: any) => b.totalViews - a.totalViews);
+    
       setDashData({
         payments,
         views,
         breakdown,
-        links: links
-          .sort((a: any, b: any) => b.totalViews - a.totalViews)
-          .splice(0, 5),
+        links: (psort[0].prevViews > 0 ? psort : tsort).slice(0, 5),
         sortBreakdown: sortBreak,
       });
 
@@ -100,7 +116,7 @@ const DashHome = () => {
     init();
   }, []);
 
-  console.log(dashData);
+  
 
   const change = (data: any[]): { value: number; direction: "up" | "down" } => {
     const [current, initial = 0] = data;
@@ -115,15 +131,12 @@ const DashHome = () => {
     
   }else{
 
-      console.log(data);
-      
-
       main = Number(current.amount) - Number(initial.amount);
 
       value = main ? (main / initial.amount) * 100 : 0;
   }
 
-    return { value, direction: value > 0 ? "up" : "down" };
+    return { value: Math.abs(value), direction: value >= 0 ? "up" : "down" };
 
   };
 
@@ -235,96 +248,106 @@ const DashHome = () => {
                     />
                   );
                 })
-              : dashData["sortBreakdown"].map((a: any, i: number) => (
-                  <div
-                    key={i}
-                    className="border-solid w-[210px] h-[245px] text-[#6a6a6ab0] py-4 px-[15px] mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border"
-                  >
-                    <div className="flex items-center mb-2">
-                      <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
-                        <Image src={lx} alt={a.token} layout={"fill"} />
+              : dashData["sortBreakdown"].map((a: any, i: number) => {
+                  const deets = cryptoDeets(a.token);
+
+                  return (
+                    <div
+                      key={i}
+                      className="border-solid w-[210px] h-[245px] text-[#6a6a6ab0] py-4 px-[15px] mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border"
+                    >
+                      <div className="flex items-center mb-2">
+                        <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
+                          <Image
+                            src={deets.img}
+                            alt={deets.name}
+                            layout={"fill"}
+                          />
+                        </div>
+                        <div className="ml-3 relative top-[2px]">
+                          <p className="font-[600] capitalize truncate leading-[14px] text-[14px]">
+                            {deets.name}
+                          </p>
+                          <span className="font-[400] uppercase text-[11px]">
+                            {deets.symbol}
+                          </span>
+                        </div>
                       </div>
-                      <div className="ml-3 relative top-[2px]">
-                        <p className="font-[600] capitalize truncate leading-[14px] text-[14px]">
-                          {a.token}
-                        </p>
-                        <span className="font-[400] text-[11px]">BTC</span>
-                      </div>
-                    </div>
 
-                    <div className="pb-1 h-[90px]">
-                      <LineChart
-                        label={["data"]}
-                        gradient={false}
-                        name="BTC"
-                        color={["#6a6a6a"]}
-                        prefix={"$"}
-                        dataList={[
-                          sortData(
-                            dashData["breakdown"][a.token],
-                            "all",
-                            false
-                          )["data"],
-                        ]}
-                        styles={{
-                          width: "100%",
-                          height: "100%",
-                        }}
-                        noLabel={true}
-                        labels={
-                          sortData(
-                            dashData["breakdown"][a.token],
-                            "all",
-                            false
-                          )["label"]
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      <NumberFormat
-                        value={a.total}
-                        className="truncate text-[#6a6a6ab0] mb-[8px] block text-[1.55rem]"
-                        thousandSeparator={true}
-                        displayType={"text"}
-                        prefix={"$"}
-                      />
-
-                      {blur ? (
-                        <Skeleton
-                          variant="rounded"
-                          className="p-[5px] rounded-[8px] text-[14px]"
-                          sx={{
-                            fontSize: "14px",
-                            height: "31px",
-                            width: "70px",
+                      <div className="pb-1 h-[90px]">
+                        <LineChart
+                          label={["data"]}
+                          gradient={false}
+                          name="BTC"
+                          color={["#6a6a6a"]}
+                          prefix={"$"}
+                          dataList={[
+                            sortData(
+                              dashData["breakdown"][a.token],
+                              "all",
+                              false
+                            )["data"],
+                          ]}
+                          styles={{
+                            width: "100%",
+                            height: "100%",
                           }}
-                        />
-                      ) : (
-                        <Direction
-                          direction={
-                            change(
-                              dashData["breakdown"][a.token].sort(
-                                (a: any, b: any) =>
-                                  new Date(b.created_at).getTime() -
-                                  new Date(a.created_at).getTime()
-                              )
-                            ).direction
-                          }
-                          value={
-                            change(
-                              dashData["breakdown"][a.token].sort(
-                                (a: any, b: any) =>
-                                  new Date(b.created_at).getTime() -
-                                  new Date(a.created_at).getTime()
-                              )
-                            ).value
+                          noLabel={true}
+                          labels={
+                            sortData(
+                              dashData["breakdown"][a.token],
+                              "all",
+                              false
+                            )["label"]
                           }
                         />
-                      )}
+                      </div>
+
+                      <div>
+                        <NumberFormat
+                          value={a.total}
+                          className="truncate text-[#6a6a6ab0] mb-[8px] block text-[1.55rem]"
+                          thousandSeparator={true}
+                          displayType={"text"}
+                          prefix={"$"}
+                        />
+
+                        {blur ? (
+                          <Skeleton
+                            variant="rounded"
+                            className="p-[5px] rounded-[8px] text-[14px]"
+                            sx={{
+                              fontSize: "14px",
+                              height: "31px",
+                              width: "70px",
+                            }}
+                          />
+                        ) : (
+                          <Direction
+                            direction={
+                              change(
+                                dashData["breakdown"][a.token].sort(
+                                  (a: any, b: any) =>
+                                    new Date(b.created_at).getTime() -
+                                    new Date(a.created_at).getTime()
+                                )
+                              ).direction
+                            }
+                            value={
+                              change(
+                                dashData["breakdown"][a.token].sort(
+                                  (a: any, b: any) =>
+                                    new Date(b.created_at).getTime() -
+                                    new Date(a.created_at).getTime()
+                                )
+                              ).value
+                            }
+                          />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
           </div>
         </div>
 
@@ -354,7 +377,7 @@ const DashHome = () => {
 
                 <div className="absolute top-[47px] font-[400] text-[1.5rem]">
                   <NumberFormat
-                    value={([
+                    value={[
                       ...sortData(
                         dashData["payments"].filter(
                           (e: any) => e.type == "onetime"
@@ -369,17 +392,21 @@ const DashHome = () => {
                         "all",
                         false
                       )["data"],
-                    ].reduce((a, b) => {
-                      return a + b;
-                    }, 0)).toFixed(2)}
+                    ]
+                      .reduce((a, b) => {
+                        return a + b;
+                      }, 0)
+                      .toFixed(2)}
                     thousandSeparator={true}
                     displayType={"text"}
+                    prefix={"$"}
                   />
                 </div>
 
                 <LineChart
                   label={["onetime", "subscribers"]}
                   name="chart1"
+                  y={true}
                   prefix="$"
                   color={["#f57059", "#961d08"]}
                   dataList={[
@@ -399,6 +426,7 @@ const DashHome = () => {
                   styles={{
                     width: "100%",
                     height: "100%",
+                    marginTop: "40px",
                   }}
                   labels={[
                     ...sortData(
@@ -451,11 +479,13 @@ const DashHome = () => {
                   label={["data"]}
                   name="Views"
                   color={["#f57059"]}
+                  y={true}
                   dataList={[
                     sortData(dashData.views, "all", false, false)["data"],
                   ]}
                   styles={{
                     width: "100%",
+                    marginTop: "40px",
                   }}
                   labels={sortData(dashData.views, "all", false)["label"]}
                 />
@@ -520,11 +550,13 @@ const DashHome = () => {
                     key={i}
                     style={{
                       height:
-                        (i == rand && rand < dashData.links) || !i
-                          ? "98px"
+                        i == rand && rand < dashData.links.length
+                          ? l.prevViews > 0
+                            ? "98px"
+                            : "66px"
                           : "66px",
                     }}
-                    className="flex mb-2 justify-between min-h-[66px] overflow-hidden hover:h-[98px] transition-all delay-700 flex-col cursor-pointer p-[1.1rem] border-[#a1a1a1] border border-solid rounded-[.9rem] py-3"
+                    className="flex mb-2 justify-between min-h-[66px] overflow-hidden hover:!h-[98px] transition-all delay-700 flex-col cursor-pointer p-[1.1rem] border-[#a1a1a1] border border-solid rounded-[.9rem] py-3"
                   >
                     <Link href={`/user/${l.link}/overview`}>
                       <a className="flex w-full items-center">

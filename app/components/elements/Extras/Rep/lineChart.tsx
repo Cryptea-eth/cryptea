@@ -31,6 +31,7 @@ const LineChart = ({
   color = ["#f57059", "#c5442e"],
   labels,
   prefix = "",
+  y = false,
   dataList,
   label,
   name,
@@ -44,6 +45,7 @@ const LineChart = ({
   dataList: (string | number)[][];
   label: string[];
   gradient?: boolean;  
+  y?: boolean;
   prefix?: string;
   name: string;
   exportLabel?: boolean;
@@ -116,9 +118,8 @@ const LineChart = ({
       },
       y: {
         ticks: {
-          stepSize: 60,
-          display: false,
-          beginAtZero: true,
+          display: y,
+          beginAtZero: false,
         },
         grid: {
           display: false,
