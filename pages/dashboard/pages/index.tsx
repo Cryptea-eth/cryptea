@@ -32,9 +32,11 @@ const Pages = () => {
       if (!isAuthenticated) {
         Router.push("/auth");
       } else {
-        "links".get("*", true).then((e) => {
-          addLinks(e);
-          loading(false);
+        "links".get("*", true).then((e: any) => {
+          if (!Boolean(e.error)) {
+            addLinks(e);
+            loading(false);
+          }
         });
       }
     }

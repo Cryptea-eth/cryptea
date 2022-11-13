@@ -127,9 +127,11 @@ const Links = () => {
       if (!isAuthenticated) {
         router.push("/auth");
       } else {
-        "links".get("*", true).then((e) => {
+        "links".get("*", true).then((e: any) => {
+          if(!Boolean(e.error)){
           addLinks(e);
-          loading(false);
+            loading(false);
+          }
         });
       }
     }
@@ -147,6 +149,7 @@ const Links = () => {
     addLinks(mlink);
 
     loading(false);
+
   };
 
   const { newLink: formLink }: dash = useContext(DashContext);

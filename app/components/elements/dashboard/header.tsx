@@ -1,4 +1,4 @@
-import { Avatar, IconButton, Popover } from "@mui/material";
+import { Avatar, IconButton, Popover, Tab, Tabs } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { BiBell } from "react-icons/bi";
 import { dash, DashContext } from "../../../contexts/GenContext";
@@ -11,18 +11,20 @@ const DashHeader = ({className, username, dp} : { className?: string, username: 
       null
     );
 
+    const [open, setOpen] = useState(false);
+    
+    const [value, setValue] = useState<number>(0);
+
+    const handleChange = (event: React.SyntheticEvent, e: any) => setValue(e);
+
     const handleNotes = (event: React.SyntheticEvent) => {
       setAnchorEl(event.currentTarget);
-    };
-
-    const notesClose = () => {
-      setAnchorEl(null);
     };
 
     const nopen = Boolean(anchorEl);
     const id = nopen ? "Your Notifications" : undefined;
 
-    const active = "before:content-[''] before:bottom-[25px] before:left-[28px] before:bg-[#6a6a6a] before:h-[5px] before:rounded-[50%] before:w-[5px]";
+    const active = "before:content-[''] before:bottom-[25px] before:left-[28px] before:bg-[#f57059] before:h-[5px] before:rounded-[50%] before:w-[5px]";
 
     return (
       <>
@@ -44,11 +46,10 @@ const DashHeader = ({className, username, dp} : { className?: string, username: 
             <span>Looking good today..</span>
           </div>
           <div className="flex items-center">
-            <div className="h-full w-[20px] mx-2">
+            <div className="h-full relative w-[20px] mx-2">
               <IconButton
-                className={
-                  `right-[14px] relative before:absolute ${active}`
-                }
+                onClick={() => setOpen(!open)}
+                className={`right-[14px] relative before:absolute ${active}`}
                 size={"medium"}
               >
                 <BiBell
@@ -60,47 +61,36 @@ const DashHeader = ({className, username, dp} : { className?: string, username: 
                 />
               </IconButton>
 
-              <Popover
-                id={id}
-                open={nopen}
-                anchorEl={anchorEl}
-                onClose={notesClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
+              <div
+                style={{
+                  display: open ? "block" : "none",
                 }}
+                className="w-[420px] top-0 p-3 right-0 shadow-md rounded-md absolute"
               >
-                <div className="py-3 px-2 bg-pattern">
-                  <div className="flex flex-col">
-                    <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
-                      <div className="img">
-                        <Avatar>U</Avatar>
-                      </div>
-                      <div className="font-medium text-base">
-                        You received 0.1ETH from 0xabc
-                      </div>
-                    </div>
+                <div className="flex items-center mb-[16px] justify-between">
+                  <h2 className="text-[rgb(32,33,36)] font-[400] flex items-center justify-between relative">
+                    Notifications
+                  </h2>
 
-                    <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
-                      <div className="img">
-                        <Avatar>J</Avatar>
-                      </div>
-                      <div className="font-medium text-base">
-                        You received 0.1ETH from joel.eth
-                      </div>
-                    </div>
-
-                    <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
-                      <div className="img">
-                        <Avatar>L</Avatar>
-                      </div>
-                      <div className="font-medium text-base">
-                        You received 0.1ETH from lucid.eth
-                      </div>
-                    </div>
-                  </div>
+                  <span className="text-[rgb(32,33,36)] font-[400] underline text-center">
+                    Mark all as read
+                  </span>
                 </div>
-              </Popover>
+
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="tabs example"
+                >
+                  <Tab
+                    value="one"
+                    label="New Arrivals in the Longest Text of Nonfiction that should appear in the next line"
+                    wrapped
+                  />
+                  <Tab value="two" label="Item Two" />
+                  <Tab value="three" label="Item Three" />
+                </Tabs>
+              </div>
             </div>
             <Avatar
               src={dp}

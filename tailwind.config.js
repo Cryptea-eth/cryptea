@@ -12,10 +12,13 @@ module.exports = {
   ],
   theme: {
     screens: {
+      "4smm": { min: "1450px" },
       "4sm": {min: "1240px"},
+      "2iism": { min: "1400px" },
       "4zsm": { min: "950px" },
       "42sm": {min: "800px"},
       "3sm": { max: "1025px" },
+      "2ism": { min: "975px" },
       "2sm": { max: "975px" },
       usm: { max: "940px" },
       dsm: { max: "900px" },

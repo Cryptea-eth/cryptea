@@ -254,7 +254,7 @@ const DashHome = () => {
                   return (
                     <div
                       key={i}
-                      className="border-solid w-[210px] h-[245px] text-[#6a6a6ab0] py-4 px-[15px] mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border"
+                      className="border-solid w-[210px] h-[245px] text-[#6a6a6ab0] py-4 px-[15px] mr-2 bg-white border-[#f57059] rounded-[8px] border"
                     >
                       <div className="flex items-center mb-2">
                         <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
@@ -351,19 +351,14 @@ const DashHome = () => {
           </div>
         </div>
 
-        <div
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-          }}
-          className="gap-6 mt-2 pt-1 pb-3 items-center w-full grid"
-        >
+        <div className="mt-2 pt-1 pb-3 2ism:flex-col 2iism:!flex-row sm:flex-col w-full flex">
           {blur ? (
             <Skeleton
               variant={"rounded"}
-              className={"col-span-2 rounded-[8px] min-h-[200px]"}
+              className={"col-span-2 mb-2 rounded-[8px] min-h-[200px]"}
             />
           ) : (
-            <div className="border-[rgb(218,220,224)] col-span-2 rounded-[8px] border bg-white overflow-hidden border-solid">
+            <div className="border-[#f57059] mb-2 w-full mr-2 col-span-2 rounded-[8px] border bg-white overflow-hidden border-solid">
               <div className="px-6 pt-6 relative pb-3">
                 <div className="flex justify-between mb-[16px] items-center">
                   <h2 className="font-bold text-[.8rem] text-[#818181] leading-[1.75rem] ">
@@ -453,7 +448,7 @@ const DashHome = () => {
               className={"col-span-2 rounded-[8px] min-h-[200px]"}
             />
           ) : (
-            <div className="border-[rgb(218,220,224)] col-span-2 rounded-[8px] border bg-white overflow-hidden border-solid">
+            <div className="border-[#f57059] w-full col-span-2 rounded-[8px] border bg-white overflow-hidden border-solid">
               <div className="px-6 pt-6 relative pb-3">
                 <div className="flex justify-between mb-[16px] items-center">
                   <h2 className="font-bold text-[.8rem] text-[#818181] leading-[1.75rem] ">
@@ -556,7 +551,7 @@ const DashHome = () => {
                             : "66px"
                           : "66px",
                     }}
-                    className="flex mb-2 justify-between min-h-[66px] overflow-hidden hover:!h-[98px] transition-all delay-700 flex-col cursor-pointer p-[1.1rem] border-[#a1a1a1] border border-solid rounded-[.9rem] py-3"
+                    className="flex mb-2 justify-between min-h-[66px] overflow-hidden hover:!h-[98px] transition-all delay-700 flex-col cursor-pointer p-[1.1rem] border-[#f57059] border border-solid rounded-[.9rem] py-3"
                   >
                     <Link href={`/user/${l.link}/overview`}>
                       <a className="flex w-full items-center">
