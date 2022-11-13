@@ -19,8 +19,8 @@ const Timeout = () => {
 
       <Nav />
 
-      <div className="w-full h-fit flex flex-col justify-items-center my-8">
-        <h2 className="text-[#F57059] font-[400] text-4xl mx-auto mt-24">
+      <div className="w-full h-fit flex flex-col justify-items-center mx-5 my-8">
+        <h2 className="text-[#F57059] font-[400] 2sm:text-2xl text-4xl mx-auto mt-24">
           Oops... Connection Timed out
         </h2>
 

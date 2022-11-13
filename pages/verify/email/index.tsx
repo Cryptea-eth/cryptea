@@ -11,7 +11,7 @@ import Image from "next/image";
 import { post_request } from "../../../app/contexts/Cryptea/requests";
 
 const Email = () => {
-    
+
   const [isLoading, setLoading] = useState<boolean>(true);
 
   const [timer, setTimer] = useState<number>(0);
@@ -34,7 +34,6 @@ const Email = () => {
         runOnce.current = true;
         
         "user".get("*", true).then(async (e: any) => {
-
             
             if (!Boolean(e.email_verified_at) && Boolean(e.email)) {
             setEmail(e.email);
@@ -53,7 +52,6 @@ const Email = () => {
           } else {
             Router.push("/dashboard");
           }
-              console.log("here");    
         });
     }
   }, []);
@@ -82,10 +80,10 @@ const Email = () => {
 
       <Nav />
 
-      <div className="w-full h-fit flex flex-col justify-items-center my-8">
+      <div className="w-full h-fit flex flex-col justify-items-center px-5 my-8">
         <Image src={emailImg} width={200} height={222} alt={"Email Sent"} />
 
-        <h2 className="text-[#F57059] font-[400] text-4xl mx-auto mt-24">
+        <h2 className="text-[#F57059] 2md:text-2xl font-[400] text-4xl mx-auto mt-24">
           We Sent a Verification Mail
         </h2>
 

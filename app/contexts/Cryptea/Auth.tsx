@@ -128,21 +128,29 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
 
 
   useEffect(() => {
-    if (localStorage.getItem("userToken") !== null && router.isReady && router.pathname.indexOf('/settings') == -1) {
+    if (
+      localStorage.getItem("userToken") !== null &&
+      router.pathname.indexOf("/settings") == -1 &&
+      router.pathname.indexOf("/verify/email") == -1
+    ) {
+      "user".get("*", true).then((cacheUser: any) => {
+        console.log("here");
 
-      const cacheUser = JSON.parse(localStorage.getItem('user') || '{}');
+        if (
+          !Boolean(cacheUser?.email_verified_at) &&
+          Boolean(cacheUser?.email)
+        ) {
+          router.push("/verify/email");
 
-      if (!Boolean(cacheUser?.email_verified_at) && Boolean(cacheUser?.email)) {
-  
-        router.push("/verify/email");
-      }else{
-        setGenLoader(false);
-      }
-    }else{
+          setGenLoader(false);
+        } else {
+          setGenLoader(false);
+        }
+      });
+    } else {
       setGenLoader(false);
-      
     }
-  }, [router, router.isReady])
+  }, [])
 
   useEffect(() => {
     if (localStorage.getItem('userToken') !== null) {

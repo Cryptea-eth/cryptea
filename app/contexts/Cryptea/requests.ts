@@ -19,10 +19,6 @@ export const get_request = async (
 ): Promise<AxiosResponse<any, any> | undefined> => {
   
   const token: string = localStorage.getItem("userToken") ?? "";
-
-  return axios
-    .get("/sanctum/csrf-cookie")
-    .then(async (e) => {
       try {
         return await axios.get(url, {
           ...config,
@@ -31,27 +27,15 @@ export const get_request = async (
       } catch (ee) {
 
         if (key <= 6) {
-          return get_request(url, config, key + 1);
+          return get_request(url, config, key + 1, redirect);
         } else {
           if (redirect) {
             Router.push("/timeout");
-          } else {
-            throw "Something went wrong, please try again";
+          }else{
+             throw "Something went wrong, please try again";
           }
         }
       }
-    })
-    .catch((e) => {
-      if (key <= 6) {
-        return get_request(url, config, key + 1);
-      } else {
-          if(redirect){
-          Router.push('/timeout');
-          }else{
-              throw "Something went wrong, please try again"
-          }
-      } 
-    });
 };
 
 export const post_request = async (
