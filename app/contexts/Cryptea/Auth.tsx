@@ -126,7 +126,6 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
 
   const router = useRouter();
 
-
   useEffect(() => {
     if (
       localStorage.getItem("userToken") !== null &&

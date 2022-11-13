@@ -18,12 +18,14 @@ const Email = () => {
 
   const [mail, setEmail] = useState('');
 
-  let count: any;
+  let count = useRef<any>();
 
   const startTimer = () => {
-    setTimer((timer) => timer + 1);
+    
+   count.current = setInterval(() => {
+      setTimer((timer) => timer + 1);
+    }, 1000);
 
-    count = setTimeout(startTimer, 1000);
   };
 
   const runOnce = useRef<boolean>(false);
@@ -36,7 +38,8 @@ const Email = () => {
         "user".get("*", true).then(async (e: any) => {
             
             if (!Boolean(e.email_verified_at) && Boolean(e.email)) {
-            setEmail(e.email);
+            
+                setEmail(e.email);
 
             const mx = await post_request("/verify/mail", {
               mail: e.email,
@@ -46,23 +49,28 @@ const Email = () => {
               setTimer(mx.data.time);
             }
 
+            setTimer(0);
+
             startTimer();
 
             setLoading(false);
+
           } else {
+            
             Router.push("/dashboard");
+
           }
         });
     }
   }, []);
 
   useEffect(() => {
+    
     if (timer >= 300) {
-      clearTimeout(count);
-
-      setTimer(0)
-
+      clearInterval(count.current);
+      
     }
+
   }, [timer]);
 
   return isLoading ? (
@@ -105,6 +113,8 @@ const Email = () => {
                   if (Boolean(e.data.time)) {
                     setTimer(e.data.time);
                   }
+
+                  setTimer(0);
 
                   startTimer();
 

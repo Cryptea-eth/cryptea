@@ -20,21 +20,25 @@ const EmailHash = () => {
 
         if (hash) {
 
-            console.log('oeeex');
+          "user".get("*", true).then(async (e: any) => {
             
+            if (!Boolean(e.email_verified_at) && Boolean(e.email)) {
 
             get_request(`/verify/mail/${hash}`, {}, undefined, false)
               .then((e) => {
-                // Router.push('/dashboard');
+                Router.push('/dashboard');
 
-                console.log(e, "dd");
               })
               .catch((err) => {
                 console.log(err);
 
                 setLoading(false);
                 
-              });            
+              });  
+            }else{
+                 Router.push("/dashboard");
+            } 
+        })
 
         }
 
