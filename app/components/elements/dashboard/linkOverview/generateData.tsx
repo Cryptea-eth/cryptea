@@ -84,18 +84,14 @@ const generateData = ({
 
     selected.forEach((v: number, ix: number) => {
 
-  
         if (v >= time + hr && v <= time + hrp) {
           
             count += !addAmt ? 1 : selAmount[ix];
         
-      }
+            delete selected[ix];
+
+        }
     });
-    // if (count == 20) {
-
-    //   console.log();      
-
-    // }
 
     edata.push(count);
   }
