@@ -3,13 +3,11 @@ import Link from "next/link";
 import NumberFormat from "react-number-format";
 import LineChart from "../Extras/Rep/lineChart";
 import sortData from "./linkOverview/generateData";
-import lx from "cryptocurrency-icons/svg/color/btc.svg";
 import Image from "next/image";
 import Direction from "./direction";
 import { get_request } from "../../../contexts/Cryptea/requests";
 import { useEffect, useState } from "react";
 import { cryptoDeets } from "../../../functions/crypto";
-
 
 const DashHome = () => {
   const [dashData, setDashData] = useState<any>({
@@ -25,12 +23,16 @@ const DashHome = () => {
   const [rand, setRand] = useState<number>(0);
 
   useEffect(() => {
-
     setRand(Math.floor(Math.random() * 4));
 
     const init = async () => {
+      const dashmain = await get_request(
+        "/dashboard/home",
+        {},
+        undefined,
+        false
+      );
 
-      const dashmain = await get_request("/dashboard/home", {}, undefined, false);
 
       let { payments, views, links } = dashmain?.data;
 
@@ -90,14 +92,12 @@ const DashHome = () => {
         }
 
         links[e]["totalViews"] = ex;
-
       }
 
       const psort = links.sort((a: any, b: any) => b.prevViews - a.prevViews);
-      
 
       const tsort = links.sort((a: any, b: any) => b.totalViews - a.totalViews);
-    
+
       setDashData({
         payments,
         views,
@@ -114,28 +114,22 @@ const DashHome = () => {
     init();
   }, []);
 
-  
-
   const change = (data: any[]): { value: number; direction: "up" | "down" } => {
     const [current, initial = 0] = data;
 
     let main, value;
 
-    if(typeof current != 'object'){
+    if (typeof current != "object") {
+      main = Number(current) - Number(initial);
 
-      main = (Number(current) - Number(initial));
-
-      value = (main ? (main / initial) * 100 : 0);
-      
-  }else{
-
+      value = main ? (main / initial) * 100 : 0;
+    } else {
       main = Number(current.amount) - Number(initial.amount);
 
       value = main ? (main / initial.amount) * 100 : 0;
-  }
+    }
 
     return { value: Math.abs(value), direction: value >= 0 ? "up" : "down" };
-
   };
 
   return (
@@ -538,16 +532,26 @@ const DashHome = () => {
                   vws = sortData(l.views, "24h", false, false)["data"];
                 }
 
+                // if (l.views) {
+                //   console.log(
+                //     sortData(l.views, "24h", false, false),
+                //     l.link,
+                //     l.prevViews
+                //   );
+                // }
+
                 return (
                   <div
                     key={i}
                     style={{
                       height:
                         i == rand && rand < dashData.links.length
-                          ? l.prevViews > 0
+                          ? (l.prevViews > 0
                             ? "98px"
-                            : "66px"
-                          : "66px",
+                            : "66px")
+                          : (l.prevViews > 0
+                          ? "98px"
+                          : "66px"),
                     }}
                     className="flex mb-2 justify-between min-h-[66px] overflow-hidden hover:!h-[98px] transition-all delay-700 flex-col cursor-pointer p-[1.1rem] border-[rgb(175,177,182)] border border-solid rounded-[.9rem] py-3"
                   >
@@ -605,7 +609,7 @@ const DashHome = () => {
 
                     <div className="w-full text-[#c9c9c9] mt-2">
                       <span className="text-[1rem] font-[400] ml-[2px]">
-                        {vws[vws.length - 1] - (vws[vws.length - 2] || 0)}
+                        {vws[vws.length - 2] || 0}
                       </span>
                       <span className="text-[0.9rem] ml-[3px] font-[400]">
                         view(s) in the last hour

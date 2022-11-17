@@ -66,19 +66,6 @@ const DashboardIndex = () => {
   ]);
 
 
-  const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(null);
-
-  const handleNotes = (event: React.SyntheticEvent) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const notesClose = () => {
-    setAnchorEl(null);
-  };
-
-  const nopen = Boolean(anchorEl);
-  const id = nopen ? "Your Notifications" : undefined;
-
   return (
     <>
       <Head>

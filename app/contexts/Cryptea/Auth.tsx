@@ -36,14 +36,16 @@ export const AuthAddress = async ({address, signature, message }: AuthAddressTyp
   try {
     
       const userx = await post_request(`/login/walletAuth`, {
-            address, signature, message 
+        address,
+        signature,
+        message,
+        tz: window.jstz.determine().name(),
       });
 
       
       if(!userx.data.error){
 
         const { email, img, accounts, username, id, email_verified_at }: { username: string, img: string,email : string, accounts: string[], id: number|string, email_verified_at: any } = userx.data.data;
-
 
          user = {
            id,
@@ -61,7 +63,7 @@ export const AuthAddress = async ({address, signature, message }: AuthAddressTyp
          isAuth = true;
 
       }else{
-          throw "Invalid Login Dextails";
+          throw "Invalid Login Details";
       }
       
   }catch (err) {

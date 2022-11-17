@@ -146,11 +146,11 @@ const Settings = () => {
 
       if (!error["account"].length) {
         try {
-         
 
           await "user".update({
             username: userInfo,
             email: validator.normalizeEmail(userEmail),
+            tz: window.jstz.determine().name(),
           });
 
          

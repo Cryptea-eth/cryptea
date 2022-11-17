@@ -71,7 +71,8 @@ const SignupForm = () => {
               await "user".update({
                 username: userInfo,
                 email: validator.normalizeEmail(userEmail),
-                desc: userDescription
+                desc: userDescription,
+                tz: window.jstz.determine().name()
               });
 
               await "links".save({
