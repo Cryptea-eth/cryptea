@@ -477,7 +477,7 @@ const AuthModal = ({
         coinbaseauth: (
           <button
             onClick={clogin}
-            key={1}
+            key={2}
             style={{
               fontFamily: "inherit",
               borderColor: isAuth["coinbase"] ? "#f57059" : undefined,
@@ -504,7 +504,7 @@ const AuthModal = ({
         uauth: userAuth && (
           <button
             onClick={Ulogin}
-            key={2}
+            key={3}
             style={{
               fontFamily: "inherit",
               borderColor: isAuth["uauth"] ? "#f57059" : undefined,
