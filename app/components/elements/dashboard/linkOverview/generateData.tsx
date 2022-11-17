@@ -1,4 +1,3 @@
-
 const months: string[] = [
   "Jan",
   "Feb",
@@ -42,14 +41,12 @@ const generateData = ({
   addAmt: boolean;
   hourly: number;
 }) => {
-
   const today = new Date().getTime();
 
   const time = today - 24 * 60 * 60 * 1000 * mday;
 
   const selAmount: number[] = [];
   const selected: number[] = [];
-
 
   data.forEach((v: number, i: number) => {
     if (v >= time) {
@@ -58,19 +55,19 @@ const generateData = ({
     }
   });
 
-
   const edata = [];
   const label = [];
 
   for (let z = 0; z <= hourx; z += hourly) {
+
     const i = z / hourx;
 
-    const hr = i * 60 * 60 * 24 * 1000 * mday;
+    const hrp = i * 60 * 60 * 24 * 1000 * mday;
 
-    const hrp = (i + hourly / hourx) * 60 * 60 * 24 * 1000 * mday;
+    const hr = hrp - (hourly * 3600000);
 
-    const { day, hour, month } = eDate(time + hr);
-
+    const { day, hour, month } = eDate(time + hrp);
+  
     const hhour = h24
       ? String(hour).length < 2
         ? "0" + hour
@@ -85,14 +82,20 @@ const generateData = ({
 
     let count = 0;
 
-
     selected.forEach((v: number, ix: number) => {
-      if (v >= time + hr && v <= time + hrp) {
 
-        count += !addAmt ? selAmount[ix] / selAmount[ix] : selAmount[ix];
-
+  
+        if (v >= time + hr && v <= time + hrp) {
+          
+            count += !addAmt ? 1 : selAmount[ix];
+        
       }
     });
+    // if (count == 20) {
+
+    //   console.log();      
+
+    // }
 
     edata.push(count);
   }
@@ -101,17 +104,16 @@ const generateData = ({
 };
 
 export const totSub = (data: any[]) => {
+  const today = new Date().getTime();
+  let num: number = 0;
+  data.forEach((v: any, i: number) => {
+    if (v.remind > today) {
+      num++;
+    }
+  });
 
-    const today = new Date().getTime();
-    let num: number = 0;
-    data.forEach((v: any, i: number) => {
-      if (v.remind > today) {
-        num++;
-      }
-    });
-
-    return num;
-} 
+  return num;
+};
 
 const generateDataSub = ({
   data,
@@ -128,7 +130,6 @@ const generateDataSub = ({
   mday: number;
   hourly: number;
 }) => {
-  
   const today = new Date().getTime();
 
   const time = today - 24 * 60 * 60 * 1000 * mday;
@@ -168,15 +169,12 @@ const generateDataSub = ({
       }`
     );
 
-    let count = 0; 
+    let count = 0;
 
     selected.forEach((v: number, ix: number) => {
-      if (
-        (v >= time + hr && v <= time + hrp)
-      ) {
+      if (v >= time + hr && v <= time + hrp) {
         count += 1;
-
-      }else if (secondary[ix] > today && v < time + hr) {
+      } else if (secondary[ix] > today && v < time + hr) {
         count += 1;
       }
     });
@@ -187,37 +185,43 @@ const generateDataSub = ({
   return { data: edata, label };
 };
 
- const sortData = (
+const sortData = (
   xdata: any[],
   interval: "24h" | "7d" | "30d" | "1yr" | "all",
-  h24: boolean = false, addAmt: boolean = true, sub: boolean = false
-): {label: any[], data: any[]} => {
-  
-  const data: number[] = xdata.map((v) => v.created_at !== undefined ? new Date(v.created_at).getTime() : Number(v.date));
+  h24: boolean = false,
+  addAmt: boolean = true,
+  sub: boolean = false
+): { label: any[]; data: any[] } => {
+  const data: number[] = xdata.map((v) =>
+    v.created_at !== undefined
+      ? new Date(v.created_at).getTime()
+      : Number(v.date)
+  );
 
+  let gen;
+  let secondary: number[];
 
-  let gen; let secondary: number[]; 
+  if (!sub) {
+    secondary = xdata.map((v) =>
+      v.amount !== undefined ? Number(v.amount) : 1
+    );
 
-  if(!sub){
-   secondary = xdata.map((v) => v.amount !== undefined ? Number(v.amount) : 1);
-
-  gen = {
-    data,
-    secondary,
-    h24,
-    addAmt
-  };
-  
-}else {
-   secondary = xdata.map((v) => Number(v.expire));
-
-  gen = {
+    gen = {
       data,
       secondary,
       h24,
       addAmt,
-    };   
-}
+    };
+  } else {
+    secondary = xdata.map((v) => Number(v.expire));
+
+    gen = {
+      data,
+      secondary,
+      h24,
+      addAmt,
+    };
+  }
 
   if (interval == "24h") {
     let results;
@@ -228,14 +232,14 @@ const generateDataSub = ({
       hourly: 1,
     };
 
-  if(!sub){
-    results = generateData(data);
-  }else{
-    results = generateDataSub(data);
-  }
+    if (!sub) {
+      results = generateData(data);
+    } else {
+      results = generateDataSub(data);
+    }
 
-  return results;
-}
+    return results;
+  }
 
   if (interval == "1yr") {
     let results;
@@ -247,16 +251,15 @@ const generateDataSub = ({
       hourly: 12,
     };
 
-    if(!sub){
-    results = generateData(data);
-    }else {
-    results = generateDataSub(data);
+    if (!sub) {
+      results = generateData(data);
+    } else {
+      results = generateDataSub(data);
     }
-  return results;
-}
+    return results;
+  }
 
   if (interval == "all") {
-
     const sdata: number[] = data.sort((a, b) => b - a);
 
     const mainD: number = sdata[sdata.length - 1];
@@ -267,28 +270,28 @@ const generateDataSub = ({
 
     let hourly = 4;
 
-   if (hourx >= 720) {
+    if (hourx >= 720) {
       hourly = 6;
     } else if (hourx >= 3085) {
       hourly = 12;
     }
-    
+
     let results;
 
     const tdata = {
       ...gen,
       hourx,
       mday,
-      hourly
+      hourly,
     };
 
-  if(!sub){
-    results = generateData(tdata);
-  }else{
-    results = generateDataSub(tdata);
+    if (!sub) {
+      results = generateData(tdata);
+    } else {
+      results = generateDataSub(tdata);
+    }
+    return results;
   }
-  return results;
-}
 
   if (interval == "30d") {
     let results;
@@ -300,15 +303,14 @@ const generateDataSub = ({
       hourly: 6,
     };
 
-  if(!sub){
-    results = generateData(tdata);
-  }else{
-    results = generateDataSub(tdata);
+    if (!sub) {
+      results = generateData(tdata);
+    } else {
+      results = generateDataSub(tdata);
+    }
+
+    return results;
   }
-
-  return results;
-
-}
 
   if (interval == "7d") {
     let results;
@@ -318,16 +320,15 @@ const generateDataSub = ({
       mday: 7,
       hourly: 1,
     };
-    if(!sub){
-    results = generateData(data);
-  }else{
-    results = generateDataSub(data);
+    if (!sub) {
+      results = generateData(data);
+    } else {
+      results = generateDataSub(data);
+    }
+    return results;
   }
-  return results;
-}
 
-  return {label: [], data: []};
+  return { label: [], data: [] };
 };
-
 
 export default sortData;

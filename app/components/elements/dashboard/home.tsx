@@ -35,6 +35,7 @@ const DashHome = () => {
 
 
       let { payments, views, links } = dashmain?.data;
+      
 
       const breakdown: {
         [index: string]: {
@@ -122,15 +123,32 @@ const DashHome = () => {
     if (typeof current != "object") {
       main = Number(current) - Number(initial);
 
-      value = main ? (main / initial) * 100 : 0;
+      value = main ? (main / (initial || 1)) * 100 : 0;
     } else {
       main = Number(current.amount) - Number(initial.amount);
 
-      value = main ? (main / initial.amount) * 100 : 0;
+      value = main ? (main / (initial.amount || 1)) * 100 : 0;
     }
+
+    console.log(
+      sortData(
+        dashData["payments"].filter((e: any) => e.type == "onetime"),
+        "all",
+        false
+      )["data"],
+      sortData(
+        dashData["payments"].filter((e: any) => e.type == "onetime"),
+        "all",
+        false
+      )["label"]
+    );
 
     return { value: Math.abs(value), direction: value >= 0 ? "up" : "down" };
   };
+
+ console.log(
+     dashData["payments"].filter((e: any) => e.type == "onetime")
+ );
 
   return (
     <div className="px-5 pt-[75px] flex items-start justify-between">
@@ -270,8 +288,8 @@ const DashHome = () => {
                         <LineChart
                           label={["data"]}
                           gradient={false}
-                          name="BTC"
-                          color={["#6a6a6a"]}
+                          name={deets.name}
+                          color={["#f57059"]}
                           prefix={"$"}
                           dataList={[
                             sortData(
@@ -379,6 +397,7 @@ const DashHome = () => {
                         "all",
                         false
                       )["data"],
+                      
                     ]
                       .reduce((a, b) => {
                         return a + b;
@@ -392,7 +411,7 @@ const DashHome = () => {
 
                 <LineChart
                   label={["onetime", "subscribers"]}
-                  name="chart1"
+                  name="payments"
                   y={true}
                   prefix="$"
                   color={["#f57059", "#961d08"]}
@@ -532,13 +551,7 @@ const DashHome = () => {
                   vws = sortData(l.views, "24h", false, false)["data"];
                 }
 
-                // if (l.views) {
-                //   console.log(
-                //     sortData(l.views, "24h", false, false),
-                //     l.link,
-                //     l.prevViews
-                //   );
-                // }
+              
 
                 return (
                   <div
@@ -546,12 +559,12 @@ const DashHome = () => {
                     style={{
                       height:
                         i == rand && rand < dashData.links.length
-                          ? (l.prevViews > 0
+                          ? l.prevViews > 0
                             ? "98px"
-                            : "66px")
-                          : (l.prevViews > 0
+                            : "66px"
+                          : l.prevViews > 0
                           ? "98px"
-                          : "66px"),
+                          : "66px",
                     }}
                     className="flex mb-2 justify-between min-h-[66px] overflow-hidden hover:!h-[98px] transition-all delay-700 flex-col cursor-pointer p-[1.1rem] border-[rgb(175,177,182)] border border-solid rounded-[.9rem] py-3"
                   >
@@ -609,7 +622,7 @@ const DashHome = () => {
 
                     <div className="w-full text-[#c9c9c9] mt-2">
                       <span className="text-[1rem] font-[400] ml-[2px]">
-                        {vws[vws.length - 2] || 0}
+                        {vws[vws.length - 1] || 0}
                       </span>
                       <span className="text-[0.9rem] ml-[3px] font-[400]">
                         view(s) in the last hour
