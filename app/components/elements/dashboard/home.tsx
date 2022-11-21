@@ -26,13 +26,13 @@ const DashHome = () => {
     setRand(Math.floor(Math.random() * 4));
 
     const init = async () => {
+
       const dashmain = await get_request(
         "/dashboard/home",
         {},
         undefined,
         false
       );
-
 
       let { payments, views, links } = dashmain?.data;
       
@@ -110,9 +110,13 @@ const DashHome = () => {
       if (blur) removeBlur(false);
 
       setTimeout(init, 3000);
+
     };
 
+
+
     init();
+
   }, []);
 
   const change = (data: any[]): { value: number; direction: "up" | "down" } => {

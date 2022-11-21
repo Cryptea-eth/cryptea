@@ -43,32 +43,36 @@ const DashHeader = ({
 
   useEffect(() => {
 
-    const itx = () => {
-      if (once.current) {
-
-        once.current = false;
-
-        get_request("/notifications", {}, undefined, false).then((dx) => {
-          if (dx?.data) {
-            if (typeof dx?.data == "object") {
-              setData(dx?.data);
-
-              setNewNote(
-                Boolean(dx?.data.filter((d: any) => d.read == "false").length)
-              );
-
-              if (isLoading) setLoading(false);
-
-            }
-          }
-
-          setTimeout(itx, 6000);
-        });
-      }
-  };
+    const itx = async () => {
     
 
-    itx();
+       const dx = await get_request("/notifications", {}, undefined, false);
+
+        if (dx?.data) {
+          if (typeof dx?.data == "object") {
+            setData(dx?.data);
+
+            setNewNote(
+              Boolean(dx?.data.filter((d: any) => d.read == "false").length)
+            );
+
+            if (isLoading) setLoading(false);
+
+          }
+        }
+
+          
+          setTimeout(itx, 3000);
+
+  };
+    
+  if (once.current) {
+
+   once.current = false;
+
+   itx();
+
+  }
 
   }, []);
 
