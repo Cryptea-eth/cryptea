@@ -23,11 +23,12 @@ import LogoSpace from "../components/elements/logo";
 import QrCode from "../components/elements/qrcode";
 import { FaRegClone } from "react-icons/fa";
 import { RiCloseCircleLine } from "react-icons/ri";
-import { AuroraTestnet, CronosTest, OasisEmeraldTestnet, OptimismGoerli } from "./Cryptea/connectors/chains";
+import { AuroraTestnet, CronosTest, FileCoinWallaby, OasisEmeraldTestnet, OptimismGoerli } from "./Cryptea/connectors/chains";
 import Loader from "../components/elements/loader";
 import axios, { AxiosError } from "axios";
 
 export const PaymentContext = createContext<PaymentCont>({});
+
 
 export const PaymentProvider = ({
   children,
@@ -43,8 +44,6 @@ export const PaymentProvider = ({
   const [is500, setIs500] = useState<boolean>(false);
 
   const [interval, setTinterval] = useState<string>("daily");
-
-  const contractAddress: string = "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43";
 
   useEffect(() => {}, [username, router.isReady]);
 
@@ -78,6 +77,7 @@ export const PaymentProvider = ({
     chainId,
     signer: nullSigner,
     account,
+    disconnect,
     validator,
   } = useCryptea();
 
@@ -123,29 +123,49 @@ export const PaymentProvider = ({
       name: "Oasis Explorer",
       link: "https://testnet.explorer.emerald.oasis.dev/tx/",
     },
+    31415: {
+      name: "Wallaby Explorer",
+      link: "https://explorer.glif.io/wallaby",
+    },
   };
 
   const [options, setOptions] = useState<
     {
       value: string | number;
-      label: string;
+      label: string | JSX.Element;
       symbol: string;
       network: string;
+      contractAddr: string;
+      name: string;
       rpc: string;
       tokenAddr: string;
     }[]
   >([
     {
       value: 80001,
-      label: "Polygon (Testnet)",
+      label: <div> Polygon (Testnet) </div>,
+      name: "Polygon (Testnet)",
       symbol: "matic",
+      contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
       network: "polygon maticmum",
       tokenAddr: "0x0000000000000000000000000000000000001010",
       rpc: process.env.MATIC_LINK as string,
     },
     {
+      value: 31415,
+      label: "Filecoin (Testnet)",
+      name: "Filecoin (Testnet)",
+      symbol: "TFIL",
+      network: FileCoinWallaby.network as string,
+      tokenAddr: "",
+      contractAddr: "0x2d9E5Cd304A84DC15Bb28749Cf0769A0bdc2CD6F",
+      rpc: FileCoinWallaby.rpcUrls.default,
+    },
+    {
       value: 338,
       label: "Cronos (Testnet)",
+      name: "Cronos (Testnet)",
+      contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
       symbol: "tcro",
       network: CronosTest.network as string,
       tokenAddr: "",
@@ -154,6 +174,8 @@ export const PaymentProvider = ({
     {
       value: 1313161555,
       label: "Aurora (Testnet)",
+      name: "Aurora (Testnet)",
+      contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
       symbol: "aurora",
       network: AuroraTestnet.network as string,
       tokenAddr: "",
@@ -161,7 +183,9 @@ export const PaymentProvider = ({
     },
     {
       value: 420,
+      contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
       label: "Optimism (Testnet)",
+      name: "Optimism (Testnet)",
       symbol: "op",
       network: OptimismGoerli.network as string,
       tokenAddr: "",
@@ -169,7 +193,9 @@ export const PaymentProvider = ({
     },
     {
       value: 42261,
+      contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
       label: "Oasis (Testnet)",
+      name: "Oasis (Testnet)",
       symbol: "rose",
       network: OasisEmeraldTestnet.network as string,
       tokenAddr: "",
@@ -177,7 +203,7 @@ export const PaymentProvider = ({
     },
   ]);
 
-   const [token, setToken] = useState<any>(options[0]);
+  const [token, setToken] = useState<any>(options[0]);
 
   const [amountMn, setAmountMn] = useState<number>(0);
 
@@ -201,7 +227,18 @@ export const PaymentProvider = ({
 
         return price / priceCurrency;
       },
+      "31415": async () => {
+        const response = await post_request("/token/price", {
+          currency: "usd",
+          token: "filecoin",
+        });
 
+        const e = response.data as { [index: string]: any };
+
+        const priceCurrency = Number(e["filecoin"]["usd"]);        
+
+        return price / priceCurrency;
+      },
       "42261": async () => {
         const response = await post_request("/token/price", {
           currency: "usd",
@@ -400,12 +437,12 @@ export const PaymentProvider = ({
   };
 
   const reset = () => {
+    
     setTransferSuccess(false);
     setFailMessage("");
     setHash("");
     setLoadingText("");
     setTransferFail(false);
-    setPemail([]);
     setTinterval("");
 
     if (typeof userD.linkAmount != "number") {
@@ -451,14 +488,21 @@ export const PaymentProvider = ({
 
     let from = "";
 
-    if (!connected || chainId != token.value) {
+    console.log(signer, 'sign')
+
+    if (!connected || chainId != token.value || !signer) {
       setLoadingText("");
 
       if (chainId != token.value) {
         await switchNetworkAsync?.(token.value);
 
         authenticate(true);
-      } else if (!connected) {
+      } else if (!connected || !signer) {
+
+        if(!signer){
+          disconnect();
+        }
+
         authenticate(true);
       }
 
@@ -468,12 +512,15 @@ export const PaymentProvider = ({
 
       setLoadingText("Pending...");
 
-      const ether = await getPrice(price, chainId);
+      const feesPrice = price + (price * 1) / 100
+
+      const ether = await getPrice(feesPrice, chainId);
 
       const signed: any = signer;
 
+  
       const initContract = new ethers.Contract(
-        contractAddress,
+        token.contractAddr,
         PAYMENT.abi,
         signed
       );
@@ -499,8 +546,32 @@ export const PaymentProvider = ({
             }
           });
 
+          // let post: any = {
+          //   ...rx,
+          //   date: new Date().getTime(),
+          //   address: from,
+          //   type,
+          //   amount: price,
+          //   hash: init.hash,
+          //   amountCrypto: ether,
+          //   token: token.label,
+          //   contractAddr: token.contractAddr,
+          //   paytype: 'auto',
+          //   linkId,
+          //   chain: token.value
+          // };
+
+          // if (type == "sub") {
+          //   post = {
+          //     ...post,
+          //     remind: new Date().getTime() + mainIx(interval) * 1000,
+          //     renewal: interval
+          //   };
+          // }
+
           let post: any = {
             ...rx,
+            explorer: tokenTrackers[token.value].link,
             date: new Date().getTime(),
             address: from,
             type,
@@ -513,6 +584,7 @@ export const PaymentProvider = ({
           if (type == "sub") {
             post = {
               ...rx,
+              explorer: tokenTrackers[token.value].link,
               date: new Date().getTime(),
               remind: new Date().getTime() + mainIx(interval) * 1000,
               address: from,
@@ -524,6 +596,10 @@ export const PaymentProvider = ({
               renewal: interval,
             };
           }
+
+          // await axios.post(`/api/payments/validate`, post, {
+          //   baseURL: window.origin
+          // });
 
           await post_request(`/link/payments/${linkId}`, post);
 
@@ -648,8 +724,6 @@ export const PaymentProvider = ({
         const trx = trxx.data;
 
         setHash(trx.message);
-
-        // here 
         
         setTransferSuccess(true);
 
