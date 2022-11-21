@@ -1,7 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require('dotenv').config()
 const web3 = require('web3');
-
+// require("./tasks")
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -29,8 +29,10 @@ task("account", "returns nonce and balance for specified address on multiple net
     const web3oasis = new web3('https://testnet.emerald.oasis.dev');
     const web3Opt = new web3('https://goerli.optimism.io');
 
-    const networkIDArr = ["Cronos:", "Polygon:", "Aurora:", "Oasis:", "Optimism:"]
-    const providerArr = [web3cronos, web3poly, web3aurora, web3oasis, web3Opt];
+    const web3FilW = new web3('https://wallaby.node.glif.io/rpc/v0');
+
+    const networkIDArr = ["Cronos:", "Polygon:", "Aurora:", "Oasis:", "Optimism:", "FilWallaby"]
+    const providerArr = [web3cronos, web3poly, web3aurora, web3oasis, web3Opt, web3FilW];
     const resultArr = [];
 
     for (let i = 0; i < providerArr.length; i++) {
@@ -58,6 +60,10 @@ module.exports = {
     },
     polygon: {
       url: process.env.MATIC_LINK,
+      accounts: [process.env.PRIVATE_KEY]
+    }, 
+    filwallaby: {
+      url: "https://wallaby.node.glif.io/rpc/v0",
       accounts: [process.env.PRIVATE_KEY]
     },  
     rinkeby: {
