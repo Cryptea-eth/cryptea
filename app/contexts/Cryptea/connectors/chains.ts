@@ -167,6 +167,27 @@ export const Cronos: Chain = {
   testnet: false,
 };
 
+export const FileCoinWallaby: Chain = {
+  id: 31415,
+  name: "Filecoin Wallaby",
+  network: "Wallaby",
+  nativeCurrency: {
+    name: "Filecoin",
+    decimals: 18,
+    symbol: "tFIL",
+  },
+  rpcUrls: {
+    default: "https://wallaby.node.glif.io/rpc/v0",
+  },
+  blockExplorers: {
+    default: {
+      name: "wallaby",
+      url: "https://explorer.glif.io/wallaby",
+    },
+  },
+  testnet: true,
+};
+
 export const CronosTest: Chain = {
   id: 338,
   name: "Cronos Testnet",
@@ -200,6 +221,7 @@ export const { chains, provider, webSocketProvider } = configureChains(
     OptimismGoerli,
     OasisEmerald,
     OasisEmeraldTestnet,
+    FileCoinWallaby,
   ],
   [
     publicProvider(),
@@ -215,7 +237,8 @@ export const { chains, provider, webSocketProvider } = configureChains(
           chain.id !== Optimism.id ||
           chain.id !== OptimismGoerli.id ||
           chain.id !== OasisEmerald.id ||
-          chain.id !== OasisEmeraldTestnet.id
+          chain.id !== OasisEmeraldTestnet.id ||
+          chain.id !== FileCoinWallaby.id
         )
           return null;
 

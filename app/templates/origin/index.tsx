@@ -579,7 +579,15 @@ const Origin = ({
                                   target={"_blank"}
                                   className="text-[#5a5a5a] cursor-pointer mb-1 font-normal"
                                 >
-                                  View transaction on {explorer!.name}
+                                  View transaction on{" "}
+                                  <span
+                                    className="font-bold"
+                                    style={{
+                                      color: data.colorScheme,
+                                    }}
+                                  >
+                                    {explorer!.name}
+                                  </span>
                                 </a>
                               </Link>
 
@@ -870,22 +878,24 @@ const Origin = ({
                                       )}
 
                                       <div className="2mmd:flex-col usm:flex usm:items-center">
-                                        {Boolean(token!.tokenAddr) && <Button
-                                          sx={{
-                                            backgroundColor: `${data.colorScheme} !important`,
-                                          }}
-                                          variant="contained"
-                                          className="!mt-4 !py-[13px] !font-medium 2mmd:mr-0 usm:mr-2  !capitalize"
-                                          style={{
-                                            fontFamily: "inherit",
-                                          }}
-                                          onClick={() =>
-                                            begin?.("onetime", false)
-                                          }
-                                          fullWidth
-                                        >
-                                          Pay Manually
-                                        </Button>}
+                                        {Boolean(token!.tokenAddr) && (
+                                          <Button
+                                            sx={{
+                                              backgroundColor: `${data.colorScheme} !important`,
+                                            }}
+                                            variant="contained"
+                                            className="!mt-4 !py-[13px] !font-medium 2mmd:mr-0 usm:mr-2  !capitalize"
+                                            style={{
+                                              fontFamily: "inherit",
+                                            }}
+                                            onClick={() =>
+                                              begin?.("onetime", false)
+                                            }
+                                            fullWidth
+                                          >
+                                            Pay Manually
+                                          </Button>
+                                        )}
                                         <Button
                                           sx={{
                                             backgroundColor: `${data.colorScheme} !important`,

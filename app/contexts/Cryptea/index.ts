@@ -45,6 +45,7 @@ export function useCryptea(): mainAppManager {
   const { disconnect } = useDisconnect();
 
   return {
+    disconnect,
     account: isAuthenticated ? altAddress.current : (address || altAddress.current),
     user,
     connected: isConnected,

@@ -82,6 +82,7 @@ export interface mainAppManager extends AuthContext {
     | import("@wagmi/core").FetchSignerResult<import("@wagmi/core").Signer>
     | undefined;
   account: string | null | undefined;
+  disconnect: any;
   chainId: number | undefined;
   logout: () => Promise<void>;
   isAuthenticating: boolean;
@@ -101,7 +102,7 @@ export interface mainAppManager extends AuthContext {
   authenticate: (e?: boolean) => void;
 }
 
-type token = { value: string | number; label: string; symbol: string, network: string, tokenAddr: string; rpc: string };
+type token = { value: string | number; label: string | JSX.Element; symbol: string, network: string, tokenAddr: string; rpc: string,name: string, contractAddr: string };
 
 type pdata = {
   price: number;

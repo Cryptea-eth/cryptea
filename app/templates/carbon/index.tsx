@@ -399,7 +399,15 @@ const Carbon = ({
                           target={"_blank"}
                           className="text-[#5a5a5a] cursor-pointer mb-1 font-normal"
                         >
-                          View transaction on {explorer!.name}
+                          View transaction on{" "}
+                          <span
+                            className="font-bold"
+                            style={{
+                              color: data.colorScheme,
+                            }}
+                          >
+                            {explorer!.name}
+                          </span>
                         </a>
                       </Link>
 
@@ -992,29 +1000,31 @@ const Carbon = ({
                             />
                           </div>
 
-                          {Boolean(token!.tokenAddr) && <Button
-                            sx={{
-                              marginTop: "10px",
-                              backgroundColor: `${data.colorScheme} !important`,
-                              padding: "12px !important",
-                              textAlign: "center",
-                              fontWeight: "bold !important",
-                              lineHeight: "18px",
-                              fontSize: "16px",
-                              fontFamily: "'ubuntu', sans-serif !important",
-                              width: "100%",
-                              color: "#fff",
-                              borderRadius: "5px",
-                              textTransform: "none",
-                              cursor: "pointer",
-                              "&:hover": {
+                          {Boolean(token!.tokenAddr) && (
+                            <Button
+                              sx={{
+                                marginTop: "10px",
                                 backgroundColor: `${data.colorScheme} !important`,
-                              },
-                            }}
-                            onClick={() => begin?.("sub", false)}
-                          >
-                            Pay Manually
-                          </Button>}
+                                padding: "12px !important",
+                                textAlign: "center",
+                                fontWeight: "bold !important",
+                                lineHeight: "18px",
+                                fontSize: "16px",
+                                fontFamily: "'ubuntu', sans-serif !important",
+                                width: "100%",
+                                color: "#fff",
+                                borderRadius: "5px",
+                                textTransform: "none",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  backgroundColor: `${data.colorScheme} !important`,
+                                },
+                              }}
+                              onClick={() => begin?.("sub", false)}
+                            >
+                              Pay Manually
+                            </Button>
+                          )}
 
                           <Button
                             sx={{
