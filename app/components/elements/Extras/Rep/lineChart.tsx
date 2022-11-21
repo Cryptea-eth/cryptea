@@ -144,6 +144,7 @@ const LineChart = ({
   };
 
   const data = () => {
+    
     return {
       labels,
       datasets: dataList.map((v: (string | number)[], i: number) => ({
@@ -159,7 +160,7 @@ const LineChart = ({
           gradient.addColorStop(0, color[i] + "85");
           gradient.addColorStop(0.7, color[i] + "00");
           return gradient;
-        } : undefined,
+        } : 'transparent',
       })),
     };
   };

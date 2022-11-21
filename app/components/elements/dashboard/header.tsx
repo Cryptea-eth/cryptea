@@ -58,6 +58,7 @@ const DashHeader = ({
               );
 
               if (isLoading) setLoading(false);
+
             }
           }
 
@@ -65,7 +66,6 @@ const DashHeader = ({
         });
       }
   };
-
     
 
     itx();
@@ -108,7 +108,10 @@ const DashHeader = ({
                 onClick={() => {
                   setOpen(!open);
 
-                  get_request("/notifications/view", {}, undefined, false);
+                  get_request("/notifications/view", {}, undefined, false).then(e => {
+                    console.log(e?.data)
+                  });
+
                 }}
                 style={{
                   backgroundColor: open ? "#ececec" : undefined,

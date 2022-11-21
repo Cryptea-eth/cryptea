@@ -37,10 +37,8 @@ export const cryptoDeets = (index:string) => {
       } else {
         img = require(`crypto-icons-plus-32/src/${mainMap[symbol as string][0]}.png`);
       }
-    }
+    }   
 
-    
-
-    return { symbol, name: name + (main[1] || ''), img }
+    return { symbol, useName: name + (main[1] || '').replaceAll(/[()]/g, ''), name: name + (main[1] || ''), img }
 
 }

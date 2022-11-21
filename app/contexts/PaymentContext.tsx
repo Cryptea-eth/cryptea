@@ -23,12 +23,17 @@ import LogoSpace from "../components/elements/logo";
 import QrCode from "../components/elements/qrcode";
 import { FaRegClone } from "react-icons/fa";
 import { RiCloseCircleLine } from "react-icons/ri";
-import { AuroraTestnet, CronosTest, FileCoinWallaby, OasisEmeraldTestnet, OptimismGoerli } from "./Cryptea/connectors/chains";
+import {
+  AuroraTestnet,
+  CronosTest,
+  FileCoinWallaby,
+  OasisEmeraldTestnet,
+  OptimismGoerli,
+} from "./Cryptea/connectors/chains";
 import Loader from "../components/elements/loader";
 import axios, { AxiosError } from "axios";
 
 export const PaymentContext = createContext<PaymentCont>({});
-
 
 export const PaymentProvider = ({
   children,
@@ -51,8 +56,6 @@ export const PaymentProvider = ({
     price: number;
     type: "onetime" | "sub";
   }>();
-
- 
 
   const [copied, mainCopy] = useState<boolean>(false);
 
@@ -235,7 +238,7 @@ export const PaymentProvider = ({
 
         const e = response.data as { [index: string]: any };
 
-        const priceCurrency = Number(e["filecoin"]["usd"]);        
+        const priceCurrency = Number(e["filecoin"]["usd"]);
 
         return price / priceCurrency;
       },
@@ -437,7 +440,6 @@ export const PaymentProvider = ({
   };
 
   const reset = () => {
-    
     setTransferSuccess(false);
     setFailMessage("");
     setHash("");
@@ -485,10 +487,9 @@ export const PaymentProvider = ({
     price: number,
     type: "sub" | "onetime" = "onetime"
   ) => {
-
     let from = "";
 
-    console.log(signer, 'sign')
+    console.log(signer, "sign");
 
     if (!connected || chainId != token.value || !signer) {
       setLoadingText("");
@@ -498,8 +499,7 @@ export const PaymentProvider = ({
 
         authenticate(true);
       } else if (!connected || !signer) {
-
-        if(!signer){
+        if (!signer) {
           disconnect();
         }
 
@@ -512,13 +512,12 @@ export const PaymentProvider = ({
 
       setLoadingText("Pending...");
 
-      const feesPrice = price + (price * 1) / 100
+      const feesPrice = price + (price * 1) / 100;
 
       const ether = await getPrice(feesPrice, chainId);
 
       const signed: any = signer;
 
-  
       const initContract = new ethers.Contract(
         token.contractAddr,
         PAYMENT.abi,
@@ -546,32 +545,8 @@ export const PaymentProvider = ({
             }
           });
 
-          // let post: any = {
-          //   ...rx,
-          //   date: new Date().getTime(),
-          //   address: from,
-          //   type,
-          //   amount: price,
-          //   hash: init.hash,
-          //   amountCrypto: ether,
-          //   token: token.label,
-          //   contractAddr: token.contractAddr,
-          //   paytype: 'auto',
-          //   linkId,
-          //   chain: token.value
-          // };
-
-          // if (type == "sub") {
-          //   post = {
-          //     ...post,
-          //     remind: new Date().getTime() + mainIx(interval) * 1000,
-          //     renewal: interval
-          //   };
-          // }
-
           let post: any = {
             ...rx,
-            explorer: tokenTrackers[token.value].link,
             date: new Date().getTime(),
             address: from,
             type,
@@ -579,29 +554,23 @@ export const PaymentProvider = ({
             hash: init.hash,
             amountCrypto: ether,
             token: token.label,
+            contractAddr: token.contractAddr,
+            paytype: "auto",
+            linkId,
+            chain: token.value,
           };
 
           if (type == "sub") {
             post = {
-              ...rx,
-              explorer: tokenTrackers[token.value].link,
-              date: new Date().getTime(),
+              ...post,
               remind: new Date().getTime() + mainIx(interval) * 1000,
-              address: from,
-              amount: price,
-              hash,
-              amountCrypto: ether,
-              token: token.label,
-              type,
               renewal: interval,
             };
           }
 
-          // await axios.post(`/api/payments/validate`, post, {
-          //   baseURL: window.origin
-          // });
-
-          await post_request(`/link/payments/${linkId}`, post);
+          await axios.post(`/api/payments/validate`, post, {
+            baseURL: window.origin,
+          });
 
           setTransferSuccess(true);
 
@@ -634,7 +603,6 @@ export const PaymentProvider = ({
 
   const [auth, setAuth] = useState<boolean>(true);
 
-
   const [genAddr, setGenAddr] = useState<string | undefined>();
 
   const timer: any = useRef();
@@ -649,166 +617,152 @@ export const PaymentProvider = ({
     initialBalance,
     price,
     type,
-    wallet
+    wallet,
   }: {
     initialBalance: any;
     price: string;
     type: "onetime" | "sub";
-    wallet: string
+    wallet: string;
   }) => {
-
     if (timeCounted <= 720) {
-
       const base = {
         initial: initialBalance,
         rpc: token.rpc,
         tokenAddr: token.tokenAddr,
         price,
-        account: wallet
+        account: wallet,
       };
-    
-      try{
-
-      const queryBalance = await axios.post("/api/payments", base, {
-        baseURL: window.origin,
-      });
-
-      console.log(queryBalance);
-
-    if (queryBalance.data.proceed) {
-  
-
-      clearInterval(timer.current);
-
-      setManLoader(true);
 
       try {
-
-        const rx: { [index: string]: string | number } = {};
-        pemail.forEach((val: undefined | string, i: number) => {
-          if (val !== undefined && val.length) {
-            if (userD.rdata[type][i] !== undefined) {
-              rx[userD.rdata[type][i].toLowerCase()] = val;
-            }
-          }
+        const queryBalance = await axios.post("/api/payments", base, {
+          baseURL: window.origin,
         });
-        
-        let post: any = {
-          rx,
-          type,
-          amount,
-          amountCrypto: price,
-          label: token.label,
-        };
 
-        if (type == "sub") {
-          post = {
-            ...post,
-            interval
-          };
-        }
+        console.log(queryBalance);
 
-      const trxx = await post_request(
-          "/api/payments/begin",
-          { ...base, ...post, linkId, ethAddress },
-          {
-            baseURL: window.origin,
-            timeout: 600000
-          }
-        );
-
-        console.log(trxx)
-
-       if (trxx.data.success) {
-
-        const trx = trxx.data;
-
-        setHash(trx.message);
-        
-        setTransferSuccess(true);
-
-        openModal(false);
-
-        setManLoader(false);
-        setTimeCounted(0);
-        if (type == "sub") setSubCheck(true);
-
-        clearTimeout(timerTimeout);
-
-        setTimeout(reset, 12000);
-
-      }else{
-          setManLoader(false);
-          openModal(false);
-          console.log(trxx.data.message);
+        if (queryBalance.data.proceed) {
           clearInterval(timer.current);
-          setTransferFail(true);
-          setTimeCounted(0);
-          setFailMessage(trxx.data.message);
-      }
 
+          setManLoader(true);
+
+          try {
+            const rx: { [index: string]: string | number } = {};
+            pemail.forEach((val: undefined | string, i: number) => {
+              if (val !== undefined && val.length) {
+                if (userD.rdata[type][i] !== undefined) {
+                  rx[userD.rdata[type][i].toLowerCase()] = val;
+                }
+              }
+            });
+
+            let post: any = {
+              rx,
+              type,
+              amount,
+              amountCrypto: price,
+              label: token.label,
+            };
+
+            if (type == "sub") {
+              post = {
+                ...post,
+                interval,
+              };
+            }
+
+            const trxx = await post_request(
+              "/api/payments/begin",
+              { ...base, ...post, linkId, ethAddress },
+              {
+                baseURL: window.origin,
+                timeout: 600000,
+              }
+            );
+
+            console.log(trxx);
+
+            if (trxx.data.success) {
+              const trx = trxx.data;
+
+              setHash(trx.message);
+
+              setTransferSuccess(true);
+
+              openModal(false);
+
+              setManLoader(false);
+              setTimeCounted(0);
+              if (type == "sub") setSubCheck(true);
+
+              clearTimeout(timerTimeout);
+
+              setTimeout(reset, 12000);
+            } else {
+              setManLoader(false);
+              openModal(false);
+              console.log(trxx.data.message);
+              clearInterval(timer.current);
+              setTransferFail(true);
+              setTimeCounted(0);
+              setFailMessage(trxx.data.message);
+            }
+          } catch (err) {
+            setManLoader(false);
+            openModal(false);
+            console.log(err);
+            setTransferFail(true);
+            clearInterval(timer.current);
+            setTimeCounted(0);
+            setFailMessage("Something went wrong, Please try again");
+          }
+        } else {
+          timerTimeout = setTimeout(
+            () =>
+              checkWallet({
+                initialBalance,
+                price,
+                type,
+                wallet,
+              }),
+            2000
+          );
+        }
       } catch (err) {
-        setManLoader(false);
-        openModal(false);
         console.log(err);
-        setTransferFail(true);
-        clearInterval(timer.current);
-        setTimeCounted(0);
-        setFailMessage("Something went wrong, Please try again");
+        timerTimeout = setTimeout(
+          () =>
+            checkWallet({
+              initialBalance,
+              price,
+              type,
+              wallet,
+            }),
+          2000
+        );
       }
-    
-  }else {
-      timerTimeout = setTimeout(
-          () => checkWallet({
-              initialBalance,
-              price,
-              type,
-              wallet
-            }),
-          2000
-        );
-    }
-
-    }catch(err){
-      console.log(err);
-      timerTimeout = setTimeout(
-          () => checkWallet({
-              initialBalance,
-              price,
-              type,
-              wallet
-            }),
-          2000
-        );
-    }
-
-  } else {
+    } else {
       clearTimeout(timerTimeout);
       openModal(false);
       setTransferFail(true);
       clearInterval(timer.current);
       setTimeCounted(0);
       setFailMessage("No crypto received, please try again");
-  }
-};
+    }
+  };
 
   useEffect(() => {
-
-      if (timeCounted >= 720) {
-          clearInterval(timer.current)
-           setTimeCounted(0);
-           openModal(false);
-           setTransferFail(true);
-           setFailMessage("No crypto received, please try again");          
-      }
-      
+    if (timeCounted >= 720) {
+      clearInterval(timer.current);
+      setTimeCounted(0);
+      openModal(false);
+      setTransferFail(true);
+      setFailMessage("No crypto received, please try again");
+    }
   }, [timeCounted, timer]);
-  
-  const beginManual = async (amount: number, type: "onetime" | "sub") => {
 
+  const beginManual = async (amount: number, type: "onetime" | "sub") => {
     setLoadingText("Just a sec...");
-  
-     
+
     axios
       .get("/api/payments/accounts", {
         params: {
@@ -851,21 +805,17 @@ export const PaymentProvider = ({
         }, 1000);
 
         await checkWallet({ initialBalance, type, price, wallet });
-     
-      }).catch((err) => {
-          const error = err as Error | AxiosError;
+      })
+      .catch((err) => {
+        const error = err as Error | AxiosError;
 
-          console.log(error);
+        console.log(error);
 
-          beginManual(amount, type);
-
+        beginManual(amount, type);
       });
-
   };
 
   const begin = (type: "onetime" | "sub", auto: boolean) => {
-    
-
     setFailMessage("");
     setTransferFail(false);
     setHash("");
@@ -997,18 +947,20 @@ export const PaymentProvider = ({
             </div>
 
             <div className="flex relative items-center flex-col justify-center mb-5">
-              {manLoader && <Loader
-                sx={{
-                  backgroundColor: "#ffffffeb",
-                  width: 210,
-                  height: 210,
-                  margin: 'auto',
-                  right: '0px',
-                  left: '0px'
-                }}
-                incLogo={false}
-                fixed={false}
-              />}
+              {manLoader && (
+                <Loader
+                  sx={{
+                    backgroundColor: "#ffffffeb",
+                    width: 210,
+                    height: 210,
+                    margin: "auto",
+                    right: "0px",
+                    left: "0px",
+                  }}
+                  incLogo={false}
+                  fixed={false}
+                />
+              )}
               <QrCode
                 style={{
                   marginBottom: "16px",
