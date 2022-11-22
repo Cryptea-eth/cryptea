@@ -44,8 +44,7 @@ const DashHeader = ({
   useEffect(() => {
 
     const itx = async () => {
-    
-
+  
        const dx = await get_request("/notifications", {}, undefined, false);
 
         if (dx?.data) {
@@ -64,7 +63,7 @@ const DashHeader = ({
           
           setTimeout(itx, 3000);
 
-  };
+      };
     
   if (once.current) {
 

@@ -36,7 +36,6 @@ const DashHome = () => {
 
       let { payments, views, links } = dashmain?.data;
       
-
       const breakdown: {
         [index: string]: {
           created_at: number;
@@ -192,36 +191,36 @@ const DashHome = () => {
               )}
             </div>
 
-            <div className="">
-              {blur ? (
-                <Skeleton
-                  variant="rounded"
-                  className="p-[5px] rounded-[8px] text-[14px]"
-                  sx={{ fontSize: "14px", height: "31px", width: "70px" }}
-                />
-              ) : (
-                <Direction
-                  direction={
-                    change(
-                      dashData["payments"].sort(
-                        (a: any, b: any) =>
-                          new Date(b.created_at).getTime() -
-                          new Date(a.created_at).getTime()
-                      )
-                    ).direction
-                  }
-                  value={
-                    change(
-                      dashData["payments"].sort(
-                        (a: any, b: any) =>
-                          new Date(b.created_at).getTime() -
-                          new Date(a.created_at).getTime()
-                      )
-                    ).value
-                  }
-                />
-              )}
-            </div>
+              <div className="w-fit">
+                {blur ? (
+                  <Skeleton
+                    variant="rounded"
+                    className="p-[5px] rounded-[8px] text-[14px]"
+                    sx={{ fontSize: "14px", height: "31px", width: "70px" }}
+                  />
+                ) : (
+                  <Direction
+                    direction={
+                      change(
+                        dashData["payments"].sort(
+                          (a: any, b: any) =>
+                            new Date(b.created_at).getTime() -
+                            new Date(a.created_at).getTime()
+                        )
+                      ).direction
+                    }
+                    value={
+                      change(
+                        dashData["payments"].sort(
+                          (a: any, b: any) =>
+                            new Date(b.created_at).getTime() -
+                            new Date(a.created_at).getTime()
+                        )
+                      ).value
+                    }
+                  />
+                )}
+              </div>
           </div>
 
           <div className="py-3">
@@ -449,6 +448,7 @@ const DashHome = () => {
                               />
                             ) : (
                               <Direction
+                                tooltip={"%change 1hr"}
                                 direction={
                                   change([
                                     vws[vws.length - 1],
@@ -490,7 +490,7 @@ const DashHome = () => {
           />
         ) : (
           <div className="border-[rgb(218,220,224)] mb-2 w-full mr-2 col-span-2 rounded-[8px] border bg-white overflow-hidden border-solid">
-            <div className="px-6 pt-6 relative pb-3">
+            <div className="px-6 pt-6 relative pb-3 h-full flex flex-col justify-between">
               <div className="flex justify-between mb-[16px] items-center">
                 <h2 className="font-bold text-[.8rem] text-[#818181] leading-[1.75rem] ">
                   Payments
@@ -577,11 +577,11 @@ const DashHome = () => {
             className={"col-span-2 rounded-[8px] min-h-[200px]"}
           />
         ) : (
-          <div className="border-[rgb(218,220,224)] w-full col-span-2 rounded-[8px] border bg-white overflow-hidden border-solid">
-            <div className="px-6 pt-6 relative pb-3">
+          <div className="border-[rgb(218,220,224)] w-full rounded-[8px] border bg-white overflow-hidden border-solid mb-2">
+            <div className="px-6 pt-6 relative pb-3 h-full flex flex-col justify-between">
               <div className="flex justify-between mb-[16px] items-center">
                 <h2 className="font-bold text-[.8rem] text-[#818181] leading-[1.75rem] ">
-                  Page Views
+                  Total Page Views
                 </h2>
 
                 <span className="font-[400] text-[1.0rem] leading-[1.75rem]">

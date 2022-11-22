@@ -25,6 +25,7 @@ import { Modal, IconButton, Tooltip, ClickAwayListener } from "@mui/material";
 import { useContext, useState } from 'react';
 import { dash, DashContext } from "../../../../contexts/GenContext";
 import { MdClose } from "react-icons/md";
+import QrCode from "../../qrcode";
 
 const ShareLink = ({
   open,
@@ -47,13 +48,17 @@ const ShareLink = ({
 
   const [copied, mainCopy] = useState<boolean>(false);
 
+ 
   return (
     <>
       <Modal
         open={open}
         sx={{
+          backgroundColor: 'rgb(229, 229, 229, .5)',
+          alignItems: "unset",
           "& .MuiBackdrop-root": {
-            backgroundColor: "rgb(229, 229, 229, .5)",
+            backgroundColor: "transparent",
+            
           },
         }}
         onClose={() => toggleSocial(false)}
@@ -214,6 +219,15 @@ const ShareLink = ({
               </div>
             </div>
 
+            <div className="w-fit m-auto">
+              <QrCode
+                style={{
+                  marginBottom: "16px",
+                }}
+                data={data.userLk}
+              />
+            </div>
+
             <div>
               <h2 className="text-[18px] text-[#5a5a5a] mb-3 font-bold w-full">
                 Link
@@ -241,8 +255,8 @@ const ShareLink = ({
                       size={"large"}
                       onClick={() => {
                         mainCopy(true);
-                        copy(data.userLk)
-                    }}
+                        copy(data.userLk);
+                      }}
                     >
                       <FaRegClone
                         color={"#919191"}
