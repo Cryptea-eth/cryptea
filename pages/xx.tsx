@@ -1,33 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { get_request, post_request } from "../app/contexts/Cryptea/requests";
 import * as ethers from 'ethers';
 import web3 from 'web3';
-import { cryptoSymbol } from 'crypto-symbol';
-import lxl from "crypto-icons-plus-32/src/polygon.png";
-import map from "crypto-icons-plus/map.min.json";
+import axios from 'axios';
+
 
 const Xx = () => {
 
-  useEffect(() => {
-    
+ const [ss, setSs] = useState("");
 
-    get_request(
-      "/testt"
-    ).then((e) => {
-      console.log(e);
-    }).catch((ex) => {
-      console.log(ex);
-      
-    });
-
-
-  }, [])
-
+ useEffect(() => {
+   axios.get(`http://localhost:3000/api/cryptoimg/matic`).then((e) => {
+     setSs(e.data);
+     console.log(e)
+   });
+ }, []);
 
 
   return (
     <>
-      <img src={lxl.src} alt={"11"} />
+      <img src={"http://localhost:3000/api/cryptoimg/matic"} alt={"11"} />
     </>
   );
 }

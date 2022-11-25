@@ -554,7 +554,7 @@ const Carbon = ({
                               isClearable={false}
                               value={token}
                               onChange={(e) => setToken?.(e!)}
-                              name="colors"
+                              name="Tokens"
                               placeholder={"Tokens..."}
                               options={options}
                               styles={{

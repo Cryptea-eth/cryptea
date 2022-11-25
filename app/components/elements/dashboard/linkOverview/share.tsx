@@ -54,17 +54,14 @@ const ShareLink = ({
       <Modal
         open={open}
         sx={{
-          backgroundColor: 'rgb(229, 229, 229, .5)',
-          alignItems: "unset",
           "& .MuiBackdrop-root": {
             backgroundColor: "transparent",
-            
           },
         }}
         onClose={() => toggleSocial(false)}
         className={`${
           sidebar?.openPage ? "pl-[257px]" : "pl-[87px]"
-        } justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur-[2px] fixed inset-0 z-50 outline-none focus:outline-none`}
+        } justify-center bg-[#bbbbbb80] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur-[2px] fixed inset-0 z-50 outline-none focus:outline-none`}
       >
         <div className="relative max-w-[1200px] 4sm:w-[60%] 42sm:w-[65%] w-[85%] min-w-[340px]">
           <div className="border-0 p-6 2md:px-4 rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
@@ -219,14 +216,6 @@ const ShareLink = ({
               </div>
             </div>
 
-            <div className="w-fit m-auto">
-              <QrCode
-                style={{
-                  marginBottom: "16px",
-                }}
-                data={data.userLk}
-              />
-            </div>
 
             <div>
               <h2 className="text-[18px] text-[#5a5a5a] mb-3 font-bold w-full">

@@ -768,7 +768,7 @@ const Links = () => {
               style={{
                 gridTemplateColumns: "repeat(auto-fill, minmax(293px, 1fr))",
               }}
-              className="grid gap-6 grid-flow-dense"
+              className="grid gap-6 mb-3 grid-flow-dense"
             >
               <Button className="!w-full !rounded-md hover:!border-[#f5705982] hover:!bg-[#f5705982] !text-[#121212] !bg-transparent hover:!text-white !border !border-solid !border-[rgb(218,220,224)]">
                 <Link href="/dashboard/links/new">

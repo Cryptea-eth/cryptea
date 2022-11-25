@@ -688,7 +688,7 @@ const Origin = ({
 
                                       <Select
                                         isClearable={false}
-                                        name="colors"
+                                        name="Tokens"
                                         placeholder={"Tokens..."}
                                         options={options!}
                                         styles={{

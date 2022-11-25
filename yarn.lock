@@ -4829,6 +4829,11 @@
     "mixin-deep" "^1.2.0"
     "pascalcase" "^0.1.1"
 
+"base64-cryptocurrency-icons@^1.1.20":
+  "integrity" "sha512-3MFEUkwiFrWOxQEdeyvSyN7OZ73xD4d4geOuOgDsYLHpU4pgGXxkKR/yOxUJfMUTIp0CUBzY1Xt7eylNPFhxZQ=="
+  "resolved" "https://registry.npmjs.org/base64-cryptocurrency-icons/-/base64-cryptocurrency-icons-1.1.20.tgz"
+  "version" "1.1.20"
+
 "base64-js@^1.3.1":
   "integrity" "sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/base64-js/-/base64-js-1.5.1.tgz"
@@ -6065,25 +6070,15 @@
     "randombytes" "^2.0.0"
     "randomfill" "^1.0.3"
 
-"crypto-icons-plus-32@^1.0.1":
-  "integrity" "sha512-+m/KeWwt18Clh0+r530k4FvmFeLZFsP/tKZ21ghzoYl1ZJ/rKCmYZmJgkUirg73jlBofnp/TTOBrIWBcSRvgTA=="
-  "resolved" "https://registry.npmjs.org/crypto-icons-plus-32/-/crypto-icons-plus-32-1.0.1.tgz"
-  "version" "1.0.1"
-
-"crypto-icons-plus@^1.0.1":
-  "integrity" "sha512-IcgUUuCinyzPRmJAsVxfCswvIfjx2BbEiM6MegYw/RI8Jxejz5FaVdn+gDwK+nNXMcixq8TdLYWe2AisW0d4Rg=="
-  "resolved" "https://registry.npmjs.org/crypto-icons-plus/-/crypto-icons-plus-1.0.1.tgz"
-  "version" "1.0.1"
-
 "crypto-js@^4.1.1", "crypto-js@4.1.1":
   "integrity" "sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/crypto-js/-/crypto-js-4.1.1.tgz"
   "version" "4.1.1"
 
-"crypto-symbol@^3.5.221":
-  "integrity" "sha512-/Sr2gEzUasyeErEWVtShUX7x3R9OnkboitSeLQkqCGEswuXvNWDYcEOf7DKqmeAvOQoW+kPHb81HnAZkCX6BVw=="
-  "resolved" "https://registry.npmjs.org/crypto-symbol/-/crypto-symbol-3.5.221.tgz"
-  "version" "3.5.221"
+"crypto-symbol@^3.5.235":
+  "integrity" "sha512-wCWk1AxnwhwBzlY7dzN5cppDKk66HJcPBziCIAOOB2pWwv4DIy28NYZACuNWbJuvtEC0yZ0UHTElTjQWdctB3w=="
+  "resolved" "https://registry.npmjs.org/crypto-symbol/-/crypto-symbol-3.5.235.tgz"
+  "version" "3.5.235"
 
 "css-unit-converter@^1.1.1":
   "integrity" "sha512-IiJwMC8rdZE0+xiEZHeru6YoONC4rfPMqGm2W85jMIbkFvv5nFTwJVFHam2eFrN6txmoUYFAFXiv8ICVeTO0MA=="

@@ -969,7 +969,7 @@ const Onetime = () => {
                       Configure link
                     </div>
                   </div>
-                  <Link href="/working">
+                  <Link href={`/user/${String(slug).toLowerCase()}/settings`}>
                     <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                       Go To Settings
                     </a>

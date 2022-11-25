@@ -8,6 +8,7 @@ import Direction from "./direction";
 import { get_request } from "../../../contexts/Cryptea/requests";
 import { useEffect, useState } from "react";
 import { cryptoDeets } from "../../../functions/crypto";
+import axios from "axios";
 
 const DashHome = () => {
   const [dashData, setDashData] = useState<any>({
@@ -20,13 +21,55 @@ const DashHome = () => {
 
   const [blur, removeBlur] = useState<boolean>(true);
 
+  const [imgCache, setImgCache] = useState<{ [index: string]: string }>({});
+
   const [rand, setRand] = useState<number>(0);
+
+  const CustomImg = ({
+    src,
+    alt,
+    symbol,
+  }: {
+    src: string;
+    alt: string;
+    symbol: string;
+  }): JSX.Element => {
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+      if (imgCache[symbol] === undefined) {
+        axios
+          .get(`${src}`, {
+            baseURL: window.origin,
+          })
+          .then((main) => {
+            if (Boolean(main.data)) {
+              imgCache[symbol] = main.data;
+
+              setLoading(false);
+            }
+          });
+      }
+    }, [src, symbol]);
+
+    return (
+      <>
+        {loading && !Boolean(imgCache[symbol]) ? (
+          <Skeleton
+            variant={"circular"}
+            sx={{ width: "40px", height: "40px" }}
+          />
+        ) : (
+          <Image layout={"fill"} alt={alt} src={imgCache[symbol]} />
+        )}
+      </>
+    );
+  };
 
   useEffect(() => {
     setRand(Math.floor(Math.random() * 4));
 
     const init = async () => {
-
       const dashmain = await get_request(
         "/dashboard/home",
         {},
@@ -35,7 +78,7 @@ const DashHome = () => {
       );
 
       let { payments, views, links } = dashmain?.data;
-      
+
       const breakdown: {
         [index: string]: {
           created_at: number;
@@ -57,12 +100,14 @@ const DashHome = () => {
       });
 
       const sortBreak = Object.values(breakdown)
-        .map((a: { created_at: number; amount: number; token: string }[]) => ({
-          total: a
-            .reduce((xx, xxx) => Number(xx) + Number(xxx.amount), 0)
-            .toFixed(2),
-          token: a[0].token,
-        }))
+        .map((a: { created_at: number; amount: number; token: string }[]) => {
+          return {
+            total: a
+              .reduce((xx, xxx) => Number(xx) + Number(xxx.amount), 0)
+              .toFixed(2),
+            token: a[0].token,
+          };
+        })
         .sort((a, b) => Number(b.total) - Number(a.total));
 
       const sortViews = views.sort(
@@ -109,13 +154,9 @@ const DashHome = () => {
       if (blur) removeBlur(false);
 
       setTimeout(init, 3000);
-
     };
 
-
-
     init();
-
   }, []);
 
   const change = (data: any[]): { value: number; direction: "up" | "down" } => {
@@ -132,10 +173,9 @@ const DashHome = () => {
 
       value = main ? (main / (initial.amount || 1)) * 100 : 0;
     }
-    
+
     return { value: Math.abs(value), direction: value >= 0 ? "up" : "down" };
   };
-
 
   return (
     <div className="px-5 pt-[75px]">
@@ -191,36 +231,36 @@ const DashHome = () => {
               )}
             </div>
 
-              <div className="w-fit">
-                {blur ? (
-                  <Skeleton
-                    variant="rounded"
-                    className="p-[5px] rounded-[8px] text-[14px]"
-                    sx={{ fontSize: "14px", height: "31px", width: "70px" }}
-                  />
-                ) : (
-                  <Direction
-                    direction={
-                      change(
-                        dashData["payments"].sort(
-                          (a: any, b: any) =>
-                            new Date(b.created_at).getTime() -
-                            new Date(a.created_at).getTime()
-                        )
-                      ).direction
-                    }
-                    value={
-                      change(
-                        dashData["payments"].sort(
-                          (a: any, b: any) =>
-                            new Date(b.created_at).getTime() -
-                            new Date(a.created_at).getTime()
-                        )
-                      ).value
-                    }
-                  />
-                )}
-              </div>
+            <div className="w-fit">
+              {blur ? (
+                <Skeleton
+                  variant="rounded"
+                  className="p-[5px] rounded-[8px] text-[14px]"
+                  sx={{ fontSize: "14px", height: "31px", width: "70px" }}
+                />
+              ) : (
+                <Direction
+                  direction={
+                    change(
+                      dashData["payments"].sort(
+                        (a: any, b: any) =>
+                          new Date(b.created_at).getTime() -
+                          new Date(a.created_at).getTime()
+                      )
+                    ).direction
+                  }
+                  value={
+                    change(
+                      dashData["payments"].sort(
+                        (a: any, b: any) =>
+                          new Date(b.created_at).getTime() -
+                          new Date(a.created_at).getTime()
+                      )
+                    ).value
+                  }
+                />
+              )}
+            </div>
           </div>
 
           <div className="py-3">
@@ -247,7 +287,7 @@ const DashHome = () => {
                     );
                   })
                 : dashData["sortBreakdown"].map((a: any, i: number) => {
-                    const deets = cryptoDeets(a.token);
+                    const { name, symbol, useName } = cryptoDeets(a.token);
 
                     return (
                       <div
@@ -256,18 +296,18 @@ const DashHome = () => {
                       >
                         <div className="flex items-center mb-2">
                           <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
-                            <Image
-                              src={deets.img}
-                              alt={deets.name}
-                              layout={"fill"}
+                            <CustomImg
+                              src={`/api/cryptoimg/${symbol?.toLowerCase()}`}
+                              alt={name}
+                              symbol={symbol}
                             />
                           </div>
                           <div className="ml-3 relative top-[2px]">
                             <p className="font-[600] capitalize truncate leading-[14px] text-[14px]">
-                              {deets.name}
+                              {name}
                             </p>
                             <span className="font-[400] uppercase text-[11px]">
-                              {deets.symbol}
+                              {symbol}
                             </span>
                           </div>
                         </div>
@@ -276,7 +316,7 @@ const DashHome = () => {
                           <LineChart
                             label={["data"]}
                             gradient={false}
-                            name={deets.useName}
+                            name={useName}
                             color={["#f57059"]}
                             dataList={[
                               sortData(

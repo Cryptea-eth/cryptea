@@ -144,14 +144,14 @@ const LineChart = ({
   };
 
   const data = () => {
-    
+
     return {
       labels,
       datasets: dataList.map((v: (string | number)[], i: number) => ({
         fill: true,
         label: label[i],
         data: v,
-        lineTension: 0.5,
+        lineTension: 0.2,
         borderWidth: 1,
         borderColor: color[i],
         backgroundColor: gradient ? (context: ScriptableContext<"line">) => {
