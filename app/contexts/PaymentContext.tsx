@@ -24,11 +24,8 @@ import QrCode from "../components/elements/qrcode";
 import { FaRegClone } from "react-icons/fa";
 import { RiCloseCircleLine } from "react-icons/ri";
 import {
-  AuroraTestnet,
-  CronosTest,
-  FileCoinWallaby,
-  OasisEmeraldTestnet,
-  OptimismGoerli,
+  CryptoList,
+  tokenTrackers,
 } from "./Cryptea/connectors/chains";
 import Loader from "../components/elements/loader";
 import axios, { AxiosError } from "axios";
@@ -42,6 +39,7 @@ export const PaymentProvider = ({
   children: JSX.Element;
   editMode: boolean;
 }) => {
+  
   const router = useRouter();
 
   let username = router.query["slug"];
@@ -105,33 +103,6 @@ export const PaymentProvider = ({
   const [failMessage, setFailMessage] = useState<string>("");
   const [hash, setHash] = useState<string>("");
 
-  const tokenTrackers: { [index: string]: { name: string; link: string } } = {
-    80001: {
-      name: "polygonscan",
-      link: "https://mumbai.polygonscan.com/tx/",
-    },
-    338: {
-      name: "Cronos Explorer",
-      link: "https://cronos.org/explorer/testnet3/tx/",
-    },
-    1313161555: {
-      name: "Aurora Explorer",
-      link: "https://explorer.testnet.aurora.dev/tx/",
-    },
-    420: {
-      name: "Optimism Explorer",
-      link: "https://goerli-optimistic.etherscan.io/tx/",
-    },
-    42261: {
-      name: "Oasis Explorer",
-      link: "https://testnet.explorer.emerald.oasis.dev/tx/",
-    },
-    31415: {
-      name: "Wallaby Explorer",
-      link: "https://explorer.glif.io/wallaby",
-    },
-  };
-
   const [options, setOptions] = useState<
     {
       value: string | number;
@@ -143,68 +114,7 @@ export const PaymentProvider = ({
       rpc: string;
       tokenAddr: string;
     }[]
-  >([
-    {
-      value: 80001,
-      label: <div> Polygon (Testnet) </div>,
-      name: "Polygon (Testnet)",
-      symbol: "matic",
-      contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
-      network: "polygon maticmum",
-      tokenAddr: "0x0000000000000000000000000000000000001010",
-      rpc: process.env.MATIC_LINK as string,
-    },
-    {
-      value: 31415,
-      label: "Filecoin (Testnet)",
-      name: "Filecoin (Testnet)",
-      symbol: "TFIL",
-      network: FileCoinWallaby.network as string,
-      tokenAddr: "",
-      contractAddr: "0x2d9E5Cd304A84DC15Bb28749Cf0769A0bdc2CD6F",
-      rpc: FileCoinWallaby.rpcUrls.default,
-    },
-    {
-      value: 338,
-      label: "Cronos (Testnet)",
-      name: "Cronos (Testnet)",
-      contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
-      symbol: "tcro",
-      network: CronosTest.network as string,
-      tokenAddr: "",
-      rpc: CronosTest.rpcUrls.default,
-    },
-    {
-      value: 1313161555,
-      label: "Aurora (Testnet)",
-      name: "Aurora (Testnet)",
-      contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
-      symbol: "aurora",
-      network: AuroraTestnet.network as string,
-      tokenAddr: "",
-      rpc: AuroraTestnet.rpcUrls.default,
-    },
-    {
-      value: 420,
-      contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
-      label: "Optimism (Testnet)",
-      name: "Optimism (Testnet)",
-      symbol: "op",
-      network: OptimismGoerli.network as string,
-      tokenAddr: "",
-      rpc: OptimismGoerli.rpcUrls.default,
-    },
-    {
-      value: 42261,
-      contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
-      label: "Oasis (Testnet)",
-      name: "Oasis (Testnet)",
-      symbol: "rose",
-      network: OasisEmeraldTestnet.network as string,
-      tokenAddr: "",
-      rpc: OasisEmeraldTestnet.rpcUrls.default,
-    },
-  ]);
+  >(CryptoList);
 
   const [token, setToken] = useState<any>(options[0]);
 

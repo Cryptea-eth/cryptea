@@ -7,6 +7,9 @@ const nextConfig = {
     PUBLIC_KEY: process.env.PUBLIC_KEY,
     APP_KEY: process.env.APP_KEY,
     KEY: process.env.KEY
+  },
+  images: {
+    domains: ['assets.coingecko.com', 'coingecko.com']
   }
 }
 

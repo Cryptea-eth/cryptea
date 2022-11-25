@@ -1,26 +1,29 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import icons from "base64-cryptocurrency-icons";
-import fs from 'fs';
+import axios from "axios";
+import generic from "../../../public/images/generic.json";
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<string>
 ) {
+
   if (req.method == "GET") {
-    const symbol = String(req.query["symbol"]).toUpperCase();
 
-    if (icons[symbol] !== undefined) {
+    const crypto = String(req.query["symbol"]).toLowerCase();    
 
-      return res
-        .status(200)
-        .json(
-          icons[symbol]?.icon || ""
-        );
-      
-    } else {
+      axios.get(`https://ab.cryptea.me/crypto/img/${crypto}`, { headers: {
+          Authorization: process.env.APP_KEY || "",
+      } }).then((rs) => {
 
-      return res.status(200).json(icons["GENERIC"]?.icon || "");
+        const mainRs = rs.data.link;
 
-    }
+        return res.status(200).json(mainRs);        
+
+      }).catch((err) => {
+
+        return res.status(200).json(generic['GENERIC'].icon)
+
+      });
+
   }
 }

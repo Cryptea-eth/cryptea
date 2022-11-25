@@ -4829,11 +4829,6 @@
     "mixin-deep" "^1.2.0"
     "pascalcase" "^0.1.1"
 
-"base64-cryptocurrency-icons@^1.1.20":
-  "integrity" "sha512-3MFEUkwiFrWOxQEdeyvSyN7OZ73xD4d4geOuOgDsYLHpU4pgGXxkKR/yOxUJfMUTIp0CUBzY1Xt7eylNPFhxZQ=="
-  "resolved" "https://registry.npmjs.org/base64-cryptocurrency-icons/-/base64-cryptocurrency-icons-1.1.20.tgz"
-  "version" "1.1.20"
-
 "base64-js@^1.3.1":
   "integrity" "sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA=="
   "resolved" "https://repo.huaweicloud.com/repository/npm/base64-js/-/base64-js-1.5.1.tgz"

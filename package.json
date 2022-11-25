@@ -27,7 +27,6 @@
     "@web3-react/walletconnect-connector": "^6.2.13",
     "@web3auth/web3auth": "^1.1.0",
     "axios": "^0.27.2",
-    "base64-cryptocurrency-icons": "^1.1.20",
     "chart.js": "^3.9.1",
     "copy-to-clipboard": "^3.3.2",
     "cors": "^2.8.5",

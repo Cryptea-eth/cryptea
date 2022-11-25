@@ -1,6 +1,7 @@
 import { configureChains, defaultChains, chain, Chain } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import CustomImg from "../../../components/elements/customImg";
 
 export const avalancheChain: Chain = {
   id: 43_114,
@@ -69,10 +70,13 @@ export const OptimismGoerli: Chain = {
     default: "https://goerli.optimism.io",
   },
   blockExplorers: {
-    default: { name: "Optimism", url: "https://goerli-optimistic.etherscan.io" },
+    default: {
+      name: "Optimism",
+      url: "https://goerli-optimistic.etherscan.io",
+    },
   },
   testnet: true,
-}
+};
 
 export const Aurora: Chain = {
   id: 1313161554,
@@ -202,7 +206,10 @@ export const CronosTest: Chain = {
     wss: "wss://cronos-testnet-3.crypto.org:8546",
   },
   blockExplorers: {
-    default: { name: "cronos-test", url: "https://cronos.org/explorer/testnet3" },
+    default: {
+      name: "cronos-test",
+      url: "https://cronos.org/explorer/testnet3",
+    },
   },
   testnet: true,
 };
@@ -248,4 +255,136 @@ export const { chains, provider, webSocketProvider } = configureChains(
   ]
 );
 
+export const tokenTrackers: {
+  [index: string]: { name: string; link: string };
+} = {
+  80001: {
+    name: "polygonscan",
+    link: "https://mumbai.polygonscan.com/tx/",
+  },
+  338: {
+    name: "Cronos Explorer",
+    link: "https://cronos.org/explorer/testnet3/tx/",
+  },
+  1313161555: {
+    name: "Aurora Explorer",
+    link: "https://explorer.testnet.aurora.dev/tx/",
+  },
+  420: {
+    name: "Optimism Explorer",
+    link: "https://goerli-optimistic.etherscan.io/tx/",
+  },
+  42261: {
+    name: "Oasis Explorer",
+    link: "https://testnet.explorer.emerald.oasis.dev/tx/",
+  },
+  31415: {
+    name: "Wallaby Explorer",
+    link: "https://explorer.glif.io/wallaby",
+  },
+};
 
+export const CryptoList = [
+  {
+    value: 80001,
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-1 relative w-[20px]">
+          <CustomImg symbol={"matic"} name="polygon" size={20} alt={"Polygon (Testnet)"} />
+        </div>
+        <span>Polygon (Testnet)</span>
+      </div>
+    ),
+    name: "Polygon (Testnet)",
+    symbol: "matic",
+    contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    network: "polygon maticmum",
+    tokenAddr: "0x0000000000000000000000000000000000001010",
+    rpc: process.env.MATIC_LINK as string,
+  },
+  {
+    value: 31415,
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-1 relative w-[20px]">
+          <CustomImg name="filecoin" symbol="FIL" size={20} alt={"Filecoin (Testnet)"} />
+        </div>
+        <span>Filecoin (Testnet)</span>
+      </div>
+    ),
+    name: "Filecoin (Testnet)",
+    symbol: "TFIL",
+    network: FileCoinWallaby.network as string,
+    tokenAddr: "",
+    contractAddr: "0x2d9E5Cd304A84DC15Bb28749Cf0769A0bdc2CD6F",
+    rpc: FileCoinWallaby.rpcUrls.default,
+  },
+  {
+    value: 338,
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-1 relative w-[20px]">
+          <CustomImg symbol="CRO" name="cronos" size={20} alt={"Cronos (Testnet)"} />
+        </div>
+        <span>Cronos (Testnet)</span>
+      </div>
+    ),
+    name: "Cronos (Testnet)",
+    contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    symbol: "tcro",
+    network: CronosTest.network as string,
+    tokenAddr: "",
+    rpc: CronosTest.rpcUrls.default,
+  },
+  {
+    value: 1313161555,
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-1 relative w-[20px]">
+          <CustomImg symbol="aurora" name="aurora" size={20} alt={"Aurora (Testnet)"} />
+        </div>
+        <span>Aurora (Testnet)</span>
+      </div>
+    ),
+    name: "Aurora (Testnet)",
+    contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    symbol: "aurora",
+    network: AuroraTestnet.network as string,
+    tokenAddr: "",
+    rpc: AuroraTestnet.rpcUrls.default,
+  },
+  {
+    value: 420,
+    contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-1 relative w-[20px]">
+          <CustomImg symbol="op" name="optimism" size={20} alt={"Optimism (Testnet)"} />
+        </div>
+        <span>Optimism (Testnet)</span>
+      </div>
+    ),
+    name: "Optimism (Testnet)",
+    symbol: "op",
+    network: OptimismGoerli.network as string,
+    tokenAddr: "",
+    rpc: OptimismGoerli.rpcUrls.default,
+  },
+  {
+    value: 42261,
+    contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-1 relative w-[20px]">
+          <CustomImg symbol="rose" name="oasis" size={20} alt={"Oasis (Testnet)"} />
+        </div>
+        <span>Oasis (Testnet)</span>
+      </div>
+    ),
+    name: "Oasis (Testnet)",
+    symbol: "rose",
+    network: OasisEmeraldTestnet.network as string,
+    tokenAddr: "",
+    rpc: OasisEmeraldTestnet.rpcUrls.default,
+  },
+];

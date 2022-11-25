@@ -9,6 +9,7 @@ import { get_request } from "../../../contexts/Cryptea/requests";
 import { useEffect, useState } from "react";
 import { cryptoDeets } from "../../../functions/crypto";
 import axios from "axios";
+import CustomImg from "../customImg";
 
 const DashHome = () => {
   const [dashData, setDashData] = useState<any>({
@@ -21,50 +22,7 @@ const DashHome = () => {
 
   const [blur, removeBlur] = useState<boolean>(true);
 
-  const [imgCache, setImgCache] = useState<{ [index: string]: string }>({});
-
   const [rand, setRand] = useState<number>(0);
-
-  const CustomImg = ({
-    src,
-    alt,
-    symbol,
-  }: {
-    src: string;
-    alt: string;
-    symbol: string;
-  }): JSX.Element => {
-    const [loading, setLoading] = useState<boolean>(true);
-
-    useEffect(() => {
-      if (imgCache[symbol] === undefined) {
-        axios
-          .get(`${src}`, {
-            baseURL: window.origin,
-          })
-          .then((main) => {
-            if (Boolean(main.data)) {
-              imgCache[symbol] = main.data;
-
-              setLoading(false);
-            }
-          });
-      }
-    }, [src, symbol]);
-
-    return (
-      <>
-        {loading && !Boolean(imgCache[symbol]) ? (
-          <Skeleton
-            variant={"circular"}
-            sx={{ width: "40px", height: "40px" }}
-          />
-        ) : (
-          <Image layout={"fill"} alt={alt} src={imgCache[symbol]} />
-        )}
-      </>
-    );
-  };
 
   useEffect(() => {
     setRand(Math.floor(Math.random() * 4));
@@ -287,7 +245,9 @@ const DashHome = () => {
                     );
                   })
                 : dashData["sortBreakdown"].map((a: any, i: number) => {
-                    const { name, symbol, useName } = cryptoDeets(a.token);
+                    const { name, symbol, useName, searchName } = cryptoDeets(
+                      a.token
+                    );
 
                     return (
                       <div
@@ -297,9 +257,9 @@ const DashHome = () => {
                         <div className="flex items-center mb-2">
                           <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
                             <CustomImg
-                              src={`/api/cryptoimg/${symbol?.toLowerCase()}`}
                               alt={name}
-                              symbol={symbol}
+                              name={searchName}
+                              symbol={symbol as string}
                             />
                           </div>
                           <div className="ml-3 relative top-[2px]">

@@ -70,8 +70,11 @@ const Settings = () => {
           template = name;
         }
 
+
         setData({
           src,
+
+          img: user.img,
 
           title: mDx.title,
 

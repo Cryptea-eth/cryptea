@@ -23,7 +23,7 @@ import {
   IconButton
 } from "@mui/material";
 
-import Select from 'react-select';
+import Select, { createFilter } from 'react-select';
 import { useRouter } from 'next/router';
 import Loader from "../../components/elements/loader";
 import { useState, useEffect, useContext } from "react";
@@ -689,6 +689,9 @@ const Origin = ({
                                       <Select
                                         isClearable={false}
                                         name="Tokens"
+                                        filterOption={createFilter({
+                                            stringify: option => `${option.value} ${option.data.name}`
+                                        })}
                                         placeholder={"Tokens..."}
                                         options={options!}
                                         styles={{

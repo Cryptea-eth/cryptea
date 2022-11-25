@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import SwipeableViews from "react-swipeable-views";
-import Select from "react-select";
+import Select, { createFilter } from "react-select";
 import style from "../../../styles/carbon.module.css";
 import Loader from "../../components/elements/loader";
 import { PaymentContext } from "../../contexts/PaymentContext";
@@ -553,6 +553,10 @@ const Carbon = ({
                             <Select
                               isClearable={false}
                               value={token}
+                              filterOption={createFilter({
+                                stringify: (option) =>
+                                  `${option.value} ${option.data.name}`,
+                              })}
                               onChange={(e) => setToken?.(e!)}
                               name="Tokens"
                               placeholder={"Tokens..."}

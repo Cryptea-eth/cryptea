@@ -1,12 +1,12 @@
 import { AbstractConnector } from "@web3-react/abstract-connector";
 import * as ethers from "ethers";
-import validator from 'validator';
+import validator from "validator";
 
 type CrypteaDBUtil = string | number | boolean | object | undefined;
 
 type CrypteaDBUtilNull = string | number | boolean | object | null;
 
-export type CrypteaSub = {supports: string[], endpoint: string}
+export type CrypteaSub = { supports: string[]; endpoint: string };
 
 export interface CrypteaDBS {
   [index: string]: CrypteaSub;
@@ -17,22 +17,24 @@ export interface CrypteaDBS {
   templates: CrypteaSub;
 }
 
-type proto = {
-  error: boolean;
-  message: string;
-} | unknown;
+type proto =
+  | {
+      error: boolean;
+      message: string;
+    }
+  | unknown;
 
-export type authenticable = "injected" | "walletconnect" | "mail" | '';
+export type authenticable = "injected" | "walletconnect" | "mail" | "";
 
-export type userDataTypes  = string | undefined | number | boolean;
+export type userDataTypes = string | undefined | number | boolean;
 
 export interface userData {
-    id: userDataTypes,
-    email: userDataTypes,
-    username: userDataTypes,
-    accounts: userDataTypes[],
-    img: userDataTypes,
-    email_verified_at: any
+  id: userDataTypes;
+  email: userDataTypes;
+  username: userDataTypes;
+  accounts: userDataTypes[];
+  img: userDataTypes;
+  email_verified_at: any;
 }
 
 export interface authData {
@@ -76,7 +78,6 @@ export interface AuthAddressType {
   message: string | number;
 }
 
-
 export interface mainAppManager extends AuthContext {
   signer:
     | import("@wagmi/core").FetchSignerResult<import("@wagmi/core").Signer>
@@ -102,7 +103,16 @@ export interface mainAppManager extends AuthContext {
   authenticate: (e?: boolean) => void;
 }
 
-type token = { value: string | number; label: string | JSX.Element; symbol: string, network: string, tokenAddr: string; rpc: string,name: string, contractAddr: string };
+type token = {
+  value: string | number;
+  label: string | JSX.Element;
+  symbol: string;
+  network: string;
+  tokenAddr: string;
+  rpc: string;
+  name: string;
+  contractAddr: string;
+};
 
 type pdata = {
   price: number;
@@ -111,7 +121,8 @@ type pdata = {
 
 export interface subValueType {
   [index: string]: number;
-  onetime: number; sub: number
+  onetime: number;
+  sub: number;
 }
 
 export interface PaymentContext {
@@ -129,7 +140,7 @@ export interface PaymentContext {
   setData?: React.Dispatch<any>;
   isLoading?: boolean;
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
-  begin?: (type: 'onetime' | 'sub', auto: boolean) => void;
+  begin?: (type: "onetime" | "sub", auto: boolean) => void;
   reset?: () => void;
   pemail?: string[];
   setPemail?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -165,7 +176,7 @@ declare global {
   interface Window {
     jstz: any;
   }
-  
+
   interface String {
     get(
       column: string,

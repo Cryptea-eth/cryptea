@@ -24,6 +24,6 @@ export const cryptoDeets = (index:string) => {
     const name: string = symbol ? nameLookup(symbol) as string : mainI;
    
 
-    return { symbol, useName: name + (main[1] || '').replaceAll(/[()]/g, ''), name: name + (main[1] || '') }
+    return { symbol, useName: name + (main[1] || '').replaceAll(/[()]/g, ''), name: name +' '+ (main[1] || ''), searchName: name }
 
 }
