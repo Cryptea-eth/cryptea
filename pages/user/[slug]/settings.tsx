@@ -490,7 +490,7 @@ const Settings = () => {
               }}
               className="text-[1.2rem] capitalize text-center text-[rgb(95,99,104)] leading-[1.25rem] tooltiprep block"
             >
-              change everything about this link
+              Change everything about this link
             </p>
 
             {success && (
@@ -512,7 +512,7 @@ const Settings = () => {
                     <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.2rem]">
                       Basic Details
                     </h2>
-                    <span>Change Details of your link</span>
+                    <span>Change details of your link</span>
                   </div>
 
                   <div className="w-full">
@@ -637,7 +637,7 @@ const Settings = () => {
                     <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.2rem]">
                       Amount Config
                     </h2>
-                    <span>Change link Amount Settings</span>
+                    <span>Change link amount settings</span>
                   </div>
 
                   <div className="w-full">
@@ -763,7 +763,7 @@ const Settings = () => {
                     className="w-full flex items-center justify-between"
                   >
                     <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Specify Minimum amount</p>
+                      <p>Specify Minimum Amount</p>
                     </div>
                     <div className="">
                       <Switch
@@ -831,7 +831,7 @@ const Settings = () => {
                     className="w-full flex items-center justify-between"
                   >
                     <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Specify Maximum amount</p>
+                      <p>Specify Maximum Amount</p>
                     </div>
                     <div className="">
                       <Switch
