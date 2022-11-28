@@ -715,7 +715,7 @@ const Origin = ({
                                           },
                                           container: (provided, state) => ({
                                             ...provided,
-                                            height: "58px",
+                                            minHeight: "58px",
                                             "& .select__value-container": {
                                               padding: "11.5px 14px",
                                             },

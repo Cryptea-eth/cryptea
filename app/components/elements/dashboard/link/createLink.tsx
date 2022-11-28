@@ -237,8 +237,8 @@ const NewLink = () => {
     slug: formLink.slug || '',
     redirect: formLink.slug || '',
     rdata: {
-      sub: ["Email"],
-      onetime: [],
+      sub: ["Email", "Name"],
+      onetime: ["Name", "Email"],
     },
   });
 

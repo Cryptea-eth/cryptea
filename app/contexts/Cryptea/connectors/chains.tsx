@@ -2,6 +2,7 @@ import { configureChains, defaultChains, chain, Chain } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import CustomImg from "../../../components/elements/customImg";
+import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi";
 
 export const avalancheChain: Chain = {
   id: 43_114,
@@ -283,6 +284,33 @@ export const tokenTrackers: {
     link: "https://explorer.glif.io/wallaby",
   },
 };
+
+export const inputsList = [
+  {
+    label: (
+      <div className="flex items-center">
+        <BiUserCircle className="mr-[6px]" size={20} /> <span>Name</span>
+      </div>
+    ),
+    value: "Name",
+  },
+  {
+    label: (
+      <div className="flex items-center">
+        <BiEnvelope className="mr-[6px]" size={20} /> <span>Email</span>
+      </div>
+    ),
+    value: "Email",
+  },
+  {
+    label: (
+      <div className="flex items-center">
+        <BiPhoneCall className="mr-[6px]" size={20} /> <span>Phone</span>
+      </div>
+    ),
+    value: "Phone",
+  },
+];
 
 export const CryptoList = [
   {

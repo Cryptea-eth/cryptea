@@ -103,7 +103,7 @@ export interface mainAppManager extends AuthContext {
   authenticate: (e?: boolean) => void;
 }
 
-type token = {
+export type token = {
   value: string | number;
   label: string | JSX.Element;
   symbol: string;

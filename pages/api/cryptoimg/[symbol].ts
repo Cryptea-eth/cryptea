@@ -4,7 +4,7 @@ import generic from "../../../public/images/generic.json";
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<string>
+  res: NextApiResponse<string | object>
 ) {
 
   if (req.method == "GET") {
@@ -24,6 +24,10 @@ export default function handler(
         return res.status(200).json(generic['GENERIC'].icon)
 
       });
-
+  }else{
+     return res.status(422).json({ 
+        message: 'Method not supported',
+        error: true
+    });
   }
 }
