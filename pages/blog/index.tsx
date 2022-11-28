@@ -12,19 +12,26 @@ const Blog = () => {
 
       <div className="w-full px-14">
         <div className="text-4xl font-bold py-12">
-          <p style={{ background: 'linear-gradient(90deg, #F57059 31.38%, #8B59F5 102.16%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Cryptea&#39;s Blog</p>
+          <span
+            style={{
+              background:
+                "linear-gradient(90deg, #F57059 31.38%, #8B59F5 102.16%)",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+            }}
+          >
+            Cryptea&#39;s Blog
+          </span>
         </div>
 
         <div className="flex flex-col">
-
           <div className="featured grid grid-cols-2 gap-4 grid-flow-row bg-white rounded-xl">
-
             <div className="featured-img rounded-l-xl">
               <Image src={donation} alt="Featured Image" />
             </div>
 
             <div className="featured-conttent">
-
               <div className="featured-tag my-4">
                 <p>Cryptea&#39;s Blog</p>
               </div>
@@ -33,7 +40,10 @@ const Blog = () => {
               </div>
               <div className="featured-blub my-3">
                 <p className="font-normal text-lg">
-                  Here&#39;s what you need to know about Immutable X, the new gaming-focused L2 blockchain on Rarible — and the exclusive double $IMX rewards program.                </p>
+                  Here&#39;s what you need to know about Immutable X, the new
+                  gaming-focused L2 blockchain on Rarible — and the exclusive
+                  double $IMX rewards program.{" "}
+                </p>
               </div>
               <div className="continue my-3">
                 <Link href="/blog/featured">
@@ -47,7 +57,12 @@ const Blog = () => {
               <div className="author my-3">
                 <div className="flex gap-2 items-center">
                   <div className="author-img rounded-full">
-                    <Image src={donation} alt="Author Image" width={44} height={44} />
+                    <Image
+                      src={donation}
+                      alt="Author Image"
+                      width={44}
+                      height={44}
+                    />
                   </div>
                   <div className="author-name">
                     <div>
@@ -67,7 +82,6 @@ const Blog = () => {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -83,14 +97,14 @@ const Blog = () => {
             <a>
               <button className="ml-2 hover:bg-[#ff320e] transition-all delay-500 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4">
                 Go Back Home
-              </button></a>
+              </button>
+            </a>
           </Link>
         </div>
       </div>
 
       <Footer />
-    </div >
-
+    </div>
   );
 };
 
