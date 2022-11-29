@@ -11,7 +11,7 @@ import Sidebar from "../../../app/components/elements/dashboard/sidebar";
 import { Avatar, IconButton, Button } from "@mui/material";
 import { FiSettings, FiShare2, FiTrash2 } from "react-icons/fi";
 import Link from "next/link";
-import { MdClose, MdInfo, MdLink } from "react-icons/md";
+import { MdArrowBackIos, MdClose, MdInfo, MdLink } from "react-icons/md";
 import Select, { createFilter } from "react-select";
 import { TbApiApp } from "react-icons/tb";
 import { dash, DashContext } from "../../../app/contexts/GenContext";
@@ -142,15 +142,15 @@ const Settings = () => {
   
 
   const [formdata, setForm] = useState<formData>({
-    title: data.title,
-    desc: data.desc,
+    title: "",
+    desc: "",
     acceptedCrypto: [],
     rdata: [],
     amountOption: [],
     amount: "",
     minAmt: 0,
     maxAmt: "",
-    redirect: data.redirect,
+    redirect: "",
   });
 
   const setFormData = (obj: object) => {
@@ -252,7 +252,8 @@ const Settings = () => {
     setSuccess(false);
     setLoad(true);
 
-    setError()
+    setError();
+    setGenError('');
 
     window.scroll(0, 0);
     if (Boolean(formdata["redirect"])) {
@@ -382,6 +383,8 @@ const Settings = () => {
           views,
         });
 
+       
+
         const rdata = JSON.parse(mDx.rdata.toLowerCase())["onetime"].map(
           (v: string, i: number) => ({
             label: (
@@ -417,9 +420,11 @@ const Settings = () => {
 
         const acceptedCrypto = JSON.parse(mDx.data || "[]");
 
-        setFormData({ minAmt: minn, acceptedCrypto, amount, maxAmt: maxx, rdata, title: mDx.title, amountOption: JSON.parse(mDx.amountMulti) });
+
+        setFormData({ redirect: mDx.required, desc: mDx.desc, minAmt: minn, acceptedCrypto, amount, maxAmt: maxx, rdata, title: mDx.title, amountOption: JSON.parse(mDx.amountMulti) });
 
         setLoading(false);
+        
       } else {
         router.push(`/user/${String(slug).toLowerCase()}`);
       }
@@ -492,16 +497,28 @@ const Settings = () => {
 
           <div
             style={{
-              maxWidth: !sidebar?.openPage ? "1031px" : "861px",
+              maxWidth: !sidebar?.openPage ? "831px" : "661px",
             }}
             className="mb-6 mt-3 mx-auto 2sm:px-3"
           >
-            <h1 className="text-[rgb(32,33,36)] capitalize mb-[5px] font-[500] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
-              <>
-                <FiSettings className="mr-2" size={23} />
-                Link Settings
-              </>
-            </h1>
+            <div className="flex relative items-center">
+              {" "}
+             <Link href={`/user/${slug}/overview`}><a>
+              <IconButton className="absolute bottom-[0px]">
+                <MdArrowBackIos
+                  color={"rgb(32,33,36)"}
+                  className="relative left-[4px]"
+                  size={18}
+                />
+              </IconButton></a></Link>{" "}
+
+              <h1 className="text-[rgb(32,33,36)] capitalize mb-[5px] font-[500] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
+                <>
+                  <FiSettings className="mr-2" size={23} />
+                  Link Settings
+                </>
+              </h1>
+            </div>
 
             <p
               style={{
