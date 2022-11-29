@@ -98,8 +98,26 @@ const Settings = () => {
     amount: "",
   });
 
-  const setError = (obj: object) => {
-    setErr({ ...error, ...obj });
+  const setError = (obj?: object) => {
+    if(obj !== undefined){
+  
+      setErr({ ...error, ...obj });
+    
+    }else{
+      setErr({
+        ...error,
+        title: "",
+        desc: "",
+        acceptedCrypto: "",
+        rdata: "",
+        amountOption: "",
+        redirect: "",
+        minAmt: "",
+        maxAmt: "",
+        amount: "",
+      })
+    }
+
     setLoad(false);
   };
 
@@ -121,52 +139,24 @@ const Settings = () => {
     return false;
   };
 
-  let amount, maxx = '', minn = 0;
-
-  if (data.amount == "variable") {
-    amount = "";
-  }else if (!Number(data.amount)) {
-    amount = data.amount;
-  }else{
-    const amt = JSON.parse(data.amount);
-
-    if(amt[0] !== undefined){
-        minn = amt[0];
-    }
-
-    if (amt[1] !== undefined) {
-      maxx = amt[1];
-    }
-  }
-
-
+  
 
   const [formdata, setForm] = useState<formData>({
     title: data.title,
     desc: data.desc,
-    acceptedCrypto: JSON.parse(data.data || "[]"),
+    acceptedCrypto: [],
     rdata: [],
-    amountOption: data.amountMulti,
-    amount,
-    minAmt: minn,
-    maxAmt: maxx,
+    amountOption: [],
+    amount: "",
+    minAmt: 0,
+    maxAmt: "",
     redirect: data.redirect,
   });
 
   const setFormData = (obj: object) => {
     setForm({ ...formdata, ...obj });
     setGenError("");
-    setError({
-      title: "",
-      desc: "",
-      acceptedCrypto: "",
-      rdata: "",
-      amountOption: "",
-      redirect: "",
-      minAmt: "",
-      maxAmt: "",
-      amount: "",
-    });
+    setError();
   };
 
   const [loading, setLoad] = useState<boolean>(false);
@@ -221,7 +211,6 @@ const Settings = () => {
 
     if (Boolean(val)) {
       if (Boolean(formdata["maxAmt"]) || Boolean(formdata["minAmt"])) {
-        
         if (
           Boolean(formdata["minAmt"]) &&
           val < (formdata["minAmt"] as number | string)
@@ -263,8 +252,10 @@ const Settings = () => {
     setSuccess(false);
     setLoad(true);
 
+    setError()
+
     window.scroll(0, 0);
-    if (Boolean(formdata["redirect"].length)) {
+    if (Boolean(formdata["redirect"])) {
       if (!validator.isURL(formdata["redirect"])) {
         setError({
           redirect: "A valid URL is required for Redirect Url",
@@ -309,7 +300,6 @@ const Settings = () => {
       payload["amountMulti"] = JSON.stringify(formdata.amountOption);
 
     try {
-
       await `links/${data.id}`.update({
         ...payload,
         amount,
@@ -323,7 +313,7 @@ const Settings = () => {
     } catch (err) {
       const error = err as any;
 
-      console.log(error, 'oer')
+      console.log(error, "oer");
 
       setLoad(false);
 
@@ -332,7 +322,6 @@ const Settings = () => {
       } else {
         setGenError("Something went wrong please try again");
       }
-
     }
   };
 
@@ -347,7 +336,6 @@ const Settings = () => {
         sub,
         views,
       } = await initD(String(slug).toLowerCase());
-
 
       setUserLk(`${window.location.origin}/user/${slug}`);
 
@@ -366,18 +354,12 @@ const Settings = () => {
           template = name;
         }
 
-        console.log(mDx)
-
         setData({
           id: mDx.id,
 
           src,
 
-          accountMulti: mDx.accountMulti,
-
           redirect: mDx.redirect,
-
-          rdata: mDx.rdata,
 
           data: mDx.data,
 
@@ -399,6 +381,43 @@ const Settings = () => {
 
           views,
         });
+
+        const rdata = JSON.parse(mDx.rdata.toLowerCase())["onetime"].map(
+          (v: string, i: number) => ({
+            label: (
+              <div key={i} className="flex items-center">
+                {dataimg[v]} <span className="capitalize">{v}</span>
+              </div>
+            ),
+            value: v
+          })
+        );
+
+        let amount,
+          maxx = "",
+          minn = 0;
+
+        if (data.amount == "variable") {
+          amount = "";
+        } else if (!Number(data.amount)) {
+          amount = data.amount;
+        } else {
+          const amt = JSON.parse(data.amount);
+
+          if (amt[0] !== undefined) {
+            setMin(true)
+            minn = amt[0];
+          }
+
+          if (amt[1] !== undefined) {
+            setMax(true)
+            maxx = amt[1];
+          }
+        }
+
+        const acceptedCrypto = JSON.parse(mDx.data || "[]");
+
+        setFormData({ minAmt: minn, acceptedCrypto, amount, maxAmt: maxx, rdata, title: mDx.title, amountOption: JSON.parse(mDx.amountMulti) });
 
         setLoading(false);
       } else {
@@ -480,7 +499,7 @@ const Settings = () => {
             <h1 className="text-[rgb(32,33,36)] capitalize mb-[5px] font-[500] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
               <>
                 <FiSettings className="mr-2" size={23} />
-                  Link Settings
+                Link Settings
               </>
             </h1>
 
@@ -490,7 +509,7 @@ const Settings = () => {
               }}
               className="text-[1.2rem] capitalize text-center text-[rgb(95,99,104)] leading-[1.25rem] tooltiprep block"
             >
-              Change everything about this link
+              change everything about this link
             </p>
 
             {success && (
@@ -512,7 +531,7 @@ const Settings = () => {
                     <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.2rem]">
                       Basic Details
                     </h2>
-                    <span>Change details of your link</span>
+                    <span>Change Details of your link</span>
                   </div>
 
                   <div className="w-full">
@@ -523,6 +542,12 @@ const Settings = () => {
                       <div className="rounded-md">
                         <div className="flex">
                           <TextField
+                            value={formdata["title"]}
+                            onChange={(e: any) => {
+                              setFormData({
+                                title: e.target.value,
+                              });
+                            }}
                             className="bg-[white]"
                             sx={{
                               "& .Mui-focused.MuiFormLabel-root": {
@@ -550,6 +575,12 @@ const Settings = () => {
                         <div className="flex">
                           <TextField
                             multiline
+                            value={formdata["desc"]}
+                            onChange={(e: any) => {
+                              setFormData({
+                                desc: e.target.value,
+                              });
+                            }}
                             minRows={3}
                             className="bg-[white]"
                             sx={{
@@ -637,7 +668,7 @@ const Settings = () => {
                     <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.2rem]">
                       Amount Config
                     </h2>
-                    <span>Change link amount settings</span>
+                    <span>Change link Amount Settings</span>
                   </div>
 
                   <div className="w-full">
@@ -763,7 +794,7 @@ const Settings = () => {
                     className="w-full flex items-center justify-between"
                   >
                     <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Specify Minimum Amount</p>
+                      <p>Specify Minimum amount</p>
                     </div>
                     <div className="">
                       <Switch
@@ -831,7 +862,7 @@ const Settings = () => {
                     className="w-full flex items-center justify-between"
                   >
                     <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Specify Maximum Amount</p>
+                      <p>Specify Maximum amount</p>
                     </div>
                     <div className="">
                       <Switch
