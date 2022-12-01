@@ -489,7 +489,7 @@ const Carbon = ({
                             (ixn: string, i: number) => {
                               return (
                                 <div key={i} className="mb-5">
-                                  <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                                  <div className="block font-[600] text-[#555555] mb-[6px] capitalize !font-ubuntu">
                                     {ixn}
                                   </div>
 
@@ -566,15 +566,18 @@ const Carbon = ({
                                   return {
                                     ...provided,
                                     backgroundColor: state.isSelected
-                                      ? data.colorScheme
+                                      ? "#dfdfdf"
                                       : "transparent",
+                                       cursor: 'pointer',
                                     "&:active": {
-                                      backgroundColor: data.colorScheme,
+                                      backgroundColor: "#dfdfdf",
+
+                                      color: "#121212 !important"
                                     },
                                     "&:hover": {
                                       backgroundColor: state.isSelected
                                         ? undefined
-                                        : `${data.colorScheme}29`,
+                                        : `#dfdfdff2`,
                                     },
                                   };
                                 },

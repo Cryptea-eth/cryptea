@@ -318,9 +318,14 @@ export const CryptoList = [
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-1 relative w-[20px]">
-          <CustomImg symbol={"matic"} name="polygon" size={20} alt={"Polygon (Testnet)"} />
+          <CustomImg
+            symbol={"matic"}
+            name="polygon"
+            size={20}
+            alt={"Polygon (Testnet)"}
+          />
         </div>
-        <span>Polygon (Testnet)</span>
+        <span className="text-[#121212]">Polygon (Testnet)</span>
       </div>
     ),
     name: "Polygon (Testnet)",
@@ -335,9 +340,14 @@ export const CryptoList = [
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-1 relative w-[20px]">
-          <CustomImg name="filecoin" symbol="FIL" size={20} alt={"Filecoin (Testnet)"} />
+          <CustomImg
+            name="filecoin"
+            symbol="FIL"
+            size={20}
+            alt={"Filecoin (Testnet)"}
+          />
         </div>
-        <span>Filecoin (Testnet)</span>
+        <span className="text-[#121212]">Filecoin (Testnet)</span>
       </div>
     ),
     name: "Filecoin (Testnet)",
@@ -352,9 +362,14 @@ export const CryptoList = [
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-1 relative w-[20px]">
-          <CustomImg symbol="CRO" name="cronos" size={20} alt={"Cronos (Testnet)"} />
+          <CustomImg
+            symbol="CRO"
+            name="cronos"
+            size={20}
+            alt={"Cronos (Testnet)"}
+          />
         </div>
-        <span>Cronos (Testnet)</span>
+        <span className="text-[#121212]">Cronos (Testnet)</span>
       </div>
     ),
     name: "Cronos (Testnet)",
@@ -369,9 +384,14 @@ export const CryptoList = [
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-1 relative w-[20px]">
-          <CustomImg symbol="aurora" name="aurora" size={20} alt={"Aurora (Testnet)"} />
+          <CustomImg
+            symbol="aurora"
+            name="aurora"
+            size={20}
+            alt={"Aurora (Testnet)"}
+          />
         </div>
-        <span>Aurora (Testnet)</span>
+        <span className="text-[#121212]">Aurora (Testnet)</span>
       </div>
     ),
     name: "Aurora (Testnet)",
@@ -387,9 +407,14 @@ export const CryptoList = [
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-1 relative w-[20px]">
-          <CustomImg symbol="op" name="optimism" size={20} alt={"Optimism (Testnet)"} />
+          <CustomImg
+            symbol="op"
+            name="optimism"
+            size={20}
+            alt={"Optimism (Testnet)"}
+          />
         </div>
-        <span>Optimism (Testnet)</span>
+        <span className="text-[#121212]">Optimism (Testnet)</span>
       </div>
     ),
     name: "Optimism (Testnet)",
@@ -404,9 +429,14 @@ export const CryptoList = [
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-1 relative w-[20px]">
-          <CustomImg symbol="rose" name="oasis" size={20} alt={"Oasis (Testnet)"} />
+          <CustomImg
+            symbol="rose"
+            name="oasis"
+            size={20}
+            alt={"Oasis (Testnet)"}
+          />
         </div>
-        <span>Oasis (Testnet)</span>
+        <span className="text-[#121212]">Oasis (Testnet)</span>
       </div>
     ),
     name: "Oasis (Testnet)",

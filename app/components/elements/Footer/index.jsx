@@ -99,7 +99,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="text-center font-semibold py-5">
-        Copyright &copy; Cryptea {date.getFullYear()}. All Rights Reserved.
+      Copyright &copy; Cryptea {date.getFullYear()}. All Rights Reserved.
       </div>
     </div>
   );

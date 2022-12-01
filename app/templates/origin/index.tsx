@@ -5,7 +5,7 @@ import {
   FaInstagram,
   FaFacebook,
   FaTwitter,
-  FaLinkedinIn
+  FaLinkedinIn,
 } from "react-icons/fa";
 import SwipeableViews from "react-swipeable-views";
 import Link from "next/link";
@@ -20,11 +20,11 @@ import {
   ToggleButtonGroup,
   TextField,
   Button,
-  IconButton
+  IconButton,
 } from "@mui/material";
 
-import Select, { createFilter } from 'react-select';
-import { useRouter } from 'next/router';
+import Select, { createFilter } from "react-select";
+import { useRouter } from "next/router";
 import Loader from "../../components/elements/loader";
 import { useState, useEffect, useContext } from "react";
 import { PaymentContext } from "../../contexts/PaymentContext";
@@ -40,16 +40,8 @@ function a11yProps(index: number) {
   };
 }
 
- 
-const Origin = ({
-  className
-}: {
-  className?: string;
-}) => {
-
-
+const Origin = ({ className }: { className?: string }) => {
   const [value, setValue] = useState<number>(0);
-
 
   const {
     userD,
@@ -84,75 +76,69 @@ const Origin = ({
     eSubscription,
     setSigner,
     subValue,
-    setSubValue
+    setSubValue,
   } = useContext(PaymentContext);
 
-   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-     setValue(newValue);
-     setFailMessage?.("");
-      const subV = { ...subValue };
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+    setFailMessage?.("");
+    const subV = { ...subValue };
 
-      subV[newValue ? "onetime" : "sub"] = 0;
+    subV[newValue ? "onetime" : "sub"] = 0;
 
-      setSubValue?.(subV as subValueType);
-     setPemail?.([]);
-   };
+    setSubValue?.(subV as subValueType);
+    setPemail?.([]);
+  };
 
-  const {
-    signer
-  } = useCryptea();
+  const { signer } = useCryptea();
 
   useEffect(() => {
-      setSigner?.(signer);
-  }, [signer])
+    setSigner?.(signer);
+  }, [signer]);
 
   useEffect(() => {
     if (userD!.rdata !== undefined) {
       if (userD!.rdata[!value ? "onetime" : "sub"].length <= 1) {
-
-        const nsVal = { ...subValue }
+        const nsVal = { ...subValue };
 
         nsVal[!value ? "onetime" : "sub"] = 1;
 
         setSubValue?.(nsVal as subValueType);
-
       }
     }
-      
   }, [value, userD]);
-
 
   const {
     username: usern,
     description,
-    img
+    img,
   }: {
     username?: string;
     description?: string;
     img?: string | null;
-  } = userD ?? {username: '', description: '', img: ''};
+  } = userD ?? { username: "", description: "", img: "" };
 
-    const text = {
-      "& .Mui-focused.MuiFormLabel-root": {
-        color: data.colorScheme,
-      },
-      "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor: `${data.colorScheme} !important`,
-      },
-    };
-    
-    const { pathname } = useRouter();
+  const text = {
+    "& .Mui-focused.MuiFormLabel-root": {
+      color: data.colorScheme,
+    },
+    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: `${data.colorScheme} !important`,
+    },
+  };
 
-    useEffect(() => {
-      const elem = document.querySelector(".origin") as HTMLDivElement;
+  const { pathname } = useRouter();
 
-      if (
-        elem?.scrollHeight == document.body.scrollHeight &&
-        pathname.indexOf("[slug]/edit") !== -1
-      ) {
-        elem.style.width = "calc(100% - 249px)";
-      }
-    });
+  useEffect(() => {
+    const elem = document.querySelector(".origin") as HTMLDivElement;
+
+    if (
+      elem?.scrollHeight == document.body.scrollHeight &&
+      pathname.indexOf("[slug]/edit") !== -1
+    ) {
+      elem.style.width = "calc(100% - 249px)";
+    }
+  });
 
   return (
     <div className={`origin ${className}`}>
@@ -690,7 +676,8 @@ const Origin = ({
                                         isClearable={false}
                                         name="Tokens"
                                         filterOption={createFilter({
-                                            stringify: option => `${option.value} ${option.data.name}`
+                                          stringify: (option) =>
+                                            `${option.value} ${option.data.name}`,
                                         })}
                                         placeholder={"Tokens..."}
                                         options={options!}
@@ -699,32 +686,41 @@ const Origin = ({
                                             return {
                                               ...provided,
                                               backgroundColor: state.isSelected
-                                                ? data.colorScheme
+                                                ? "#dfdfdf"
                                                 : "transparent",
+                                              cursor: "pointer",
                                               "&:active": {
-                                                backgroundColor:
-                                                  data.colorScheme,
+                                                backgroundColor: "#dfdfdf",
+
+                                                color: "#121212 !important",
                                               },
                                               "&:hover": {
                                                 backgroundColor:
                                                   state.isSelected
                                                     ? undefined
-                                                    : `${data.colorScheme}29`,
+                                                    : `#dfdfdff2`,
                                               },
                                             };
                                           },
                                           container: (provided, state) => ({
                                             ...provided,
-                                            minHeight: "58px",
+                                            "& .select__control": {
+                                              borderWidth: "0px",
+                                              borderRadius: "0px",
+                                              backgroundColor: "transparent",
+                                              borderBottomWidth: "1px",
+                                            },
                                             "& .select__value-container": {
-                                              padding: "11.5px 14px",
+                                              paddingLeft: "0px",
                                             },
                                             "& .select__control:hover": {
-                                              borderColor: "#121212",
+                                              borderBottomWidth: "2px",
+                                              borderBottomColor: "#121212",
                                             },
                                             "& .select__control--is-focused": {
-                                              borderWidth: "2px",
-                                              borderColor: `${data.colorScheme} !important`,
+                                              borderWidth: "0px",
+                                              borderBottomWidth: "2px",
+                                              borderBottomColor: `${data.colorScheme} !important`,
                                               boxShadow: "none",
                                             },
                                           }),

@@ -6,7 +6,11 @@ import * as ethers from "ethers";
 import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
 import { initD } from "../components/elements/dashboard/link/data";
 import { useSwitchNetwork } from "wagmi";
-import { PaymentContext as PaymentCont, subValueType } from "./Cryptea/types";
+import {
+  PaymentContext as PaymentCont,
+  subValueType,
+  token,
+} from "./Cryptea/types";
 import AuthModal from "../components/elements/modal";
 import { balanceABI } from "../functions/abi";
 import {
@@ -23,10 +27,7 @@ import LogoSpace from "../components/elements/logo";
 import QrCode from "../components/elements/qrcode";
 import { FaRegClone } from "react-icons/fa";
 import { RiCloseCircleLine } from "react-icons/ri";
-import {
-  CryptoList,
-  tokenTrackers,
-} from "./Cryptea/connectors/chains";
+import { CryptoList, tokenTrackers } from "./Cryptea/connectors/chains";
 import Loader from "../components/elements/loader";
 import axios, { AxiosError } from "axios";
 
@@ -39,7 +40,6 @@ export const PaymentProvider = ({
   children: JSX.Element;
   editMode: boolean;
 }) => {
-  
   const router = useRouter();
 
   let username = router.query["slug"];
@@ -105,7 +105,7 @@ export const PaymentProvider = ({
 
   const [options, setOptions] = useState<
     {
-      value: string | number;
+      value: number;
       label: string | JSX.Element;
       symbol: string;
       network: string;
@@ -264,6 +264,16 @@ export const PaymentProvider = ({
 
           // Custom inputs
           const rdata = JSON.parse(lQ.rdata);
+
+          const cryptoData = JSON.parse(lQ.data || "[]");
+
+          if (cryptoData.length) {
+            setOptions(
+              [...options].filter(
+                (v: token) => cryptoData.indexOf(v.value) != -1
+              )
+            );
+          }
 
           if (
             rdata["sub"] !== undefined &&

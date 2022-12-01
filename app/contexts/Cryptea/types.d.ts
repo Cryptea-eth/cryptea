@@ -104,7 +104,7 @@ export interface mainAppManager extends AuthContext {
 }
 
 export type token = {
-  value: string | number;
+  value: number;
   label: string | JSX.Element;
   symbol: string;
   network: string;
