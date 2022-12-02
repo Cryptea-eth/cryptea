@@ -334,6 +334,8 @@ const Onetime = () => {
 
 
           setData({
+                id: oDx.id,
+
                 src,
 
                 username: user.username,
@@ -443,6 +445,7 @@ const Onetime = () => {
         <>
           <TypePayment
             data={{
+              id: data.id,
               src: data.src,
               title: data.title !== undefined ? data.title : slug,
               slug: String(slug),

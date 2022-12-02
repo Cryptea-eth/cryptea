@@ -1,6 +1,6 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Button, CircularProgress, Alert } from "@mui/material";
 import Loader from "../../loader";
 import Head from "next/head";
 import empty from "../../../../../public/images/coming-soon.svg";
@@ -8,6 +8,7 @@ import { dash, DashContext } from "../../../../contexts/GenContext";
 import Sidebar from "../sidebar";
 import Image from "next/image";
 import { GiTwoCoins } from "react-icons/gi";
+import Router from "next/router";
 
 const TypePayment = ({
   children,
@@ -19,6 +20,7 @@ const TypePayment = ({
   which: "sub" | "onetime";
   support: boolean,
   data: {
+    id: number,
     src: string,
     title: string,
     slug: string
@@ -29,9 +31,40 @@ const TypePayment = ({
   const { sidebar }: dash = useContext(DashContext);
 
  
+  const [isSaving, saving] = useState<boolean>(false);
+
+  const [genError, setGenError] = useState<string>('');
+
   const whichM: string = which == "sub" ? "subscription" : "onetime";
 
- 
+  const addSupport = async ( ) => {
+
+      saving(true);
+
+      setGenError('');
+
+       try {
+         await`links/${data.id}`.update({
+           type: 'both'
+         });
+
+         Router.reload()
+
+       } catch (err) {
+         const error = err as any;
+
+         saving(false)
+
+         console.log(error, "oer");
+
+         if (error.response) {
+           setGenError(error.response.data.message);
+         } else {
+           setGenError("Something went wrong please try again");
+         }
+       }
+  }; 
+
   return (
     <>
       <Head>
@@ -108,22 +141,48 @@ const TypePayment = ({
                     button below to add support
                   </span>
                 </div>
-                <div className="flex item-center justify-center">
-                  <Link href="/working">
-                    <a>
-                      <Button className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
-                        <GiTwoCoins size={25} className="mr-1" /> Add Support
-                      </Button>
-                    </a>
-                  </Link>
 
-                  <Link href={`/pay/${data.slug}/overview`}>
-                    <a>
-                      <Button className="!py-2 opacity-80 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
-                        Nah Maybe Later
-                      </Button>
-                    </a>
-                  </Link>
+                {Boolean(genError) && (
+                  <Alert
+                    className="w-full font-bold mt-3 mb-2"
+                    severity="error"
+                  >
+                    {genError}
+                  </Alert>
+                )}
+
+                <div className="flex item-center justify-center">
+                  <Button
+                    onClick={addSupport}
+                    className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="mr-3 h-[20px] text-[#fff]">
+                          <CircularProgress
+                            color={"inherit"}
+                            className="!w-[20px] !h-[20px]"
+                          />
+                        </div>{" "}
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <GiTwoCoins size={25} className="mr-1" />{" "}
+                        <span>Add Support</span>
+                      </>
+                    )}
+                  </Button>
+
+                  {!isSaving && (
+                    <Link href={`/pay/${data.slug}/overview`}>
+                      <a>
+                        <Button className="!py-2 opacity-80 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
+                          Maybe Later
+                        </Button>
+                      </a>
+                    </Link>
+                  )}
                 </div>
               </div>
             </>

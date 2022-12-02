@@ -313,7 +313,6 @@ const Settings = () => {
           views,
         });
 
-       
 
         const rdata = JSON.parse(mDx.rdata.toLowerCase())["onetime"].map(
           (v: string, i: number) => ({
@@ -443,7 +442,7 @@ const Settings = () => {
         rdata: JSON.stringify({ sub: rdata, onetime: rdata }),
       });
 
-      // saveData(false);
+      saveData(false);
       setSuccess(true);
     } catch (err) {
       const error = err as any;
