@@ -24,13 +24,14 @@ import TabPanel from "../../components/elements/dashboard/link/TabPanel";
 import Secured from "../../components/elements/secured";
 import { subValueType } from "../../contexts/Cryptea/types";
 import { MdChevronLeft } from "react-icons/md";
+import NumberFormat from "react-number-format";
 
 const Carbon = ({
   className,
 }: {
   className?: string;
 }) => {
-  
+
   const {
     userD,
     setUserD,
@@ -51,6 +52,7 @@ const Carbon = ({
     setTransferFail,
     failMessage,
     setFailMessage,
+    amountFixed,
     hash,
     setHash,
     begin,
@@ -545,6 +547,27 @@ const Carbon = ({
                         </TabPanel>
 
                         <TabPanel value={subValue?.onetime as number} index={1}>
+                          {amountFixed && (
+                            <div className="flex items-center flex-col justify-center text-[1.55rem] mb-5">
+                              <span className="font-light block mb-1 text-[rgba(88,88,88,0.86)] text-[14px]">
+                                You&apos;ll Be Paying
+                              </span>
+
+                              <span className="font-[500] text-[rgb(32,33,36)] text-[1.21rem]">
+                                <NumberFormat
+                                  value={amount}
+                                  thousandSeparator={true}
+                                  displayType={"text"}
+                                  prefix={"USD "}
+                                />
+                              </span>
+
+                              <span className="font-normal text-[rgb(78,79,80)] text-[15px]">
+                                1% fee
+                              </span>
+                            </div>
+                          )}
+
                           <div className="mb-5">
                             <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
                               Token
@@ -568,11 +591,11 @@ const Carbon = ({
                                     backgroundColor: state.isSelected
                                       ? "#dfdfdf"
                                       : "transparent",
-                                       cursor: 'pointer',
+                                    cursor: "pointer",
                                     "&:active": {
                                       backgroundColor: "#dfdfdf",
 
-                                      color: "#121212 !important"
+                                      color: "#121212 !important",
                                     },
                                     "&:hover": {
                                       backgroundColor: state.isSelected
@@ -641,81 +664,83 @@ const Carbon = ({
                             </div>
                           )}
 
-                          <div className="mb-5">
-                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                              Amount (USD)
-                            </label>
+                          {!amountFixed && (
+                            <div className="mb-5">
+                              <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                                Amount (USD) (1% fee)
+                              </label>
 
-                            {Boolean(userD?.amountMultiple.length) &&
-                              typeof userD?.linkAmount != "number" && (
-                                <ToggleButtonGroup
-                                  sx={{
-                                    justifyContent: "space-between",
-                                    width: "100%",
-                                    "& .Mui-selected": {
-                                      backgroundColor: `${data.colorScheme} !important`,
-                                      color: `#fff !important`,
-                                    },
-                                    "& .MuiButtonBase-root:first-of-type": {
-                                      marginRight: "0px !important",
-                                      marginLeft: "0px !important",
-                                    },
+                              {Boolean(userD?.amountMultiple.length) &&
+                                typeof userD?.linkAmount != "number" && (
+                                  <ToggleButtonGroup
+                                    sx={{
+                                      justifyContent: "space-between",
+                                      width: "100%",
+                                      "& .Mui-selected": {
+                                        backgroundColor: `${data.colorScheme} !important`,
+                                        color: `#fff !important`,
+                                      },
+                                      "& .MuiButtonBase-root:first-of-type": {
+                                        marginRight: "0px !important",
+                                        marginLeft: "0px !important",
+                                      },
 
-                                    "& .MuiToggleButtonGroup-grouped": {
-                                      borderRadius: "4px !important",
-                                      minWidth: 55,
-                                      padding: "5px",
-                                      marginLeft: 3,
-                                      border:
-                                        "1px solid rgba(0, 0, 0, 0.12) !important",
-                                    },
-                                  }}
-                                  exclusive
-                                  className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                                  value={amount}
-                                  onChange={(e: any) => {
-                                    setTransferFail?.(false);
-                                    setLoadingText?.("");
-                                    const val = e.target.value;
-                                    setAmount?.(val.replace(/[^\d.]/g, ""));
-                                  }}
-                                >
-                                  {userD?.amountMultiple.map(
-                                    (amount: number, i: number) => (
-                                      <ToggleButton
-                                        key={i}
-                                        sx={{
-                                          textTransform: "capitalize",
-                                          fontWeight: "bold",
-                                        }}
-                                        value={`${amount}`}
-                                      >
-                                        {amount}
-                                      </ToggleButton>
-                                    )
-                                  )}
-                                </ToggleButtonGroup>
-                              )}
+                                      "& .MuiToggleButtonGroup-grouped": {
+                                        borderRadius: "4px !important",
+                                        minWidth: 55,
+                                        padding: "5px",
+                                        marginLeft: 3,
+                                        border:
+                                          "1px solid rgba(0, 0, 0, 0.12) !important",
+                                      },
+                                    }}
+                                    exclusive
+                                    className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                    value={amount}
+                                    onChange={(e: any) => {
+                                      setTransferFail?.(false);
+                                      setLoadingText?.("");
+                                      const val = e.target.value;
+                                      setAmount?.(val.replace(/[^\d.]/g, ""));
+                                    }}
+                                  >
+                                    {userD?.amountMultiple.map(
+                                      (amount: number, i: number) => (
+                                        <ToggleButton
+                                          key={i}
+                                          sx={{
+                                            textTransform: "capitalize",
+                                            fontWeight: "bold",
+                                          }}
+                                          value={`${amount}`}
+                                        >
+                                          {amount}
+                                        </ToggleButton>
+                                      )
+                                    )}
+                                  </ToggleButtonGroup>
+                                )}
 
-                            <TextField
-                              sx={text}
-                              value={amount}
-                              onChange={(
-                                e: React.ChangeEvent<
-                                  HTMLInputElement | HTMLTextAreaElement
-                                >
-                              ) => {
-                                setTransferFail?.(false);
-                                setLoadingText?.("");
-                                const val = e.target.value;
-                                setAmount?.(val.replace(/[^\d.]/g, ""));
-                              }}
-                              variant="standard"
-                              name="amount"
-                              fullWidth
-                              placeholder="0.00"
-                            />
-                          </div>
+                              <TextField
+                                sx={text}
+                                value={amount}
+                                onChange={(
+                                  e: React.ChangeEvent<
+                                    HTMLInputElement | HTMLTextAreaElement
+                                  >
+                                ) => {
+                                  setTransferFail?.(false);
+                                  setLoadingText?.("");
+                                  const val = e.target.value;
+                                  setAmount?.(val.replace(/[^\d.]/g, ""));
+                                }}
+                                variant="standard"
+                                name="amount"
+                                fullWidth
+                                placeholder="0.00"
+                              />
+                            </div>
+                          )}
 
                           <div className="">
                             <Button
@@ -775,7 +800,7 @@ const Carbon = ({
                           {userD!.rdata["sub"].map((ixn: string, i: number) => {
                             return (
                               <div key={i} className="mb-5">
-                                <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                                <div className="block font-[600] text-[#555555] mb-[6px] capitalize !font-ubuntu">
                                   {ixn}
                                 </div>
 
@@ -831,6 +856,27 @@ const Carbon = ({
                         </TabPanel>
 
                         <TabPanel value={subValue?.sub as number} index={1}>
+                          {amountFixed && (
+                            <div className="flex items-center flex-col justify-center text-[1.55rem] mb-5">
+                              <span className="font-light block mb-1 text-[rgba(88,88,88,0.86)] text-[14px]">
+                                You&apos;ll Be Paying
+                              </span>
+
+                              <span className="font-[500] text-[rgb(32,33,36)] text-[1.21rem]">
+                                <NumberFormat
+                                  value={amount}
+                                  thousandSeparator={true}
+                                  displayType={"text"}
+                                  prefix={"USD "}
+                                />
+                              </span>
+
+                              <span className="font-normal text-[rgb(78,79,80)] text-[15px]">
+                                1% fee
+                              </span>
+                            </div>
+                          )}
+
                           <div className="mb-5">
                             <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
                               Billed
@@ -931,81 +977,83 @@ const Carbon = ({
                               </div>
                             )}
 
-                          <div className="mb-5">
-                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                              Amount (USD)
-                            </label>
+                          {!amountFixed && (
+                            <div className="mb-5">
+                              <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                                Amount (USD) (1% fee)
+                              </label>
 
-                            {Boolean(userD?.amountMultiple.length) &&
-                              typeof userD?.linkAmount != "number" && (
-                                <ToggleButtonGroup
-                                  sx={{
-                                    justifyContent: "space-between",
-                                    width: "100%",
-                                    "& .Mui-selected": {
-                                      backgroundColor: `${data.colorScheme} !important`,
-                                      color: `#fff !important`,
-                                    },
-                                    "& .MuiButtonBase-root:first-of-type": {
-                                      marginRight: "0px !important",
-                                      marginLeft: "0px !important",
-                                    },
+                              {Boolean(userD?.amountMultiple.length) &&
+                                typeof userD?.linkAmount != "number" && (
+                                  <ToggleButtonGroup
+                                    sx={{
+                                      justifyContent: "space-between",
+                                      width: "100%",
+                                      "& .Mui-selected": {
+                                        backgroundColor: `${data.colorScheme} !important`,
+                                        color: `#fff !important`,
+                                      },
+                                      "& .MuiButtonBase-root:first-of-type": {
+                                        marginRight: "0px !important",
+                                        marginLeft: "0px !important",
+                                      },
 
-                                    "& .MuiToggleButtonGroup-grouped": {
-                                      borderRadius: "4px !important",
-                                      minWidth: 55,
-                                      padding: "5px",
-                                      marginLeft: 3,
-                                      border:
-                                        "1px solid rgba(0, 0, 0, 0.12) !important",
-                                    },
-                                  }}
-                                  exclusive
-                                  className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                                  value={amount}
-                                  onChange={(e: any) => {
-                                    setTransferFail?.(false);
-                                    setLoadingText?.("");
-                                    const val = e.target.value;
-                                    setAmount?.(val.replace(/[^\d.]/g, ""));
-                                  }}
-                                >
-                                  {userD?.amountMultiple.map(
-                                    (amount: number, i: number) => (
-                                      <ToggleButton
-                                        key={i}
-                                        sx={{
-                                          textTransform: "capitalize",
-                                          fontWeight: "bold",
-                                        }}
-                                        value={`${amount}`}
-                                      >
-                                        {amount}
-                                      </ToggleButton>
-                                    )
-                                  )}
-                                </ToggleButtonGroup>
-                              )}
+                                      "& .MuiToggleButtonGroup-grouped": {
+                                        borderRadius: "4px !important",
+                                        minWidth: 55,
+                                        padding: "5px",
+                                        marginLeft: 3,
+                                        border:
+                                          "1px solid rgba(0, 0, 0, 0.12) !important",
+                                      },
+                                    }}
+                                    exclusive
+                                    className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                    value={amount}
+                                    onChange={(e: any) => {
+                                      setTransferFail?.(false);
+                                      setLoadingText?.("");
+                                      const val = e.target.value;
+                                      setAmount?.(val.replace(/[^\d.]/g, ""));
+                                    }}
+                                  >
+                                    {userD?.amountMultiple.map(
+                                      (amount: number, i: number) => (
+                                        <ToggleButton
+                                          key={i}
+                                          sx={{
+                                            textTransform: "capitalize",
+                                            fontWeight: "bold",
+                                          }}
+                                          value={`${amount}`}
+                                        >
+                                          {amount}
+                                        </ToggleButton>
+                                      )
+                                    )}
+                                  </ToggleButtonGroup>
+                                )}
 
-                            <TextField
-                              sx={text}
-                              value={amount}
-                              onChange={(
-                                e: React.ChangeEvent<
-                                  HTMLInputElement | HTMLTextAreaElement
-                                >
-                              ) => {
-                                setTransferFail?.(false);
-                                setLoadingText?.("");
-                                const val = e.target.value;
-                                setAmount?.(val.replace(/[^\d.]/g, ""));
-                              }}
-                              variant="standard"
-                              name="amount"
-                              fullWidth
-                              placeholder="0.00"
-                            />
-                          </div>
+                              <TextField
+                                sx={text}
+                                value={amount}
+                                onChange={(
+                                  e: React.ChangeEvent<
+                                    HTMLInputElement | HTMLTextAreaElement
+                                  >
+                                ) => {
+                                  setTransferFail?.(false);
+                                  setLoadingText?.("");
+                                  const val = e.target.value;
+                                  setAmount?.(val.replace(/[^\d.]/g, ""));
+                                }}
+                                variant="standard"
+                                name="amount"
+                                fullWidth
+                                placeholder="0.00"
+                              />
+                            </div>
+                          )}
 
                           {Boolean(token!.tokenAddr) && (
                             <Button

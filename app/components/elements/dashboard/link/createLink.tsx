@@ -29,6 +29,7 @@ import {
   OutlinedInput,
   SelectChangeEvent,
   FormHelperText,
+  Switch,
 } from "@mui/material";
 import { MdInfo, MdAddLink, MdInsertLink, MdClose } from "react-icons/md";
 import { GiTwoCoins } from "react-icons/gi";
@@ -99,6 +100,8 @@ const NewLink = () => {
       backgroundColor: "currentColor",
     },
   }));
+
+  const [minMax, setMinMax] =useState<boolean>(false);
 
   const QontoStepIcon = (props: any) => {
     const { active, completed, className, icon } = props;
@@ -308,9 +311,10 @@ const NewLink = () => {
     }
 
     if (value == 1 || value == 3) {
-      if (data.amountType == "range") {
+
+      if (data.amountType == "range" && minMax) {
         if (
-          !Boolean(Number(data.range[0])) ||
+          !Boolean(Number(data.range[0])) &&
           !Boolean(Number(data.range[1]))
         ) {
           init({
@@ -324,6 +328,7 @@ const NewLink = () => {
           data.range[0] > (data.range[1] as number) &&
           data.range[1] !== undefined
         ) {
+
           init({
             amount: "Range Minimum should not be greater than maximum",
           });
@@ -428,13 +433,15 @@ const NewLink = () => {
         }
       }
 
+      
+
       const newData = {
         slug: data.slug.toLowerCase(),
         desc: data.desc,
         title: data.title,
         amount,
         address: account,
-        amountMulti: JSON.stringify(data.multi),
+        amountMulti: JSON.stringify(data.multi.filter((v) => Number(v))),
         type: data.type === undefined ? "onetime" : data.type,
         rdata: JSON.stringify(rinputs),
         template_data: JSON.stringify(templateData),
@@ -540,7 +547,7 @@ const NewLink = () => {
     if (Boolean(val)) {
       if (data["amountType"] == "range") {
         if (
-          Boolean(data["range"][1]) &&
+          Boolean(data["range"][0]) &&
           val < (data["range"][0] as number | string)
         ) {
           uerror({
@@ -563,7 +570,7 @@ const NewLink = () => {
             });
           }
         }
-      } else if (data["amountType"] == "variable") {
+      } else {
         if (!pushMulti(val)) {
           uerror({
             ...error,
@@ -591,7 +598,7 @@ const NewLink = () => {
 
       {!loadpage && (
         <div className="w-screen min-w-[340px] linkadd 2md:pl-0 sm:px-2 flex justify-center items-center bg-pattern2 h-full min-h-screen">
-          <div className="w-full flex 2md:px-0 px-10 justify-center flex-col h-full backdrop-blur-[2px]">
+          <div className="w-full flex 2md:px-0 px-10 justify-center flex-col h-full backdrop-blur-[6px]">
             <LogoSpace
               className={"2mmd:mx-auto"}
               style={{
@@ -715,9 +722,7 @@ const NewLink = () => {
                             }}
                             value={"onetime"}
                           >
-
-                            <GiTwoCoins className="mr-2" size={20} /> Onetime 
-
+                            <GiTwoCoins className="mr-2" size={20} /> Onetime
                           </ToggleButton>
                           <ToggleButton
                             sx={{
@@ -812,117 +817,88 @@ const NewLink = () => {
                         </div>
                       </div>
 
-                      <div className="w-full s:px-2 px-10 py-5">
+
+                      <div className="w-full sm:px-2 p-10">
                         <div className="flex items-center ssm:flex-wrap">
-                          <div className="w-full">
-                            <FormLabel
-                              sx={{
-                                fontWeight: "600",
-                                color: "#121212",
-                                display: "block",
-                                marginBottom: "10px",
-                              }}
-                              id="demo-row-radio-buttons-group-label"
-                            >
-                              Choose Amount Type
-                            </FormLabel>
+                          <TextField
+                            sx={text}
+                            id="amount"
+                            value={data["amount"]}
+                            label="Amount (USD)"
+                            variant="standard"
+                            helperText={error["amount"] || 'Can be left blank'}
+                            error={Boolean(error["amount"])}
+                            onChange={(
+                              e: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) => {
+                              const val = e.target.value;
+                              init({
+                                amount: "",
+                              });
+                              udata({
+                                ...data,
+                                amount: val.replace(/[^\d.]/g, ""),
+                              });
 
-                            <ToggleButtonGroup
-                              value={data["amountType"]}
-                              exclusive
-                              sx={{
-                                justifyContent: "space-between",
-                                width: "100%",
-                                "& .Mui-selected.MuiToggleButtonGroup-grouped":
-                                  {
-                                    backgroundColor: `#f57059 !important`,
-                                    color: `#fff !important`,
-                                    border: "1px solid #f57059 !important",
-                                  },
-                                "& .MuiToggleButtonGroup-grouped": {
-                                  borderRadius: "4px !important",
-                                  backgroundColor: "#fff",
-                                  minWidth: 80,
-                                  border:
-                                    "1px solid rgba(0, 0, 0, 0.3) !important",
-                                },
-                              }}
-                              onChange={(e: any) => {
-                                const val = e.target.value;
+                              setMinMax(false)
 
-                                udata({
-                                  ...data,
-                                  amountType: val,
-                                });
-                              }}
-                            >
-                              <ToggleButton
-                                sx={{
-                                  textTransform: "capitalize",
-                                  fontWeight: "bold",
-                                }}
-                                value="range"
-                              >
-                                Range
-                              </ToggleButton>
-                              <ToggleButton
-                                sx={{
-                                  textTransform: "capitalize",
-                                  fontWeight: "bold",
-                                }}
-                                value="variable"
-                              >
-                                Variable
-                              </ToggleButton>
-                              <ToggleButton
-                                sx={{
-                                  textTransform: "capitalize",
-                                  fontWeight: "bold",
-                                }}
-                                value="fixed"
-                              >
-                                Fixed
-                              </ToggleButton>
-                            </ToggleButtonGroup>
-                          </div>
+                            }}
+                            name="amount"
+                            type="text"
+                            fullWidth
+                          />
                         </div>
                       </div>
 
-                      {data["amountType"] == "fixed" && (
-                        <div className="w-full sm:px-2 p-10">
-                          <div className="flex items-center ssm:flex-wrap">
-                            <TextField
-                              sx={text}
-                              id="amount"
-                              value={data["amount"]}
-                              label="Amount (USD)"
-                              variant="standard"
-                              helperText={error["amount"]}
-                              error={Boolean(error["amount"])}
+                      <div className="sm:px-2 p-10">
+                        <div
+                          onClick={() => {
+                            setMinMax(!minMax);
+
+                            const ux = {
+                              ...data,
+                              amount: "",
+                            };
+
+                            ux.amountType = "range";
+
+                            if(!minMax == false){
+                                ux.amountType = 'variable'
+                            }
+
+                            udata(ux);  
+
+                          }}
+                          className="justify-between w-full flex items-center"
+                        >
+                          <div className="font-semibold mt-4 mb-2 text-[#121212]">
+                            <p>Specify Min/Max amount</p>
+                          </div>
+
+                          <div className="">
+                            <Switch
                               onChange={(
-                                e: React.ChangeEvent<
-                                  HTMLInputElement | HTMLTextAreaElement
-                                >
+                                e: React.ChangeEvent<HTMLInputElement>
                               ) => {
-                                const val = e.target.value;
-                                init({
-                                  amount: "",
-                                });
-                                udata({
-                                  ...data,
-                                  amount: val.replace(/[^\d.]/g, ""),
-                                });
+                                setMinMax(e.target.checked);
                               }}
-                              name="amount"
-                              type="text"
-                              fullWidth
+                              checked={minMax}
+                              inputProps={{ "aria-label": "minimum amount" }}
+                              sx={{
+                                "&& .MuiSwitch-switchBase.Mui-checked": {
+                                  color: "#f57059",
+                                },
+                                "&& .Mui-checked+.MuiSwitch-track": {
+                                  backgroundColor: "#f57059",
+                                },
+                              }}
                             />
                           </div>
                         </div>
-                      )}
 
-                      {data["amountType"] == "range" && (
-                        <div className="w-full sm:px-2 p-10">
+                        {minMax && (
                           <div className="flex items-center ssm:flex-wrap">
                             <TextField
                               sx={text}
@@ -945,13 +921,25 @@ const NewLink = () => {
                                   amount: "",
                                 });
 
-                                udata({
+                                const ux = {
                                   ...data,
+                                  amount: "",
+                                };
+
+                                ux.amountType = 'range';
+
+                                if (!minMax == false) {
+                                  ux.amountType = "variable";
+                                }
+
+                                udata({
+                                  ...ux,
                                   range: [
                                     val.replace(/[^\d.]/g, ""),
                                     data["range"][1],
                                   ],
                                 });
+
                               }}
                               name="max"
                               type="text"
@@ -977,23 +965,36 @@ const NewLink = () => {
                                 init({
                                   amount: "",
                                 });
-                                udata({
+
+                                const ux = {
                                   ...data,
+                                  amount: "",
+                                };
+
+                                ux.amountType = 'range';
+
+                                if (!minMax == false) {
+                                  ux.amountType = "variable";
+                                }
+
+                                udata({
+                                  ...ux,
                                   range: [
                                     data["range"][0],
                                     val.replace(/[^\d.]/g, ""),
                                   ],
                                 });
+
                               }}
                               name="max"
                               type="text"
                               fullWidth
                             />
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
 
-                      {data["amountType"] != "fixed" && (
+                      {!Boolean(data['amount']) && (
                         <div className="w-full s:px-2 px-10 py-5">
                           <div className="flex items-center ssm:flex-wrap">
                             <div className="w-full">
@@ -1087,6 +1088,7 @@ const NewLink = () => {
                           </div>
                         </div>
                       )}
+
                     </form>
                   </TabPanel>
 

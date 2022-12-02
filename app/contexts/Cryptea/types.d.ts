@@ -154,6 +154,7 @@ export interface PaymentContext {
   failMessage?: string;
   setFailMessage?: React.Dispatch<React.SetStateAction<string>>;
   hash?: string;
+  amountFixed?: boolean;
   setHash?: React.Dispatch<React.SetStateAction<string>>;
   interval?: string;
   options?: token[];

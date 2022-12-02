@@ -32,6 +32,7 @@ import { useCryptea } from "../../contexts/Cryptea";
 import Secured from "../../components/elements/secured";
 import { MdChevronLeft } from "react-icons/md";
 import { subValueType } from "../../contexts/Cryptea/types";
+import NumberFormat from "react-number-format";
 
 function a11yProps(index: number) {
   return {
@@ -65,6 +66,7 @@ const Origin = ({ className }: { className?: string }) => {
     setHash,
     begin,
     interval,
+    amountFixed,
     setTinterval,
     explorer,
     is500,
@@ -667,6 +669,27 @@ const Origin = ({ className }: { className?: string }) => {
                                     value={subValue?.onetime as number}
                                     index={1}
                                   >
+                                    {amountFixed && (
+                                      <div className="flex items-center flex-col justify-center text-[1.55rem] mb-5">
+                                        <span className="font-light block mb-1 text-[rgba(88,88,88,0.86)] text-[14px]">
+                                          You&apos;ll Be Paying
+                                        </span>
+
+                                        <span className="font-[500] text-[rgb(32,33,36)] text-[1.21rem]">
+                                          <NumberFormat
+                                            value={amount}
+                                            thousandSeparator={true}
+                                            displayType={"text"}
+                                            prefix={"USD "}
+                                          />
+                                        </span>
+
+                                        <span className="font-normal text-[rgb(78,79,80)] text-[15px]">
+                                          1% fee
+                                        </span>
+                                      </div>
+                                    )}
+
                                     <FormControl fullWidth>
                                       <div className="pb-3 font-bold">
                                         Token
@@ -768,12 +791,11 @@ const Origin = ({ className }: { className?: string }) => {
                                         </>
                                       )}
 
-                                      <div className="py-3 font-bold">
-                                        Amount (USD)
-                                        {typeof userD?.linkAmount == "number"
-                                          ? ` - $${userD?.linkAmount}`
-                                          : ""}
-                                      </div>
+                                      {typeof userD?.linkAmount != "number" && (
+                                        <div className="py-3 font-bold">
+                                          Amount (USD) (1% fee)
+                                        </div>
+                                      )}
 
                                       {Boolean(userD?.amountMultiple.length) &&
                                         typeof userD?.linkAmount !=
@@ -937,7 +959,7 @@ const Origin = ({ className }: { className?: string }) => {
                                                 paddingTop:
                                                   (!i && 0.001) || undefined,
                                               }}
-                                              className="py-3 font-bold"
+                                              className="py-3 capitalize font-bold"
                                             >
                                               {ixn}
                                             </div>
@@ -993,6 +1015,27 @@ const Origin = ({ className }: { className?: string }) => {
                                       index={1}
                                       padding={0}
                                     >
+                                      {amountFixed && (
+                                        <div className="flex items-center flex-col justify-center text-[1.55rem] mb-5">
+                                          <span className="font-light block mb-1 text-[rgba(88,88,88,0.86)] text-[14px]">
+                                            You&apos;ll Be Paying
+                                          </span>
+
+                                          <span className="font-[500] text-[rgb(32,33,36)] text-[1.21rem]">
+                                            <NumberFormat
+                                              value={amount}
+                                              thousandSeparator={true}
+                                              displayType={"text"}
+                                              prefix={"USD "}
+                                            />
+                                          </span>
+
+                                          <span className="font-normal text-[rgb(78,79,80)] text-[15px]">
+                                            1% fee
+                                          </span>
+                                        </div>
+                                      )}
+
                                       <FormControl fullWidth>
                                         <div className="pb-3 font-bold">
                                           Billed
@@ -1091,13 +1134,12 @@ const Origin = ({ className }: { className?: string }) => {
                                           )}
 
                                         <div className="my-2">
-                                          <div className="py-3 font-bold">
-                                            Amount (USD)
-                                            {typeof userD?.linkAmount ==
-                                            "number"
-                                              ? ` - $${userD?.linkAmount}`
-                                              : ""}
-                                          </div>
+                                          {typeof userD?.linkAmount !=
+                                            "number" && (
+                                            <div className="py-3 font-bold">
+                                              Amount (USD) (1% fee)
+                                            </div>
+                                          )}
 
                                           {Boolean(
                                             userD?.amountMultiple.length

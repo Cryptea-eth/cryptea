@@ -120,6 +120,38 @@ export const PaymentProvider = ({
 
   const [amountMn, setAmountMn] = useState<number>(0);
 
+  
+  const validAmt = (amt: any) => {
+    
+    if (userD.linkAmount == "variable" || !Boolean(userD.linkAmount)) {
+      if (amt < 0 || amt == 0) {
+        return "Amount cannot be zero";
+      } else {
+        return true;
+      }
+    } else if (typeof userD.linkAmount == "object") {
+      const json = userD.linkAmount;
+
+      if (json[0] !== undefined) {
+        if (amt < json[0]) {
+          return `Amount cannot be less than ${json[0]}`;
+        } else {
+          return true;
+        }
+      }
+
+      if (json[1] !== undefined) {
+        if (amt > json[1]) {
+          return `Amount cannot be greater than ${json[0]}`;
+        } else {
+          return true;
+        }
+      }
+    } else {
+      return true;
+    }
+  };
+
   const getPrice = async (
     price: number,
     chain: string | number | undefined = 80001
@@ -217,7 +249,15 @@ export const PaymentProvider = ({
     setLoadingText("Initializing Payment");
     try {
       if (Number(price)) {
-        await beginPayment(price, type);
+        
+        const validA = validAmt(Number(price));
+
+        if(typeof validA == 'boolean'){
+          await beginPayment(price, type);
+        }else{
+          setTransferFail(true);
+          setFailMessage(validA || 'Something went wrong, please try again')
+        }
       } else {
         setTransferFail(true);
         setFailMessage("Your amount is invalid");
@@ -230,6 +270,8 @@ export const PaymentProvider = ({
   };
 
   const [amount, setAmount] = useState<string | number>("");
+
+  const [amountFixed, setAmountFixed] = useState<boolean>(false)
 
   useEffect(() => {
     const init = async () => {
@@ -259,6 +301,7 @@ export const PaymentProvider = ({
 
             if (typeof linkAmount == "number") {
               setAmount(linkAmount);
+              setAmountFixed(true);
             }
           }
 
@@ -268,18 +311,25 @@ export const PaymentProvider = ({
           const cryptoData = JSON.parse(lQ.data || "[]");
 
           if (cryptoData.length) {
-            setOptions(
-              [...options].filter(
-                (v: token) => cryptoData.indexOf(v.value) != -1
-              )
+
+            const sOptions = [...options].filter(
+              (v: token) => cryptoData.indexOf(v.value) != -1
             );
+
+            setOptions(sOptions);
+              
+            if (sOptions[0] !== undefined) {
+              setToken(sOptions[0]);
+            }
+
           }
 
           if (
             rdata["sub"] !== undefined &&
-            rdata["sub"].indexOf("Email") == -1
+            rdata["sub"].indexOf("Email") == -1 &&
+              rdata["sub"].indexOf("email") == -1
           ) {
-            rdata["sub"].push("Email");
+            rdata["sub"].push("email");
           }
 
           setUserD({
@@ -815,6 +865,7 @@ export const PaymentProvider = ({
         setSubValue,
         eSubscription,
         options,
+        amountFixed,
         setESubscription,
         setSigner,
       }}
