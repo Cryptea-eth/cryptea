@@ -70,7 +70,7 @@ const TypePayment = ({
                   ).toUpperCase()}
                 </Avatar>
 
-                <Link href={`/user/${data.slug}/overview`}>
+                <Link href={`/pay/${data.slug}/overview`}>
                   <a className="cursor-pointer text-[1.95rem] leading-[2.45rem] flex items-center">
                     <span className="mr-2">{data.title}</span>
                   </a>
@@ -117,7 +117,7 @@ const TypePayment = ({
                     </a>
                   </Link>
 
-                  <Link href={`/user/${data.slug}/overview`}>
+                  <Link href={`/pay/${data.slug}/overview`}>
                     <a>
                       <Button className="!py-2 opacity-80 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
                         Nah Maybe Later

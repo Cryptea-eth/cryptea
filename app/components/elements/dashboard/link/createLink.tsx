@@ -450,7 +450,7 @@ const NewLink = () => {
       try {
         await "links".save(newData);
 
-        Router.push(`/user/${newData.slug}/overview`);
+        Router.push(`/pay/${newData.slug}/overview`);
       } catch (e) {
         const errorObject = e as any;
 

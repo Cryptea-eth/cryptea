@@ -224,7 +224,7 @@ const ShareLink = ({
 
               <div className="w-full items-center mx-[2px] rounded-md flex justify-between bg-[#2020200e] py-1 px-3">
                 <span className="text-[#919191] h-fit">
-                  {window.location.origin}/user/{data.slug}
+                  {window.location.origin}/pay/{data.slug}
                 </span>
                 <ClickAwayListener onClickAway={() => mainCopy(false)}>
                   <Tooltip

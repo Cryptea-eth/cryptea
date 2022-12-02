@@ -414,7 +414,7 @@ const DashHome = () => {
                       }}
                       className="flex mb-2 justify-between min-h-[66px] overflow-hidden hover:!h-[98px] transition-all delay-700 flex-col cursor-pointer p-[1.1rem] border-[rgb(175,177,182)] border border-solid rounded-[.9rem] py-3"
                     >
-                      <Link href={`/user/${l.link}/overview`}>
+                      <Link href={`/pay/${l.link}/overview`}>
                         <a className="flex w-full items-center">
                           <Avatar
                             sx={{

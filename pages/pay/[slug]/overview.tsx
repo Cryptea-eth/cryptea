@@ -49,7 +49,7 @@ const Overview = () => {
 
         const { link:mDx, user, onetime, sub, views } = await initD(String(slug).toLowerCase());
 
-        setUserLk(`${window.location.origin}/user/${slug}`); 
+        setUserLk(`${window.location.origin}/pay/${slug}`); 
 
         if(user['owner']){
          
@@ -91,7 +91,7 @@ const Overview = () => {
                 setLoading(false);
 
         }else{
-            router.push(`/user/${String(slug).toLowerCase()}`);
+            router.push(`/pay/${String(slug).toLowerCase()}`);
         }
     };
 
@@ -176,7 +176,7 @@ const Overview = () => {
                         </a>
                       </Link>
 
-                      <Link href={`/user/${slug}`}>
+                      <Link href={`/pay/${slug}`}>
                         <a className="cursor-pointer text-[1.95rem] leading-[2.45rem] mx-auto flex items-center">
                           <span className="mr-2">
                             {data.title !== undefined ? data.title : slug}
@@ -283,7 +283,7 @@ const Overview = () => {
                         />
                       </div>
 
-                      <Link href={`/user/${slug}/onetime`}>
+                      <Link href={`/pay/${slug}/onetime`}>
                         <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                           View more payment data
                         </a>
@@ -422,7 +422,7 @@ const Overview = () => {
                           </>
                         )}
                       </div>
-                      <Link href={`/user/${slug}/multiple`}>
+                      <Link href={`/pay/${slug}/multiple`}>
                         <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                           {data.type == "sub" || data.type == "both"
                             ? "View more subscription data"
@@ -451,7 +451,7 @@ const Overview = () => {
                           link below to edit your link template
                         </div>
                       </div>
-                      <Link href={`/user/${slug}/edit`}>
+                      <Link href={`/pay/${slug}/edit`}>
                         <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                           Edit Template
                         </a>
@@ -507,7 +507,7 @@ const Overview = () => {
                         </div>
                       </div>
                       <Link
-                        href={`/user/${slug}/settings`}
+                        href={`/pay/${slug}/settings`}
                       >
                         <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                           Go To Settings

@@ -338,7 +338,7 @@ const Settings = () => {
         views,
       } = await initD(String(slug).toLowerCase());
 
-      setUserLk(`${window.location.origin}/user/${slug}`);
+      setUserLk(`${window.location.origin}/pay/${slug}`);
 
       if (user["owner"]) {
         let src = "";
@@ -426,7 +426,7 @@ const Settings = () => {
         setLoading(false);
         
       } else {
-        router.push(`/user/${String(slug).toLowerCase()}`);
+        router.push(`/pay/${String(slug).toLowerCase()}`);
       }
     };
 
@@ -463,7 +463,7 @@ const Settings = () => {
               usrc: data.img,
               title: data.title,
               desc: data.desc,
-              userLk: `${window.location.origin}/user/${slug}`,
+              userLk: `${window.location.origin}/pay/${slug}`,
               slug: String(slug),
             }}
             toggleSocial={(ee: boolean) => toggleSocial(ee)}
@@ -472,7 +472,7 @@ const Settings = () => {
 
           <div className="pl-5 pr-2 flex items-center justify-between min-h-[75px] py-3 border-b sticky top-0 bg-white z-10 w-full">
             <div className="text-truncate capitalize text-[rgb(32,33,36)] text-[19px] mr-1">
-              <Link href={`/user/${slug}/overview`}>
+              <Link href={`/pay/${slug}/overview`}>
                 <a>{data.title !== undefined ? data.title : slug}</a>
               </Link>
             </div>
@@ -503,7 +503,7 @@ const Settings = () => {
           >
             <div className="flex relative items-center">
               {" "}
-             <Link href={`/user/${slug}/overview`}><a>
+             <Link href={`/pay/${slug}/overview`}><a>
               <IconButton className="absolute bottom-[0px]">
                 <MdArrowBackIos
                   color={"rgb(32,33,36)"}

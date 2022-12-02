@@ -274,7 +274,7 @@ const Links = () => {
 
       await "links".save(newData);
 
-      router.push(`/user/${newData.slug}/overview`);
+      router.push(`/pay/${newData.slug}/overview`);
       
       showLinkAdd(false);
 
@@ -794,7 +794,7 @@ const Links = () => {
                   image !== undefined ? image : { src: undefined };
 
                 return (
-                  <Link href={`/user/${link}/overview`} key={i}>
+                  <Link href={`/pay/${link}/overview`} key={i}>
                     <a>
                       <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(248,248,248)] transition-all delay-300 cursor-pointer">
                         <div className="mb-4">

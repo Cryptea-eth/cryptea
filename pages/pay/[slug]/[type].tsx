@@ -368,7 +368,7 @@ const Onetime = () => {
       setLoader(false);
 
       }else {
-           router.push(`/user/${String(slug).toLowerCase()}`);
+           router.push(`/pay/${String(slug).toLowerCase()}`);
       }
 
     };
@@ -456,7 +456,7 @@ const Onetime = () => {
                 usrc: data.img,
                 title: data.title,
                 desc: data.desc,
-                userLk: `${window.location.origin}/user/${slug}`,
+                userLk: `${window.location.origin}/pay/${slug}`,
                 slug: String(slug),
               }}
               toggleSocial={(ee: boolean) => toggleSocial(ee)}
@@ -465,7 +465,7 @@ const Onetime = () => {
 
             <div className="pl-5 pr-2 flex items-center justify-between min-h-[75px] py-3 border-b sticky top-0 bg-white z-10 w-full">
               <div className="text-truncate capitalize text-[rgb(32,33,36)] text-[19px] mr-1">
-                <Link href={`/user/${slug}/overview`}>
+                <Link href={`/pay/${slug}/overview`}>
                   <a>{data.title !== undefined ? data.title : slug}</a>
                 </Link>
               </div>
@@ -969,7 +969,7 @@ const Onetime = () => {
                       Configure link
                     </div>
                   </div>
-                  <Link href={`/user/${String(slug).toLowerCase()}/settings`}>
+                  <Link href={`/pay/${String(slug).toLowerCase()}/settings`}>
                     <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
                       Go To Settings
                     </a>
