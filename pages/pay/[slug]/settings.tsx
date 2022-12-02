@@ -5,6 +5,8 @@ import {
   Alert,
   Tooltip,
   CircularProgress,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import Head from "next/head";
 import Sidebar from "../../../app/components/elements/dashboard/sidebar";
@@ -27,11 +29,17 @@ import {
 } from "../../../app/contexts/Cryptea/connectors/chains";
 import { token } from "../../../app/contexts/Cryptea/types";
 import { AxiosError } from "axios";
+import { GiTwoCoins } from "react-icons/gi";
+import { FaCoins } from "react-icons/fa";
+import { RiCoinLine } from 'react-icons/ri'
+import Loader from "../../../app/components/elements/loader";
 
 const Settings = () => {
   const { isAuthenticated, validator } = useCryptea();
 
   const [isLoading, setLoading] = useState<boolean>(true);
+
+  const [saving, saveData] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -61,6 +69,7 @@ const Settings = () => {
     redirect: string;
     amount: Amt;
     minAmt: Amt;
+    type: string;
     maxAmt: Amt;
     [index: string]: any;
   }
@@ -74,6 +83,7 @@ const Settings = () => {
     amountOption: string;
     minAmt: string;
     maxAmt: string;
+    type: string;
     amount: string;
     acceptedCrypto: string;
     redirect: string;
@@ -93,6 +103,7 @@ const Settings = () => {
     rdata: "",
     amountOption: "",
     redirect: "",
+    type: "",
     minAmt: "",
     maxAmt: "",
     amount: "",
@@ -114,11 +125,12 @@ const Settings = () => {
         redirect: "",
         minAmt: "",
         maxAmt: "",
+        type: "",
         amount: "",
       })
     }
 
-    setLoad(false);
+    saveData(false);
   };
 
   const [success, setSuccess] = useState<boolean>(false);
@@ -139,13 +151,12 @@ const Settings = () => {
     return false;
   };
 
-  
-
   const [formdata, setForm] = useState<formData>({
     title: "",
     desc: "",
     acceptedCrypto: [],
     rdata: [],
+    type: "",
     amountOption: [],
     amount: "",
     minAmt: 0,
@@ -159,8 +170,7 @@ const Settings = () => {
     setError();
   };
 
-  const [loading, setLoad] = useState<boolean>(false);
-
+ 
   const [amountOpt, setAmountOpt] = useState<Amt>("");
 
   const pushMulti = (num: number) => {
@@ -243,86 +253,6 @@ const Settings = () => {
       setError({
         amountOption: "Cannot set a null number to Amount options",
       });
-    }
-  };
-
-  const validateFields = async () => {
-    const payload: { [index: string]: any } = {};
-
-    setSuccess(false);
-    setLoad(true);
-
-    setError();
-    setGenError('');
-
-    window.scroll(0, 0);
-    if (Boolean(formdata["redirect"])) {
-      if (!validator.isURL(formdata["redirect"])) {
-        setError({
-          redirect: "A valid URL is required for Redirect Url",
-        });
-
-        return;
-      } else {
-        payload["redirect"] = formdata["redirect"];
-      }
-    }
-
-    let amount: string | number | (string | number)[] = "variable";
-
-    if (Boolean(Number(formdata["amount"]))) {
-      amount = formdata["amount"];
-    }
-
-    if (
-      (Boolean(Number(formdata["maxAmt"])) && max) ||
-      (Boolean(Number(formdata["minAmt"])) && min)
-    ) {
-      amount = [];
-
-      if (max) {
-        amount[1] = formdata["maxAmt"];
-      }
-
-      if (min) {
-        amount[0] = formdata["minAmt"];
-      }
-    }
-
-    const accepted = JSON.stringify(
-      formdata["acceptedCrypto"].map((v: token) => v.value)
-    );
-
-    const rdata = formdata["rdata"].map((v) => v.value);
-
-    if (Boolean(formdata.title)) payload["title"] = formdata.title;
-    if (Boolean(formdata.desc)) payload["desc"] = formdata.desc;
-    if (Boolean(formdata.amountOption))
-      payload["amountMulti"] = JSON.stringify(formdata.amountOption);
-
-    try {
-      await `links/${data.id}`.update({
-        ...payload,
-        amount,
-        type: data.type,
-        accepted,
-        rdata: JSON.stringify({ sub: rdata, onetime: rdata }),
-      });
-
-      setLoad(false);
-      setSuccess(true);
-    } catch (err) {
-      const error = err as any;
-
-      console.log(error, "oer");
-
-      setLoad(false);
-
-      if (error.response) {
-        setGenError(error.response.data.message);
-      } else {
-        setGenError("Something went wrong please try again");
-      }
     }
   };
 
@@ -421,7 +351,7 @@ const Settings = () => {
         const acceptedCrypto = JSON.parse(mDx.data || "[]");
 
 
-        setFormData({ redirect: mDx.required, desc: mDx.desc, minAmt: minn, acceptedCrypto, amount, maxAmt: maxx, rdata, title: mDx.title, amountOption: JSON.parse(mDx.amountMulti) });
+        setFormData({ redirect: mDx.required, type: mDx.type, desc: mDx.desc, minAmt: minn, acceptedCrypto, amount, maxAmt: maxx, rdata, title: mDx.title, amountOption: JSON.parse(mDx.amountMulti) });
 
         setLoading(false);
         
@@ -443,13 +373,102 @@ const Settings = () => {
 
   const acceptOptions = [...CryptoList];
 
+  const validateFields = async () => {
+    const payload: { [index: string]: any } = {};
+
+    if (saving) {
+      return;
+    }
+
+    saveData(true);
+
+
+    setSuccess(false);
+
+    setError();
+    setGenError("");
+
+    window.scroll(0, 0);
+
+    if (Boolean(formdata["redirect"])) {
+      if (!validator.isURL(formdata["redirect"])) {
+        setError({
+          redirect: "A valid URL is required for Redirect Url",
+        });
+
+        return;
+      } else {
+        payload["redirect"] = formdata["redirect"];
+      }
+    }
+
+    let amount: string | number | (string | number)[] = "variable";
+
+    if (Boolean(Number(formdata["amount"]))) {
+      amount = formdata["amount"];
+    }
+
+    if (
+      (Boolean(Number(formdata["maxAmt"])) && max) ||
+      (Boolean(Number(formdata["minAmt"])) && min)
+    ) {
+      amount = [];
+
+      if (max) {
+        amount[1] = formdata["maxAmt"];
+      }
+
+      if (min) {
+        amount[0] = formdata["minAmt"];
+      }
+    }
+
+    const accepted = JSON.stringify(
+      formdata["acceptedCrypto"].map((v: token) => v.value)
+    );
+
+    const rdata = formdata["rdata"].map((v) => v.value);
+
+    if (Boolean(formdata.title)) payload["title"] = formdata.title;
+    if (Boolean(formdata.desc)) payload["desc"] = formdata.desc;
+    if (Boolean(formdata.amountOption))
+      payload["amountMulti"] = JSON.stringify(formdata.amountOption);
+
+    try {
+      await `links/${data.id}`.update({
+        ...payload,
+        amount,
+        type: formdata.type,
+        accepted,
+        rdata: JSON.stringify({ sub: rdata, onetime: rdata }),
+      });
+
+      // saveData(false);
+      setSuccess(true);
+    } catch (err) {
+      const error = err as any;
+
+      console.log(error, "oer");
+
+      // saveData(false);
+
+      if (error.response) {
+        setGenError(error.response.data.message);
+      } else {
+        setGenError("Something went wrong please try again");
+      }
+    }
+  };
+
   return (
     <>
       <Head>
         <title>Settings | {slug} | Cryptea</title>
       </Head>
 
-      <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
+      {isLoading && <Loader />}
+
+      {!isLoading && <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
         <Sidebar page={"link"} />
 
         <div
@@ -503,15 +522,17 @@ const Settings = () => {
           >
             <div className="flex relative items-center">
               {" "}
-             <Link href={`/pay/${slug}/overview`}><a>
-              <IconButton className="absolute bottom-[0px]">
-                <MdArrowBackIos
-                  color={"rgb(32,33,36)"}
-                  className="relative left-[4px]"
-                  size={18}
-                />
-              </IconButton></a></Link>{" "}
-
+              <Link href={`/pay/${slug}/overview`}>
+                <a>
+                  <IconButton className="absolute bottom-[0px]">
+                    <MdArrowBackIos
+                      color={"rgb(32,33,36)"}
+                      className="relative left-[4px]"
+                      size={18}
+                    />
+                  </IconButton>
+                </a>
+              </Link>{" "}
               <h1 className="text-[rgb(32,33,36)] capitalize mb-[5px] font-[500] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
                 <>
                   <FiSettings className="mr-2" size={23} />
@@ -612,6 +633,85 @@ const Settings = () => {
                             fullWidth
                             placeholder="Link Description"
                           />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-full">
+                    <div className="font-semibold mt-4 mb-2 text-[#525252]">
+                      <p>Link Type</p>
+                    </div>
+                    <div className="">
+                      <div className="rounded-md">
+                        <div className="flex">
+                          <ToggleButtonGroup
+                            value={formdata.type}
+                            sx={{
+                              justifyContent: "space-between",
+                              width: "100%",
+                              "& .Mui-selected": {
+                                backgroundColor: `rgba(245, 112, 89, 0.8) !important`,
+                                color: `#fff !important`,
+                              },
+                              "& .MuiButtonBase-root:first-of-type": {
+                                marginLeft: "0px !important",
+                              },
+                              "& .MuiButtonBase-root": {
+                                padding: "10px 15px !important",
+                              },
+                              "& .MuiToggleButtonGroup-grouped": {
+                                borderRadius: "4px !important",
+                                minWidth: 'fit-content',
+                                marginLeft: 3,
+                                backgroundColor: "#1212121a",
+                                border: "none",
+                              },
+                            }}
+                            exclusive
+                            className="w-full cusscroller overflow-y-hidden mb-2 pb-1"
+                            onChange={(e: any) => {
+                              if (e.target.value !== undefined) {
+                                setFormData({
+                                  ...data,
+                                  type: e.target.value,
+                                });
+                              }
+                            }}
+                          >
+                            <ToggleButton
+                              sx={{
+                                textTransform: "capitalize",
+                                fontWeight: "bold",
+                                marginRight: "5px",
+                              }}
+                              value={"onetime"}
+                            >
+                              <GiTwoCoins className="mr-2" size={20} /> Onetime
+                            </ToggleButton>
+                            <ToggleButton
+                              sx={{
+                                textTransform: "capitalize",
+                                fontWeight: "bold",
+                                marginRight: "5px",
+                              }}
+                              value={"sub"}
+                            >
+                              <FaCoins className="mr-2" size={20} />{" "}
+                              Subscription
+                            </ToggleButton>
+                            <ToggleButton
+                              sx={{
+                                textTransform: "capitalize",
+                                fontWeight: "bold",
+                                marginRight: "5px",
+                              }}
+                              value={"both"}
+                            >
+                              <RiCoinLine className="mr-2" size={20} /> Onetime
+                              & Subscription
+                            </ToggleButton>
+                          </ToggleButtonGroup>
                         </div>
                       </div>
                     </div>
@@ -1081,14 +1181,10 @@ const Settings = () => {
 
           <div className="button py-2 bg-white mt-2 bottom-0 w-full sticky flex items-center justify-center">
             <Button
-              onClick={() => {
-                if (!loading) {
-                  validateFields();
-                }
-              }}
+              onClick={validateFields}
               className="!py-2 !font-bold !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
             >
-              {loading ? (
+              {saving ? (
                 <>
                   <div className="mr-3 h-[20px] text-[#fff]">
                     <CircularProgress
@@ -1106,7 +1202,9 @@ const Settings = () => {
             </Button>
           </div>
         </div>
-      </div>
+      </div>}
+
+      
     </>
   );
 };

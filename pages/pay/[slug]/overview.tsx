@@ -14,7 +14,6 @@ import Link from "next/link";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
 import { MdArrowBackIos, MdLink, MdOutlineSettingsSuggest } from "react-icons/md";
 import sortData, { totSub } from "../../../app/components/elements/dashboard/linkOverview/generateData";
-
 import { TbApiApp } from 'react-icons/tb';
 import { AiOutlineUser } from 'react-icons/ai'
 import ShareLink from "../../../app/components/elements/dashboard/linkOverview/share";
