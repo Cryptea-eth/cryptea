@@ -424,7 +424,7 @@ const Onetime = () => {
           ".tooltiprep"
         ) as HTMLParagraphElement;
 
-        setx.innerHTML = `$${(sortData(
+        (setx || { innerHTML: '' }).innerHTML = `$${(sortData(
           data.main.length ? data.main : [{ amount: 0, date: 0 }],
           interval[linkType]['main'],
           false
