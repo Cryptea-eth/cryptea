@@ -613,7 +613,7 @@ const Origin = ({ className }: { className?: string }) => {
                                               paddingTop:
                                                 (!i && 0.001) || undefined,
                                             }}
-                                            className="py-3 font-bold"
+                                            className="py-3 capitalize font-bold"
                                           >
                                             {ixn}
                                           </div>

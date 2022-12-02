@@ -295,6 +295,7 @@ export const PaymentProvider = ({
               : [],
             linkAmount,
             rdata,
+            redirect: lQ.redirect
           });
 
           if (setIsLoading !== undefined) setIsLoading(false);
@@ -495,6 +496,10 @@ export const PaymentProvider = ({
           setTransferSuccess(true);
 
           if (type == "sub") setSubCheck(true);
+
+          if (Boolean(userD.redirect) && validator.isURL(userD.redirect)) {
+            router.push(userD.redirect);
+          }
 
           setTimeout(reset, 12000);
         })

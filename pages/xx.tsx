@@ -3,23 +3,24 @@ import { get_request, post_request } from "../app/contexts/Cryptea/requests";
 import * as ethers from 'ethers';
 import web3 from 'web3';
 import axios from 'axios';
-
+import { useRouter } from 'next/router'
+import validator from 'validator'
 
 const Xx = () => {
 
- const [ss, setSs] = useState("");
+ const router = useRouter();
+
 
  useEffect(() => {
-   axios.get(`http://localhost:3000/api/cryptoimg/matic`).then((e) => {
-     setSs(e.data);
-     console.log(e)
-   });
- }, []);
+  
+
+ }, [router.isReady, router]);
 
 
   return (
     <>
-      <img src={"http://localhost:3000/api/cryptoimg/matic"} alt={"11"} />
+
+
     </>
   );
 }
