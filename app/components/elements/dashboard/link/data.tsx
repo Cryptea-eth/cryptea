@@ -1,12 +1,22 @@
 import dynamic from "next/dynamic";
+import { get_request } from "../../../../contexts/Cryptea/requests";
 
 let xd: any;
 
-export const initD = async (link: string) => {
+export const initD = async (link: string, api?: string) => {
   
-   xd = await (`links/${link}`).get('*', true);
+    xd = (
+      (await get_request(`link/${link}`, {
+        params: {
+          api,
+        },
+      })) || { data: {} }
+    ).data;
 
-  return xd.data;
+    console.log(xd.data, "eor");
+
+    return xd.data;
+
 };
 
 export const template = () => {

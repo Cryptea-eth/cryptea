@@ -44,6 +44,8 @@ export const PaymentProvider = ({
 
   let username = router.query["slug"];
 
+  const apiCode = router.query["trx"] as string | undefined;
+
   const [is500, setIs500] = useState<boolean>(false);
 
   const [interval, setTinterval] = useState<string>("daily");
@@ -120,9 +122,7 @@ export const PaymentProvider = ({
 
   const [amountMn, setAmountMn] = useState<number>(0);
 
-  
   const validAmt = (amt: any) => {
-    
     if (userD.linkAmount == "variable" || !Boolean(userD.linkAmount)) {
       if (amt < 0 || amt == 0) {
         return "Amount cannot be zero";
@@ -249,14 +249,13 @@ export const PaymentProvider = ({
     setLoadingText("Initializing Payment");
     try {
       if (Number(price)) {
-        
         const validA = validAmt(Number(price));
 
-        if(typeof validA == 'boolean'){
+        if (typeof validA == "boolean") {
           await beginPayment(price, type);
-        }else{
+        } else {
           setTransferFail(true);
-          setFailMessage(validA || 'Something went wrong, please try again')
+          setFailMessage(validA || "Something went wrong, please try again");
         }
       } else {
         setTransferFail(true);
@@ -271,14 +270,18 @@ export const PaymentProvider = ({
 
   const [amount, setAmount] = useState<string | number>("");
 
-  const [amountFixed, setAmountFixed] = useState<boolean>(false)
+  const [apiState, setApiState] = useState<boolean>(false);
+
+  const [amountFixed, setAmountFixed] = useState<boolean>(false);
 
   useEffect(() => {
     const init = async () => {
       try {
-        const { link: lQ, user: userl } = await initD(
-          String(username).toLowerCase()
-        );
+        const {
+          link: lQ,
+          user: userl,
+          api,
+        } = await initD(String(username).toLowerCase(), apiCode);
 
         if (lQ !== undefined) {
           if (lQ.template_data !== undefined) {
@@ -311,25 +314,38 @@ export const PaymentProvider = ({
           const cryptoData = JSON.parse(lQ.data || "[]");
 
           if (cryptoData.length) {
-
             const sOptions = [...options].filter(
               (v: token) => cryptoData.indexOf(v.value) != -1
             );
 
             setOptions(sOptions);
-              
+
             if (sOptions[0] !== undefined) {
               setToken(sOptions[0]);
             }
-
           }
 
           if (
             rdata["sub"] !== undefined &&
             rdata["sub"].indexOf("Email") == -1 &&
-              rdata["sub"].indexOf("email") == -1
+            rdata["sub"].indexOf("email") == -1
           ) {
             rdata["sub"].push("email");
+          }
+
+          let redirect = lQ.redirect;
+
+          if (Boolean(api)) {
+            redirect = Boolean(api.redirect) ? api.redirect : redirect;
+
+            if (Boolean(api.amount)) {
+              setAmount(api.amount);
+              setAmountFixed(true);
+            }
+
+            if (api.data !== null) {
+              setApiState(true);
+            }
           }
 
           setUserD({
@@ -345,7 +361,7 @@ export const PaymentProvider = ({
               : [],
             linkAmount,
             rdata,
-            redirect: lQ.redirect
+            redirect: lQ.redirect,
           });
 
           if (setIsLoading !== undefined) setIsLoading(false);
@@ -795,7 +811,7 @@ export const PaymentProvider = ({
     setTransferFail(false);
     setHash("");
 
-    if (userD.rdata[type].length > 1 && !subValue[type]) {
+    if (!subValue[type]) {
       let proceed = true;
 
       userD.rdata[type].forEach((val: string, i: number) => {
@@ -861,6 +877,7 @@ export const PaymentProvider = ({
         subCheck,
         setSubCheck,
         begin,
+        apiState,
         subValue,
         setSubValue,
         eSubscription,
@@ -925,6 +942,7 @@ export const PaymentProvider = ({
             <div className="flex relative items-center flex-col justify-center mb-5">
               {manLoader && (
                 <Loader
+                  head={false}
                   sx={{
                     backgroundColor: "#ffffffeb",
                     width: 210,

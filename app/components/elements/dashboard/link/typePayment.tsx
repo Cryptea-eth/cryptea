@@ -25,12 +25,10 @@ const TypePayment = ({
     title: string,
     slug: string
   }
-}) => {
- 
+}) => { 
 
   const { sidebar }: dash = useContext(DashContext);
 
- 
   const [isSaving, saving] = useState<boolean>(false);
 
   const [genError, setGenError] = useState<string>('');
@@ -44,7 +42,7 @@ const TypePayment = ({
       setGenError('');
 
        try {
-         await`links/${data.id}`.update({
+         await `links/${data.id}`.update({
            type: 'both'
          });
 

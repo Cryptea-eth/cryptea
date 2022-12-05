@@ -317,7 +317,7 @@ export const CryptoList = [
     value: 80001,
     label: (
       <div className="items-center flex">
-        <div className="h-[20px] mr-1 relative w-[20px]">
+        <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
             symbol={"matic"}
             name="polygon"
@@ -339,7 +339,7 @@ export const CryptoList = [
     value: 31415,
     label: (
       <div className="items-center flex">
-        <div className="h-[20px] mr-1 relative w-[20px]">
+        <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
             name="filecoin"
             symbol="FIL"
@@ -361,7 +361,7 @@ export const CryptoList = [
     value: 338,
     label: (
       <div className="items-center flex">
-        <div className="h-[20px] mr-1 relative w-[20px]">
+        <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
             symbol="CRO"
             name="cronos"
@@ -383,7 +383,7 @@ export const CryptoList = [
     value: 1313161555,
     label: (
       <div className="items-center flex">
-        <div className="h-[20px] mr-1 relative w-[20px]">
+        <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
             symbol="aurora"
             name="aurora"
@@ -406,7 +406,7 @@ export const CryptoList = [
     contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
     label: (
       <div className="items-center flex">
-        <div className="h-[20px] mr-1 relative w-[20px]">
+        <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
             symbol="op"
             name="optimism"
@@ -428,7 +428,7 @@ export const CryptoList = [
     contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
     label: (
       <div className="items-center flex">
-        <div className="h-[20px] mr-1 relative w-[20px]">
+        <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
             symbol="rose"
             name="oasis"
