@@ -10,8 +10,24 @@ import { GenProvider } from '../app/contexts/GenContext';
 import { HomeProvider } from '../app/contexts/HomeContext';
 import '../app/contexts/Cryptea/types.d.ts';
 import { CrypteaProvider } from "../app/contexts/Cryptea/Auth";
+import { crypteaCon, stylesCon } from '../app/contexts/Cryptea/icon';
 
 function MyApp({ Component, pageProps }: AppProps) {
+
+  const once = React.useRef<boolean>(true)
+
+  React.useEffect(() => {
+
+    if(once.current){
+
+      once.current = false;
+
+      console.log(`${crypteaCon} \n\n   %c Pay with Cryptea😊`, stylesCon);
+
+    }
+
+  }, [])
+
   return (
       <CrypteaProvider>
         <GenProvider>

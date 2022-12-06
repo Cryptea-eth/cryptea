@@ -336,6 +336,7 @@ export const PaymentProvider = ({
           let redirect = lQ.redirect;
 
           if (Boolean(api)) {
+
             redirect = Boolean(api.redirect) ? api.redirect : redirect;
 
             if (Boolean(api.amount)) {
@@ -344,7 +345,13 @@ export const PaymentProvider = ({
             }
 
             if (api.data !== null) {
-              setApiState(true);
+              const data = JSON.parse(api.data);
+
+              if (data["email"] !== undefined && data["name"] !== undefined) {
+                if (validator.isEmail(data['email']) && data['name'].length) {
+                   setApiState(true);
+                }
+              }
             }
           }
 
@@ -361,7 +368,7 @@ export const PaymentProvider = ({
               : [],
             linkAmount,
             rdata,
-            redirect: lQ.redirect,
+            redirect,
           });
 
           if (setIsLoading !== undefined) setIsLoading(false);
@@ -482,9 +489,23 @@ export const PaymentProvider = ({
       setLoadingText("");
 
       if (chainId != token.value) {
-        await switchNetworkAsync?.(token.value);
 
+       const switchNet = await switchNetworkAsync?.(token.value);
+
+       console.log(switchNet, 'hehe')
+
+       if (connected) {
+         disconnect();
+       }
+
+       if (switchNet === undefined) {
+        
+        // activate modal
+
+       }else{
         authenticate(true);
+       }
+          
       } else if (!connected || !signer) {
         if (!signer) {
           disconnect();
@@ -492,6 +513,7 @@ export const PaymentProvider = ({
 
         authenticate(true);
       }
+
 
       setPaymentData({ price, type });
     } else {
@@ -524,18 +546,21 @@ export const PaymentProvider = ({
 
           const rx: { [index: string]: string | number } = {};
 
-          pemail.forEach((val: undefined | string, i: number) => {
-            if (val !== undefined && val.length) {
-              if (userD.rdata[type][i] !== undefined) {
-                rx[userD.rdata[type][i].toLowerCase()] = val;
+          if (!apiState) {
+            pemail.forEach((val: undefined | string, i: number) => {
+              if (val !== undefined && val.length) {
+                if (userD.rdata[type][i] !== undefined) {
+                  rx[userD.rdata[type][i].toLowerCase()] = val;
+                }
               }
-            }
-          });
+            });
+          }
 
           let post: any = {
             ...rx,
             date: new Date().getTime(),
             address: from,
+            api: apiCode,
             type,
             amount: price,
             hash: init.hash,
@@ -564,7 +589,23 @@ export const PaymentProvider = ({
           if (type == "sub") setSubCheck(true);
 
           if (Boolean(userD.redirect) && validator.isURL(userD.redirect)) {
-            router.push(userD.redirect);
+            let link = String(userD.redirect).split("?");
+
+            if (Boolean(link[1])) {
+              if (!link[1].length) {
+                link[0] += `?trx=${apiCode}`;
+              } else {
+                link[1] += `&trx=${apiCode}`;
+
+                link[0] += "?";
+              }
+            } else {
+              link[0] += `?trx=${apiCode}`;
+            }
+
+            const mLink = link.join("");
+
+            router.push(mLink);
           }
 
           setTimeout(reset, 12000);
@@ -574,6 +615,9 @@ export const PaymentProvider = ({
 
           if (error.message.length) {
             setTransferFail(true);
+            if ((err.data.message).indexOf('insufficient funds') != -1) {
+              setFailMessage('Insufficient funds for transaction');
+            }
             console.log(err);
             setLoadingText("");
           }
@@ -814,10 +858,14 @@ export const PaymentProvider = ({
     if (!subValue[type]) {
       let proceed = true;
 
+      if ( !apiState ) {
+
       userD.rdata[type].forEach((val: string, i: number) => {
         if (!validForm(Boolean(pemail[i]) ? pemail[i] : "", val.toLowerCase()))
           proceed = false;
       });
+
+    }
 
       if (proceed) {
         subValue[type] = 1;
@@ -826,12 +874,14 @@ export const PaymentProvider = ({
         return;
       }
     } else if (Number(amount) || subValue[type] == 1) {
+      if (!apiState) {
       if (
         !validForm(pemail[0], userD.rdata[type][0].toLowerCase()) &&
         userD.rdata[type].length == 1
       ) {
         return;
       }
+    }
 
       if (auto) initMain(Number(amount), type);
       else beginManual(Number(amount), type);

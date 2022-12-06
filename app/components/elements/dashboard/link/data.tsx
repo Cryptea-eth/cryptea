@@ -13,10 +13,7 @@ export const initD = async (link: string, api?: string) => {
       })) || { data: {} }
     ).data;
 
-    console.log(xd.data, "eor");
-
     return xd.data;
-
 };
 
 export const template = () => {
