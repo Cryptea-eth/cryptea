@@ -14,6 +14,7 @@ async function main() {
   await deployedMain.deployed();
 
     console.log("Contract deployed to:", deployedMain.address);
+    
 }
 
 // We recommend this pattern to be able to use async/await everywhere

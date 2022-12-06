@@ -7,16 +7,16 @@ import {
   ToggleButton,
   Tab,
   Tabs,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import SwipeableViews from "react-swipeable-views";
-import Select from "react-select";
+import Select, { createFilter } from "react-select";
 import style from "../../../styles/carbon.module.css";
 import Loader from "../../components/elements/loader";
 import { PaymentContext } from "../../contexts/PaymentContext";
-import Head from 'next/head';
+import Head from "next/head";
 import Nav from "../../components/elements/Nav";
 import { useRouter } from "next/router";
 import { useCryptea } from "../../contexts/Cryptea";
@@ -24,13 +24,9 @@ import TabPanel from "../../components/elements/dashboard/link/TabPanel";
 import Secured from "../../components/elements/secured";
 import { subValueType } from "../../contexts/Cryptea/types";
 import { MdChevronLeft } from "react-icons/md";
+import NumberFormat from "react-number-format";
 
-const Carbon = ({
-  className,
-}: {
-  className?: string;
-}) => {
-  
+const Carbon = ({ className }: { className?: string }) => {
   const {
     userD,
     setUserD,
@@ -48,9 +44,11 @@ const Carbon = ({
     setTransferSuccess,
     explorer,
     transferFail,
+    apiState,
     setTransferFail,
     failMessage,
     setFailMessage,
+    amountFixed,
     hash,
     setHash,
     begin,
@@ -77,13 +75,18 @@ const Carbon = ({
     };
   }
 
-   useEffect(() => {
-      const elem = document.querySelector(".carbon") as HTMLDivElement;
+  useEffect(() => {
+    const elem = document.querySelector(".carbon") as HTMLDivElement;
 
-     if ((elem?.scrollHeight == document.body.scrollHeight) && pathname.indexOf('[slug]/edit') !== -1) {
-        elem.style.width = 'calc(100% - 249px)'  
-     } 
-   });
+    if (pathname.indexOf("[slug]/edit") !== -1) {
+      if (elem?.scrollHeight == document.body.scrollHeight) {
+        elem.style.width = "calc(100% - 249px)";
+      } else {
+        elem.style.width = "calc(100% - 258px)";
+      }
+    }
+
+  });
 
   const {
     username: usern,
@@ -115,33 +118,30 @@ const Carbon = ({
     setFailMessage?.("");
     const subV = { ...subValue };
 
-    subV[newValue ? 'onetime' : 'sub'] = 0;
+    subV[newValue ? "onetime" : "sub"] = 0;
 
     setSubValue?.(subV as subValueType);
 
     setPemail?.([]);
   };
 
-   const { signer } = useCryptea();
+  const { signer } = useCryptea();
 
-   useEffect(() => {
+  useEffect(() => {
+    setSigner?.(signer);
+  }, [signer]);
 
-     setSigner?.(signer);
-
-   }, [signer]);
-
-
-   useEffect(() => {
+  useEffect(() => {
     if (userD!.rdata !== undefined) {
-        if (userD!.rdata[!value ? "onetime" : "sub"].length <= 1) {
-          const nsVal = { ...subValue };
+      if (userD!.rdata[!value ? "onetime" : "sub"].length <= 1 || apiState) {
+        const nsVal = { ...subValue };
 
-          nsVal[!value ? "onetime" : "sub"] = 1;
+        nsVal[!value ? "onetime" : "sub"] = 1;
 
-          setSubValue?.(nsVal as subValueType);
-        }
+        // setSubValue?.(nsVal as subValueType);
+      }
     }
-   }, [value, userD]);
+  }, [value, userD]);
 
   return (
     <div className={`carbon ${className}`}>
@@ -202,6 +202,15 @@ const Carbon = ({
               className={`${style.wrapper} flex justify-center min-h-screen`}
               style={data.body}
             >
+              <Head>
+                <title>{usern} | Cryptea</title>
+                <meta
+                  name="description"
+                  content={`Send crypto to ${usern} quick and easy`}
+                />
+                <link rel="icon" href="/favicon.ico" />
+              </Head>
+
               <div
                 className="payment mt-[60px] shadow-lg mb-4 pb-[12px] px-[10px] h-auto rounded-[5px] relative pt-[70px]"
                 style={data.box}
@@ -224,22 +233,21 @@ const Carbon = ({
                 </Avatar>
 
                 <div className="items-center w-full flex mb-7">
-                  {userD!.rdata[!value ? "onetime" : "sub"].length > 1 &&
-                    subValue![!value ? "onetime" : "sub"] == 1 && (
-                      <IconButton
-                        className="mr-[6px]"
-                        onClick={() => {
-                          const nsVal = { ...subValue };
-                          nsVal[!value ? "onetime" : "sub"] = 0;
+                  {subValue![!value ? "onetime" : "sub"] == 1 && !apiState && (
+                    <IconButton
+                      className="mr-[6px] absolute top-5"
+                      onClick={() => {
+                        const nsVal = { ...subValue };
+                        nsVal[!value ? "onetime" : "sub"] = 0;
 
-                          setFailMessage?.("");
+                        setFailMessage?.("");
 
-                          setSubValue?.(nsVal as subValueType);
-                        }}
-                      >
-                        <MdChevronLeft color="#302f2f" size={24} />
-                      </IconButton>
-                    )}
+                        setSubValue?.(nsVal as subValueType);
+                      }}
+                    >
+                      <MdChevronLeft color="#302f2f" size={24} />
+                    </IconButton>
+                  )}
                   <h2
                     className="!font-ubuntu w-full header"
                     style={{
@@ -250,7 +258,7 @@ const Carbon = ({
                     {Boolean(data.header.text) ? data.header.text : usern}
                   </h2>
                 </div>
-                <div className="form">
+                <div className="form min-h-[407px]">
                   {/* error */}
                   {(transferFail || Boolean(failMessage)) && (
                     <div
@@ -399,7 +407,15 @@ const Carbon = ({
                           target={"_blank"}
                           className="text-[#5a5a5a] cursor-pointer mb-1 font-normal"
                         >
-                          View transaction on {explorer!.name}
+                          View transaction on{" "}
+                          <span
+                            className="font-bold"
+                            style={{
+                              color: data.colorScheme,
+                            }}
+                          >
+                            {explorer!.name}
+                          </span>
                         </a>
                       </Link>
 
@@ -475,13 +491,18 @@ const Carbon = ({
 
                   <SwipeableViews index={value}>
                     <TabPanel padding={4} value={value} index={0}>
-                      <SwipeableViews index={subValue?.onetime as number}>
-                        <TabPanel value={subValue?.onetime as number} index={0}>
+                      {/* <SwipeableViews index={subValue?.onetime as number}> */}
+                      <TabPanel
+                        className="min-h-[280px] flex flex-col justify-evenly"
+                        value={subValue?.onetime as number}
+                        index={0}
+                      >
+                        <div>
                           {userD!.rdata["onetime"].map(
                             (ixn: string, i: number) => {
                               return (
                                 <div key={i} className="mb-5">
-                                  <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                                  <div className="block font-[600] text-[#555555] mb-[6px] capitalize !font-ubuntu">
                                     {ixn}
                                   </div>
 
@@ -511,6 +532,219 @@ const Carbon = ({
                               );
                             }
                           )}
+                        </div>
+                        <Button
+                          sx={{
+                            marginTop: "10px",
+                            backgroundColor: `${data.colorScheme} !important`,
+                            padding: "12px !important",
+                            textAlign: "center",
+                            fontWeight: "bold !important",
+                            lineHeight: "18px",
+                            fontSize: "16px",
+                            fontFamily: "'ubuntu', sans-serif !important",
+                            width: "100%",
+                            color: "#fff",
+                            borderRadius: "5px",
+                            textTransform: "none",
+                            cursor: "pointer",
+                            "&:hover": {
+                              backgroundColor: `${data.colorScheme} !important`,
+                            },
+                          }}
+                          onClick={() => begin?.("onetime", true)}
+                        >
+                          Next
+                        </Button>
+                      </TabPanel>
+
+                      <TabPanel value={subValue?.onetime as number} index={1}>
+                        {amountFixed && (
+                          <div className="flex items-center flex-col justify-center text-[1.55rem] mb-5">
+                            <span className="font-light block mb-1 text-[rgba(88,88,88,0.86)] text-[14px]">
+                              You&apos;ll Be Paying
+                            </span>
+
+                            <span className="font-[500] text-[rgb(32,33,36)] text-[1.21rem]">
+                              <NumberFormat
+                                value={amount}
+                                thousandSeparator={true}
+                                displayType={"text"}
+                                prefix={"USD "}
+                              />
+                            </span>
+
+                            <span className="font-normal text-[rgb(78,79,80)] text-[15px]">
+                              1% fee
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="mb-5">
+                          <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                            Token
+                          </label>
+
+                          <Select
+                            isClearable={false}
+                            value={token}
+                            filterOption={createFilter({
+                              stringify: (option) =>
+                                `${option.value} ${option.data.name}`,
+                            })}
+                            onChange={(e) => setToken?.(e!)}
+                            name="Tokens"
+                            placeholder={"Tokens..."}
+                            options={options}
+                            styles={{
+                              option: (provided, state) => {
+                                return {
+                                  ...provided,
+                                  backgroundColor: state.isSelected
+                                    ? "#dfdfdf"
+                                    : "transparent",
+                                  cursor: "pointer",
+                                  "&:active": {
+                                    backgroundColor: "#dfdfdf",
+
+                                    color: "#121212 !important",
+                                  },
+                                  "&:hover": {
+                                    backgroundColor: state.isSelected
+                                      ? undefined
+                                      : `#dfdfdff2`,
+                                  },
+                                };
+                              },
+                              container: (provided, state) => ({
+                                ...provided,
+                                "& .select__control": {
+                                  borderWidth: "0px",
+                                  borderRadius: "0px",
+                                  backgroundColor: "transparent",
+                                  borderBottomWidth: "1px",
+                                },
+                                "& .select__value-container": {
+                                  paddingLeft: "0px",
+                                },
+                                "& .select__control:hover": {
+                                  borderBottomWidth: "2px",
+                                  borderBottomColor: "#121212",
+                                },
+                                "& .select__control--is-focused": {
+                                  borderWidth: "0px",
+                                  borderBottomWidth: "2px",
+                                  borderBottomColor: `${data.colorScheme} !important`,
+                                  boxShadow: "none",
+                                },
+                              }),
+                            }}
+                            classNamePrefix="select"
+                          />
+                        </div>
+
+                        {!amountFixed && (
+                          <div className="mb-5">
+                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                              Amount (USD) (1% fee)
+                            </label>
+
+                            {Boolean(userD?.amountMultiple.length) &&
+                              typeof userD?.linkAmount != "number" && (
+                                <ToggleButtonGroup
+                                  sx={{
+                                    justifyContent: "space-between",
+                                    width: "100%",
+                                    "& .Mui-selected": {
+                                      backgroundColor: `${data.colorScheme} !important`,
+                                      color: `#fff !important`,
+                                    },
+                                    "& .MuiButtonBase-root:first-of-type": {
+                                      marginRight: "0px !important",
+                                      marginLeft: "0px !important",
+                                    },
+
+                                    "& .MuiToggleButtonGroup-grouped": {
+                                      borderRadius: "4px !important",
+                                      minWidth: 55,
+                                      padding: "5px",
+                                      marginLeft: 3,
+                                      border:
+                                        "1px solid rgba(0, 0, 0, 0.12) !important",
+                                    },
+                                  }}
+                                  exclusive
+                                  className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                                  value={amount}
+                                  onChange={(e: any) => {
+                                    setTransferFail?.(false);
+                                    setLoadingText?.("");
+                                    const val = e.target.value;
+                                    setAmount?.(val.replace(/[^\d.]/g, ""));
+                                  }}
+                                >
+                                  {userD?.amountMultiple.map(
+                                    (amount: number, i: number) => (
+                                      <ToggleButton
+                                        key={i}
+                                        sx={{
+                                          textTransform: "capitalize",
+                                          fontWeight: "bold",
+                                        }}
+                                        value={`${amount}`}
+                                      >
+                                        {amount}
+                                      </ToggleButton>
+                                    )
+                                  )}
+                                </ToggleButtonGroup>
+                              )}
+
+                            <TextField
+                              sx={text}
+                              value={amount}
+                              onChange={(
+                                e: React.ChangeEvent<
+                                  HTMLInputElement | HTMLTextAreaElement
+                                >
+                              ) => {
+                                setTransferFail?.(false);
+                                setLoadingText?.("");
+                                const val = e.target.value;
+                                setAmount?.(val.replace(/[^\d.]/g, ""));
+                              }}
+                              variant="standard"
+                              name="amount"
+                              fullWidth
+                              placeholder="0.00"
+                            />
+                          </div>
+                        )}
+
+                        <div className="">
+                          <Button
+                            sx={{
+                              marginTop: "10px",
+                              backgroundColor: `${data.colorScheme} !important`,
+                              padding: "12px !important",
+                              textAlign: "center",
+                              fontWeight: "bold !important",
+                              lineHeight: "18px",
+                              fontSize: "16px",
+                              fontFamily: "'ubuntu', sans-serif !important",
+                              width: "100%",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              textTransform: "none",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: `${data.colorScheme} !important`,
+                              },
+                            }}
+                            onClick={() => begin?.("onetime", false)}
+                          >
+                            Pay Manually
+                          </Button>
                           <Button
                             sx={{
                               marginTop: "10px",
@@ -532,83 +766,35 @@ const Carbon = ({
                             }}
                             onClick={() => begin?.("onetime", true)}
                           >
-                            Next
+                            Pay
                           </Button>
-                        </TabPanel>
+                        </div>
+                      </TabPanel>
+                      {/* </SwipeableViews> */}
+                    </TabPanel>
 
-                        <TabPanel value={subValue?.onetime as number} index={1}>
-                          <div className="mb-5">
-                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                              Token
-                            </label>
-
-                            <Select
-                              isClearable={false}
-                              value={token}
-                              onChange={(e) => setToken?.(e!)}
-                              name="colors"
-                              placeholder={"Tokens..."}
-                              options={options}
-                              styles={{
-                                option: (provided, state) => {
-                                  return {
-                                    ...provided,
-                                    backgroundColor: state.isSelected
-                                      ? data.colorScheme
-                                      : "transparent",
-                                    "&:active": {
-                                      backgroundColor: data.colorScheme,
-                                    },
-                                    "&:hover": {
-                                      backgroundColor: state.isSelected
-                                        ? undefined
-                                        : `${data.colorScheme}29`,
-                                    },
-                                  };
-                                },
-                                container: (provided, state) => ({
-                                  ...provided,
-                                  "& .select__control": {
-                                    borderWidth: "0px",
-                                    borderRadius: "0px",
-                                    backgroundColor: "transparent",
-                                    borderBottomWidth: "1px",
-                                  },
-                                  "& .select__value-container": {
-                                    paddingLeft: "0px",
-                                  },
-                                  "& .select__control:hover": {
-                                    borderBottomWidth: "2px",
-                                    borderBottomColor: "#121212",
-                                  },
-                                  "& .select__control--is-focused": {
-                                    borderWidth: "0px",
-                                    borderBottomWidth: "2px",
-                                    borderBottomColor: `${data.colorScheme} !important`,
-                                    boxShadow: "none",
-                                  },
-                                }),
-                              }}
-                              classNamePrefix="select"
-                            />
-                          </div>
-
-                          {userD!.rdata["onetime"].length == 1 && (
-                            <div className="mb-5">
-                              <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                                {userD!.rdata["onetime"][0]}
+                    <TabPanel padding={4} value={value} index={1}>
+                      {/* <SwipeableViews index={subValue?.sub as number}> */}
+                      <TabPanel
+                        className="min-h-[280px] flex flex-col justify-evenly"
+                        value={subValue?.sub as number}
+                        index={0}
+                      >
+                        {userD!.rdata["sub"].map((ixn: string, i: number) => {
+                          return (
+                            <div key={i} className="mb-5">
+                              <div className="block font-[600] text-[#555555] mb-[6px] capitalize !font-ubuntu">
+                                {ixn}
                               </div>
 
                               <TextField
                                 fullWidth
                                 id="outlined-basic"
-                                placeholder={`Your ${
-                                  userD!.rdata["onetime"][0]
-                                }`}
+                                placeholder={`Your ${ixn}`}
                                 variant="standard"
                                 sx={text}
                                 value={
-                                  pemail![0] !== undefined ? pemail![0] : ""
+                                  pemail![i] !== undefined ? pemail![i] : ""
                                 }
                                 onChange={(
                                   e: React.ChangeEvent<
@@ -618,307 +804,132 @@ const Carbon = ({
                                   setTransferFail?.(false);
                                   setLoadingText?.("");
                                   const val = e.target.value;
-                                  pemail![0] = val;
+                                  pemail![i] = val;
 
                                   setPemail?.([...pemail!]);
                                 }}
                               />
                             </div>
-                          )}
+                          );
+                        })}
 
-                          <div className="mb-5">
-                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                              Amount (USD)
-                            </label>
-
-                            {Boolean(userD?.amountMultiple.length) &&
-                              typeof userD?.linkAmount != "number" && (
-                                <ToggleButtonGroup
-                                  sx={{
-                                    justifyContent: "space-between",
-                                    width: "100%",
-                                    "& .Mui-selected": {
-                                      backgroundColor: `${data.colorScheme} !important`,
-                                      color: `#fff !important`,
-                                    },
-                                    "& .MuiButtonBase-root:first-of-type": {
-                                      marginRight: "0px !important",
-                                      marginLeft: "0px !important",
-                                    },
-
-                                    "& .MuiToggleButtonGroup-grouped": {
-                                      borderRadius: "4px !important",
-                                      minWidth: 55,
-                                      padding: "5px",
-                                      marginLeft: 3,
-                                      border:
-                                        "1px solid rgba(0, 0, 0, 0.12) !important",
-                                    },
-                                  }}
-                                  exclusive
-                                  className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                                  value={amount}
-                                  onChange={(e: any) => {
-                                    setTransferFail?.(false);
-                                    setLoadingText?.("");
-                                    const val = e.target.value;
-                                    setAmount?.(val.replace(/[^\d.]/g, ""));
-                                  }}
-                                >
-                                  {userD?.amountMultiple.map(
-                                    (amount: number, i: number) => (
-                                      <ToggleButton
-                                        key={i}
-                                        sx={{
-                                          textTransform: "capitalize",
-                                          fontWeight: "bold",
-                                        }}
-                                        value={`${amount}`}
-                                      >
-                                        {amount}
-                                      </ToggleButton>
-                                    )
-                                  )}
-                                </ToggleButtonGroup>
-                              )}
-
-                            <TextField
-                              sx={text}
-                              value={amount}
-                              onChange={(
-                                e: React.ChangeEvent<
-                                  HTMLInputElement | HTMLTextAreaElement
-                                >
-                              ) => {
-                                setTransferFail?.(false);
-                                setLoadingText?.("");
-                                const val = e.target.value;
-                                setAmount?.(val.replace(/[^\d.]/g, ""));
-                              }}
-                              variant="standard"
-                              name="amount"
-                              fullWidth
-                              placeholder="0.00"
-                            />
-                          </div>
-
-                          <div className="">
-                            <Button
-                              sx={{
-                                marginTop: "10px",
-                                backgroundColor: `${data.colorScheme} !important`,
-                                padding: "12px !important",
-                                textAlign: "center",
-                                fontWeight: "bold !important",
-                                lineHeight: "18px",
-                                fontSize: "16px",
-                                fontFamily: "'ubuntu', sans-serif !important",
-                                width: "100%",
-                                color: "#fff",
-                                borderRadius: "5px",
-                                textTransform: "none",
-                                cursor: "pointer",
-                                "&:hover": {
-                                  backgroundColor: `${data.colorScheme} !important`,
-                                },
-                              }}
-                              onClick={() => begin?.("onetime", false)}
-                            >
-                              Pay Manually
-                            </Button>
-                            <Button
-                              sx={{
-                                marginTop: "10px",
-                                backgroundColor: `${data.colorScheme} !important`,
-                                padding: "12px !important",
-                                textAlign: "center",
-                                fontWeight: "bold !important",
-                                lineHeight: "18px",
-                                fontSize: "16px",
-                                fontFamily: "'ubuntu', sans-serif !important",
-                                width: "100%",
-                                color: "#fff",
-                                borderRadius: "5px",
-                                textTransform: "none",
-                                cursor: "pointer",
-                                "&:hover": {
-                                  backgroundColor: `${data.colorScheme} !important`,
-                                },
-                              }}
-                              onClick={() => begin?.("onetime", true)}
-                            >
-                              Pay
-                            </Button>
-                          </div>
-                        </TabPanel>
-                      </SwipeableViews>
-                    </TabPanel>
-
-                    <TabPanel padding={4} value={value} index={1}>
-                      <SwipeableViews index={subValue?.sub as number}>
-                        <TabPanel value={subValue?.sub as number} index={0}>
-                          {userD!.rdata["sub"].map((ixn: string, i: number) => {
-                            return (
-                              <div key={i} className="mb-5">
-                                <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                                  {ixn}
-                                </div>
-
-                                <TextField
-                                  fullWidth
-                                  id="outlined-basic"
-                                  placeholder={`Your ${ixn}`}
-                                  variant="standard"
-                                  sx={text}
-                                  value={
-                                    pemail![i] !== undefined ? pemail![i] : ""
-                                  }
-                                  onChange={(
-                                    e: React.ChangeEvent<
-                                      HTMLInputElement | HTMLTextAreaElement
-                                    >
-                                  ) => {
-                                    setTransferFail?.(false);
-                                    setLoadingText?.("");
-                                    const val = e.target.value;
-                                    pemail![i] = val;
-
-                                    setPemail?.([...pemail!]);
-                                  }}
-                                />
-                              </div>
-                            );
-                          })}
-
-                          <Button
-                            sx={{
-                              marginTop: "10px",
+                        <Button
+                          sx={{
+                            marginTop: "10px",
+                            backgroundColor: `${data.colorScheme} !important`,
+                            padding: "12px !important",
+                            textAlign: "center",
+                            fontWeight: "bold !important",
+                            lineHeight: "18px",
+                            fontSize: "16px",
+                            fontFamily: "'ubuntu', sans-serif !important",
+                            width: "100%",
+                            color: "#fff",
+                            borderRadius: "5px",
+                            textTransform: "none",
+                            cursor: "pointer",
+                            "&:hover": {
                               backgroundColor: `${data.colorScheme} !important`,
-                              padding: "12px !important",
-                              textAlign: "center",
-                              fontWeight: "bold !important",
-                              lineHeight: "18px",
-                              fontSize: "16px",
-                              fontFamily: "'ubuntu', sans-serif !important",
+                            },
+                          }}
+                          onClick={() => begin?.("sub", true)}
+                        >
+                          Next
+                        </Button>
+                      </TabPanel>
+
+                      <TabPanel value={subValue?.sub as number} index={1}>
+                        {amountFixed && (
+                          <div className="flex items-center flex-col justify-center text-[1.55rem] mb-5">
+                            <span className="font-light block mb-1 text-[rgba(88,88,88,0.86)] text-[14px]">
+                              You&apos;ll Be Paying
+                            </span>
+
+                            <span className="font-[500] text-[rgb(32,33,36)] text-[1.21rem]">
+                              <NumberFormat
+                                value={amount}
+                                thousandSeparator={true}
+                                displayType={"text"}
+                                prefix={"USD "}
+                              />
+                            </span>
+
+                            <span className="font-normal text-[rgb(78,79,80)] text-[15px]">
+                              1% fee
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="mb-5">
+                          <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                            Billed
+                          </label>
+
+                          <ToggleButtonGroup
+                            value={interval}
+                            exclusive
+                            sx={{
+                              justifyContent: "space-between",
                               width: "100%",
-                              color: "#fff",
-                              borderRadius: "5px",
-                              textTransform: "none",
-                              cursor: "pointer",
-                              "&:hover": {
+                              "& .Mui-selected": {
                                 backgroundColor: `${data.colorScheme} !important`,
+                                color: `#fff !important`,
+                              },
+                              "& .MuiButtonBase-root:first-of-type": {
+                                marginRight: "0px !important",
+                                marginLeft: "0px !important",
+                              },
+
+                              "& .MuiToggleButtonGroup-grouped": {
+                                borderRadius: "4px !important",
+                                minWidth: 55,
+                                padding: "5px",
+                                marginLeft: 3,
+                                border:
+                                  "1px solid rgba(0, 0, 0, 0.12) !important",
                               },
                             }}
-                            onClick={() => begin?.("sub", true)}
+                            className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                            onChange={(e: any) => {
+                              setTransferFail?.(false);
+                              setLoadingText?.("");
+                              const val = e.target.value;
+                              setTinterval?.(val);
+                            }}
                           >
-                            Next
-                          </Button>
-                        </TabPanel>
-
-                        <TabPanel value={subValue?.sub as number} index={1}>
-                          <div className="mb-5">
-                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                              Billed
-                            </label>
-
-                            <ToggleButtonGroup
-                              value={interval}
-                              exclusive
-                              sx={{
-                                justifyContent: "space-between",
-                                width: "100%",
-                                "& .Mui-selected": {
-                                  backgroundColor: `${data.colorScheme} !important`,
-                                  color: `#fff !important`,
-                                },
-                                "& .MuiButtonBase-root:first-of-type": {
-                                  marginRight: "0px !important",
-                                  marginLeft: "0px !important",
-                                },
-
-                                "& .MuiToggleButtonGroup-grouped": {
-                                  borderRadius: "4px !important",
-                                  minWidth: 55,
-                                  padding: "5px",
-                                  marginLeft: 3,
-                                  border:
-                                    "1px solid rgba(0, 0, 0, 0.12) !important",
-                                },
-                              }}
-                              className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                              onChange={(e: any) => {
-                                setTransferFail?.(false);
-                                setLoadingText?.("");
-                                const val = e.target.value;
-                                setTinterval?.(val);
-                              }}
+                            <ToggleButton
+                              className="capitalize font-bold"
+                              value="daily"
                             >
-                              <ToggleButton
-                                className="capitalize font-bold"
-                                value="daily"
-                              >
-                                Daily
-                              </ToggleButton>
+                              Daily
+                            </ToggleButton>
 
-                              <ToggleButton
-                                className="capitalize font-bold"
-                                value="weekly"
-                              >
-                                Weekly
-                              </ToggleButton>
-                              <ToggleButton
-                                className="capitalize font-bold"
-                                value="monthly"
-                              >
-                                Monthly
-                              </ToggleButton>
+                            <ToggleButton
+                              className="capitalize font-bold"
+                              value="weekly"
+                            >
+                              Weekly
+                            </ToggleButton>
+                            <ToggleButton
+                              className="capitalize font-bold"
+                              value="monthly"
+                            >
+                              Monthly
+                            </ToggleButton>
 
-                              <ToggleButton
-                                className="capitalize font-bold"
-                                value="yearly"
-                              >
-                                Yearly
-                              </ToggleButton>
-                            </ToggleButtonGroup>
-                          </div>
+                            <ToggleButton
+                              className="capitalize font-bold"
+                              value="yearly"
+                            >
+                              Yearly
+                            </ToggleButton>
+                          </ToggleButtonGroup>
+                        </div>
 
-                          {userD!.rdata["sub"].length == 1 &&
-                            userD!.rdata["sub"][0] == "Email" && (
-                              <div className="mb-5">
-                                <div className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                                  {userD!.rdata["onetime"][0]}
-                                </div>
-
-                                <TextField
-                                  fullWidth
-                                  id="outlined-basic"
-                                  placeholder={`Your ${
-                                    userD!.rdata["onetime"][0]
-                                  }`}
-                                  variant="standard"
-                                  sx={text}
-                                  value={
-                                    pemail![0] !== undefined ? pemail![0] : ""
-                                  }
-                                  onChange={(
-                                    e: React.ChangeEvent<
-                                      HTMLInputElement | HTMLTextAreaElement
-                                    >
-                                  ) => {
-                                    setTransferFail?.(false);
-                                    setLoadingText?.("");
-                                    const val = e.target.value;
-                                    pemail![0] = val;
-
-                                    setPemail?.([...pemail!]);
-                                  }}
-                                />
-                              </div>
-                            )}
-
+                        {!amountFixed && (
                           <div className="mb-5">
                             <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                              Amount (USD)
+                              Amount (USD) (1% fee)
                             </label>
 
                             {Boolean(userD?.amountMultiple.length) &&
@@ -991,8 +1002,10 @@ const Carbon = ({
                               placeholder="0.00"
                             />
                           </div>
+                        )}
 
-                          {Boolean(token!.tokenAddr) && <Button
+                        {Boolean(token!.tokenAddr) && (
+                          <Button
                             sx={{
                               marginTop: "10px",
                               backgroundColor: `${data.colorScheme} !important`,
@@ -1014,33 +1027,34 @@ const Carbon = ({
                             onClick={() => begin?.("sub", false)}
                           >
                             Pay Manually
-                          </Button>}
-
-                          <Button
-                            sx={{
-                              marginTop: "10px",
-                              backgroundColor: `${data.colorScheme} !important`,
-                              padding: "12px !important",
-                              textAlign: "center",
-                              fontWeight: "bold !important",
-                              lineHeight: "18px",
-                              fontSize: "16px",
-                              fontFamily: "'ubuntu', sans-serif !important",
-                              width: "100%",
-                              color: "#fff",
-                              borderRadius: "5px",
-                              textTransform: "none",
-                              cursor: "pointer",
-                              "&:hover": {
-                                backgroundColor: `${data.colorScheme} !important`,
-                              },
-                            }}
-                            onClick={() => begin?.("sub", true)}
-                          >
-                            Pay
                           </Button>
-                        </TabPanel>
-                      </SwipeableViews>
+                        )}
+
+                        <Button
+                          sx={{
+                            marginTop: "10px",
+                            backgroundColor: `${data.colorScheme} !important`,
+                            padding: "12px !important",
+                            textAlign: "center",
+                            fontWeight: "bold !important",
+                            lineHeight: "18px",
+                            fontSize: "16px",
+                            fontFamily: "'ubuntu', sans-serif !important",
+                            width: "100%",
+                            color: "#fff",
+                            borderRadius: "5px",
+                            textTransform: "none",
+                            cursor: "pointer",
+                            "&:hover": {
+                              backgroundColor: `${data.colorScheme} !important`,
+                            },
+                          }}
+                          onClick={() => begin?.("sub", true)}
+                        >
+                          Pay
+                        </Button>
+                      </TabPanel>
+                      {/* </SwipeableViews> */}
                     </TabPanel>
                   </SwipeableViews>
 

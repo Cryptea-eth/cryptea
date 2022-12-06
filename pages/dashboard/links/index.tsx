@@ -274,7 +274,7 @@ const Links = () => {
 
       await "links".save(newData);
 
-      router.push(`/user/${newData.slug}/overview`);
+      router.push(`/pay/${newData.slug}/overview`);
       
       showLinkAdd(false);
 
@@ -768,7 +768,7 @@ const Links = () => {
               style={{
                 gridTemplateColumns: "repeat(auto-fill, minmax(293px, 1fr))",
               }}
-              className="grid gap-6 grid-flow-dense"
+              className="grid gap-6 mb-3 grid-flow-dense"
             >
               <Button className="!w-full !rounded-md hover:!border-[#f5705982] hover:!bg-[#f5705982] !text-[#121212] !bg-transparent hover:!text-white !border !border-solid !border-[rgb(218,220,224)]">
                 <Link href="/dashboard/links/new">
@@ -794,7 +794,7 @@ const Links = () => {
                   image !== undefined ? image : { src: undefined };
 
                 return (
-                  <Link href={`/user/${link}/overview`} key={i}>
+                  <Link href={`/pay/${link}/overview`} key={i}>
                     <a>
                       <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(248,248,248)] transition-all delay-300 cursor-pointer">
                         <div className="mb-4">

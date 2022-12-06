@@ -849,7 +849,7 @@ const DashHome = () => {
                             </div>
                             <div>
                               <div className="flex items-center w-full">
-                                <Link href={`/user/${link.toLowerCase()}/edit`}>
+                                <Link href={`/pay/${link.toLowerCase()}/edit`}>
                                   <a title="Edit Page" rel="noreferrer">
                                     <IconButton
                                       color="inherit"
@@ -861,7 +861,7 @@ const DashHome = () => {
                                   </a>
                                 </Link>
 
-                                <Link href={`/user/${link.toLowerCase()}`}>
+                                <Link href={`/pay/${link.toLowerCase()}`}>
                                   <a
                                     title="View Page"
                                     target="_blank"

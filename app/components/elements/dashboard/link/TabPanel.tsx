@@ -4,11 +4,12 @@ interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
     value: number;
+    className?:string
     padding?: number;
   }
 
 const TabPanel = (props: TabPanelProps) => {
-  const { children, padding, value, index, ...other } = props;
+  const { children, padding, value, index, className = '', ...other } = props;
 
   const pc = {
       p: padding,
@@ -25,7 +26,7 @@ const TabPanel = (props: TabPanelProps) => {
       {...other}
     >
       {value === index && (
-        <Box sx={pc}>
+        <Box className={className} sx={pc}>
           {children}
         </Box>
       )}

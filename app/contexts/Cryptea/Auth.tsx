@@ -19,6 +19,7 @@ import { post_request } from "./requests";
 import { createClient, useAccount, WagmiConfig } from "wagmi";
 import { useRouter } from "next/router";
 import Loader from "../../components/elements/loader";
+import { crypteaCon } from "./icon";
 
 const getLibrary = (provider: any) => {
   return new web3(provider);

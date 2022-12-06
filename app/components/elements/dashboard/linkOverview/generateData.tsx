@@ -94,6 +94,7 @@ const generateData = ({
     });
 
     edata.push(count);
+    
   }
 
   return { data: edata, label };

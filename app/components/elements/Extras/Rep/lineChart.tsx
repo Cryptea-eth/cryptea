@@ -144,13 +144,14 @@ const LineChart = ({
   };
 
   const data = () => {
+
     return {
       labels,
       datasets: dataList.map((v: (string | number)[], i: number) => ({
         fill: true,
         label: label[i],
         data: v,
-        lineTension: 0.5,
+        lineTension: 0.2,
         borderWidth: 1,
         borderColor: color[i],
         backgroundColor: gradient ? (context: ScriptableContext<"line">) => {
@@ -159,7 +160,7 @@ const LineChart = ({
           gradient.addColorStop(0, color[i] + "85");
           gradient.addColorStop(0.7, color[i] + "00");
           return gradient;
-        } : undefined,
+        } : 'transparent',
       })),
     };
   };

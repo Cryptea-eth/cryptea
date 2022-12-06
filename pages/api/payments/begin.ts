@@ -44,7 +44,6 @@ export default function handler(
             value: ethers.utils.parseEther(body.price),
         };
 
-
         axios
           .get(`https://ab.cryptea.me/link/pay/accounts/${body.account}`, {
             headers: {

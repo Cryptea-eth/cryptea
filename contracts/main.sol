@@ -4,8 +4,10 @@ pragma solidity ^0.8.7;
 contract Main {
 
     address public owner;
-    uint public cut = 3;
-    uint public qrcut = 2;
+
+    uint public cut = 1;
+
+    uint public qrcut = 1;
 
     mapping(bytes32 => address) public whitelist;
 

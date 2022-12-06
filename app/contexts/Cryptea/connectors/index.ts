@@ -5,7 +5,7 @@ import { chains } from "./chains";
 import UAuth from "@uauth/js";
 
 export const supported = [
-  80001, 137, 43114, 43113, 10, 69, 1313161554, 1313161555, 42262, 42261, 25, 338
+  80001, 137, 43114, 43113, 10, 31415, 69, 1313161554, 1313161555, 42262, 42261, 25, 338
 ];
 
 const connectors = [

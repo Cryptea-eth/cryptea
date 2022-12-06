@@ -43,32 +43,35 @@ const DashHeader = ({
 
   useEffect(() => {
 
-    const itx = () => {
-      if (once.current) {
+    const itx = async () => {
+  
+       const dx = await get_request("/notifications", {}, undefined, false);
 
-        once.current = false;
+        if (dx?.data) {
+          if (typeof dx?.data == "object") {
+            setData(dx?.data);
 
-        get_request("/notifications", {}, undefined, false).then((dx) => {
-          if (dx?.data) {
-            if (typeof dx?.data == "object") {
-              setData(dx?.data);
+            setNewNote(
+              Boolean(dx?.data.filter((d: any) => d.read == "false").length)
+            );
 
-              setNewNote(
-                Boolean(dx?.data.filter((d: any) => d.read == "false").length)
-              );
+            if (isLoading) setLoading(false);
 
-              if (isLoading) setLoading(false);
-            }
           }
+        }
 
-          setTimeout(itx, 6000);
-        });
-      }
-  };
+          
+          setTimeout(itx, 3000);
 
+      };
     
+  if (once.current) {
 
-    itx();
+   once.current = false;
+
+   itx();
+
+  }
 
   }, []);
 
@@ -108,7 +111,10 @@ const DashHeader = ({
                 onClick={() => {
                   setOpen(!open);
 
-                  get_request("/notifications/view", {}, undefined, false);
+                  get_request("/notifications/view", {}, undefined, false).then(e => {
+                    console.log(e?.data)
+                  });
+
                 }}
                 style={{
                   backgroundColor: open ? "#ececec" : undefined,
