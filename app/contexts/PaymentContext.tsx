@@ -6,6 +6,7 @@ import * as ethers from "ethers";
 import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
 import { initD } from "../components/elements/dashboard/link/data";
 import { useSwitchNetwork } from "wagmi";
+import { GrConnect } from 'react-icons/gr';
 import {
   PaymentContext as PaymentCont,
   subValueType,
@@ -30,6 +31,7 @@ import { RiCloseCircleLine } from "react-icons/ri";
 import { CryptoList, tokenTrackers } from "./Cryptea/connectors/chains";
 import Loader from "../components/elements/loader";
 import axios, { AxiosError } from "axios";
+import { TbPlugConnected } from "react-icons/tb";
 
 export const PaymentContext = createContext<PaymentCont>({});
 
@@ -56,6 +58,20 @@ export const PaymentProvider = ({
     price: number;
     type: "onetime" | "sub";
   }>();
+
+  const [nullSwitch, setNullSwitch] = useState<boolean>(false);
+
+  const [switching, setSwitching] = useState<boolean>(false);
+
+  const closeSwitch = () => setNullSwitch(false);
+
+  const validSwitch = () => {
+
+    setNullSwitch(false)
+
+    authenticate(true)
+
+  }
 
   const [copied, mainCopy] = useState<boolean>(false);
 
@@ -500,7 +516,7 @@ export const PaymentProvider = ({
 
        if (switchNet === undefined) {
         
-        // activate modal
+          setNullSwitch(true);
 
        }else{
         authenticate(true);
@@ -890,6 +906,8 @@ export const PaymentProvider = ({
     }
   };
 
+
+
   return (
     <PaymentContext.Provider
       value={{
@@ -938,6 +956,78 @@ export const PaymentProvider = ({
       }}
     >
       <AuthModal userAuth={false} />
+
+      {nullSwitch && (
+        <>
+          <Modal
+            open={nullSwitch}
+            sx={{
+              "&& .MuiBackdrop-root": {
+                backdropFilter: "blur(5px)",
+              },
+            }}
+            onClose={closeSwitch}
+            className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+            aria-labelledby="Generate New Api Key"
+            aria-describedby="Generate Api"
+          >
+            <Box
+              className="sm:w-full h-fit 3mdd:px-[2px]"
+              sx={{
+                minWidth: 300,
+                width: "70%",
+                maxWidth: 800,
+                borderRadius: 6,
+                outline: "none",
+                p: 4,
+                position: "relative",
+                margin: "auto",
+              }}
+            >
+              <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+                <div className="mb-2 flex items-start justify-between">
+                  <div>
+                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                      Switch Network
+                    </h2>
+                    <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
+                      You have to switch networks to continue
+                    </span>
+                  </div>
+
+                  <IconButton size={"medium"} onClick={closeSwitch}>
+                    <MdClose
+                      size={20}
+                      color={"rgb(32,33,36)"}
+                      className="cursor-pointer"
+                    />
+                  </IconButton>
+                </div>
+
+                <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
+                  {/* Content here */}
+                </span>
+              </div>
+
+              <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+                <div className="flex items-center">
+                  <Button
+                    onClick={validSwitch}
+                    className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                  >
+                    <TbPlugConnected
+                      color={"inherit"}
+                      className={"mr-2 !fill-white"}
+                      size={23}
+                    />{" "}
+                    Reconnect
+                  </Button>
+                </div>
+              </div>
+            </Box>
+          </Modal>
+        </>
+      )}
 
       <Modal
         open={isOpened}

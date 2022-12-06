@@ -18,9 +18,8 @@ export const initD = async (link: string, api?: string) => {
 
 export const template = () => {
 
-  console.log(xd)
-
-  if (Boolean(xd.data)) {
+  if (Boolean(xd.data.link.template_data)) {
+    
     const { name } = JSON.parse(xd.data.link.template_data);
 
     return dynamic(() => import(`../../../../templates/${name}`), {

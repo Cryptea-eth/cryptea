@@ -485,6 +485,11 @@ const Api = () => {
                   </div>
                   <div
                     onClick={async () => {
+
+                      if (gLoader) {
+                        return;
+                      }
+
                       setGLoader(true);
 
                       try {
