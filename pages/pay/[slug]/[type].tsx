@@ -161,17 +161,18 @@ const Onetime = () => {
 
           let addColumn = [...dcolumns];
 
-          if (Boolean(Number(amount))) {
-            addColumn.forEach((v: any) => {
-              if (v.id == "amount") {
-                delete v.id;
-              }
-            });
-          }
+          // if (Boolean(Number(amount))) {
+          //   addColumn.forEach((v: any) => {
+          //     if (v.id == "amount") {
+          //       delete v.id;
+          //     }
+          //   });
+          // }
 
+      
           if (extra[linkType] !== undefined) {
             extra[linkType].forEach((v: string) => {
-              if (v != "Name") {
+              if ((v).toLowerCase() != "name") {
                 addColumn.push({
                   id: v.toLowerCase(),
                   label: v,
@@ -201,17 +202,25 @@ const Onetime = () => {
             if (sdd.length) {
               sdd.forEach(
                 (
-                  vmain: { [index: string]: string | number } | undefined,
+                  vmainn: { [index: string]: string | number } | undefined,
                   ii: number
                 ) => {
-                  if (vmain !== undefined) {
+                  if (vmainn !== undefined) {
+
                     const supply: { [index: string]: string | number } = {};
+
+                    const data = JSON.parse(vmainn.data as string || '{}')
+
+                    const vmain = { ...vmainn, ...data }
 
                     supply["name"] =
                       vmain.name === undefined ? "anonymous" : vmain.name;
+
                     supply["token"] =
                       vmain.token === undefined ? "matic" : vmain.token;
+
                     const msupply = { ...supply, ...vmain };
+
 
                     const date = new Date(msupply.created_at);
 
@@ -234,6 +243,8 @@ const Onetime = () => {
                           "Nov",
                           "Dec",
                         ];
+
+                       
 
                         if (v["id"] == "name") {
                           rowD["name"] = (
@@ -259,7 +270,10 @@ const Onetime = () => {
                                   {String(date.getDate()).length == 1
                                     ? "0" + date.getDate()
                                     : date.getDate()}{" "}
-                                  {date.getFullYear()} {hrx}:{date.getMinutes()}{" "}
+                                  {date.getFullYear()} {hrx}:
+                                  {String(date.getMinutes()).length < 2
+                                    ? `0${date.getMinutes()}`
+                                    : date.getMinutes()}{" "}
                                   {hrx > 12 ? "pm" : "am"}
                                 </span>
                               </div>
@@ -304,8 +318,10 @@ const Onetime = () => {
                             </ClickAwayListener>
                           );
                         } else if (v["id"] == "amount") {
+
+                      
                           const renewal =
-                            msupply["renewal"] !== undefined
+                            Boolean(msupply["renewal"])
                               ? msupply["renewal"]
                               : "";
 
@@ -313,6 +329,7 @@ const Onetime = () => {
                             Number(msupply["amount"]).toFixed(2) +
                             " " +
                             renewal;
+
                         } else if (v["id"] == "asset") {
                           rowD["asset"] = msupply["token"];
                         } else if (v["id"] == "email") {
