@@ -6,7 +6,7 @@ import * as ethers from "ethers";
 import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
 import { initD } from "../components/elements/dashboard/link/data";
 import { useSwitchNetwork } from "wagmi";
-import { GrConnect } from 'react-icons/gr';
+import { GrConnect } from "react-icons/gr";
 import {
   PaymentContext as PaymentCont,
   subValueType,
@@ -28,7 +28,11 @@ import LogoSpace from "../components/elements/logo";
 import QrCode from "../components/elements/qrcode";
 import { FaRegClone } from "react-icons/fa";
 import { RiCloseCircleLine } from "react-icons/ri";
-import { CryptoList, inputsList, tokenTrackers } from "./Cryptea/connectors/chains";
+import {
+  CryptoList,
+  inputsList,
+  tokenTrackers,
+} from "./Cryptea/connectors/chains";
 import Loader from "../components/elements/loader";
 import axios, { AxiosError } from "axios";
 import { TbPlugConnected } from "react-icons/tb";
@@ -66,12 +70,10 @@ export const PaymentProvider = ({
   const closeSwitch = () => setNullSwitch(false);
 
   const validSwitch = () => {
+    setNullSwitch(false);
 
-    setNullSwitch(false)
-
-    authenticate(true)
-
-  }
+    authenticate(true);
+  };
 
   const [copied, mainCopy] = useState<boolean>(false);
 
@@ -188,7 +190,6 @@ export const PaymentProvider = ({
 
         const e = response.data as { [index: string]: any };
 
-        
         const priceCurrency = Number(e["matic-network"]["usd"]);
 
         return price / priceCurrency;
@@ -241,16 +242,13 @@ export const PaymentProvider = ({
       },
 
       "338": async () => {
-        const response = await axios.get(
-          "/simple/price",
-          {
-            params: {
-              ids: "crypto-com-chain",
-              vs_currencies: "usd",
-            },
-            baseURL: "https://api.coingecko.com/api/v3",
-          }
-        );
+        const response = await axios.get("/simple/price", {
+          params: {
+            ids: "crypto-com-chain",
+            vs_currencies: "usd",
+          },
+          baseURL: "https://api.coingecko.com/api/v3",
+        });
 
         const e = response.data as { [index: string]: any };
 
@@ -377,9 +375,8 @@ export const PaymentProvider = ({
           let redirect = lQ.redirect;
 
           if (Boolean(api)) {
-
             if (Boolean(api.payid)) {
-                router.push('/timeout/reference')
+              router.push("/timeout/reference");
             }
 
             redirect = Boolean(api.redirect) ? api.redirect : redirect;
@@ -393,8 +390,8 @@ export const PaymentProvider = ({
               const data = JSON.parse(api.data);
 
               if (data["email"] !== undefined && data["name"] !== undefined) {
-                if (validator.isEmail(data['email']) && data['name'].length) {
-                   setApiState(true);
+                if (validator.isEmail(data["email"]) && data["name"].length) {
+                  setApiState(true);
                   setApiData(data);
                 }
               }
@@ -535,23 +532,19 @@ export const PaymentProvider = ({
       setLoadingText("");
 
       if (chainId != token.value) {
+        const switchNet = await switchNetworkAsync?.(token.value);
 
-       const switchNet = await switchNetworkAsync?.(token.value);
+        console.log(switchNet, "hehe");
 
-       console.log(switchNet, 'hehe')
+        if (connected) {
+          disconnect();
+        }
 
-       if (connected) {
-         disconnect();
-       }
-
-       if (switchNet === undefined) {
-        
+        if (switchNet === undefined) {
           setNullSwitch(true);
-
-       }else{
-        authenticate(true);
-       }
-          
+        } else {
+          authenticate(true);
+        }
       } else if (!connected || !signer) {
         if (!signer) {
           disconnect();
@@ -561,13 +554,12 @@ export const PaymentProvider = ({
       }
 
       setPaymentData({ price, type });
-
     } else {
       from = account || "";
 
       setLoadingText("Pending...");
 
-      const feesPrice = price + ((price * 1) / 100);
+      const feesPrice = price + (price * 1) / 100;
 
       const ether = await getPrice(feesPrice, chainId);
 
@@ -589,7 +581,7 @@ export const PaymentProvider = ({
       //   }
       // );
 
-     const feeData = await signer.getFeeData();
+      const feeData = await signer.getFeeData();
 
       initContract
         .transferNative(ethAddress || "", {
@@ -684,30 +676,35 @@ export const PaymentProvider = ({
             if (err.data) {
               if (err.data.message.indexOf("insufficient funds") != -1) {
                 setFailMessage("Insufficient funds for transaction");
-              }else if(err.data.message.indexOf('transaction underpriced') != -1) {
+              } else if (
+                err.data.message.indexOf("transaction underpriced") != -1
+              ) {
                 setFailMessage("Transaction Underpriced, please try again");
-              }else if(err.data.message.indexOf('user rejected transaction') != -1){
-                 setFailMessage("Transaction cancelled"); 
+              } else if (
+                err.data.message.indexOf("user rejected transaction") != -1
+              ) {
+                setFailMessage("Transaction cancelled");
               }
             }
             if (err.message.indexOf("user rejected transaction") != -1) {
               setFailMessage("Transaction cancelled");
+            } else if (err.message.indexOf("transaction underpriced") != -1) {
+              setFailMessage("Transaction underpriced, please try again");
             }
 
             console.log(err);
             setLoadingText("");
           }
         });
-      }
-    };
+    }
+  };
 
   useEffect(() => {
-
     if (connected && paymentData !== undefined) {
       if (chainId == token.value) {
-        console.log('ee')
+        console.log("ee");
         if (Boolean(signer)) {
-          console.log('kekr');
+          console.log("kekr");
           beginPayment(paymentData.price, paymentData.type);
           setPaymentData(undefined);
         }
@@ -937,14 +934,14 @@ export const PaymentProvider = ({
     if (!subValue[type]) {
       let proceed = true;
 
-      if ( !apiState ) {
-
-      userD.rdata[type].forEach((val: string, i: number) => {
-        if (!validForm(Boolean(pemail[i]) ? pemail[i] : "", val.toLowerCase()))
-          proceed = false;
-      });
-
-    }
+      if (!apiState) {
+        userD.rdata[type].forEach((val: string, i: number) => {
+          if (
+            !validForm(Boolean(pemail[i]) ? pemail[i] : "", val.toLowerCase())
+          )
+            proceed = false;
+        });
+      }
 
       if (proceed) {
         subValue[type] = 1;
@@ -954,13 +951,13 @@ export const PaymentProvider = ({
       }
     } else if (Number(amount) || subValue[type] == 1) {
       if (!apiState) {
-      if (
-        !validForm(pemail[0], userD.rdata[type][0].toLowerCase()) &&
-        userD.rdata[type].length == 1
-      ) {
-        return;
+        if (
+          !validForm(pemail[0], userD.rdata[type][0].toLowerCase()) &&
+          userD.rdata[type].length == 1
+        ) {
+          return;
+        }
       }
-    }
 
       if (auto) initMain(Number(amount), type);
       else beginManual(Number(amount), type);
@@ -968,8 +965,6 @@ export const PaymentProvider = ({
       setFailMessage("The amount set is invalid");
     }
   };
-
-
 
   return (
     <PaymentContext.Provider
