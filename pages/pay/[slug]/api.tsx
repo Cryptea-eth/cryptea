@@ -468,7 +468,11 @@ const Api = () => {
                           </h2>
 
                           <div className="font-[400] relative z-30 text-[1.0rem] leading-[1.75rem]">
-                            {error.length ? error : (data.activeKey ? 'Active' : '')}
+                            {error.length
+                              ? error
+                              : data.activeKey
+                              ? "Active"
+                              : ""}
                           </div>
                         </div>
 
@@ -486,7 +490,6 @@ const Api = () => {
                   </div>
                   <div
                     onClick={async () => {
-
                       if (gLoader) {
                         return;
                       }
@@ -561,7 +564,7 @@ const Api = () => {
                       </>
                     }
                   </div>
-                  <Link href={`/working`}>
+                  <Link href={`https://cryptea.gitbook.io/link`}>
                     <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] cursor-pointer block font-bold hover:bg-[#fff1ef] transition-all relative bg-white delay-150">
                       Go to Documentation
                     </a>
