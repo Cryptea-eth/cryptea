@@ -138,7 +138,6 @@ const Onetime = () => {
 
       const { link:oDx, user, onetime, sub, views } = await initD(String(slug).toLowerCase());
 
-
       if (user["owner"]) {
 
           let src = "";
@@ -209,7 +208,7 @@ const Onetime = () => {
 
                     const supply: { [index: string]: string | number } = {};
 
-                    const data = JSON.parse(vmainn.data as string || '{}')
+                    const data = JSON.parse((vmainn.data as string).toLowerCase() || '{}')
 
                     const vmain = { ...vmainn, ...data }
 
@@ -217,7 +216,7 @@ const Onetime = () => {
                       vmain.name === undefined ? "anonymous" : vmain.name;
 
                     supply["token"] =
-                      vmain.token === undefined ? "matic" : vmain.token;
+                      vmain.token === undefined ? "polygon" : vmain.token;
 
                     const msupply = { ...supply, ...vmain };
 

@@ -14,23 +14,11 @@ const Xx = () => {
 
  useEffect(() => {
 
-  let link = String('https://www.joel.com/').split("?");
-
-  if (Boolean(link[1])) {
-    if (!link[1].length) {
-      link[0] += `?trx=${'apiCode'}`;
-    } else {
-      link[1] += `&trx=${'apiCode'}`;
-
-      link[0] += "?";
-    }
-  } else {
-    link[0] += `?trx=${'apiCode'}`;
-  }
-
-  const mLink = link.join("");
-
-  console.log(mLink)
+  get_request("/pay/idiaghe/payments/both").then((e) => {
+    console.log(e.data);
+  }).catch(ee => {
+    console.log(ee, 'xx')
+  });
 
  }, [router.isReady, router]);
 

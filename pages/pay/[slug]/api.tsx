@@ -71,13 +71,14 @@ const Api = () => {
     all: "All time",
   });
 
-  const [hash, setHash] = useState<string>(`leo`);
+  const [hash, setHash] = useState<string>(``);
 
   const cxHash = () => {
 
       copy(hash);
 
       setHash('');
+  
   }
 
   const [error, setError] = useState<string>("");

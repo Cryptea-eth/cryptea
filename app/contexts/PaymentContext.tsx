@@ -28,7 +28,7 @@ import LogoSpace from "../components/elements/logo";
 import QrCode from "../components/elements/qrcode";
 import { FaRegClone } from "react-icons/fa";
 import { RiCloseCircleLine } from "react-icons/ri";
-import { CryptoList, tokenTrackers } from "./Cryptea/connectors/chains";
+import { CryptoList, inputsList, tokenTrackers } from "./Cryptea/connectors/chains";
 import Loader from "../components/elements/loader";
 import axios, { AxiosError } from "axios";
 import { TbPlugConnected } from "react-icons/tb";
@@ -288,6 +288,8 @@ export const PaymentProvider = ({
 
   const [apiState, setApiState] = useState<boolean>(false);
 
+  const [apiData, setApiData] = useState<any>({});
+
   const [amountFixed, setAmountFixed] = useState<boolean>(false);
 
   useEffect(() => {
@@ -353,6 +355,10 @@ export const PaymentProvider = ({
 
           if (Boolean(api)) {
 
+            if (Boolean(api.payid)) {
+                router.push('/timeout/reference')
+            }
+
             redirect = Boolean(api.redirect) ? api.redirect : redirect;
 
             if (Boolean(api.amount)) {
@@ -366,6 +372,7 @@ export const PaymentProvider = ({
               if (data["email"] !== undefined && data["name"] !== undefined) {
                 if (validator.isEmail(data['email']) && data['name'].length) {
                    setApiState(true);
+                  setApiData(data);
                 }
               }
             }
@@ -530,14 +537,14 @@ export const PaymentProvider = ({
         authenticate(true);
       }
 
-
       setPaymentData({ price, type });
+
     } else {
       from = account || "";
 
       setLoadingText("Pending...");
 
-      const feesPrice = price + (price * 1) / 100;
+      const feesPrice = price + ((price * 1) / 100);
 
       const ether = await getPrice(feesPrice, chainId);
 
@@ -551,16 +558,28 @@ export const PaymentProvider = ({
 
       setLoadingText("Awaiting payment confirmation");
 
+      const estimation = await initContract.estimateGas.transferNative(
+        ethAddress || "",
+        {
+          value: ethers.utils.parseEther(ether),
+          nonce: await signer.getTransactionCount(),
+        }
+      );
+     const gasPrice = await signer.getGasPrice();
+
       initContract
         .transferNative(ethAddress || "", {
           value: ethers.utils.parseEther(ether),
+          gasLimit: estimation,
+          gasPrice
         }) //receiver
         .then(async (init: any) => {
+        
           console.log(init);
 
           setHash(init.hash);
 
-          const rx: { [index: string]: string | number } = {};
+          const rx: { [index: string]: string | number | undefined } = {};
 
           if (!apiState) {
             pemail.forEach((val: undefined | string, i: number) => {
@@ -570,6 +589,15 @@ export const PaymentProvider = ({
                 }
               }
             });
+          }else{
+
+            inputsList.forEach((val) => {
+              
+              const index = val.value.toLowerCase();
+
+              rx[index] = apiData[index] || undefined;
+
+            })
           }
 
           let post: any = {
@@ -580,8 +608,9 @@ export const PaymentProvider = ({
             type,
             amount: price,
             hash: init.hash,
+            explorer: tokenTrackers[token.value].link,
             amountCrypto: ether,
-            token: token.label,
+            token: token.name,
             contractAddr: token.contractAddr,
             paytype: "auto",
             linkId,
@@ -605,7 +634,10 @@ export const PaymentProvider = ({
           if (type == "sub") setSubCheck(true);
 
           if (Boolean(userD.redirect) && validator.isURL(userD.redirect)) {
+           
             let link = String(userD.redirect).split("?");
+
+            if(apiCode !== undefined){
 
             if (Boolean(link[1])) {
               if (!link[1].length) {
@@ -618,6 +650,7 @@ export const PaymentProvider = ({
             } else {
               link[0] += `?trx=${apiCode}`;
             }
+          }
 
             const mLink = link.join("");
 
@@ -627,24 +660,30 @@ export const PaymentProvider = ({
           setTimeout(reset, 12000);
         })
         .catch((err: any) => {
+
           const error = err as Error;
 
           if (error.message.length) {
             setTransferFail(true);
-            if ((err.data.message).indexOf('insufficient funds') != -1) {
-              setFailMessage('Insufficient funds for transaction');
+            if (err.data) {
+              if (err.data.message.indexOf("insufficient funds") != -1) {
+                setFailMessage("Insufficient funds for transaction");
+              }
             }
             console.log(err);
             setLoadingText("");
           }
         });
-    }
-  };
+      }
+    };
 
   useEffect(() => {
+
     if (connected && paymentData !== undefined) {
       if (chainId == token.value) {
+        console.log('ee')
         if (Boolean(signer)) {
+          console.log('kekr');
           beginPayment(paymentData.price, paymentData.type);
           setPaymentData(undefined);
         }

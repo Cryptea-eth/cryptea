@@ -76,6 +76,7 @@ export default function handler(
                   type: body.type,
                   amount: body.amount,
                   hash: trx.hash,
+                  explorer: body.explorer,
                   amountCrypto: body.price,
                   token: body.label,
                 };

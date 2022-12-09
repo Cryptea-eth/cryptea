@@ -19,7 +19,6 @@ export default function handler(
         let provider = new ethers.providers.JsonRpcProvider(body.rpc);
 
         let balance = new ethers.Contract(body.tokenAddr, balanceABI, provider);
-
         
         balance.balanceOf(body.account).then(async (mbalance: any) => {
             const currentBalance = Number(ethers.utils.formatEther(mbalance));
