@@ -173,25 +173,33 @@ export const PaymentProvider = ({
     chain: string | number | undefined = 80001
   ) => {
     let final: number = 0;
-    setLoadingText("Loading Price data...");
+    setLoadingText("Loading price data...");
 
     const prices: { [index: string]: () => Promise<number> } = {
       "80001": async () => {
-        const response = await post_request("/token/price", {
-          currency: "usd",
-          token: "matic-network",
+        const response = await axios.get("/simple/price", {
+          params: {
+            ids: "matic-network",
+            vs_currencies: "usd",
+          },
+          baseURL: "https://api.coingecko.com/api/v3",
+          withCredentials: false,
         });
 
         const e = response.data as { [index: string]: any };
 
+        
         const priceCurrency = Number(e["matic-network"]["usd"]);
 
         return price / priceCurrency;
       },
       "31415": async () => {
-        const response = await post_request("/token/price", {
-          currency: "usd",
-          token: "filecoin",
+        const response = await axios.get("/simple/price", {
+          params: {
+            ids: "filecoin",
+            vs_currencies: "usd",
+          },
+          baseURL: "https://api.coingecko.com/api/v3",
         });
 
         const e = response.data as { [index: string]: any };
@@ -201,9 +209,12 @@ export const PaymentProvider = ({
         return price / priceCurrency;
       },
       "42261": async () => {
-        const response = await post_request("/token/price", {
-          currency: "usd",
-          token: "oasis-network",
+        const response = await axios.get("/simple/price", {
+          params: {
+            ids: "oasis-network",
+            vs_currencies: "usd",
+          },
+          baseURL: "https://api.coingecko.com/api/v3",
         });
 
         const e = response.data as { [index: string]: any };
@@ -214,9 +225,12 @@ export const PaymentProvider = ({
       },
 
       "1313161555": async () => {
-        const response = await post_request("/token/price", {
-          currency: "usd",
-          token: "auroratoken",
+        const response = await axios.get("/simple/price", {
+          params: {
+            ids: "auroratoken",
+            vs_currencies: "usd",
+          },
+          baseURL: "https://api.coingecko.com/api/v3",
         });
 
         const e = response.data as { [index: string]: any };
@@ -227,10 +241,16 @@ export const PaymentProvider = ({
       },
 
       "338": async () => {
-        const response = await post_request("/token/price", {
-          currency: "usd",
-          token: "crypto-com-chain",
-        });
+        const response = await axios.get(
+          "/simple/price",
+          {
+            params: {
+              ids: "crypto-com-chain",
+              vs_currencies: "usd",
+            },
+            baseURL: "https://api.coingecko.com/api/v3",
+          }
+        );
 
         const e = response.data as { [index: string]: any };
 
@@ -239,9 +259,12 @@ export const PaymentProvider = ({
         return price / priceCurrency;
       },
       "420": async () => {
-        const response = await post_request("/token/price", {
-          currency: "usd",
-          token: "optimism",
+        const response = await axios.get("/simple/price", {
+          params: {
+            ids: "optimism",
+            vs_currencies: "usd",
+          },
+          baseURL: "https://api.coingecko.com/api/v3",
         });
 
         const e = response as { [index: string]: any };
@@ -262,7 +285,7 @@ export const PaymentProvider = ({
     type: "sub" | "onetime" = "onetime"
   ) => {
     setAuth(false);
-    setLoadingText("Initializing Payment");
+    setLoadingText("Initializing payment");
     try {
       if (Number(price)) {
         const validA = validAmt(Number(price));
@@ -556,25 +579,24 @@ export const PaymentProvider = ({
         signed
       );
 
-      setLoadingText("Awaiting payment confirmation");
+      setLoadingText("Processing payment");
 
-      const estimation = await initContract.estimateGas.transferNative(
-        ethAddress || "",
-        {
-          value: ethers.utils.parseEther(ether),
-          nonce: await signer.getTransactionCount(),
-        }
-      );
-     const gasPrice = await signer.getGasPrice();
+      // const estimation = await initContract.estimateGas.transferNative(
+      //   ethAddress || "",
+      //   {
+      //     value: ethers.utils.parseEther(ether),
+      //     nonce: await signer.getTransactionCount(),
+      //   }
+      // );
+
+     const feeData = await signer.getFeeData();
 
       initContract
         .transferNative(ethAddress || "", {
           value: ethers.utils.parseEther(ether),
-          gasLimit: estimation,
-          gasPrice
+          gasPrice: feeData.gasPrice,
         }) //receiver
         .then(async (init: any) => {
-        
           console.log(init);
 
           setHash(init.hash);
@@ -589,15 +611,12 @@ export const PaymentProvider = ({
                 }
               }
             });
-          }else{
-
+          } else {
             inputsList.forEach((val) => {
-              
               const index = val.value.toLowerCase();
 
               rx[index] = apiData[index] || undefined;
-
-            })
+            });
           }
 
           let post: any = {
@@ -634,23 +653,21 @@ export const PaymentProvider = ({
           if (type == "sub") setSubCheck(true);
 
           if (Boolean(userD.redirect) && validator.isURL(userD.redirect)) {
-           
             let link = String(userD.redirect).split("?");
 
-            if(apiCode !== undefined){
+            if (apiCode !== undefined) {
+              if (Boolean(link[1])) {
+                if (!link[1].length) {
+                  link[0] += `?trx=${apiCode}`;
+                } else {
+                  link[1] += `&trx=${apiCode}`;
 
-            if (Boolean(link[1])) {
-              if (!link[1].length) {
-                link[0] += `?trx=${apiCode}`;
+                  link[0] += "?";
+                }
               } else {
-                link[1] += `&trx=${apiCode}`;
-
-                link[0] += "?";
+                link[0] += `?trx=${apiCode}`;
               }
-            } else {
-              link[0] += `?trx=${apiCode}`;
             }
-          }
 
             const mLink = link.join("");
 
@@ -660,7 +677,6 @@ export const PaymentProvider = ({
           setTimeout(reset, 12000);
         })
         .catch((err: any) => {
-
           const error = err as Error;
 
           if (error.message.length) {
@@ -668,8 +684,16 @@ export const PaymentProvider = ({
             if (err.data) {
               if (err.data.message.indexOf("insufficient funds") != -1) {
                 setFailMessage("Insufficient funds for transaction");
+              }else if(err.data.message.indexOf('transaction underpriced') != -1) {
+                setFailMessage("Transaction Underpriced, please try again");
+              }else if(err.data.message.indexOf('user rejected transaction') != -1){
+                 setFailMessage("Transaction cancelled"); 
               }
             }
+            if (err.message.indexOf("user rejected transaction") != -1) {
+              setFailMessage("Transaction cancelled");
+            }
+
             console.log(err);
             setLoadingText("");
           }

@@ -14,11 +14,7 @@ const Xx = () => {
 
  useEffect(() => {
 
-  get_request("/pay/idiaghe/payments/both").then((e) => {
-    console.log(e.data);
-  }).catch(ee => {
-    console.log(ee, 'xx')
-  });
+ 
 
  }, [router.isReady, router]);
 
