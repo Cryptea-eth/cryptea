@@ -573,20 +573,10 @@ export const PaymentProvider = ({
 
       setLoadingText("Processing payment");
 
-      // const estimation = await initContract.estimateGas.transferNative(
-      //   ethAddress || "",
-      //   {
-      //     value: ethers.utils.parseEther(ether),
-      //     nonce: await signer.getTransactionCount(),
-      //   }
-      // );
-
-      const feeData = await signer.getFeeData();
 
       initContract
         .transferNative(ethAddress || "", {
           value: ethers.utils.parseEther(ether),
-          gasPrice: feeData.gasPrice,
         }) //receiver
         .then(async (init: any) => {
           console.log(init);
@@ -635,6 +625,7 @@ export const PaymentProvider = ({
               renewal: interval,
             };
           }
+
 
           await axios.post(`/api/payments/validate`, post, {
             baseURL: window.origin,

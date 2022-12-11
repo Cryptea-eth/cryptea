@@ -8,7 +8,7 @@ import Footer from '../app/components/elements/Footer'
 
 const Home: NextPage = () => {
   return (
-        <div>
+        <div className="overflow-hidden">
           <Head>
             <title>Cryptea</title>
             <meta

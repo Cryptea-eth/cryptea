@@ -766,7 +766,7 @@ const Links = () => {
             </h2>
             <div
               style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(293px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
               }}
               className="grid gap-6 mb-3 grid-flow-dense"
             >

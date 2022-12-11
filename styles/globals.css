@@ -38,6 +38,8 @@ body{
   overflow-x:hidden;
 }
 
+
+
 body::-webkit-scrollbar,
 .cusscroller::-webkit-scrollbar, div .walletconnect-qrcode__base::-webkit-scrollbar {
   width: 8px;

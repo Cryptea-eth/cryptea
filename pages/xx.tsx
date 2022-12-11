@@ -14,12 +14,15 @@ const Xx = () => {
 
  useEffect(() => {
 
- 
 
  }, [router.isReady, router]);
 
 
-  return <>Welcome, we&apos;ve been expecting you</>;
+  return (
+    <>
+      Welcome, we have been expecting you.
+    </>
+  );
 }
 
 export default Xx;

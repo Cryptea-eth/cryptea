@@ -88,7 +88,6 @@ export default function handler(
           }
 
           if (valid) {
-            
 
             const resMain = await axios.post(
               `https://ab.cryptea.me/link/payments/${data.linkId}`,
@@ -102,7 +101,7 @@ export default function handler(
             );
 
             return res.status(resMain.status).json(resMain.data);
-            
+
           } else {
             return res
               .status(400)

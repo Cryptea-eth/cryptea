@@ -16,10 +16,7 @@ const Supported = () => {
           <span className="text-[#64607D] ml-[10px] font-bold">Polygon</span>
         </div>
 
-        <div className="flex justify-between items-center mb-2">
-          <Image src={avax} width={60} height={60} alt="avalanche" />
-          <span className="text-[#64607D] ml-[10px] font-bold">Avalanche</span>
-        </div>
+      
       </div>
     </div>
   );

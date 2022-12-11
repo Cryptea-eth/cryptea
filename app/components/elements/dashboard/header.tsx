@@ -101,7 +101,7 @@ const DashHeader = ({
         }`}
       >
         <div className="">
-          <h1 className="font-bold">Welcome {username}!☕</h1>
+          <h1 className="font-bold">Hello!☕</h1>
           <span>Looking good today..</span>
         </div>
         <div className="flex items-center">
