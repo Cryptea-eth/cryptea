@@ -1,36 +1,45 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Nav from '../app/components/elements/Nav'
-import Hero from '../app/components/elements/Hero'
-import About from '../app/components/elements/About'
-import Extras from '../app/components/elements/Extras'
-import Footer from '../app/components/elements/Footer'
+import { useEffect, useState } from 'react';
+import Loader from '../app/components/elements/loader';
+import AuthModal from '../app/components/elements/modal';
+import { useCryptea } from '../app/contexts/Cryptea';
+import Router from 'next/router';
 
 const Home: NextPage = () => {
+
+  const { isAuthenticated, logout } = useCryptea();
+
+  const [loader, setLoader] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (isAuthenticated !== undefined) {
+      if (isAuthenticated) {
+        Router.push('/dashboard');
+      } else {
+        setLoader(false);
+      }
+    }
+  }, [isAuthenticated]);
+
   return (
-        <div className="overflow-hidden">
-          <Head>
-            <title>Cryptea</title>
-            <meta
-              name="description"
-            content="Receive Payments Instantly With Ease"
-            />
-            <link rel="icon" href="/favicon.ico" />
-          </Head>
-
-          <main>
-            <div className="app">
-              <Nav />
-              <Hero />
-              <About />
-              <Extras />
-            </div>
-          </main>
-
-          <footer>
-            <Footer />
-          </footer>
+    <div className="overflow-hidden">
+      <Head>
+        <title>Launch App | Cryptea</title>
+        <meta
+          name="description"
+          content="Receive Payments Instantly With Ease"
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      {loader ? (
+        <Loader />
+      ) : (
+        <div className="h-screen w-screen flex bg-pattern2 items-center">
+          <AuthModal blur={false} openM={true} message={"Welcome to Cryptea"} />
         </div>
+      )}
+    </div>
   );
 }
 
