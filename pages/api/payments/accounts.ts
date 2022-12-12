@@ -31,7 +31,6 @@ export default function handler(
 
       const type = Boolean(query['type']) ? query['type'] : 'evm';
 
-      console.log('Joel')
 
       axios
         .get(`https://ab.cryptea.me/link/pay/account/${type}`, {

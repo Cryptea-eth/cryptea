@@ -1,6 +1,7 @@
 import { Box, CircularProgress } from "@mui/material";
 import logo from "../../../../public/images/cryptea-logo.svg";
 import Image from 'next/image';
+import Head from 'next/head';
 
 const Loader = ({
   incLogo = true,
@@ -8,9 +9,11 @@ const Loader = ({
   fixed = true,
   color = undefined,
   sx = {},
+  head = true
 }: {
   incLogo?: boolean;
   text?: any;
+  head?: boolean;
   color?: string | undefined;
   fixed?: boolean;
   sx?: object;
@@ -24,6 +27,13 @@ const Loader = ({
       }}
       className="h-full left-0 bg-white top-0 z-[10000000] flex flex-col justify-center items-center w-full"
     >
+
+      {head && <Head>
+
+        <title> Loading... | Cryptea </title>
+
+      </Head>}
+
       {incLogo && (
         <div className="items-center flex justify-center">
           <Image src={logo} alt="cryptea" width={35} height={35} />

@@ -3,7 +3,7 @@ import SignUpForm from "../../app/components/elements/SignupForm";
 import Head from "next/head";
 
 const Signup = () => {
-  console.log('signhere')
+  
   return (
     <>
       <Head>

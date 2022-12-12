@@ -254,7 +254,7 @@ useEffect(() => {
       }
     };
 
-    const client = makeStorageClient(await get_request("/storagekey"));
+    const client = makeStorageClient(await get_request("/storagekey", {}, undefined, false));
 
     return client.put(files, { onRootCidReady, onStoredChunk });
   };

@@ -71,6 +71,8 @@ const SignupForm = () => {
               await "user".update({
                 username: userInfo,
                 email: validator.normalizeEmail(userEmail),
+                desc: userDescription,
+                tz: window.jstz.determine().name()
               });
 
               await "links".save({
@@ -126,7 +128,9 @@ useEffect(() => {
       authenticate(true);
 
     }else{
+      
       authenticate(false);
+      
     }
 
     setMLoader(false);

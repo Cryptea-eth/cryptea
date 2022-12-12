@@ -25,6 +25,7 @@ import { Modal, IconButton, Tooltip, ClickAwayListener } from "@mui/material";
 import { useContext, useState } from 'react';
 import { dash, DashContext } from "../../../../contexts/GenContext";
 import { MdClose } from "react-icons/md";
+import QrCode from "../../qrcode";
 
 const ShareLink = ({
   open,
@@ -47,19 +48,20 @@ const ShareLink = ({
 
   const [copied, mainCopy] = useState<boolean>(false);
 
+ 
   return (
     <>
       <Modal
         open={open}
         sx={{
           "& .MuiBackdrop-root": {
-            backgroundColor: "rgb(229, 229, 229, .5)",
+            backgroundColor: "transparent",
           },
         }}
         onClose={() => toggleSocial(false)}
         className={`${
           sidebar?.openPage ? "pl-[257px]" : "pl-[87px]"
-        } justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur-[2px] fixed inset-0 z-50 outline-none focus:outline-none`}
+        } justify-center bg-[#bbbbbb80] items-center flex overflow-x-hidden overflow-y-auto backdrop-blur-[2px] fixed inset-0 z-50 outline-none focus:outline-none`}
       >
         <div className="relative max-w-[1200px] 4sm:w-[60%] 42sm:w-[65%] w-[85%] min-w-[340px]">
           <div className="border-0 p-6 2md:px-4 rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
@@ -214,6 +216,7 @@ const ShareLink = ({
               </div>
             </div>
 
+
             <div>
               <h2 className="text-[18px] text-[#5a5a5a] mb-3 font-bold w-full">
                 Link
@@ -221,7 +224,7 @@ const ShareLink = ({
 
               <div className="w-full items-center mx-[2px] rounded-md flex justify-between bg-[#2020200e] py-1 px-3">
                 <span className="text-[#919191] h-fit">
-                  {window.location.origin}/user/{data.slug}
+                  {window.location.origin}/pay/{data.slug}
                 </span>
                 <ClickAwayListener onClickAway={() => mainCopy(false)}>
                   <Tooltip
@@ -241,8 +244,8 @@ const ShareLink = ({
                       size={"large"}
                       onClick={() => {
                         mainCopy(true);
-                        copy(data.userLk)
-                    }}
+                        copy(data.userLk);
+                      }}
                     >
                       <FaRegClone
                         color={"#919191"}

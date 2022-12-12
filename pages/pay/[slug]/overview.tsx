@@ -12,9 +12,8 @@ import {
 } from "../../../app/components/elements/dashboard/link/data";
 import Link from "next/link";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
-import { MdArrowBackIos, MdLink } from "react-icons/md";
+import { MdArrowBackIos, MdLink, MdOutlineSettingsSuggest } from "react-icons/md";
 import sortData, { totSub } from "../../../app/components/elements/dashboard/linkOverview/generateData";
-
 import { TbApiApp } from 'react-icons/tb';
 import { AiOutlineUser } from 'react-icons/ai'
 import ShareLink from "../../../app/components/elements/dashboard/linkOverview/share";
@@ -49,7 +48,7 @@ const Overview = () => {
 
         const { link:mDx, user, onetime, sub, views } = await initD(String(slug).toLowerCase());
 
-        setUserLk(`${window.location.origin}/user/${slug}`); 
+        setUserLk(`${window.location.origin}/pay/${slug}`); 
 
         if(user['owner']){
          
@@ -91,7 +90,7 @@ const Overview = () => {
                 setLoading(false);
 
         }else{
-            router.push(`/user/${String(slug).toLowerCase()}`);
+            router.push(`/pay/${String(slug).toLowerCase()}`);
         }
     };
 
@@ -143,7 +142,9 @@ const Overview = () => {
                         width: 120,
                         height: 120,
                         margin: "1pc auto",
-                        backgroundColor: !Boolean(data.src) ? "#f57059" : undefined,
+                        backgroundColor: !Boolean(data.src)
+                          ? "#f57059"
+                          : undefined,
                       }}
                       className="text-[50px] font-bold"
                       variant="circular"
@@ -174,7 +175,7 @@ const Overview = () => {
                         </a>
                       </Link>
 
-                      <Link href={`/user/${slug}`}>
+                      <Link href={`/pay/${slug}`}>
                         <a className="cursor-pointer text-[1.95rem] leading-[2.45rem] mx-auto flex items-center">
                           <span className="mr-2">
                             {data.title !== undefined ? data.title : slug}
@@ -270,18 +271,6 @@ const Overview = () => {
                               false
                             )["data"],
                           ]}
-                          // dataList={[
-                          //   [
-                          //     100, 230, 360, 230, 520, 200, 300, 400, 500,
-                          //     130, 1100, 1230, 1210, 1200, 1300, 1400, 1340,
-                          //     1400, 1600, 1900, 2200, 1200, 1340, 2400, 2200,
-                          //   ],
-                          //   [
-                          //     10, 23, 36, 23, 50, 40, 30, 30, 50, 130, 110,
-                          //     123, 121, 120, 130, 140, 134, 140, 1600, 1900,
-                          //     2200, 1200, 1340, 240, 200,
-                          //   ],
-                          // ]}
                           styles={{
                             width: "100%",
                           }}
@@ -293,8 +282,8 @@ const Overview = () => {
                         />
                       </div>
 
-                      <Link href={`/user/${slug}/onetime`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
+                      <Link href={`/pay/${slug}/onetime`}>
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] transition-all cursor-pointer relative bg-white delay-150">
                           View more payment data
                         </a>
                       </Link>
@@ -350,7 +339,7 @@ const Overview = () => {
                       </div>
 
                       {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
@@ -432,8 +421,8 @@ const Overview = () => {
                           </>
                         )}
                       </div>
-                      <Link href={`/user/${slug}/multiple`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
+                      <Link href={`/pay/${slug}/multiple`}>
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
                           {data.type == "sub" || data.type == "both"
                             ? "View more subscription data"
                             : "Add subscription support to link"}
@@ -461,8 +450,8 @@ const Overview = () => {
                           link below to edit your link template
                         </div>
                       </div>
-                      <Link href={`/user/${slug}/edit`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
+                      <Link href={`/pay/${slug}/edit`}>
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
                           Edit Template
                         </a>
                       </Link>
@@ -476,7 +465,7 @@ const Overview = () => {
                           </h2>
 
                           <span className="font-[400] text-[1.0rem] leading-[1.75rem]">
-                            Non Active
+                            Active
                           </span>
                         </div>
 
@@ -489,9 +478,36 @@ const Overview = () => {
                           To Integrate This link through our API, Click Below
                         </div>
                       </div>
-                      <Link href="/working">
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#f570590c] transition-all relative bg-white delay-150">
+                      <Link href={`/pay/${slug}/api`}>
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
                           Lookup SDK/API
+                        </a>
+                      </Link>
+                    </div>
+
+                    <div className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
+                      <div className="px-6 pt-6 relative pb-3">
+                        <div className="flex justify-between mb-[16px] items-center">
+                          <h2 className="font-[400] text-[1.375rem] leading-[1.75rem]">
+                            Settings
+                          </h2>
+                        </div>
+
+                        <div className="z-0 right-[15px] flex items-center top-[5px] bottom-0 m-auto absolute">
+                          <div className="absolute z-0 h-full w-0 bg-overlay"></div>
+                          <MdOutlineSettingsSuggest
+                            size={180}
+                            color={"#f5705933"}
+                          />
+                        </div>
+
+                        <div className="w-full relative z-[10] items-center flex text-[rgb(95,99,104)] h-[100px]">
+                          Configure link
+                        </div>
+                      </div>
+                      <Link href={`/pay/${slug}/settings`}>
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
+                          Go To Settings
                         </a>
                       </Link>
                     </div>

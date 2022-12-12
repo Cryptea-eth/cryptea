@@ -1,7 +1,6 @@
 import { Web3ReactProvider } from "@web3-react/core";
 import { createContext, useContext, useEffect, useState } from "react";
 import web3 from "web3";
-import { useWeb3React } from "@web3-react/core";
 import { AxiosError } from 'axios';
 import connectors from "./connectors";
 import { webSocketProvider } from './connectors/chains';
@@ -19,6 +18,8 @@ import './DB';
 import { post_request } from "./requests";
 import { createClient, useAccount, WagmiConfig } from "wagmi";
 import { useRouter } from "next/router";
+import Loader from "../../components/elements/loader";
+import { crypteaCon } from "./icon";
 
 const getLibrary = (provider: any) => {
   return new web3(provider);
@@ -36,14 +37,16 @@ export const AuthAddress = async ({address, signature, message }: AuthAddressTyp
   try {
     
       const userx = await post_request(`/login/walletAuth`, {
-            address, signature, message 
+        address,
+        signature,
+        message,
+        tz: window.jstz.determine().name(),
       });
 
       
       if(!userx.data.error){
 
-        const { email, img, accounts, username, id }: { username: string, img: string,email : string, accounts: string[], id: number|string } = userx.data.data;
-
+        const { email, img, accounts, username, id, email_verified_at }: { username: string, img: string,email : string, accounts: string[], id: number|string, email_verified_at: any } = userx.data.data;
 
          user = {
            id,
@@ -51,6 +54,7 @@ export const AuthAddress = async ({address, signature, message }: AuthAddressTyp
            username,
            accounts,
            img,
+           email_verified_at,
          };
 
          localStorage.setItem('user', JSON.stringify(user));
@@ -60,7 +64,7 @@ export const AuthAddress = async ({address, signature, message }: AuthAddressTyp
          isAuth = true;
 
       }else{
-          throw "Invalid Login Dextails";
+          throw "Invalid Login Details";
       }
       
   }catch (err) {
@@ -109,7 +113,7 @@ export const AuthUser = async ({
         throw "Something went wrong, please try again";
       }
     } else {
-      console.log(isConnected, data.length);
+      
     }
   }
 };
@@ -121,6 +125,34 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
 
   const [context, setContext] = useState<userData | undefined>(user);
 
+  const [genLoader, setGenLoader] = useState<boolean>(true);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      localStorage.getItem("userToken") !== null &&
+      router.pathname.indexOf("/settings") == -1 &&
+      router.pathname.indexOf("/verify/email") == -1
+    ) {
+      "user".get("*", true).then((cacheUser: any) => {
+        console.log("here");
+
+        if (
+          !Boolean(cacheUser?.email_verified_at) &&
+          Boolean(cacheUser?.email)
+        ) {
+          router.push("/verify/email");
+
+          setGenLoader(false);
+        } else {
+          setGenLoader(false);
+        }
+      });
+    } else {
+      setGenLoader(false);
+    }
+  }, [])
 
   useEffect(() => {
     if (localStorage.getItem('userToken') !== null) {
@@ -147,7 +179,7 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
             update: (e: userData | undefined) => setContext(e),
           }}
         >
-          {children}
+          {genLoader ? <Loader /> : children}
         </AuthContextMain.Provider>
       </WagmiConfig>
     </Web3ReactProvider>

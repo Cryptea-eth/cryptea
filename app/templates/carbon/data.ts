@@ -14,10 +14,10 @@ data = {
   box: {
     background: "#f8f8f8",
     maxWidth: "360px",
-    width: "360px",
+    width: "360px"
   },
   header: {
-    fontSize: "24px",
+    fontSize: "19px",
     color: "#353535",
     textAlign: "center",
     text: "",
@@ -82,6 +82,12 @@ const rules: { [index: string]: any } = {
       src?: string;
     }) => {
       if (newD !== undefined) {
+
+        data.box = {
+          ...data.box,
+          paddingTop: (newD.size - 30)+'px'
+        }
+
         data.image = {
           ...data.image,
           background: newD.borderColor,

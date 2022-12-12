@@ -14,14 +14,11 @@ axios.defaults.timeout = 30000;
 export const get_request = async (
   url: string,
   config: AxiosRequestConfig<any> = {},
-  key: number | undefined = 0
+  key: number | undefined = 0,
+  redirect: boolean | undefined = true
 ): Promise<AxiosResponse<any, any> | undefined> => {
   
   const token: string = localStorage.getItem("userToken") ?? "";
-
-  return axios
-    .get("/sanctum/csrf-cookie")
-    .then(async (e) => {
       try {
         return await axios.get(url, {
           ...config,
@@ -30,19 +27,15 @@ export const get_request = async (
       } catch (ee) {
 
         if (key <= 6) {
-          return get_request(url, config, key + 1);
+          return get_request(url, config, key + 1, redirect);
         } else {
-          Router.push('/timeout');
+          if (redirect) {
+            Router.push("/timeout");
+          }else{
+             throw "Something went wrong, please try again";
+          }
         }
       }
-    })
-    .catch((e) => {
-      if (key <= 6) {
-        return get_request(url, config, key + 1);
-      } else {
-          Router.push('/timeout');
-      } 
-    });
 };
 
 export const post_request = async (

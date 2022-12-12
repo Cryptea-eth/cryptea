@@ -31,11 +31,13 @@ const LineChart = ({
   color = ["#f57059", "#c5442e"],
   labels,
   prefix = "",
+  y = false,
   dataList,
   label,
   name,
   gradient = true,
   exportLabel = true,
+  noLabel = false
 }: {
   styles?: object;
   color?: string[];
@@ -43,13 +45,18 @@ const LineChart = ({
   dataList: (string | number)[][];
   label: string[];
   gradient?: boolean;  
+  y?: boolean;
   prefix?: string;
   name: string;
   exportLabel?: boolean;
+  noLabel ?: boolean;
 }) => {
   const { chartData }: { chartData: Chartx } = useContext<dash>(DashContext);
 
   const processTooltipModel = (model: any) => {
+
+    if (noLabel) return false;
+
     const tooltip = document.querySelector(`.tooltip${name}`) as HTMLDivElement;
 
     const tooltipModel = model.tooltip;
@@ -59,7 +66,9 @@ const LineChart = ({
         ".tooltiprep"
       ) as HTMLParagraphElement;
 
-      specialTip.innerHTML = `$${tooltipModel.dataPoints[0].raw.toFixed(2)} - ${
+      (
+        specialTip || { innerHTML: '' }
+      ).innerHTML = `$${tooltipModel.dataPoints[0].raw.toFixed(2)} - ${
         tooltipModel.dataPoints[0].label
       }`;
     }
@@ -109,9 +118,8 @@ const LineChart = ({
       },
       y: {
         ticks: {
-          stepSize: 60,
-          display: false,
-          beginAtZero: true,
+          display: y,
+          beginAtZero: false,
         },
         grid: {
           display: false,
@@ -136,13 +144,14 @@ const LineChart = ({
   };
 
   const data = () => {
+
     return {
       labels,
       datasets: dataList.map((v: (string | number)[], i: number) => ({
         fill: true,
         label: label[i],
         data: v,
-        lineTension: 0.5,
+        lineTension: 0.2,
         borderWidth: 1,
         borderColor: color[i],
         backgroundColor: gradient ? (context: ScriptableContext<"line">) => {
@@ -151,7 +160,7 @@ const LineChart = ({
           gradient.addColorStop(0, color[i] + "85");
           gradient.addColorStop(0.7, color[i] + "00");
           return gradient;
-        } : undefined,
+        } : 'transparent',
       })),
     };
   };
@@ -189,7 +198,7 @@ const LineChart = ({
       >
         {" "}
         <Line options={options} data={data()} />{" "}
-        <div className={`${toolstype.tooltip} tooltip tooltip${name}`}>
+        {!noLabel && <div className={`${toolstype.tooltip} tooltip tooltip${name}`}>
           {exportLabel && (
             <>
               <div
@@ -212,7 +221,7 @@ const LineChart = ({
             <span className={`${toolstype.color_circle} color_circle`}></span>
             <span className={`${toolstype.value} value`}></span>
           </div>
-        </div>
+        </div>}
       </div>
     </>
   );

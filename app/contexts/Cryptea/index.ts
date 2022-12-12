@@ -34,8 +34,10 @@ export function useCryptea(): mainAppManager {
 
     if (localStorage.getItem('userToken') !== null) {
         ('user').get('accounts').then((e: any) => {
+          if(e !== undefined){
           const acct = JSON.parse(e)
             altAddress.current = acct[0];
+          }
         });
     }
   })
@@ -43,6 +45,7 @@ export function useCryptea(): mainAppManager {
   const { disconnect } = useDisconnect();
 
   return {
+    disconnect,
     account: isAuthenticated ? altAddress.current : (address || altAddress.current),
     user,
     connected: isConnected,
@@ -79,7 +82,7 @@ export function useCryptea(): mainAppManager {
     AuthAddress,
     logout: async () => {
       updateLogout?.(true);
-      await get_request("/logout");
+      await get_request("/logout", {}, undefined, false);
       const uaux = localStorage.getItem('username');
 
       if (!Boolean(uaux)) {

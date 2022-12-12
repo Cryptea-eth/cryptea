@@ -32,9 +32,11 @@ const Pages = () => {
       if (!isAuthenticated) {
         Router.push("/auth");
       } else {
-        "links".get("*", true).then((e) => {
-          addLinks(e);
-          loading(false);
+        "links".get("*", true).then((e: any) => {
+          if (!Boolean(e.error)) {
+            addLinks(e);
+            loading(false);
+          }
         });
       }
     }
@@ -135,7 +137,7 @@ const Pages = () => {
 
                     <div className="flex mt-4 justify-between items-center w-full">
                       <Link
-                        href={`/user/${attributes.link.toLowerCase()}/edit`}
+                        href={`/pay/${attributes.link.toLowerCase()}/edit`}
                       >
                         <a rel="noreferrer">
                           <Button className="!py-2 !font-bold !px-4 !capitalize !flex !items-center !text-white hover:!bg-[#ff8c78b8] !bg-[#f36e57b8] !transition-all !delay-500 !rounded-lg">
@@ -145,7 +147,7 @@ const Pages = () => {
                         </a>
                       </Link>
 
-                      <Link href={`/user/${attributes.link.toLowerCase()}`}>
+                      <Link href={`/pay/${attributes.link.toLowerCase()}`}>
                         <a title="View Page" target="_blank" rel="noreferrer">
                           <IconButton
                             color="inherit"

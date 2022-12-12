@@ -26,7 +26,7 @@ export const time = async () =>
   await (
     ((await get_request(`/time`, {
       params: { timezone: window.jstz.determine().name() },
-    })) as any) || { data: undefined }
+    }, undefined, false)) as any) || { data: undefined }
   ).data;
 
 const allowed: CrypteaDBS = {
@@ -106,11 +106,12 @@ String.prototype.get = async function (
     const rcache = JSON.parse(cache ?? "{}");
 
     if (fresh || cache === null) {
+      try {
       const res: any = await get_request(`${allowP.endpoint}${extra}`, {
         params: { tz: window.jstz.determine().name() },
       });
 
-      const { data } = res || { data: { error: undefined } };
+      const { data } = res || { data: { error: true } };
 
       if (!data.error || data.error == undefined) {
         localStorage.setItem(pstring[0].toLowerCase(), JSON.stringify(data));
@@ -120,7 +121,15 @@ String.prototype.get = async function (
         } else {
           return getKey(column, data);
         }
+      }else{
+          return data;
       }
+
+      } catch (err) {
+
+        throw err;
+      }
+
     } else {
       if (column == "*") {
         return rcache;

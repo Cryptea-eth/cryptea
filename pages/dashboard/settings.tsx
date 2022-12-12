@@ -146,11 +146,11 @@ const Settings = () => {
 
       if (!error["account"].length) {
         try {
-         
 
           await "user".update({
             username: userInfo,
             email: validator.normalizeEmail(userEmail),
+            tz: window.jstz.determine().name(),
           });
 
          
@@ -241,7 +241,8 @@ const Settings = () => {
 
       setLoading({ ...isLoading, progress: [pct, uploaded] });
     };
-    const token = await get_request("/storagekey");
+    
+    const token = await get_request("/storagekey", {}, undefined, false);
     
     const client = makeStorageClient(token!.data);
 
@@ -288,63 +289,6 @@ const Settings = () => {
       setError({ ...error, account: err?.message });
     }
   };
-
-  // const submitLink = async () => {
-  //   document.querySelector("#link_sett")?.scrollIntoView();
-  //   window.scrollTo(0, 0);
-  //   setError({
-  //     ...error,
-  //     link: "",
-  //   });
-  //   setSuccess({
-  //     ...success,
-  //     link: "",
-  //   });
-  //   let more = true;
-  //   setLoading({ ...isLoading, link: true });
-  //   [userDescription, userLink].forEach((d) => {
-  //     if (!d.length) {
-  //       setError({
-  //         ...error,
-  //         link: "Data Incomplete, Please required fields should be field",
-  //       });
-  //       setLoading({ ...isLoading, link: false });
-  //       more = false;
-  //     }
-  //   });
-
-  //   if (more) {
-  //     if (userDescription.length < 50) {
-  //       setError({
-  //         ...error,
-  //         link: "Atleast 50 characters are required in your description",
-  //       });
-  //       setLoading({ ...isLoading, link: false });
-  //     }
-
-  //     if (!error["link"].length) {
-  //       const Links = Moralis.Object.extend("link");
-  //       const link = new Links();
-  //       link?.set("link", userLink);
-  //       user?.set("desc", userDescription);
-
-  //       try {
-  //         await link?.save();
-  //         await user?.save();
-  //         setSuccess({
-  //           ...success,
-  //           link: "Link Details Saved Successfully",
-  //         });
-
-  //         setLoading({ ...isLoading, link: false });
-  //       } catch (err) {
-  //         const erro = err as Error;
-  //         setError({ ...error, link: erro?.message });
-  //         setLoading({ ...isLoading, link: false });
-  //       }
-  //     }
-  //   }
-  // };
 
 
   const { username, email } = data;
@@ -635,149 +579,7 @@ const Settings = () => {
                 </form>
               </div>
 
-              {/* <div>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              submitLink();
-            }}
-            method="POST"
-            action="#"
-            id="link_sett"
-            encType="multipart/form-data"
-          >
-            <div className="w-full justify-center mt-4">
-              <div className="flex flex-col mx-7 items-center justify-center">
-                <div className="flex flex-row border-b justify-start w-full">
-                  <div className="flex items-center justify-between font-semibold w-full">
-                    <span className="text-[25px] font-[800] mb-2">
-                      Your Link
-                    </span>
-                  </div>
-                </div>
-                {isLoading["link"] && (
-                  <Box className="text-[#F57059]" sx={{ width: "100%" }}>
-                    <LinearProgress color="inherit" />
-                  </Box>
-                )}
-
-                {error["link"].length > 0 && (
-                  <Alert className="w-full" severity="error">
-                    {error["link"]}
-                  </Alert>
-                )}
-
-                {success["link"].length > 0 && (
-                  <Alert className="w-full" severity="success">
-                    {success["link"]}
-                  </Alert>
-                )}
-
-                <div className="username w-full">
-                  <div className="mt-2">
-                    <div className="font-semibold mt-5 mb-4 text-[#777]">
-                      Change Cryptea Link
-                    </div>
-                    <div className="flex mt-2">
-                      <FormControl
-                        sx={{
-                          width: "100%",
-                        }}
-                        variant="outlined"
-                      >
-                        <InputLabel htmlFor="current-password">Link</InputLabel>
-                        <OutlinedInput
-                          className="bg-[white] !p-0"
-                          placeholder={desc}
-                          name="Link"
-                          label="Link"
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            const lk = e.target.value;
-                            setUserLink(
-                              lk.replace(/[/\\.@#&?;,:"'~*^%|]/g, "")
-                            );
-
-                            setError({
-                              ...error,
-                              link: "",
-                            });
-                            setSuccess({
-                              ...success,
-                              link: "",
-                            });
-                          }}
-                          startAdornment={
-                            <InputAdornment position="start">
-                              <div className="text-[#838383] rounded-l-md p-[15px] pr-0">
-                                cryptea.com/
-                              </div>
-                            </InputAdornment>
-                          }
-                        />
-                      </FormControl>
-                    </div>
-
-                    <div className="font-semibold mt-5 mb-4 text-[#777]">
-                      Change Description
-                    </div>
-                    <div className="rounded-md mt-2">
-                      <div className="flex">
-                        <TextField
-                          type="textarea"
-                          className="bg-[white]"
-                          label={"Description"}
-                          placeholder={desc}
-                          sx={{
-                            "& .Mui-focused.MuiFormLabel-root": {
-                              color: "#f57059",
-                            },
-                            "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                              borderColor: `#f57059 !important`,
-                            },
-                          }}
-                          value={userDescription}
-                          onChange={(
-                            e: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            setUserDescription(e.target.value);
-                            setError({
-                              ...error,
-                              link: "",
-                            });
-                            setSuccess({
-                              ...success,
-                              link: "",
-                            });
-                          }}
-                          name="desc"
-                          fullWidth
-                          multiline
-                          minRows={3}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex flex-row justify-end w-full mt-8">
-                      <Button
-                        variant="contained"
-                        type="submit"
-                        className="!text-sm !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-10"
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div> */}
+          
             </div>
           </div>
         )}

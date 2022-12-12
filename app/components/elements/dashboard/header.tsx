@@ -1,131 +1,296 @@
-import { Avatar, Popover } from "@mui/material";
-import React, { useContext, useState } from "react";
+import empty from "../../../../public/images/empty2.png";
+import {
+  Avatar,
+  ClickAwayListener,
+  IconButton,
+  ListItemAvatar,
+  Popover,
+  Tab,
+  Tabs,
+} from "@mui/material";
+import Image from "next/image";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { BiBell } from "react-icons/bi";
+import { get_request } from "../../../contexts/Cryptea/requests";
 import { dash, DashContext } from "../../../contexts/GenContext";
 
-const DashHeader = ({className, username, dp} : { className?: string, username: string, dp: string }) => {
+const DashHeader = ({
+  className,
+  username,
+  dp,
+}: {
+  className?: string;
+  username: string;
+  dp: string;
+}) => {
+  const { sidebar }: dash = useContext(DashContext);
 
-    const { sidebar }: dash = useContext(DashContext);
+  const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(
+    null
+  );
 
-    const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(
-      null
-    );
+  const [open, setOpen] = useState(false);
 
-    const handleNotes = (event: React.SyntheticEvent) => {
-      setAnchorEl(event.currentTarget);
-    };
+  const [value, setValue] = useState<any>("all");
 
-    const notesClose = () => {
-      setAnchorEl(null);
-    };
+  const [data, setData] = useState<any>({});
 
-    const nopen = Boolean(anchorEl);
-    const id = nopen ? "Your Notifications" : undefined;
+  const [isLoading, setLoading] = useState<boolean>(true);
 
-    return (
-      <>
-        <div
-          style={{
-            width: sidebar?.openPage
-              ? "calc(100% - 247px)"
-              : "calc(100% - 77px)",
-            right: 0,
-          }}
-          className={`${
-            className === undefined
-              ? "flex transition-all delay-500 z-10 px-[20px] fixed py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
-              : className
-          }`}
-        >
-          <div className="">
-            <h1 className="font-bold">Welcome {username}!☕</h1>
-            <span>Looking good today..</span>
-          </div>
-          <div className="flex items-center">
-            {/* <form
-              className="relative min-w-[260px] mr-[10px] flex items-center"
-              method="get"
-              action=""
-            >
-              <BiSearch
-                className="absolute left-[9px]"
-                color="#626262"
-                size={22}
-              />
-              <input
-                className="rounded-lg border p-2 w-full pl-[35px] focus:outline-none focus:shadow-outline-blue text-[#A9A9A9] placeholder-[#A9A9A9]"
-                placeholder="Search..."
-                type="search"
-                name="username"
-              />
-            </form> */}
+  const [newNote, setNewNote] = useState<boolean>(false);
 
-            <div className="h-full w-[20px] mx-2">
-              <BiBell
-                size={23}
-                aria-describedby={id}
-                onClick={handleNotes}
-                className="cursor-pointer"
-                color="#000"
-              />
-              <Popover
-                id={id}
-                open={nopen}
-                anchorEl={anchorEl}
-                onClose={notesClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-              >
-                <div className="py-3 px-2 bg-pattern">
-                  <div className="flex flex-col">
-                    <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
-                      <div className="img">
-                        <Avatar>U</Avatar>
-                      </div>
-                      <div className="font-medium text-base">
-                        You received 0.1ETH from 0xabc
-                      </div>
-                    </div>
+  const once = useRef<boolean>(true);
 
-                    <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
-                      <div className="img">
-                        <Avatar>J</Avatar>
-                      </div>
-                      <div className="font-medium text-base">
-                        You received 0.1ETH from joel.eth
-                      </div>
-                    </div>
+  useEffect(() => {
 
-                    <div className="not my-2 py-2 px-3 border border-gray-600 rounded-lg bg-[#FFF7EA] flex flex-row justify-between align-middle">
-                      <div className="img">
-                        <Avatar>L</Avatar>
-                      </div>
-                      <div className="font-medium text-base">
-                        You received 0.1ETH from lucid.eth
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Popover>
-            </div>
-            <Avatar
-              src={dp}
-              sx={{
-                width: 40,
-                height: 40,
-                bgcolor: !Boolean(dp) ? "#f57059" : undefined,
-              }}
-              alt={username}
-            >
-              {username?.charAt(0).toUpperCase()}
-            </Avatar>
-          </div>
+    const itx = async () => {
+  
+       const dx = await get_request("/notifications", {}, undefined, false);
+
+        if (dx?.data) {
+          if (typeof dx?.data == "object") {
+            setData(dx?.data);
+
+            setNewNote(
+              Boolean(dx?.data.filter((d: any) => d.read == "false").length)
+            );
+
+            if (isLoading) setLoading(false);
+
+          }
+        }
+
+          
+          setTimeout(itx, 3000);
+
+      };
+    
+  if (once.current) {
+
+   once.current = false;
+
+   itx();
+
+  }
+
+  }, []);
+
+  const handleChange = (event: React.SyntheticEvent, e: any) => setValue(e);
+
+  const handleNotes = (event: React.SyntheticEvent) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const nopen = Boolean(anchorEl);
+  const id = nopen ? "Your Notifications" : undefined;
+
+  const active =
+    "before:content-[''] before:bottom-[25px] before:left-[28px] before:bg-[#f57059] before:h-[7px] before:rounded-[50%] before:w-[7px]";
+
+  return (
+    <>
+      <div
+        style={{
+          width: sidebar?.openPage ? "calc(100% - 247px)" : "calc(100% - 77px)",
+          right: 0,
+        }}
+        className={`${
+          className === undefined
+            ? "flex transition-all delay-500 z-10 px-[20px] fixed py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
+            : className
+        }`}
+      >
+        <div className="">
+          <h1 className="font-bold">Hello!☕</h1>
+          <span>Looking good today..</span>
         </div>
-      </>
-    );
+        <div className="flex items-center">
+          <ClickAwayListener onClickAway={() => setOpen(false)}>
+            <div className="h-full relative w-[20px] mx-2">
+              <IconButton
+                onClick={() => {
+                  setOpen(!open);
 
-}
+                  get_request("/notifications/view", {}, undefined, false).then(e => {
+                    console.log(e?.data)
+                  });
+
+                }}
+                style={{
+                  backgroundColor: open ? "#ececec" : undefined,
+                }}
+                className={`right-[14px] relative before:absolute ${
+                  newNote ? active : ""
+                }`}
+                size={"medium"}
+              >
+                <BiBell
+                  size={24}
+                  aria-describedby={id}
+                  onClick={handleNotes}
+                  className="cursor-pointer"
+                  color="#6a6a6a"
+                />
+              </IconButton>
+
+              <div
+                style={{
+                  display: open ? "flex" : "none",
+                }}
+                className="w-[360px] bg-white flex-col max-h-[400px] top-[60px] right-0 shadow-md rounded-md absolute"
+              >
+                <div className="px-5 pt-2 border-b-[2px] border-solid border-b-[rgb(194,194,194)]">
+                  <div className="flex items-center mb-[7px]">
+                    <h2 className="text-[rgb(32,33,36)] text-[1.1rem] flex items-center justify-between font-bold relative">
+                      Notifications
+                    </h2>
+                  </div>
+
+                  <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    className="relative top-[2px]"
+                    sx={{
+                      "& .MuiTabs-flexContainer": {
+                        width: "100%",
+                        justifyContent: "unset",
+                      },
+                      "& .MuiTab-root.MuiButtonBase-root.Mui-selected": {
+                        fontWeight: "bold",
+                        borderRadius: "4px",
+                        opacity: 1,
+                        color: "rgb(18, 18, 18)",
+                        backgroundColor: "transparent !important",
+                        textTransform: "capitalize",
+                      },
+                      "& .MuiButtonBase-root.MuiTab-root": {
+                        fontWeight: "bold",
+                        padding: "0px",
+                        borderRadius: "4px",
+                        textTransform: "capitalize",
+                        color: "rgb(194,194,194)",
+                        maxHeight: "30px",
+                        opacity: 0.7,
+                        position: "relative",
+                        top: "4px",
+                        backgroundColor: "transparent !important",
+                      },
+                      "& .MuiTabs-indicator": {
+                        backgroundColor: "rgb(83,84,87) !important",
+                        zIndex: 20,
+                      },
+                    }}
+                    aria-label="Notifications"
+                  >
+                    <Tab value="all" label="All" />
+                    {/* <Tab value="payment" label="Payments" /> */}
+                  </Tabs>
+                </div>
+
+                {Boolean(data.length) ? (
+                  <div className="overflow-y-scroll cusscroller overflow-x-hidden">
+                    {data.map((d: any, i: number) => {
+                      let text: JSX.Element = <></>;
+
+                      const data = JSON.parse(d.data || "{}");
+
+                      const tags = JSON.parse(d.tags || "[]");
+
+                      tags.forEach((e: string) => {
+                        if (e == "payment") {
+                          text = (
+                            <>
+                              <b>{data.name}</b> paid <b>${data.amount}</b>
+                            </>
+                          );
+                        }
+                      });
+
+                      const dz = (Boolean(d.text) ? d.text : data.name).substr(
+                        0,
+                        2
+                      );
+
+                      return (
+                        <div
+                          key={i}
+                          style={{
+                            backgroundColor: !d.read ? "#f5705914" : undefined,
+                          }}
+                          className="w-full px-6 py-2 flex items-center"
+                        >
+                          <Avatar
+                            sx={{
+                              width: 30,
+                              height: 30,
+                              fontSize: "13px",
+                              color: "rgba(0, 0, 0, .4)",
+                              bgcolor: "#f57059",
+                            }}
+                            variant={"rounded"}
+                            className="font-bold"
+                          >
+                            <strong>{dz.toUpperCase()}</strong>
+                          </Avatar>
+
+                          <div className="ml-3">
+                            <div className="text-[14px]">
+                              {Boolean(d.text) ? d.text : text}
+                            </div>
+
+                            <span className="block text-[12px] text-[#b3b3b3]">
+                              {d.time} • {tags.join(" • ")}{" "}
+                              {Boolean(data.link) ? " • " + data.link : ""}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div
+                    className="empty"
+                    style={{
+                      display: "flex",
+                      width: "100%",
+                      height: "400px",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div className="w-[240px]">
+                      <Image
+                        src={empty}
+                        className="mb-3 object-scale-down"
+                        layout={"intrinsic"}
+                        alt="Quite empty here"
+                      />
+                    </div>
+
+                    <h2 className="text-[#F57059] font-[400] text-2xl mx-auto my-2">
+                      Nothing here for now
+                    </h2>
+                  </div>
+                )}
+              </div>
+            </div>
+          </ClickAwayListener>
+          <Avatar
+            src={dp}
+            sx={{
+              width: 40,
+              height: 40,
+              bgcolor: !Boolean(dp) ? "#f57059" : undefined,
+            }}
+            alt={username}
+          >
+            {username?.charAt(0).toUpperCase()}
+          </Avatar>
+        </div>
+      </div>
+    </>
+  );
+};
 
 export default DashHeader;

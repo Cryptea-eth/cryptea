@@ -19,8 +19,8 @@ const Timeout = () => {
 
       <Nav />
 
-      <div className="w-full h-fit flex flex-col justify-items-center my-8">
-        <h2 className="text-[#F57059] font-[400] text-4xl mx-auto mt-24">
+      <div className="w-full h-fit flex flex-col justify-items-center mx-5 my-8">
+        <h2 className="text-[#F57059] font-[400] 2sm:text-2xl text-4xl mx-auto mt-24">
           Oops... Connection Timed out
         </h2>
 
@@ -31,19 +31,19 @@ const Timeout = () => {
           <ul className="pl-8 my-3">
             <li className="text-[#888888] list-item mb-1">
               {" "}
-               Check your internet connection, as no internet connectivity{" "}
+               - Check your internet connection, as no internet connectivity{" "}
               <br />
               might prevent some content from loading.
             </li>
 
             <li className="text-[#888888] list-item mb-1">
               {" "}
-               Try again in a few minutes.
+              - Try again in a few minutes.
             </li>
 
             <li className="text-[#888888] list-item mb-1">
               {" "}
-              Contact customer care.
+             - or Contact us.
             </li>
           </ul>
         </div>

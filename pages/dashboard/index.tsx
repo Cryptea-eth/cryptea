@@ -2,9 +2,7 @@ import {
   // BiSearch,
   BiBell,
 } from "react-icons/bi";
-
 import { RiSettingsLine } from "react-icons/ri";
-// import "../../app/styles/dash.css";
 import { Avatar, Popover } from "@mui/material";
 import DashHome from "../../app/components/elements/dashboard/home";
 import Link from "next/link";
@@ -44,8 +42,13 @@ const DashboardIndex = () => {
         }
       } else {
          "user".get("*", true).then((e: any) => {
+
            if(!Boolean(e.email)) {
-              router.push('/signup')
+  
+              if (!Boolean(e.error)) {
+                router.push("/signup");
+              }
+  
            }else{
            if (e !== null) {
              setData(typeof e == "object" ? e : { username: "", img: "" });
@@ -62,19 +65,6 @@ const DashboardIndex = () => {
     isAuthenticated
   ]);
 
-
-  const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(null);
-
-  const handleNotes = (event: React.SyntheticEvent) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const notesClose = () => {
-    setAnchorEl(null);
-  };
-
-  const nopen = Boolean(anchorEl);
-  const id = nopen ? "Your Notifications" : undefined;
 
   return (
     <>
@@ -97,7 +87,7 @@ const DashboardIndex = () => {
           <div
             className={`body transition-all delay-500 ${
               sidebar?.openPage ? "pl-[247px]" : "pl-[77px]"
-            } w-full h-full 2sm:!pl-[77px]`}
+            } w-full h-full`}
           >
             <DashHeader
               className={

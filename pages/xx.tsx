@@ -1,22 +1,28 @@
-import { useEffect } from "react";
-import { get_request } from "../app/contexts/Cryptea/requests";
+import { useEffect, useState } from "react";
+import { get_request, post_request } from "../app/contexts/Cryptea/requests";
 import * as ethers from 'ethers';
+import web3 from 'web3';
+import axios from 'axios';
+import { useRouter } from 'next/router'
+import validator from 'validator'
 
 const Xx = () => {
 
-  useEffect(() => {
-    
-    get_request("/api/payments/accounts", { baseURL: window.origin }).then((e) => {
-      console.log(e);
-    });
+ const router = useRouter();
 
-   
+ 
 
-  }, [])
+ useEffect(() => {
 
-  return (<>
-  
-  </>)
+
+ }, [router.isReady, router]);
+
+
+  return (
+    <>
+      Welcome, we have been expecting you.
+    </>
+  );
 }
 
 export default Xx;
