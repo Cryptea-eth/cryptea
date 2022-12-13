@@ -75,6 +75,7 @@ const Carbon = ({ className }: { className?: string }) => {
     };
   }
 
+
   useEffect(() => {
     const elem = document.querySelector(".carbon") as HTMLDivElement;
 

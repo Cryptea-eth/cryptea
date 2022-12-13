@@ -327,7 +327,7 @@ export const PaymentProvider = ({
             const { name, data: udata } = JSON.parse(lQ.template_data);
 
             if (!editMode) {
-              setData(udata);
+              setData(typeof udata == 'string' ? JSON.parse(udata) : udata);
             } else {
               const { data: mdata } = await import(`../templates/${name}/data`);
 
@@ -625,7 +625,6 @@ export const PaymentProvider = ({
               renewal: interval,
             };
           }
-
 
           await axios.post(`/api/payments/validate`, post, {
             baseURL: window.origin,

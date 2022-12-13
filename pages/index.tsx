@@ -8,12 +8,6 @@ import Router from 'next/router';
 
 const Home: NextPage = () => {
 
-  const { isAuthenticated, logout } = useCryptea();
-
-  const [loader, setLoader] = useState<boolean>(true);
-
-
-
   return (
     <div className="overflow-hidden">
       <Head>

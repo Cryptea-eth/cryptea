@@ -83,14 +83,8 @@ export default function handler(
 
                 if (body.type == "sub") {
                   post = {
-                    ...body.rx,
-                    date: new Date().getTime(),
+                    ...post,
                     remind: new Date().getTime() + mainIx(body.interval) * 1000,
-                    address: walletConnect.address,
-                    amount: body.amount,
-                    hash: trx.hash,
-                    amountCrypto: body.price,
-                    token: body.label,
                     type: body.type,
                     renewal: body.interval,
                   };
