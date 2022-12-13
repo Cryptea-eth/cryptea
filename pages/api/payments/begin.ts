@@ -69,6 +69,21 @@ export default function handler(
 
                 const trx = await walletConnect.sendTransaction(tx);
 
+            //     ...rx,
+            // date: new Date().getTime(),
+            // address: from,
+            // api: apiCode,
+            // type,
+            // amount: price,
+            // hash: init.hash,
+            // explorer: tokenTrackers[token.value].link,
+            // amountCrypto: ether,
+            // token: token.name,
+            // contractAddr: token.contractAddr,
+            // paytype: "auto",
+            // linkId,
+          // chain: token.value,
+
                 let post: any = {
                   ...body.rx,
                   date: new Date().getTime(),

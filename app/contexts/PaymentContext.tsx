@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useRef } from "react";
 import { useCryptea } from "./Cryptea";
 import { useRouter } from "next/router";
@@ -760,8 +761,9 @@ export const PaymentProvider = ({
               rx,
               type,
               amount,
+              explorer: tokenTrackers[token.value].link,
               amountCrypto: price,
-              label: token.label,
+              label: token.value,
             };
 
             if (type == "sub") {
