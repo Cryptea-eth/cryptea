@@ -325,7 +325,7 @@ export const PaymentProvider = ({
 
         if (lQ !== undefined) {
           if (lQ.template_data !== undefined) {
-            
+
             const { name, data: udata } = JSON.parse(lQ.template_data);
 
             if (!editMode) {
@@ -775,7 +775,7 @@ export const PaymentProvider = ({
               api: apiCode,
               explorer: tokenTrackers[token.value].link,
               amountCrypto: price,
-              label: token.value,
+              label: token.name,
             };
 
             if (type == "sub") {
@@ -810,6 +810,28 @@ export const PaymentProvider = ({
               if (type == "sub") setSubCheck(true);
 
               clearTimeout(timerTimeout);
+
+               if (Boolean(userD.redirect) && validator.isURL(userD.redirect)) {
+                 let link = String(userD.redirect).split("?");
+
+                 if (apiCode !== undefined) {
+                   if (Boolean(link[1])) {
+                     if (!link[1].length) {
+                       link[0] += `?trx=${apiCode}`;
+                     } else {
+                       link[1] += `&trx=${apiCode}`;
+
+                       link[0] += "?";
+                     }
+                   } else {
+                     link[0] += `?trx=${apiCode}`;
+                   }
+                 }
+
+                 const mLink = link.join("");
+
+                 router.push(mLink);
+               }
 
               setTimeout(reset, 12000);
             } else {

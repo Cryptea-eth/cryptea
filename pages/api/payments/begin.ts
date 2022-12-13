@@ -93,14 +93,13 @@ export default function handler(
                   hash: trx.hash,
                   explorer: body.explorer,
                   amountCrypto: body.price,
-                  token: body.label,
+                  token: body.label
                 };
 
                 if (body.type == "sub") {
                   post = {
                     ...post,
                     remind: new Date().getTime() + mainIx(body.interval) * 1000,
-                    type: body.type,
                     renewal: body.interval,
                   };
                 }
