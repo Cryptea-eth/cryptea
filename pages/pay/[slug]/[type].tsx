@@ -146,7 +146,7 @@ const Onetime = () => {
 
             const { data: tdata } = JSON.parse(oDx.template_data);
 
-            const { src: srcc } = tdata.image;
+            const { src: srcc } = (typeof tdata == 'string' ? JSON.parse(tdata) : tdata).image;
 
             src = srcc;
           }

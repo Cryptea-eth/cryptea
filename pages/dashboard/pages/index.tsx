@@ -95,11 +95,13 @@ const Pages = () => {
               {links.map((attributes: any, i: number) => {
                 let realS = "";
                 if (attributes.templates_data !== undefined) {
-                  const temp = JSON.parse(attributes.template_data);
 
-                  const { image } = temp;
+                  const { data } = JSON.parse(attributes.template_data);
 
+                  const { image } = typeof data == 'string' ? JSON.parse(data) : data;
+                  
                   realS = image.src;
+
                 }
 
                 return (

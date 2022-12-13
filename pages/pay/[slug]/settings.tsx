@@ -276,7 +276,7 @@ const Settings = () => {
         if (mDx.template_data !== undefined) {
           const { data: tdata, name } = JSON.parse(mDx.template_data);
 
-          const { src: srcc } = tdata.image;
+          const { src: srcc } = (typeof tdata == 'string' ? JSON.parse(tdata) : tdata).image;
 
           src = srcc;
 
@@ -771,12 +771,12 @@ const Settings = () => {
                             value={formdata["rdata"]}
                             onChange={(e: any) => {
                               let p: boolean = true;
-
-                            if (p) {
-                              setFormData({
-                                rdata: e,
-                              });
-                            }
+                              console.log(e, 'wo');
+                              if (p) {
+                                setFormData({
+                                  rdata: e,
+                                });
+                              }
                             
                             }}
                             classNamePrefix="select"

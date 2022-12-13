@@ -86,8 +86,7 @@ useEffect(() => {
          
           const linkx:any = await (`links/${String(usern).toLowerCase()}`).get('link', true);
 
-
-          setLinkx(linkx);
+            setLinkx(linkx);
           
            if (linkx?.template_data !== undefined) {
 
@@ -99,7 +98,7 @@ useEffect(() => {
 
             setData(name);
 
-            getData(udata);
+            getData(typeof udata == 'string' ? JSON.parse(udata) : udata);
 
             const edx:string[] = [];
 

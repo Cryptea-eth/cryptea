@@ -57,9 +57,12 @@ const Overview = () => {
                 let template = '';
 
                 if (mDx.template_data !== undefined) {
+                  
                     const { data: tdata, name } = JSON.parse(mDx.template_data);
 
-                    const { src:srcc } = tdata.image;
+                    const { src: srcc } = (
+                      typeof tdata == "string" ? JSON.parse(tdata) : tdata
+                    ).image;
 
                      src = srcc;
 

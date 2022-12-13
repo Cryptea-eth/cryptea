@@ -325,6 +325,7 @@ export const PaymentProvider = ({
 
         if (lQ !== undefined) {
           if (lQ.template_data !== undefined) {
+            
             const { name, data: udata } = JSON.parse(lQ.template_data);
 
             if (!editMode) {
@@ -748,7 +749,10 @@ export const PaymentProvider = ({
           setManLoader(true);
 
           try {
+
             const rx: { [index: string]: string | number } = {};
+
+          if (apiState) {
             pemail.forEach((val: undefined | string, i: number) => {
               if (val !== undefined && val.length) {
                 if (userD.rdata[type][i] !== undefined) {
@@ -756,11 +760,19 @@ export const PaymentProvider = ({
                 }
               }
             });
+          }else{
+            inputsList.forEach((val) => {
+              const index = val.value.toLowerCase();
+
+              rx[index] = apiData[index] || undefined;
+            });
+          }
 
             let post: any = {
               rx,
               type,
               amount,
+              api: apiCode,
               explorer: tokenTrackers[token.value].link,
               amountCrypto: price,
               label: token.value,
