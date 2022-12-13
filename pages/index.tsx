@@ -12,15 +12,7 @@ const Home: NextPage = () => {
 
   const [loader, setLoader] = useState<boolean>(true);
 
-  useEffect(() => {
-    if (isAuthenticated !== undefined) {
-      if (isAuthenticated) {
-        Router.push('/dashboard');
-      } else {
-        setLoader(false);
-      }
-    }
-  }, [isAuthenticated]);
+
 
   return (
     <div className="overflow-hidden">
@@ -32,13 +24,10 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {loader ? (
-        <Loader />
-      ) : (
+
         <div className="h-screen w-screen flex bg-pattern2 items-center">
           <AuthModal blur={false} openM={true} message={"Welcome to Cryptea"} />
         </div>
-      )}
     </div>
   );
 }
