@@ -99,7 +99,7 @@ const Origin = ({ className }: { className?: string }) => {
 
   useEffect(() => {
     if (userD!.rdata !== undefined) {
-      if (userD!.rdata[!value ? "onetime" : "sub"].length <= 1 || apiState) {
+      if (userD!.rdata[!value ? "onetime" : "sub"].length < 1 || apiState) {
 
         const nsVal = { ...subValue };
 
@@ -340,7 +340,7 @@ const Origin = ({ className }: { className?: string }) => {
                     {/* paymentbox */}
                     <div className="rounded-lg bg-white usm:shadow-sm usm:border shadow-lg usm:border-[#e2e2e2] usm:mb-2 shadow-[#cccccc]">
                       <div className="border-b items-center flex py-[14px] px-[17px] text-xl font-bold">
-                        {userD!.rdata[!value ? "onetime" : "sub"].length > 1 &&
+                        {userD!.rdata[!value ? "onetime" : "sub"].length >= 1 &&
                           !apiState &&
                           subValue![!value ? "onetime" : "sub"] == 1 && (
                             <IconButton

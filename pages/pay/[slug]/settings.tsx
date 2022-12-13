@@ -772,8 +772,6 @@ const Settings = () => {
                             onChange={(e: any) => {
                               let p: boolean = true;
 
-                            
-                            
                             if (p) {
                               setFormData({
                                 rdata: e,
