@@ -629,10 +629,9 @@ const Onetime = () => {
               </ToggleButtonGroup>
               <div
                 style={{
-                  gridTemplateColumns: "repeat(auto-fill, minmax(410px, 1fr))",
                   maxWidth: !sidebar?.openPage ? "1031px" : "861px",
                 }}
-                className="mt-4 mx-auto transition-all delay-500 grid gap-6"
+                className="mt-4 gridTemplate mx-auto transition-all delay-500 grid gap-6"
               >
                 <div className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="p-6 relative">
@@ -845,7 +844,7 @@ const Onetime = () => {
                             },
                           }}
                           exclusive
-                          className="cusscroller top-[5px] relative overflow-y-hidden flex justify-center pb-1"
+                          className="cusscroller top-[5px] relative overflow-y-hidden !flex justify-center pb-1"
                           onChange={(e: any) => {
                             const val: string | any = e.target.value;
                             setAmountInfo(
