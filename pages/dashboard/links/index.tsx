@@ -37,6 +37,7 @@ import {
   dash,
   Link as Linkx,
 } from "../../../app/contexts/GenContext";
+import { json } from "stream/consumers";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -129,7 +130,7 @@ const Links = () => {
       } else {
         "links".get("*", true).then((e: any) => {
           if(!Boolean(e.error)){
-          addLinks(e);
+            addLinks(e);
             loading(false);
           }
         });
@@ -785,9 +786,13 @@ const Links = () => {
 
                 const { template_data, link, desc, id } = attributes;
 
+                const { data: tm_data } = JSON.parse(template_data);
+
                 const { image } =
-                  template_data !== undefined
-                    ? JSON.parse(template_data)
+                  tm_data !== undefined
+                    ? (typeof tm_data == "string"
+                      ? JSON.parse(tm_data)
+                      : tm_data)
                     : { image: undefined };
 
                 const { src } =

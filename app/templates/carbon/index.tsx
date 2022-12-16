@@ -75,6 +75,7 @@ const Carbon = ({ className }: { className?: string }) => {
     };
   }
 
+
   useEffect(() => {
     const elem = document.querySelector(".carbon") as HTMLDivElement;
 
@@ -133,12 +134,13 @@ const Carbon = ({ className }: { className?: string }) => {
 
   useEffect(() => {
     if (userD!.rdata !== undefined) {
-      if (userD!.rdata[!value ? "onetime" : "sub"].length <= 1 || apiState) {
+
+      if (userD!.rdata[!value ? "onetime" : "sub"].length < 1 || apiState) {
         const nsVal = { ...subValue };
 
         nsVal[!value ? "onetime" : "sub"] = 1;
 
-        // setSubValue?.(nsVal as subValueType);
+        setSubValue?.(nsVal as subValueType);
       }
     }
   }, [value, userD]);
@@ -233,7 +235,7 @@ const Carbon = ({ className }: { className?: string }) => {
                 </Avatar>
 
                 <div className="items-center w-full flex mb-7">
-                  {subValue![!value ? "onetime" : "sub"] == 1 && !apiState && (
+                  {userD!.rdata[!value ? "onetime" : "sub"].length >= 1 && subValue![!value ? "onetime" : "sub"] >= 1 && !apiState && (
                     <IconButton
                       className="mr-[6px] absolute top-5"
                       onClick={() => {

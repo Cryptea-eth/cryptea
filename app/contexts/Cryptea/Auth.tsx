@@ -152,7 +152,7 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
     } else {
       setGenLoader(false);
     }
-  }, [])
+  }, [router])
 
   useEffect(() => {
     if (localStorage.getItem('userToken') !== null) {

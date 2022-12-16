@@ -113,7 +113,7 @@ useEffect(() => {
 
           setData(name);
 
-          getData(udata);
+          getData(typeof udata == "string" ? JSON.parse(udata) : udata);
 
           const edx: string[] = [];
 
@@ -214,7 +214,9 @@ const [isSaving, saveChanges] = useState<{
 
      setRules(rules);
 
-     const { data: Olddata } = JSON.parse(linkx.template_data);
+     const { data: Old } = JSON.parse(linkx.template_data);
+
+    const Olddata = typeof Old == 'string' ? JSON.parse(Old) : Old;
 
     const cache = localStorage.getItem(`${String(usern)}-oldlink`) !== null;
 

@@ -111,3 +111,13 @@ div .walletconnect-qrcode__base{
     transform: rotate(360deg);
   }
 }
+
+.gridTemplate{
+    grid-template-columns: repeat(auto-fill, minmax(410px, 1fr));
+}
+
+@media only screen and (max-width: 1000px){
+  .gridTemplate{
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}

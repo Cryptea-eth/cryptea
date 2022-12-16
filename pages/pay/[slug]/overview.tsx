@@ -57,9 +57,12 @@ const Overview = () => {
                 let template = '';
 
                 if (mDx.template_data !== undefined) {
+
                     const { data: tdata, name } = JSON.parse(mDx.template_data);
 
-                    const { src:srcc } = tdata.image;
+                    const { src: srcc } = (
+                      typeof tdata == "string" ? JSON.parse(tdata) : tdata
+                    ).image;
 
                      src = srcc;
 
@@ -206,11 +209,9 @@ const Overview = () => {
 
                   <div
                     style={{
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(410px, 1fr))",
                       maxWidth: !sidebar?.openPage ? "1031px" : "861px",
                     }}
-                    className="m-auto transition-all delay-500 grid gap-6 grid-flow-dense"
+                    className="m-auto gridTemplate transition-all delay-500 grid gap-6 grid-flow-dense"
                   >
                     <div className="col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
@@ -434,7 +435,7 @@ const Overview = () => {
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
-                            Link Template
+                            Template
                           </h2>
 
                           <span className="font-[400] capitalize text-[1.0rem] leading-[1.75rem]">

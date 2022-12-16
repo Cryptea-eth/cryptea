@@ -91,6 +91,148 @@ const DashHeader = ({
     <>
       <div
         style={{
+          display: open ? "flex" : "none",
+        }}
+        className="w-[360px] z-[1000000] 33md:w-[320px] bg-white flex-col max-h-[400px] top-[60px] right-0 shadow-md 2mdd:-right-[63px] rounded-md absolute"
+      >
+        <div className="px-5 pt-2 border-b-[2px] border-solid border-b-[rgb(194,194,194)]">
+          <div className="flex items-center mb-[7px]">
+            <h2 className="text-[rgb(32,33,36)] text-[1.1rem] flex items-center justify-between font-bold relative">
+              Notifications
+            </h2>
+          </div>
+
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            className="relative top-[2px]"
+            sx={{
+              "& .MuiTabs-flexContainer": {
+                width: "100%",
+                justifyContent: "unset",
+              },
+              "& .MuiTab-root.MuiButtonBase-root.Mui-selected": {
+                fontWeight: "bold",
+                borderRadius: "4px",
+                opacity: 1,
+                color: "rgb(18, 18, 18)",
+                backgroundColor: "transparent !important",
+                textTransform: "capitalize",
+              },
+              "& .MuiButtonBase-root.MuiTab-root": {
+                fontWeight: "bold",
+                padding: "0px",
+                borderRadius: "4px",
+                textTransform: "capitalize",
+                color: "rgb(194,194,194)",
+                maxHeight: "30px",
+                opacity: 0.7,
+                position: "relative",
+                top: "4px",
+                backgroundColor: "transparent !important",
+              },
+              "& .MuiTabs-indicator": {
+                backgroundColor: "rgb(83,84,87) !important",
+                zIndex: 20,
+              },
+            }}
+            aria-label="Notifications"
+          >
+            <Tab value="all" label="All" />
+            {/* <Tab value="payment" label="Payments" /> */}
+          </Tabs>
+        </div>
+
+        {Boolean(data.length) ? (
+          <div className="overflow-y-scroll cusscroller overflow-x-hidden">
+            {data.map((d: any, i: number) => {
+              let text: JSX.Element = <></>;
+
+              const data = JSON.parse(d.data || "{}");
+
+              const tags = JSON.parse(d.tags || "[]");
+
+              tags.forEach((e: string) => {
+                if (e == "payment") {
+                  text = (
+                    <>
+                      <b>{data.name}</b> paid <b>${data.amount}</b>
+                    </>
+                  );
+                }
+              });
+
+              const dz = (Boolean(d.text) ? d.text : data.name).substr(0, 2);
+
+              return (
+                <div
+                  key={i}
+                  style={{
+                    backgroundColor: !d.read ? "#f5705914" : undefined,
+                  }}
+                  className="w-full px-6 py-2 flex items-center"
+                >
+                  <Avatar
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      fontSize: "13px",
+                      color: "rgba(0, 0, 0, .4)",
+                      bgcolor: "#f57059",
+                    }}
+                    variant={"rounded"}
+                    className="font-bold"
+                  >
+                    <strong>{dz.toUpperCase()}</strong>
+                  </Avatar>
+
+                  <div className="ml-3">
+                    <div
+                      title={Boolean(d.text) ? d.text : text}
+                      className="text-[14px] truncate"
+                    >
+                      {Boolean(d.text) ? d.text : text}
+                    </div>
+
+                    <span className="block  text-[12px] text-[#b3b3b3]">
+                      {d.time} • {tags.join(" • ")}{" "}
+                      {Boolean(data.link) ? " • " + data.link : ""}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div
+            className="empty"
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "400px",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div className="w-[240px]">
+              <Image
+                src={empty}
+                className="mb-3 object-scale-down"
+                layout={"intrinsic"}
+                alt="Quite empty here"
+              />
+            </div>
+
+            <h2 className="text-[#F57059] font-[400] text-2xl mx-auto my-2">
+              Nothing here for now
+            </h2>
+          </div>
+        )}
+      </div>
+
+      <div
+        style={{
           width: sidebar?.openPage ? "calc(100% - 247px)" : "calc(100% - 77px)",
           right: 0,
         }}
@@ -111,10 +253,11 @@ const DashHeader = ({
                 onClick={() => {
                   setOpen(!open);
 
-                  get_request("/notifications/view", {}, undefined, false).then(e => {
-                    console.log(e?.data)
-                  });
-
+                  get_request("/notifications/view", {}, undefined, false).then(
+                    (e) => {
+                      console.log(e?.data);
+                    }
+                  );
                 }}
                 style={{
                   backgroundColor: open ? "#ececec" : undefined,
@@ -132,148 +275,6 @@ const DashHeader = ({
                   color="#6a6a6a"
                 />
               </IconButton>
-
-              <div
-                style={{
-                  display: open ? "flex" : "none",
-                }}
-                className="w-[360px] bg-white flex-col max-h-[400px] top-[60px] right-0 shadow-md rounded-md absolute"
-              >
-                <div className="px-5 pt-2 border-b-[2px] border-solid border-b-[rgb(194,194,194)]">
-                  <div className="flex items-center mb-[7px]">
-                    <h2 className="text-[rgb(32,33,36)] text-[1.1rem] flex items-center justify-between font-bold relative">
-                      Notifications
-                    </h2>
-                  </div>
-
-                  <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    className="relative top-[2px]"
-                    sx={{
-                      "& .MuiTabs-flexContainer": {
-                        width: "100%",
-                        justifyContent: "unset",
-                      },
-                      "& .MuiTab-root.MuiButtonBase-root.Mui-selected": {
-                        fontWeight: "bold",
-                        borderRadius: "4px",
-                        opacity: 1,
-                        color: "rgb(18, 18, 18)",
-                        backgroundColor: "transparent !important",
-                        textTransform: "capitalize",
-                      },
-                      "& .MuiButtonBase-root.MuiTab-root": {
-                        fontWeight: "bold",
-                        padding: "0px",
-                        borderRadius: "4px",
-                        textTransform: "capitalize",
-                        color: "rgb(194,194,194)",
-                        maxHeight: "30px",
-                        opacity: 0.7,
-                        position: "relative",
-                        top: "4px",
-                        backgroundColor: "transparent !important",
-                      },
-                      "& .MuiTabs-indicator": {
-                        backgroundColor: "rgb(83,84,87) !important",
-                        zIndex: 20,
-                      },
-                    }}
-                    aria-label="Notifications"
-                  >
-                    <Tab value="all" label="All" />
-                    {/* <Tab value="payment" label="Payments" /> */}
-                  </Tabs>
-                </div>
-
-                {Boolean(data.length) ? (
-                  <div className="overflow-y-scroll cusscroller overflow-x-hidden">
-                    {data.map((d: any, i: number) => {
-                      let text: JSX.Element = <></>;
-
-                      const data = JSON.parse(d.data || "{}");
-
-                      const tags = JSON.parse(d.tags || "[]");
-
-                      tags.forEach((e: string) => {
-                        if (e == "payment") {
-                          text = (
-                            <>
-                              <b>{data.name}</b> paid <b>${data.amount}</b>
-                            </>
-                          );
-                        }
-                      });
-
-                      const dz = (Boolean(d.text) ? d.text : data.name).substr(
-                        0,
-                        2
-                      );
-
-                      return (
-                        <div
-                          key={i}
-                          style={{
-                            backgroundColor: !d.read ? "#f5705914" : undefined,
-                          }}
-                          className="w-full px-6 py-2 flex items-center"
-                        >
-                          <Avatar
-                            sx={{
-                              width: 30,
-                              height: 30,
-                              fontSize: "13px",
-                              color: "rgba(0, 0, 0, .4)",
-                              bgcolor: "#f57059",
-                            }}
-                            variant={"rounded"}
-                            className="font-bold"
-                          >
-                            <strong>{dz.toUpperCase()}</strong>
-                          </Avatar>
-
-                          <div className="ml-3">
-                            <div className="text-[14px]">
-                              {Boolean(d.text) ? d.text : text}
-                            </div>
-
-                            <span className="block text-[12px] text-[#b3b3b3]">
-                              {d.time} • {tags.join(" • ")}{" "}
-                              {Boolean(data.link) ? " • " + data.link : ""}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div
-                    className="empty"
-                    style={{
-                      display: "flex",
-                      width: "100%",
-                      height: "400px",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div className="w-[240px]">
-                      <Image
-                        src={empty}
-                        className="mb-3 object-scale-down"
-                        layout={"intrinsic"}
-                        alt="Quite empty here"
-                      />
-                    </div>
-
-                    <h2 className="text-[#F57059] font-[400] text-2xl mx-auto my-2">
-                      Nothing here for now
-                    </h2>
-                  </div>
-                )}
-              </div>
             </div>
           </ClickAwayListener>
           <Avatar

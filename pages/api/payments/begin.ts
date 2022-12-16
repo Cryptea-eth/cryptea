@@ -69,6 +69,21 @@ export default function handler(
 
                 const trx = await walletConnect.sendTransaction(tx);
 
+            //     ...rx,
+            // date: new Date().getTime(),
+            // address: from,
+            // api: apiCode,
+            // type,
+            // amount: price,
+            // hash: init.hash,
+            // explorer: tokenTrackers[token.value].link,
+            // amountCrypto: ether,
+            // token: token.name,
+            // contractAddr: token.contractAddr,
+            // paytype: "auto",
+            // linkId,
+          // chain: token.value,
+
                 let post: any = {
                   ...body.rx,
                   date: new Date().getTime(),
@@ -78,20 +93,13 @@ export default function handler(
                   hash: trx.hash,
                   explorer: body.explorer,
                   amountCrypto: body.price,
-                  token: body.label,
+                  token: body.label
                 };
 
                 if (body.type == "sub") {
                   post = {
-                    ...body.rx,
-                    date: new Date().getTime(),
+                    ...post,
                     remind: new Date().getTime() + mainIx(body.interval) * 1000,
-                    address: walletConnect.address,
-                    amount: body.amount,
-                    hash: trx.hash,
-                    amountCrypto: body.price,
-                    token: body.label,
-                    type: body.type,
                     renewal: body.interval,
                   };
                 }

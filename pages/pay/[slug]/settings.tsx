@@ -39,7 +39,6 @@ const Settings = () => {
 
   const [isLoading, setLoading] = useState<boolean>(true);
 
-  const [saving, saveData] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -130,7 +129,6 @@ const Settings = () => {
       })
     }
 
-    saveData(false);
   };
 
   const [success, setSuccess] = useState<boolean>(false);
@@ -278,7 +276,7 @@ const Settings = () => {
         if (mDx.template_data !== undefined) {
           const { data: tdata, name } = JSON.parse(mDx.template_data);
 
-          const { src: srcc } = tdata.image;
+          const { src: srcc } = (typeof tdata == 'string' ? JSON.parse(tdata) : tdata).image;
 
           src = srcc;
 
@@ -372,7 +370,10 @@ const Settings = () => {
 
   const acceptOptions = [...CryptoList];
 
+  const [saving, saveData] = useState<boolean>(false);  
+
   const validateFields = async () => {
+
     const payload: { [index: string]: any } = {};
 
     if (saving) {
@@ -381,9 +382,7 @@ const Settings = () => {
 
     saveData(true);
 
-
     setSuccess(false);
-
     setError();
     setGenError("");
 
@@ -394,10 +393,12 @@ const Settings = () => {
         setError({
           redirect: "A valid URL is required for Redirect Url",
         });
-
+        saveData(false) 
         return;
       } else {
+        
         payload["redirect"] = formdata["redirect"];
+
       }
     }
 
@@ -426,7 +427,7 @@ const Settings = () => {
       formdata["acceptedCrypto"].map((v: token) => v.value)
     );
 
-    const rdata = formdata["rdata"].map((v) => v.value);
+    const rdata = formdata["rdata"].map((v) => (v.value).toLowerCase());
 
     if (Boolean(formdata.title)) payload["title"] = formdata.title;
     if (Boolean(formdata.desc)) payload["desc"] = formdata.desc;
@@ -434,6 +435,7 @@ const Settings = () => {
       payload["amountMulti"] = JSON.stringify(formdata.amountOption);
 
     try {
+
       await `links/${data.id}`.update({
         ...payload,
         amount,
@@ -448,12 +450,13 @@ const Settings = () => {
       const error = err as any;
 
       console.log(error, "oer");
-
-      // saveData(false);
+      saveData(false);
 
       if (error.response) {
         setGenError(error.response.data.message);
-      } else {
+      } else if (error.message !== undefined) {
+          setGenError(error.message)
+      }else {
         setGenError("Something went wrong please try again");
       }
     }
@@ -767,9 +770,14 @@ const Settings = () => {
                             isMulti
                             value={formdata["rdata"]}
                             onChange={(e: any) => {
-                              setFormData({
-                                rdata: e,
-                              });
+                              let p: boolean = true;
+                              console.log(e, 'wo');
+                              if (p) {
+                                setFormData({
+                                  rdata: e,
+                                });
+                              }
+                            
                             }}
                             classNamePrefix="select"
                           />
@@ -1191,7 +1199,7 @@ const Settings = () => {
                       className="!w-[20px] !h-[20px]"
                     />
                   </div>{" "}
-                  <span>Saving...</span>
+                  <span>Updating...</span>
                 </>
               ) : (
                 <>

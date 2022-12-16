@@ -288,27 +288,27 @@ export const tokenTrackers: {
 export const inputsList = [
   {
     label: (
-      <div className="flex items-center">
+      <div key={0} className="flex items-center">
         <BiUserCircle className="mr-[6px]" size={20} /> <span>Name</span>
       </div>
     ),
-    value: "Name",
+    value: "name",
   },
   {
     label: (
-      <div className="flex items-center">
+      <div key={1} className="flex items-center">
         <BiEnvelope className="mr-[6px]" size={20} /> <span>Email</span>
       </div>
     ),
-    value: "Email",
+    value: "email",
   },
   {
     label: (
-      <div className="flex items-center">
+      <div key={2} className="flex items-center">
         <BiPhoneCall className="mr-[6px]" size={20} /> <span>Phone</span>
       </div>
     ),
-    value: "Phone",
+    value: "phone",
   },
 ];
 

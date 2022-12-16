@@ -42,7 +42,7 @@ const Blog = () => {
                 <p className="font-normal text-lg">
                   Here&#39;s what you need to know about Immutable X, the new
                   gaming-focused L2 blockchain on Rarible — and the exclusive
-                  double $IMX rewards program.{" "}
+                  double $IMX rewards program.
                 </p>
               </div>
               <div className="continue my-3">

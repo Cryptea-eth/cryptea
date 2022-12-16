@@ -813,7 +813,7 @@ const DashHome = () => {
                       let source = "";
                       if (template_data !== undefined) {
                         const { data: temp } = JSON.parse(template_data);
-                        const { image = { src: "" } } = temp;
+                        const { image = { src: "" } } = (typeof temp == 'string' ? JSON.parse(temp) : temp);
                         source = image.src;
                       }
                       return (
