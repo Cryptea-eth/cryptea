@@ -78,7 +78,7 @@ const Email = () => {
   ) : (
     <div className="h-screen">
       <Head>
-        <title>We Just Sent a Verification Mail - Cryptea</title>
+        <title>We Just Sent a Verification Mail | Cryptea</title>
         <meta
           name="description"
           content="Cryptea - Receive Payments Instantly With Ease."

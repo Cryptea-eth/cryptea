@@ -1,5 +1,6 @@
 import { useCryptea } from "../../../contexts/Cryptea";
 import { useState, useContext, useEffect } from "react";
+import { Button } from '@mui/material';
 import { HomeContext } from "../../../contexts/HomeContext";
 import Image from "next/image";
 import LogoSpace from "../logo";
@@ -14,6 +15,7 @@ import {
   uauth_connector,
 } from "../../../contexts/Cryptea/connectors";
 import { DashContext } from "../../../contexts/GenContext";
+import { post_request } from "../../../contexts/Cryptea/requests";
 
 const AuthModal = ({
   message,
@@ -65,6 +67,7 @@ const AuthModal = ({
   }>({
     metamask: false,
     uauth: false,
+    magic:false, 
     coinbase: false,
     walletconnect: false,
   });
@@ -141,7 +144,7 @@ const AuthModal = ({
     }
   };
 
-  const methods = ["metaauth", "walletconnectauth", "coinbaseauth", "uauth"];
+  const methods = ["metaauth", "walletconnectauth", "coinbaseauth", "uauth", "magicauth"];
 
   const storeAuth = (authMethod: string) => {
     const cache = localStorage.getItem('auths');
@@ -354,6 +357,29 @@ const AuthModal = ({
     }
   };
 
+  const magic = async () => {
+    if (isMainAuth()) {
+      updAuthError("");
+      setIsAuth({ ...isAuth, magic: true });
+
+      if (!isAuthenticated) {
+
+        setSupport(false);
+ 
+        storeAuth("magicauth");
+
+        if (userAuth) {
+
+            router.push('/');
+
+        }
+
+
+      }
+
+    }
+  }
+
   const walletconnect = async () => {
     if (isMainAuth()) {
       updAuthError("");
@@ -447,10 +473,37 @@ const AuthModal = ({
             <Image src={meta} alt="Metamask" width={40} height={40} />
           </button>
         ),
+        magicauth: (
+          <button
+            onClick={magic}
+            key={1}
+            style={{
+              fontFamily: "inherit",
+              borderColor: isAuth["magic"] ? "#f57059" : undefined,
+              color: isAuth["magic"] ? "#f57059" : undefined,
+              ...blurAuth("magic"),
+            }}
+            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
+          >
+            <div className="flex items-center">
+              {isAuth["magic"] && (
+                <Box className="mr-2 h-[22px] text-[#F57059]">
+                  <CircularProgress
+                    className="!w-[22px] !h-[22px]"
+                    color="inherit"
+                  />
+                </Box>
+              )}
+              Log with Email
+            </div>
+
+            <Image src={wallcon} alt="Email" width={40} height={40} />
+          </button>
+        ),
         walletconnectauth: (
           <button
             onClick={walletconnect}
-            key={1}
+            key={2}
             style={{
               fontFamily: "inherit",
               borderColor: isAuth["walletconnect"] ? "#f57059" : undefined,
@@ -477,7 +530,7 @@ const AuthModal = ({
         coinbaseauth: (
           <button
             onClick={clogin}
-            key={2}
+            key={3}
             style={{
               fontFamily: "inherit",
               borderColor: isAuth["coinbase"] ? "#f57059" : undefined,
@@ -504,7 +557,7 @@ const AuthModal = ({
         uauth: userAuth && (
           <button
             onClick={Ulogin}
-            key={3}
+            key={4}
             style={{
               fontFamily: "inherit",
               borderColor: isAuth["uauth"] ? "#f57059" : undefined,
@@ -568,7 +621,7 @@ const AuthModal = ({
         >
           <div className="relative max-w-[1500px] w-[80%] 4sm:w-[60%] min-w-[340px]">
             {/*content*/}
-            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+            <div className="border-0 rounded-[12px] shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div className="flex items-center justify-center py-5 border-solid rounded-t">
                 <LogoSpace />
@@ -599,15 +652,14 @@ const AuthModal = ({
               </div>
               {/*footer*/}
 
-              {(pathname != "/auth" && pathname != "/") && (
-                <div className="flex items-center justify-end p-2 border-t border-solid border-slate-200 rounded-b">
-                  <button
-                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    type="button"
+              {pathname != "/auth" && pathname != "/" && (
+                <div className="bg-[#f7f7f7] flex justify-center items-center rounded-b-[.9rem] p-3">
+                  <Button
                     onClick={useclose}
+                    className="!py-2 !font-bold !px-3 !min-w-[120px] !capitalize !flex !items-center !text-white !fill-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                   >
                     Close
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>

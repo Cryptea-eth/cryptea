@@ -9,7 +9,7 @@ const Usedkey = () => {
   return (
     <div className="h-screen">
       <Head>
-        <title>Used Reference Key - Cryptea</title>
+        <title>Used Reference Key | Cryptea</title>
         <meta
           name="description"
           content="Cryptea - Receive Payments Instantly With Ease."

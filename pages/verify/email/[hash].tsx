@@ -4,7 +4,7 @@ import Head from "next/head";
 import {useRouter} from "next/router";
 import Loader from "../../../app/components/elements/loader";
 import { useState, useEffect } from "react";
-import emailImg from "../../../public/images/email_success.svg";
+import emailImg from "../../../public/images/email_fail.svg";
 import Image from "next/image";
 import { get_request } from "../../../app/contexts/Cryptea/requests";
 
@@ -50,7 +50,7 @@ return isLoading ? (
 ) : (
   <div className="h-screen">
     <Head>
-      <title>Verification link invalid - Cryptea</title>
+      <title>Verification link invalid | Cryptea</title>
       <meta
         name="description"
         content="Cryptea - Receive Payments Instantly With Ease."
@@ -61,7 +61,7 @@ return isLoading ? (
     <Nav />
 
     <div className="w-full h-fit flex flex-col justify-items-center px-5 my-8">
-      <Image src={emailImg} width={200} height={222} alt={"Email Sent"} />
+      <Image src={emailImg} width={200} height={222} alt={"Email error"} />
 
       <h2 className="text-[#F57059] font-[400] 2md:text-2xl text-4xl mx-auto mt-24">
         Verification Failed, please try again

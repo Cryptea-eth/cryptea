@@ -453,7 +453,7 @@ const Api = () => {
                   </div>
 
                   <Link href={`/pay/${slug}/onetime`}>
-                    <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] transition-all cursor-pointer relative bg-white delay-150">
+                    <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] transition-all cursor-pointer relative bg-white delay-150">
                       View more payment data
                     </a>
                   </Link>
@@ -521,7 +521,7 @@ const Api = () => {
                         setGLoader(false);
                       }
                     }}
-                    className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] cursor-pointer font-bold hover:bg-[#fff1ef] flex items-center transition-all relative bg-white delay-150"
+                    className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] cursor-pointer font-bold hover:bg-[#fff6f5] flex items-center transition-all relative bg-white delay-150"
                   >
                     {gLoader ? (
                       <>
@@ -566,7 +566,7 @@ const Api = () => {
                     }
                   </div>
                   <Link href={`https://cryptea.gitbook.io/link`}>
-                    <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] cursor-pointer block font-bold hover:bg-[#fff1ef] transition-all relative bg-white delay-150">
+                    <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] cursor-pointer block font-bold hover:bg-[#fff6f5] transition-all relative bg-white delay-150">
                       Go to Documentation
                     </a>
                   </Link>
