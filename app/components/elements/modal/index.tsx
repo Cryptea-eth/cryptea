@@ -384,7 +384,7 @@ const AuthModal = ({
 
         if (userAuth) {
 
-            router.push('/');
+            router.push('/magic');
 
         }
 
