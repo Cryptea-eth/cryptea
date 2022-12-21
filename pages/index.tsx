@@ -8,6 +8,14 @@ import Router from 'next/router';
 
 const Home: NextPage = () => {
 
+  useEffect(() => {
+
+    if (localStorage.getItem('userToken') !== null) {
+        Router.push('/dashboard')
+    }
+
+  }, [])
+
   return (
     <div className="overflow-hidden">
       <Head>

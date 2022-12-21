@@ -16,6 +16,7 @@ import {
 } from "../../../contexts/Cryptea/connectors";
 import { DashContext } from "../../../contexts/GenContext";
 import { post_request } from "../../../contexts/Cryptea/requests";
+import { FaRegEnvelopeOpen } from "react-icons/fa";
 
 const AuthModal = ({
   message,
@@ -157,6 +158,11 @@ const AuthModal = ({
         if (methods.indexOf(e) != -1 && e !== authMethod) list.push(e);
       });
 
+      list = [
+        ...cache.split(","),
+        ...methods.filter((e) => (cache.split(",").indexOf(e) == -1 && e != authMethod)),
+      ];
+
     } else {
       
       methods.forEach((e: string) => {
@@ -165,7 +171,7 @@ const AuthModal = ({
 
     }
 
-    list.push(authMethod);
+    list.unshift(authMethod);
 
     localStorage.setItem("auths", list.join(","));
 
@@ -287,8 +293,11 @@ const AuthModal = ({
           setIsAuth({ ...isAuth, metamask: false });
         }
       } else {
-        updAuthError("Please refresh the page");
-
+        if (userAuth) {
+          router.push("/dashboard");
+        } else {
+          updAuthError("Please refresh the page");
+        }
         setIsAuth({ ...isAuth, metamask: false });
       }
     }
@@ -350,8 +359,13 @@ const AuthModal = ({
           setIsAuth({ ...isAuth, coinbase: false });
         }
       } else {
-        updAuthError("Please refresh the page");
-
+        
+      if (userAuth) {
+        router.push("/dashboard");
+      }else{
+        updAuthError("Please refresh the page"); 
+      }
+        
         setIsAuth({ ...isAuth, coinbase: false });
       }
     }
@@ -374,7 +388,10 @@ const AuthModal = ({
 
         }
 
-
+      }else{
+        if(userAuth){
+          router.push('/dashboard')
+        } 
       }
 
     }
@@ -431,8 +448,11 @@ const AuthModal = ({
           setIsAuth({ ...isAuth, walletconnect: false });
         }
       } else {
-        updAuthError("Please refresh the page");
-
+        if (userAuth) {
+          router.push("/dashboard");
+        } else {
+          updAuthError("Please refresh the page");
+        }
         setIsAuth({ ...isAuth, walletconnect: false });
       }
     }
@@ -457,7 +477,7 @@ const AuthModal = ({
               color: isAuth["metamask"] ? "#f57059" : undefined,
               ...blurAuth("metamask"),
             }}
-            className="transition-all rounded-md delay-500 hover:border-[#F57059] hover:text-[#F57059] items-center text-[16px] flex justify-between border-[1px] text-[#575757] w-full py-4 min-w-[320px] px-4"
+            className="transition-all rounded-md delay-500 hover:border-[#F57059] hover:text-[#F57059] items-center text-[16px] flex justify-between border-[1px] text-[#575757] w-full py-4 px-4"
           >
             <div className="flex items-center">
               {isAuth["metamask"] && (
@@ -473,7 +493,7 @@ const AuthModal = ({
             <Image src={meta} alt="Metamask" width={40} height={40} />
           </button>
         ),
-        magicauth: (
+        magicauth: userAuth && (
           <button
             onClick={magic}
             key={1}
@@ -483,7 +503,7 @@ const AuthModal = ({
               color: isAuth["magic"] ? "#f57059" : undefined,
               ...blurAuth("magic"),
             }}
-            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
+            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] flex justify-between text-[#575757] w-full py-4 px-4"
           >
             <div className="flex items-center">
               {isAuth["magic"] && (
@@ -494,10 +514,10 @@ const AuthModal = ({
                   />
                 </Box>
               )}
-              Log with Email
+              Email link
             </div>
 
-            <Image src={wallcon} alt="Email" width={40} height={40} />
+            <FaRegEnvelopeOpen size={34} color={'#f57059'}/>
           </button>
         ),
         walletconnectauth: (
@@ -510,7 +530,7 @@ const AuthModal = ({
               color: isAuth["walletconnect"] ? "#f57059" : undefined,
               ...blurAuth("walletconnect"),
             }}
-            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
+            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px]  flex justify-between text-[#575757] w-full py-4 px-4"
           >
             <div className="flex items-center">
               {isAuth["walletconnect"] && (
@@ -537,7 +557,7 @@ const AuthModal = ({
               color: isAuth["coinbase"] ? "#f57059" : undefined,
               ...blurAuth("coinbase"),
             }}
-            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
+            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] flex justify-between text-[#575757] w-full py-4 px-4"
           >
             <div className="flex items-center">
               {isAuth["coinbase"] && (
@@ -564,7 +584,7 @@ const AuthModal = ({
               color: isAuth["uauth"] ? "#f57059" : undefined,
               ...blurAuth("uauth"),
             }}
-            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] min-w-[320px] flex justify-between text-[#575757] w-full py-4 px-4"
+            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] flex justify-between text-[#575757] w-full py-4 px-4"
           >
             <div className="flex items-center">
               {isAuth["uauth"] && (
@@ -594,10 +614,13 @@ const AuthModal = ({
 
     const list: (JSX.Element | boolean)[] = []
 
+    const used: string[] = [];
+
     if (cache !== null) {
-        cache.split(',').forEach((ix: string) => {
-            if (auths.indexOf(ix) != -1) {
+        (cache).toLowerCase().split(',').forEach((ix: string) => {
+            if (auths.indexOf(ix) != -1 && used.indexOf(ix) == -1) {
                 list.push(buttons[ix])
+                used.push(ix);
             }
         });
 
