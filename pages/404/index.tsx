@@ -6,7 +6,7 @@ const Notfound = () => {
   return (
     <div className="h-screen">
       <Head>
-        <title>404 not found - Cryptea</title>
+        <title>404 not found | Cryptea</title>
         <meta
           name="description"
           content="Cryptea - Receive Payments Instantly With Ease."
