@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Loader from "../../app/components/elements/loader";
 import Head from 'next/head';
 import Nav from "../../app/components/elements/Nav";
@@ -18,13 +18,20 @@ const VerifyHash = () => {
 
     const { hash } = router.query;
 
+    const once = useRef<boolean>(false);
+
     useEffect(() => {
+
+        if(!once.current){
+
+            once.current = true
 
         axios
           .post("https://ab.cryptea.me/login/magic", {
-            magic: hash,
+            magic: String(hash),
           })
           .then((userx) => {
+
             const {
               email,
               img,
@@ -65,6 +72,8 @@ const VerifyHash = () => {
 
             setLoading(false);
           });
+
+        }
 
     }, [router.isReady, hash, router])
 
