@@ -61,13 +61,13 @@ const LineChart = ({
 
     const tooltipModel = model.tooltip;
 
-    if (!exportLabel) {
+    if (!exportLabel && tooltipModel.dataPoints[0] !== undefined) {
       const specialTip = document.querySelector(
         ".tooltiprep"
       ) as HTMLParagraphElement;
 
       (
-        specialTip || { innerHTML: '' }
+        specialTip || { innerHTML: "" }
       ).innerHTML = `$${tooltipModel.dataPoints[0].raw.toFixed(2)} - ${
         tooltipModel.dataPoints[0].label
       }`;
@@ -88,7 +88,7 @@ const LineChart = ({
         tooltip.querySelector(`.tooltip${name} .tooltip_sublabel`) || {
           textContent: "",
         }
-      ).textContent = "time: " + tooltipModel.dataPoints[0].label;
+      ).textContent = "time: " + (tooltipModel.dataPoints[0] || { label: '' }).label;
       (
         tooltip.querySelector(`.tooltip${name} .tooltip_value .value`) || {
           textContent: "",
