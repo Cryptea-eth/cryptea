@@ -235,7 +235,7 @@ String.prototype.delete = async function (this: string, id?: number) {
   );
 
   if (allowP !== undefined) {
-    const extra = pstring[1] !== undefined ? "/" + pstring[1] : "";
+    const extra = pstring[1] !== undefined ? "/" + pstring[1] : '/'+(id || "");
 
     try {
       const res = await del_request(`${allowP.endpoint}${extra}`);
@@ -255,7 +255,7 @@ String.prototype.delete = async function (this: string, id?: number) {
       }
     } catch (error) {
       const err = error as AxiosError;
-
+      console.log(err);
       if (err.response) {
         throw err.response.data;
       }

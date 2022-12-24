@@ -54,7 +54,7 @@ const SignupForm = () => {
         more = false;
       }
 
-      if (!validator.isEmail(validator.normalizeEmail(userEmail))) {
+      if (!validator.isEmail(userEmail)) {
         setError("The email provided is incorrect");
         setLoading(false);
         more = false;

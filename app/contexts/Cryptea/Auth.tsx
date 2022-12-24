@@ -136,7 +136,6 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
       router.pathname.indexOf("/verify/email") == -1
     ) {
       "user".get("*", true).then((cacheUser: any) => {
-        console.log("here");
 
         if (
           !Boolean(cacheUser?.email_verified_at) &&
@@ -154,10 +153,11 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
     }
   }, [router])
 
+
   useEffect(() => {
     if (localStorage.getItem('userToken') !== null) {
         setAuth(true);
-    }else{
+      }else{
        setAuth(false)
     }
   })

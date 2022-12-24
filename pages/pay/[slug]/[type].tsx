@@ -812,7 +812,7 @@ const Onetime = () => {
                   </div>
 
                   {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
@@ -960,7 +960,7 @@ const Onetime = () => {
                     </div>
 
                     {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] cursor-pointer text-[#f57059] block font-bold hover:bg-[#fff1ef] transition-all relative bg-white delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] cursor-pointer text-[#f57059] block font-bold hover:bg-[#fff6f5] transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
@@ -988,7 +988,7 @@ const Onetime = () => {
                     </div>
                   </div>
                   <Link href={`/pay/${String(slug).toLowerCase()}/settings`}>
-                    <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
+                    <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
                       Go To Settings
                     </a>
                   </Link>

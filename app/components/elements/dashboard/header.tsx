@@ -7,6 +7,7 @@ import {
   Popover,
   Tab,
   Tabs,
+  CircularProgress
 } from "@mui/material";
 import Image from "next/image";
 import React, { useContext, useState, useEffect, useRef } from "react";
@@ -35,11 +36,19 @@ const DashHeader = ({
 
   const [data, setData] = useState<any>({});
 
+  const [odata, setOdata] = useState<any[]>([]);
+
   const [isLoading, setLoading] = useState<boolean>(true);
+
+  const [mloader, setMloader] = useState<boolean>(false);
 
   const [newNote, setNewNote] = useState<boolean>(false);
 
+  const [noteData, setNoteData] = useState<any>({})
+
   const once = useRef<boolean>(true);
+
+  const mOnce = useRef<boolean>(true) 
 
   useEffect(() => {
 
@@ -49,10 +58,18 @@ const DashHeader = ({
 
         if (dx?.data) {
           if (typeof dx?.data == "object") {
-            setData(dx?.data);
+
+            setData(dx?.data.data);
+
+            setNoteData({
+              current_page: dx.data.current_page,
+              last_page: dx.data.last_page,
+            });            
+
+            // console.log(dx.data.data, 'ww')
 
             setNewNote(
-              Boolean(dx?.data.filter((d: any) => d.read == "false").length)
+              Boolean(dx?.data.data.filter((d: any) => d.read == "false").length)
             );
 
             if (isLoading) setLoading(false);
@@ -61,7 +78,7 @@ const DashHeader = ({
         }
 
           
-          setTimeout(itx, 3000);
+          setTimeout(itx, 5000);
 
       };
     
@@ -87,6 +104,69 @@ const DashHeader = ({
   const active =
     "before:content-[''] before:bottom-[25px] before:left-[28px] before:bg-[#f57059] before:h-[7px] before:rounded-[50%] before:w-[7px]";
 
+  const noteValues = (d: any, i: number) => {
+    let text: JSX.Element = <></>;
+
+    const data = JSON.parse(d.data || "{}");
+
+    const tags = JSON.parse(d.tags || "[]");
+
+    tags.forEach((e: string) => {
+      if (e == "payment") {
+        text = (
+          <>
+            <span className="font-[500] capitalize">{data.name}</span> paid{" "}
+            <b>${data.amount}</b>
+          </>
+        );
+      }
+    });
+
+    const dz = (Boolean(d.text) ? d.text : data.name).substr(0, 2);
+
+    return (
+      <div
+        key={i}
+        style={{
+          backgroundColor: !d.read ? "#f5705914" : undefined,
+        }}
+        className="w-full px-6 py-2 flex items-center"
+      >
+        <Avatar
+          sx={{
+            width: 30,
+            height: 30,
+            fontSize: "13px",
+            color: "rgba(0, 0, 0, .4)",
+            bgcolor: "#f57059",
+          }}
+          variant={"rounded"}
+          className="font-bold"
+        >
+          <strong>{dz.toUpperCase()}</strong>
+        </Avatar>
+
+        <div className="ml-3 max-w-[94%]">
+          <div
+            title={
+              Boolean(d.text)
+                ? d.text
+                : data.name + " paid" + " $" + data.amount
+            }
+            className="text-[14px] truncate"
+          >
+            {Boolean(d.text) ? d.text : text}
+          </div>
+
+          <span className="block  text-[12px] text-[#838383]">
+            {d.time} • {tags.join(" • ")}{" "}
+            {Boolean(data.link) ? " • " + data.link : ""}
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <div
@@ -96,7 +176,7 @@ const DashHeader = ({
         className="w-[360px] z-[1000000] 33md:w-[320px] bg-white flex-col max-h-[400px] top-[60px] right-0 shadow-md 2mdd:-right-[63px] rounded-md absolute"
       >
         <div className="px-5 pt-2 border-b-[2px] border-solid border-b-[rgb(194,194,194)]">
-          <div className="flex items-center mb-[7px]">
+          <div className="flex items-center">
             <h2 className="text-[rgb(32,33,36)] text-[1.1rem] flex items-center justify-between font-bold relative">
               Notifications
             </h2>
@@ -144,64 +224,72 @@ const DashHeader = ({
         </div>
 
         {Boolean(data.length) ? (
-          <div className="overflow-y-scroll cusscroller overflow-x-hidden">
-            {data.map((d: any, i: number) => {
-              let text: JSX.Element = <></>;
+          <div
+            onScroll={async (
+              e: React.UIEvent<HTMLDivElement, UIEvent> & {
+                target: {
+                  scrollHeight: number;
+                  scrollTop: number;
+                  clientHeight: number;
+                };
+              }
+            ) => {
+              const { scrollHeight, scrollTop, clientHeight } = e.target;
 
-              const data = JSON.parse(d.data || "{}");
+              const height = scrollHeight - clientHeight;
 
-              const tags = JSON.parse(d.tags || "[]");
+              if (scrollTop >= height - 30 && mOnce.current) {
 
-              tags.forEach((e: string) => {
-                if (e == "payment") {
-                  text = (
-                    <>
-                      <b>{data.name}</b> paid <b>${data.amount}</b>
-                    </>
+                mOnce.current = false;
+
+                if (noteData.current_page != noteData.last_page) {
+                  setMloader(true);
+
+                  const dxx = await get_request(
+                    "/notifications",
+                    {
+                      params: {
+                        page: noteData.current_page + 1,
+                      },
+                    },
+                    undefined,
+                    false
                   );
+
+                  // console.log("wpeo", Object.values(dxx?.data.data).length);
+
+                  setOdata([...odata, ...Object.values(dxx?.data.data)]);
+
+                  setNoteData({
+                    current_page: dxx?.data.current_page,
+                    last_page: dxx?.data.last_page,
+                  });
+
+                  if (!newNote) {
+                    setNewNote(
+                      Boolean(
+                        Object.values(dxx?.data.data).filter(
+                          (d: any) => d.read == "false"
+                        ).length
+                      )
+                    );
+                  }
+                  mOnce.current = true;
+                  setMloader(false);
                 }
-              });
+              }
+            }}
+            className="overflow-y-scroll cusscroller overflow-x-hidden"
+          >
+            {data.map((d: any, i: number) => noteValues(d, i))}
 
-              const dz = (Boolean(d.text) ? d.text : data.name).substr(0, 2);
+            {Boolean(odata) && odata.map((d: any, i: number) => noteValues(d, i))}
 
-              return (
-                <div
-                  key={i}
-                  style={{
-                    backgroundColor: !d.read ? "#f5705914" : undefined,
-                  }}
-                  className="w-full px-6 py-2 flex items-center"
-                >
-                  <Avatar
-                    sx={{
-                      width: 30,
-                      height: 30,
-                      fontSize: "13px",
-                      color: "rgba(0, 0, 0, .4)",
-                      bgcolor: "#f57059",
-                    }}
-                    variant={"rounded"}
-                    className="font-bold"
-                  >
-                    <strong>{dz.toUpperCase()}</strong>
-                  </Avatar>
-
-                  <div className="ml-3">
-                    <div
-                      title={Boolean(d.text) ? d.text : text}
-                      className="text-[14px] truncate"
-                    >
-                      {Boolean(d.text) ? d.text : text}
-                    </div>
-
-                    <span className="block  text-[12px] text-[#b3b3b3]">
-                      {d.time} • {tags.join(" • ")}{" "}
-                      {Boolean(data.link) ? " • " + data.link : ""}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+            {mloader && (
+              <div className="flex items-center py-2 justify-center">
+                <CircularProgress className="text-[#f57059]" size={25} />
+              </div>
+            )}
           </div>
         ) : (
           <div
@@ -224,7 +312,7 @@ const DashHeader = ({
               />
             </div>
 
-            <h2 className="text-[#F57059] font-[400] text-2xl mx-auto my-2">
+            <h2 className="text-[#8990a3] font-[600] text-xl mx-auto my-2">
               Nothing here for now
             </h2>
           </div>

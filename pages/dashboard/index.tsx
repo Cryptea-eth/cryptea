@@ -36,11 +36,12 @@ const DashboardIndex = () => {
   useEffect(() => {
 
     if(isAuthenticated !== undefined){
-      if(!isAuthenticated){
-        if(!active){
+      if(!isAuthenticated && !active && localStorage.getItem('userToken') === null){
+
           router.push('/auth')
-        }
+        
       } else {
+
          "user".get("*", true).then((e: any) => {
 
            if(!Boolean(e.email)) {
@@ -48,7 +49,6 @@ const DashboardIndex = () => {
               if (!Boolean(e.error)) {
                 router.push("/signup");
               }
-  
            }else{
            if (e !== null) {
              setData(typeof e == "object" ? e : { username: "", img: "" });

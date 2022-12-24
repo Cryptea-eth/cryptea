@@ -9,7 +9,7 @@ const Timeout = () => {
   return (
     <div className="h-screen">
       <Head>
-        <title>Seems Connection Timed out - Cryptea</title>
+        <title>Seems Connection Timed out | Cryptea</title>
         <meta
           name="description"
           content="Cryptea - Receive Payments Instantly With Ease."

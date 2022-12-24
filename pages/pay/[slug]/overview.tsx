@@ -284,7 +284,7 @@ const Overview = () => {
                       </div>
 
                       <Link href={`/pay/${slug}/onetime`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] transition-all cursor-pointer relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] transition-all cursor-pointer relative bg-white delay-150">
                           View more payment data
                         </a>
                       </Link>
@@ -340,7 +340,7 @@ const Overview = () => {
                       </div>
 
                       {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
@@ -423,7 +423,7 @@ const Overview = () => {
                         )}
                       </div>
                       <Link href={`/pay/${slug}/multiple`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
                           {data.type == "sub" || data.type == "both"
                             ? "View more subscription data"
                             : "Add subscription support to link"}
@@ -452,7 +452,7 @@ const Overview = () => {
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/edit`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
                           Edit Template
                         </a>
                       </Link>
@@ -480,7 +480,7 @@ const Overview = () => {
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/api`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
                           Lookup SDK/API
                         </a>
                       </Link>
@@ -507,7 +507,7 @@ const Overview = () => {
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/settings`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff1ef] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
                           Go To Settings
                         </a>
                       </Link>
