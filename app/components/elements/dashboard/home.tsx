@@ -6,7 +6,7 @@ import sortData from "./linkOverview/generateData";
 import Image from "next/image";
 import Direction from "./direction";
 import { get_request } from "../../../contexts/Cryptea/requests";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cryptoDeets } from "../../../functions/crypto";
 import axios from "axios";
 import CustomImg from "../customImg";
@@ -21,6 +21,8 @@ const DashHome = () => {
   });
 
   const [blur, removeBlur] = useState<boolean>(true);
+
+  const once = useRef<boolean>(true)
 
   const [rand, setRand] = useState<number>(0);
 
@@ -111,10 +113,16 @@ const DashHome = () => {
 
       if (blur) removeBlur(false);
 
-      setTimeout(init, 3000);
+      setTimeout(init, 5000);
     };
 
+    if(once.current){
+
+      once.current = false;
+
     init();
+    
+  }
   }, []);
 
   const change = (data: any[]): { value: number; direction: "up" | "down" } => {

@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { Button } from '@mui/material';
 import { BiSync } from "react-icons/bi";
 import axios, { AxiosError } from "axios";
+import { useCryptea } from "../../app/contexts/Cryptea";
 
 const VerifyHash = () => {
 
@@ -16,16 +17,11 @@ const VerifyHash = () => {
 
     const [isLoading, setLoading] = useState<boolean>(true);
 
-    const { hash } = router.query;
-
-    const once = useRef<boolean>(false);
+    const hash = router.query['hash'];
 
     useEffect(() => {
-
-        if(!once.current){
-
-            once.current = true
-
+      
+      if (hash !== undefined) {
         axios
           .post("https://ab.cryptea.me/login/magic", {
             magic: String(hash),
@@ -75,7 +71,8 @@ const VerifyHash = () => {
 
         }
 
-    }, [router.isReady, hash, router])
+    }, [hash])
+
 
 return isLoading ? (
   <Loader />

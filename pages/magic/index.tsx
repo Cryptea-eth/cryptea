@@ -5,7 +5,7 @@ import {
   TextField,
 } from "@mui/material";
 import LogoSpace from '../../app/components/elements/logo';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { post_request } from "../../app/contexts/Cryptea/requests";
 import { AxiosError } from "axios";
@@ -13,6 +13,8 @@ import { useCryptea } from "../../app/contexts/Cryptea";
 import { BiEnvelope } from "react-icons/bi";
 import Image from 'next/image';
 import emailImg from "../../public/images/email_success.svg";
+import { useRouter } from "next/router";
+import Loader from "../../app/components/elements/loader";
 
 const Magic = () => {
 
@@ -25,6 +27,22 @@ const Magic = () => {
     const [success, setSuccess] = useState<boolean>(false);
 
     const [error, setError] = useState<string>('');
+
+    const router = useRouter();
+
+    const { isAuthenticated } = useCryptea();
+
+    const [loader, setLoader] = useState<boolean>(true);
+
+    useEffect(() => {
+      if (isAuthenticated !== undefined) {
+        if(isAuthenticated){
+            router.push('/dashboard');
+        }else{
+          setLoader(false);
+        }
+      }
+    }, [isAuthenticated, router])
 
     const auth = async () => {
         if (loading) {
@@ -71,7 +89,7 @@ const Magic = () => {
     }
 
     return (
-      <div className="flex h-screen items-center flex-col justify-center">
+      !loader ? <div className="flex h-screen items-center flex-col justify-center">
         <Head>
           <title>Request Magic Link | Cryptea</title>
           <meta
@@ -160,7 +178,7 @@ const Magic = () => {
             </div>
           </>
         )}
-      </div>
+      </div> : <Loader />
     );
 }
 

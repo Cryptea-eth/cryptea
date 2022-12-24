@@ -8,16 +8,24 @@ import Router from 'next/router';
 
 const Home: NextPage = () => {
 
+  const { isAuthenticated } = useCryptea();
+
+  const [isLoading, setLoading] = useState(true);
+
   useEffect(() => {
 
-    if (localStorage.getItem('userToken') !== null) {
-        Router.push('/dashboard')
-    }
+    if (isAuthenticated !== undefined) {
+      if (isAuthenticated && localStorage.getItem("userToken") !== null) {
+        Router.push("/dashboard");
+      } else {
+        setLoading(false);
+      }
+  }
 
-  }, [])
+  }, [isAuthenticated])
 
   return (
-    <div className="overflow-hidden">
+    isLoading ? <Loader /> : <div className="overflow-hidden">
       <Head>
         <title>Launch App | Cryptea</title>
         <meta
