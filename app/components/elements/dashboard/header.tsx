@@ -7,6 +7,7 @@ import {
   Popover,
   Tab,
   Tabs,
+  CircularProgress
 } from "@mui/material";
 import Image from "next/image";
 import React, { useContext, useState, useEffect, useRef } from "react";
@@ -43,6 +44,8 @@ const DashHeader = ({
 
   const [newNote, setNewNote] = useState<boolean>(false);
 
+  const [noteData, setNoteData] = useState<any>({})
+
   const once = useRef<boolean>(true);
 
   const mOnce = useRef<boolean>(true) 
@@ -55,12 +58,18 @@ const DashHeader = ({
 
         if (dx?.data) {
           if (typeof dx?.data == "object") {
-            setData(dx?.data);
 
-            // console.log(dx.data)
+            setData(dx?.data.data);
+
+            setNoteData({
+              current_page: dx.data.current_page,
+              last_page: dx.data.last_page,
+            });            
+
+            // console.log(dx.data.data, 'ww')
 
             setNewNote(
-              Boolean(dx?.data.filter((d: any) => d.read == "false").length)
+              Boolean(dx?.data.data.filter((d: any) => d.read == "false").length)
             );
 
             if (isLoading) setLoading(false);
@@ -94,6 +103,69 @@ const DashHeader = ({
 
   const active =
     "before:content-[''] before:bottom-[25px] before:left-[28px] before:bg-[#f57059] before:h-[7px] before:rounded-[50%] before:w-[7px]";
+
+  const noteValues = (d: any, i: number) => {
+    let text: JSX.Element = <></>;
+
+    const data = JSON.parse(d.data || "{}");
+
+    const tags = JSON.parse(d.tags || "[]");
+
+    tags.forEach((e: string) => {
+      if (e == "payment") {
+        text = (
+          <>
+            <span className="font-[500] capitalize">{data.name}</span> paid{" "}
+            <b>${data.amount}</b>
+          </>
+        );
+      }
+    });
+
+    const dz = (Boolean(d.text) ? d.text : data.name).substr(0, 2);
+
+    return (
+      <div
+        key={i}
+        style={{
+          backgroundColor: !d.read ? "#f5705914" : undefined,
+        }}
+        className="w-full px-6 py-2 flex items-center"
+      >
+        <Avatar
+          sx={{
+            width: 30,
+            height: 30,
+            fontSize: "13px",
+            color: "rgba(0, 0, 0, .4)",
+            bgcolor: "#f57059",
+          }}
+          variant={"rounded"}
+          className="font-bold"
+        >
+          <strong>{dz.toUpperCase()}</strong>
+        </Avatar>
+
+        <div className="ml-3 max-w-[94%]">
+          <div
+            title={
+              Boolean(d.text)
+                ? d.text
+                : data.name + " paid" + " $" + data.amount
+            }
+            className="text-[14px] truncate"
+          >
+            {Boolean(d.text) ? d.text : text}
+          </div>
+
+          <span className="block  text-[12px] text-[#838383]">
+            {d.time} • {tags.join(" • ")}{" "}
+            {Boolean(data.link) ? " • " + data.link : ""}
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -153,80 +225,71 @@ const DashHeader = ({
 
         {Boolean(data.length) ? (
           <div
-            onScroll={(e: React.UIEvent<HTMLDivElement, UIEvent> & { target: { scrollHeight: number, scrollTop: number, clientHeight: number } }) => {
+            onScroll={async (
+              e: React.UIEvent<HTMLDivElement, UIEvent> & {
+                target: {
+                  scrollHeight: number;
+                  scrollTop: number;
+                  clientHeight: number;
+                };
+              }
+            ) => {
               const { scrollHeight, scrollTop, clientHeight } = e.target;
 
-              const height = scrollHeight - clientHeight; 
+              const height = scrollHeight - clientHeight;
 
               if (scrollTop >= height - 30 && mOnce.current) {
-                  
+
                 mOnce.current = false;
 
+                if (noteData.current_page != noteData.last_page) {
+                  setMloader(true);
 
+                  const dxx = await get_request(
+                    "/notifications",
+                    {
+                      params: {
+                        page: noteData.current_page + 1,
+                      },
+                    },
+                    undefined,
+                    false
+                  );
 
-                // come back here
+                  // console.log("wpeo", Object.values(dxx?.data.data).length);
+
+                  setOdata([...odata, ...Object.values(dxx?.data.data)]);
+
+                  setNoteData({
+                    current_page: dxx?.data.current_page,
+                    last_page: dxx?.data.last_page,
+                  });
+
+                  if (!newNote) {
+                    setNewNote(
+                      Boolean(
+                        Object.values(dxx?.data.data).filter(
+                          (d: any) => d.read == "false"
+                        ).length
+                      )
+                    );
+                  }
+                  mOnce.current = true;
+                  setMloader(false);
+                }
               }
-              
             }}
             className="overflow-y-scroll cusscroller overflow-x-hidden"
           >
-            {data.map((d: any, i: number) => {
-              let text: JSX.Element = <></>;
+            {data.map((d: any, i: number) => noteValues(d, i))}
 
-              const data = JSON.parse(d.data || "{}");
+            {Boolean(odata) && odata.map((d: any, i: number) => noteValues(d, i))}
 
-              const tags = JSON.parse(d.tags || "[]");
-
-              tags.forEach((e: string) => {
-                if (e == "payment") {
-                  text = (
-                    <>
-                      <span className="font-[500] capitalize">{data.name}</span> paid <b>${data.amount}</b>
-                    </>
-                  );
-                }
-              });
-
-              const dz = (Boolean(d.text) ? d.text : data.name).substr(0, 2);
-
-              return (
-                <div
-                  key={i}
-                  style={{
-                    backgroundColor: !d.read ? "#f5705914" : undefined,
-                  }}
-                  className="w-full px-6 py-2 flex items-center"
-                >
-                  <Avatar
-                    sx={{
-                      width: 30,
-                      height: 30,
-                      fontSize: "13px",
-                      color: "rgba(0, 0, 0, .4)",
-                      bgcolor: "#f57059",
-                    }}
-                    variant={"rounded"}
-                    className="font-bold"
-                  >
-                    <strong>{dz.toUpperCase()}</strong>
-                  </Avatar>
-
-                  <div className="ml-3">
-                    <div
-                      title={Boolean(d.text) ? d.text : (data.name + ' paid' +' $'+data.amount)}
-                      className="text-[14px] truncate"
-                    >
-                      {Boolean(d.text) ? d.text : text}
-                    </div>
-
-                    <span className="block  text-[12px] text-[#838383]">
-                      {d.time} • {tags.join(" • ")}{" "}
-                      {Boolean(data.link) ? " • " + data.link : ""}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+            {mloader && (
+              <div className="flex items-center py-2 justify-center">
+                <CircularProgress className="text-[#f57059]" size={25} />
+              </div>
+            )}
           </div>
         ) : (
           <div
