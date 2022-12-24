@@ -565,7 +565,7 @@ const Api = () => {
                       </>
                     }
                   </div>
-                  <Link href={`https://cryptea.gitbook.io/link`}>
+                  <Link href={`https://docs.cryptea.me/link/api/api-reference`}>
                     <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] cursor-pointer block font-bold hover:bg-[#fff6f5] transition-all relative bg-white delay-150">
                       Go to Documentation
                     </a>
