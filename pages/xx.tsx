@@ -18,7 +18,7 @@ const Xx = () => {
 
   return (
     <>
-      Welcome, we have been expecting you.
+    <span className="variable font-bold">Welcome, we have been expecting you.</span>  
     </>
   );
 }

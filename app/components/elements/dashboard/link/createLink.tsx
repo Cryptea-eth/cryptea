@@ -598,7 +598,7 @@ const NewLink = () => {
 
       {!loadpage && (
         <div className="w-screen min-w-[340px] linkadd 2md:pl-0 sm:px-2 flex justify-center items-center bg-pattern2 h-full min-h-screen">
-          <div className="w-full flex 2md:px-0 px-10 justify-center flex-col h-full backdrop-blur-[6px]">
+          <div className="w-full flex 2md:px-0 px-10 justify-center flex-col h-full backdrop-blur-[35px]">
             <LogoSpace
               className={"2mmd:mx-auto"}
               style={{

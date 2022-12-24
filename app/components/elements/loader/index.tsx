@@ -37,7 +37,7 @@ const Loader = ({
       {incLogo && (
         <div className="items-center flex justify-center">
           <Image src={logo} alt="cryptea" width={35} height={35} />
-          <div className="text-black text-xl ml-[5px] font-bold">CRYPTEA</div>
+          <div className="text-black text-xl ml-[5px] font-[600]">CRYPTEA</div>
           {/* <img src={logo1} alt="cryptea" width={100} /> */}
         </div>
       )}

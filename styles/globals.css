@@ -2,12 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;600;700;800;900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;600;700;800;900&display=swap'); */
 
 @import url('https://fonts.googleapis.com/css?family=Baloo+Bhaijaan|Ubuntu');
 
+@import '../public/font/css/general-sans.css';
+
 .App {
   text-align: center;
+}
+
+.variable {
+  font-family: 'GeneralSans-Variable', sans-serif !important;
 }
 
 ::-moz-selection {
@@ -31,7 +37,7 @@
 }
 
 body *:not(i, svg){
-    font-family: 'Manrope', sans-serif !important;
+    font-family: 'GeneralSans-Variable', sans-serif !important;
 }
 
 body{

@@ -41,6 +41,7 @@ const DashHeader = ({
 
   const once = useRef<boolean>(true);
 
+
   useEffect(() => {
 
     const itx = async () => {
@@ -50,6 +51,8 @@ const DashHeader = ({
         if (dx?.data) {
           if (typeof dx?.data == "object") {
             setData(dx?.data);
+
+            // console.log(dx.data)
 
             setNewNote(
               Boolean(dx?.data.filter((d: any) => d.read == "false").length)
@@ -144,7 +147,21 @@ const DashHeader = ({
         </div>
 
         {Boolean(data.length) ? (
-          <div className="overflow-y-scroll cusscroller overflow-x-hidden">
+          <div
+            onScroll={(e: React.UIEvent<HTMLDivElement, UIEvent> & { target: { scrollHeight: number, scrollTop: number, clientHeight: number } }) => {
+              const { scrollHeight, scrollTop, clientHeight } = e.target;
+
+              const height = scrollHeight - clientHeight; 
+
+              if (scrollTop >= height - 30) {
+
+                // come back here
+
+              }
+              
+            }}
+            className="overflow-y-scroll cusscroller overflow-x-hidden"
+          >
             {data.map((d: any, i: number) => {
               let text: JSX.Element = <></>;
 
@@ -224,7 +241,7 @@ const DashHeader = ({
               />
             </div>
 
-            <h2 className="text-[#F57059] font-[400] text-2xl mx-auto my-2">
+            <h2 className="text-[#8990a3] font-[600] text-xl mx-auto my-2">
               Nothing here for now
             </h2>
           </div>
