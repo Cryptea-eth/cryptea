@@ -12,9 +12,6 @@
   text-align: center;
 }
 
-.variable {
-  font-family: 'GeneralSans-Variable', sans-serif !important;
-}
 
 ::-moz-selection {
   background: rgb(255, 167, 151);
@@ -42,6 +39,7 @@ body *:not(i, svg){
 
 body{
   overflow-x:hidden;
+  color:rgb(32, 33, 36);
 }
 
 

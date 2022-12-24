@@ -35,12 +35,17 @@ const DashHeader = ({
 
   const [data, setData] = useState<any>({});
 
+  const [odata, setOdata] = useState<any[]>([]);
+
   const [isLoading, setLoading] = useState<boolean>(true);
+
+  const [mloader, setMloader] = useState<boolean>(false);
 
   const [newNote, setNewNote] = useState<boolean>(false);
 
   const once = useRef<boolean>(true);
 
+  const mOnce = useRef<boolean>(true) 
 
   useEffect(() => {
 
@@ -99,7 +104,7 @@ const DashHeader = ({
         className="w-[360px] z-[1000000] 33md:w-[320px] bg-white flex-col max-h-[400px] top-[60px] right-0 shadow-md 2mdd:-right-[63px] rounded-md absolute"
       >
         <div className="px-5 pt-2 border-b-[2px] border-solid border-b-[rgb(194,194,194)]">
-          <div className="flex items-center mb-[7px]">
+          <div className="flex items-center">
             <h2 className="text-[rgb(32,33,36)] text-[1.1rem] flex items-center justify-between font-bold relative">
               Notifications
             </h2>
@@ -153,10 +158,13 @@ const DashHeader = ({
 
               const height = scrollHeight - clientHeight; 
 
-              if (scrollTop >= height - 30) {
+              if (scrollTop >= height - 30 && mOnce.current) {
+                  
+                mOnce.current = false;
+
+
 
                 // come back here
-
               }
               
             }}
@@ -173,7 +181,7 @@ const DashHeader = ({
                 if (e == "payment") {
                   text = (
                     <>
-                      <b>{data.name}</b> paid <b>${data.amount}</b>
+                      <span className="font-[500] capitalize">{data.name}</span> paid <b>${data.amount}</b>
                     </>
                   );
                 }
@@ -205,13 +213,13 @@ const DashHeader = ({
 
                   <div className="ml-3">
                     <div
-                      title={Boolean(d.text) ? d.text : text}
+                      title={Boolean(d.text) ? d.text : (data.name + ' paid' +' $'+data.amount)}
                       className="text-[14px] truncate"
                     >
                       {Boolean(d.text) ? d.text : text}
                     </div>
 
-                    <span className="block  text-[12px] text-[#b3b3b3]">
+                    <span className="block  text-[12px] text-[#838383]">
                       {d.time} • {tags.join(" • ")}{" "}
                       {Boolean(data.link) ? " • " + data.link : ""}
                     </span>
