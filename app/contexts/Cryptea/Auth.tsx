@@ -155,7 +155,6 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
 
 
   useEffect(() => {
-    console.log(';le')
     if (localStorage.getItem('userToken') !== null) {
         setAuth(true);
       }else{
