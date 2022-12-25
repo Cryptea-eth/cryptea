@@ -9,7 +9,6 @@ import Link from 'next/link'
 import { Button } from '@mui/material';
 import { BiSync } from "react-icons/bi";
 import axios, { AxiosError } from "axios";
-import { useCryptea } from "../../app/contexts/Cryptea";
 
 const VerifyHash = () => {
 
@@ -23,11 +22,15 @@ const VerifyHash = () => {
       
       if (hash !== undefined) {
         axios
-          .post("https://ab.cryptea.me/login/magic", {
-            magic: String(hash),
-          })
+          .post(
+            `https://ab.cryptea.me/login/magic?tz=${window.jstz
+              .determine()
+              .name()}`,
+            {
+              magic: String(hash),
+            }
+          )
           .then((userx) => {
-
             const {
               email,
               img,
@@ -44,7 +47,7 @@ const VerifyHash = () => {
               email_verified_at: any;
             } = userx.data.data;
 
-           let user = {
+            let user = {
               id,
               email,
               username,
@@ -57,14 +60,16 @@ const VerifyHash = () => {
 
             localStorage.setItem("userToken", userx.data.token);
 
-            router.push('/dashboard');
-
+            if (accounts[0] == 'null') {
+              router.push('/signup');
+            }else {
+              router.push("/dashboard");
+            }
           })
           .catch((err) => {
-
             const error = err as AxiosError;
 
-            console.log(error)
+            console.log(error);
 
             setLoading(false);
           });
