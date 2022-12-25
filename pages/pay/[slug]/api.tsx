@@ -16,7 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import NumberFormat from "react-number-format";
-import { FiShare2, FiTrash2 } from "react-icons/fi";
+import { FiShare2, FiThumbsDown, FiThumbsUp, FiTrash2 } from "react-icons/fi";
 import { BiBook, BiCopy } from "react-icons/bi";
 import { initD } from "../../../app/components/elements/dashboard/link/data";
 import Link from "next/link";
@@ -53,6 +53,8 @@ const Api = () => {
 
   const [gLoader, setGLoader] = useState(false);
 
+  const [rLoader, setRLoader] = useState(false);
+
   const [data, setData] = useState<any>({});
 
   const [userLk, setUserLk] = useState<string>("");
@@ -80,6 +82,8 @@ const Api = () => {
       setHash('');
   
   }
+  
+  const [rdialog, revokeDialog] = useState<boolean>(false);
 
   const [error, setError] = useState<string>("");
 
@@ -117,6 +121,8 @@ const Api = () => {
           id: mDx.id,
 
           src,
+
+          username: user.username,
 
           title: mDx.title,
 
@@ -240,6 +246,105 @@ const Api = () => {
             </>
           )}
 
+          {rdialog && (
+            <>
+              <Modal
+                open={rdialog}
+                sx={{
+                  "&& .MuiBackdrop-root": {
+                    backdropFilter: "blur(5px)",
+                  },
+                }}
+                onClose={() => revokeDialog(false)}
+                className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+                aria-labelledby="Generate New Api Key"
+                aria-describedby="Generate Api"
+              >
+                <Box
+                  className="sm:w-full h-fit 3mdd:px-[2px]"
+                  sx={{
+                    minWidth: 300,
+                    width: "70%",
+                    maxWidth: 800,
+                    borderRadius: 6,
+                    outline: "none",
+                    p: 4,
+                    position: "relative",
+                    margin: "auto",
+                  }}
+                >
+                  <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+                    <div className="mb-2 flex items-start justify-between">
+                      <div>
+                        <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.4rem]">
+                          Revoke API key
+                        </h2>
+                      </div>
+
+                      <IconButton
+                        size={"medium"}
+                        onClick={() => revokeDialog(false)}
+                      >
+                        <MdClose
+                          size={20}
+                          color={"rgb(32,33,36)"}
+                          className="cursor-pointer"
+                        />
+                      </IconButton>
+                    </div>
+
+                    <span className="text-[#7c7c7c] mt-3 block font-[600] text-[18px] text-center ">
+                      Are you sure you want to revoke API key?
+                    </span>
+                  </div>
+
+                  <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+                    <div className="flex items-center">
+                      <Button
+                        onClick={async () => {
+                          setRLoader(true);
+
+                          revokeDialog(false);
+
+                          try {
+                            await post_request(
+                              `/generate/api/${data.id}/revoke`,
+                              {}
+                            );
+
+                            setGLoader(false);
+                          } catch (err) {
+                            const errx = err as any;
+
+                            console.log(errx, "ee");
+
+                            if (errx.response) {
+                              setError(errx.response.data.message);
+                            } else {
+                              setError("Failed, Check your internet access");
+                            }
+
+                            setRLoader(false);
+                          }
+                        }}
+                        className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] mr-1 !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                      >
+                        <FiThumbsUp className={"mr-2"} size={23} /> Yes
+                      </Button>
+
+                      <Button
+                        onClick={() => revokeDialog(false)}
+                        className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] ml-1 !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                      >
+                        <FiThumbsDown className={"mr-2"} size={23} /> No
+                      </Button>
+                    </div>
+                  </div>
+                </Box>
+              </Modal>
+            </>
+          )}
+
           <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
             <Sidebar page={"link"} />
 
@@ -280,9 +385,17 @@ const Api = () => {
                   </Tooltip>
                   <Avatar
                     alt={data.username}
-                    src={Boolean(data.img) ? data.img : ""}
-                    sx={{ width: 45, height: 45, marginLeft: "10px" }}
-                  />
+                    src={Boolean(data.img) ? data.img : undefined}
+                    sx={{
+                      width: 45,
+                      height: 45,
+                      marginLeft: "10px",
+                      fontWeight: "bold",
+                      bgcolor: !Boolean(data.img) ? "#f57059" : undefined,
+                    }}
+                  >
+                    {data.username?.charAt(0).toUpperCase()}
+                  </Avatar>
                 </div>
               </div>
 
@@ -309,7 +422,7 @@ const Api = () => {
                       .toFixed(2)}
                     thousandSeparator={true}
                     displayType={"text"}
-                    className="font-bold"
+                    className="font-[600]"
                     prefix={"$"}
                   />{" "}
                   - Onetime
@@ -323,7 +436,7 @@ const Api = () => {
                     )
                       ["data"].reduce((a: any, b: any) => a + b, 0)
                       .toFixed(2)}
-                    className="font-bold"
+                    className="font-[600]"
                     thousandSeparator={true}
                     displayType={"text"}
                     prefix={"$"}
@@ -464,7 +577,7 @@ const Api = () => {
                     {
                       <>
                         <div className="flex justify-between mb-[16px] items-center">
-                          <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
+                          <h2 className="font-[400] z-[1] text-[1.375rem] leading-[1.75rem] ">
                             Generate API key
                           </h2>
 
@@ -472,7 +585,7 @@ const Api = () => {
                             {error.length
                               ? error
                               : data.activeKey
-                              ? "Active"
+                              ? "Secured"
                               : ""}
                           </div>
                         </div>
@@ -489,54 +602,91 @@ const Api = () => {
                       </>
                     }
                   </div>
-                  <div
-                    onClick={async () => {
-                      if (gLoader) {
-                        return;
-                      }
+                  <div className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] font-bold justify-between hover:bg-[#fff6f5] flex items-center transition-all relative bg-white delay-150">
+                    <div
+                      onClick={async () => {
+                        if (gLoader) {
+                          return;
+                        }
 
-                      setGLoader(true);
+                        setGLoader(true);
 
-                      try {
-                        const ax = await post_request(
-                          `/generate/api/${data.id}`,
-                          {}
-                        );
+                        try {
+                          const ax = await post_request(
+                            `/generate/api/${data.id}`,
+                            {}
+                          );
 
-                        if (ax?.data.hash) {
-                          setHash(ax?.data.hash);
+                          if (ax?.data.hash) {
+                            setHash(ax?.data.hash);
+                            setGLoader(false);
+                          }
+                        } catch (err) {
+                          const errx = err as any;
+
+                          console.log(errx, "ee");
+
+                          if (errx.response) {
+                            setError(errx.response.data.message);
+                          } else {
+                            setError("Failed, Check your internet access");
+                          }
+
                           setGLoader(false);
                         }
-                      } catch (err) {
-                        const errx = err as any;
+                      }}
+                      className="cursor-pointer w-full"
+                    >
+                      {gLoader ? (
+                        <>
+                          <div className="mr-3 h-[20px] text-[#fff]">
+                            <CircularProgress
+                              color={"inherit"}
+                              className="!w-[20px] text-[#f57059] !h-[20px]"
+                            />
+                          </div>{" "}
+                          <span>Generating...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Generate new key</span>
+                        </>
+                      )}
+                    </div>
 
-                        console.log(errx, "ee");
+                    {data.activeKey && (
+                      <Tooltip
+                        arrow
+                        title="Remove api key, this would render this link api open to public use"
+                      >
+                        {/* CA-153e-2ftSpC-so5q3K */}
+                        <div
+                          onClick={() => {
+                            if (rLoader) {
+                              return;
+                            }
 
-                        if (errx.response) {
-                          setError(errx.response.data.message);
-                        } else {
-                          setError("Failed, Check your internet access");
-                        }
-
-                        setGLoader(false);
-                      }
-                    }}
-                    className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] cursor-pointer font-bold hover:bg-[#fff6f5] flex items-center transition-all relative bg-white delay-150"
-                  >
-                    {gLoader ? (
-                      <>
-                        <div className="mr-3 h-[20px] text-[#fff]">
-                          <CircularProgress
-                            color={"inherit"}
-                            className="!w-[20px] text-[#f57059] !h-[20px]"
-                          />
-                        </div>{" "}
-                        <span>Generating...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Generate new key</span>
-                      </>
+                            revokeDialog(true);
+                          }}
+                          className="cursor-pointer min-w-[100px] flex items-center ml-1"
+                        >
+                          {rLoader ? (
+                            <>
+                              <div className="mr-3 h-[20px] text-[#fff]">
+                                <CircularProgress
+                                  color={"inherit"}
+                                  className="!w-[20px] text-[#f57059] !h-[20px]"
+                                />
+                              </div>{" "}
+                              <span>Revoking...</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>Revoke Key</span>
+                            </>
+                          )}
+                        </div>
+                      </Tooltip>
                     )}
                   </div>
                 </div>
@@ -546,7 +696,7 @@ const Api = () => {
                     {
                       <>
                         <div className="flex justify-between mb-[16px] items-center">
-                          <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
+                          <h2 className="font-[400] z-[1] text-[1.375rem] leading-[1.75rem] ">
                             Documentation
                           </h2>
 
