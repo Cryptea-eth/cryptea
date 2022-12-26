@@ -1089,7 +1089,10 @@ export const PaymentProvider = ({
                 </div>
 
                 <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
-                  {/* Content here */}
+                  This popup came up, because you are using the wrong network on
+                  your crypto wallet, kindly switch networks to{" "}
+                  <b>{token.network}</b> after which click the reconnect button,
+                  <span className="block text-center w-full font-bold">or</span>Click reconnect and select <b>{token.network}</b> on your crypto wallet then connect. <br/> Based on your wallet configuration.
                 </span>
               </div>
 

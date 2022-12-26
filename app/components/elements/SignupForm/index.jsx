@@ -96,6 +96,7 @@ const SignupForm = () => {
 
               let userObj = {
                 email: validator.normalizeEmail(userEmail),
+                init: true
               };
 
               if (!eoa) {
