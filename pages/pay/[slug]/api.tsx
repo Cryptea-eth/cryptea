@@ -87,6 +87,8 @@ const Api = () => {
 
   const [error, setError] = useState<string>("");
 
+  const [ref, setRefresh] = useState("");
+
   useEffect(() => {
     const init = async () => {
       setUserX(await "user".get("*", true));
@@ -158,7 +160,7 @@ const Api = () => {
         init();
       }
     }
-  }, [isAuthenticated, slug, router.isReady, router]);
+  }, [isAuthenticated, slug, router.isReady, router, ref]);
 
   return (
     <>
@@ -312,7 +314,10 @@ const Api = () => {
                               {}
                             );
 
-                            setGLoader(false);
+                            setRLoader(false);
+
+                            setRefresh('rev')
+
                           } catch (err) {
                             const errx = err as any;
 
@@ -602,7 +607,7 @@ const Api = () => {
                       </>
                     }
                   </div>
-                  <div className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] font-bold justify-between hover:bg-[#fff6f5] flex items-center transition-all relative bg-white delay-150">
+                  <div className="text-[#f57059] font-bold justify-between flex items-center transition-all relative bg-white delay-150">
                     <div
                       onClick={async () => {
                         if (gLoader) {
@@ -620,6 +625,7 @@ const Api = () => {
                           if (ax?.data.hash) {
                             setHash(ax?.data.hash);
                             setGLoader(false);
+                            setRefresh('gen')
                           }
                         } catch (err) {
                           const errx = err as any;
@@ -635,7 +641,7 @@ const Api = () => {
                           setGLoader(false);
                         }
                       }}
-                      className="cursor-pointer w-full"
+                      className="cursor-pointer border-t pl-6 p-3 border-solid border-[rgb(218,220,224)] hover:bg-[#fff6f5] flex items-center transition-all delay-150 w-full"
                     >
                       {gLoader ? (
                         <>
@@ -659,7 +665,6 @@ const Api = () => {
                         arrow
                         title="Remove api key, this would render this link api open to public use"
                       >
-                        {/* CA-153e-2ftSpC-so5q3K */}
                         <div
                           onClick={() => {
                             if (rLoader) {
@@ -668,7 +673,7 @@ const Api = () => {
 
                             revokeDialog(true);
                           }}
-                          className="cursor-pointer min-w-[100px] flex items-center ml-1"
+                          className="cursor-pointer min-w-[180px] flex items-center border-t pr-6 transition-all delay-150 p-3 border-solid border-[rgb(218,220,224)] hover:bg-[#fff6f5]"
                         >
                           {rLoader ? (
                             <>

@@ -18,16 +18,13 @@ import SwipeableViews from "react-swipeable-views";
 import {
   MdAddLink,
   MdClose,
-  MdDeleteOutline,
   MdInfo,
   MdLink,
 } from "react-icons/md";
 import { FaCoins } from "react-icons/fa";
 import Link from "next/link";
 import Loader from "../../../app/components/elements/loader";
-import { RiDeleteBin2Line } from "react-icons/ri";
-import { BiCheck } from "react-icons/bi";
-import { FiTrash2 } from "react-icons/fi";
+import { FiThumbsDown, FiThumbsUp, FiTrash2 } from "react-icons/fi";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 import { useRouter } from "next/router";
 import Page from "../../../app/components/elements/dashboard";
@@ -301,50 +298,78 @@ const Links = () => {
       <div className="pt-[75px] px-5">
         {isLoading && <Loader />}
 
-        <Modal
-          open={Boolean(showLinkModal)}
-          onClose={handleClose}
-          aria-labelledby="Delete Link"
-          aria-describedby="Remove Link From List"
-        >
-          <Box sx={style}>
-            <div className="px-4 w-full items-center bg-white flex flex-col pt-[4rem] pb-5">
-              <div className="flex items-center absolute left-0 right-0 m-auto -top-[10px] text-white rounded-[50%] h-[90px] w-[90px] bg-[#aaa] justify-center">
-                <MdDeleteOutline size={40} />
-              </div>
+        {Boolean(showLinkModal) && (
+          <>
+            <Modal
+              open={Boolean(showLinkModal)}
+              onClose={handleClose}
+              aria-labelledby="Delete Link"
+              aria-describedby="Remove Link From List"
+              sx={{
+                "&& .MuiBackdrop-root": {
+                  backdropFilter: "blur(5px)",
+                },
+              }}
+              className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+            >
+              <Box
+                className="sm:w-full h-fit 3mdd:px-[2px]"
+                sx={{
+                  minWidth: 300,
+                  width: "70%",
+                  maxWidth: 800,
+                  borderRadius: 6,
+                  outline: "none",
+                  p: 4,
+                  position: "relative",
+                  margin: "auto",
+                }}
+              >
+                <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+                  <div className="mb-2 flex items-start justify-between">
+                    <div>
+                      <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.4rem]">
+                        Delete Link
+                      </h2>
+                    </div>
 
-              <h2 className="text-[18px] flex items-start font-bold text-bold pb-[10px]">
-                Are You Sure You Want To Delete This Link?
-              </h2>
+                    <IconButton size={"medium"} onClick={handleClose}>
+                      <MdClose
+                        size={20}
+                        color={"rgb(32,33,36)"}
+                        className="cursor-pointer"
+                      />
+                    </IconButton>
+                  </div>
 
-              <span>Note that this action is irreversible...</span>
+                  <span className="text-[#7c7c7c] mt-3 block font-[600] text-[18px] text-center ">
+                    You would not be able to recover this link again, although you can always create a new link but then all link data of deleted link would be lost, Are you sure you want to delete this link?
+                  </span>
+                </div>
 
-              <div className="py-2 mt-3 flex justify-center">
-                <Button
-                  variant="contained"
-                  className="!bg-[#aaa] !mr-2 !py-[13px] !font-medium !capitalize"
-                  fullWidth
-                  onClick={deleteLink}
-                >
-                  <>
-                    Yes{" "}
-                    <RiDeleteBin2Line className="ml-3 font-medium" size={18} />
-                  </>
-                </Button>
+                <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+                  <div className="flex items-center">
+                    <Button
+                      onClick={deleteLink}
+                      className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] mr-1 !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                    >
+                      <FiThumbsUp className={"mr-2"} size={23} /> Yes
+                    </Button>
 
-                <Button
-                  onClick={handleClose}
-                  variant="contained"
-                  className="!bg-[#F57059] !ml-2 !py-[13px] !font-medium !capitalize"
-                  fullWidth
-                >
-                  No
-                  <BiCheck className="ml-3 font-medium" size={18} />
-                </Button>
-              </div>
-            </div>
-          </Box>
-        </Modal>
+                    <Button
+                      onClick={handleClose}
+                      className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] ml-1 !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                    >
+                      <FiThumbsDown className={"mr-2"} size={23} /> No
+                    </Button>
+                  </div>
+                </div>
+              </Box>
+            </Modal>
+          </>
+        )}
+
+        
 
         {!Boolean(links.length) && !isLoading && (
           <div
@@ -790,9 +815,9 @@ const Links = () => {
 
                 const { image } =
                   tm_data !== undefined
-                    ? (typeof tm_data == "string"
+                    ? typeof tm_data == "string"
                       ? JSON.parse(tm_data)
-                      : tm_data)
+                      : tm_data
                     : { image: undefined };
 
                 const { src } =
