@@ -319,7 +319,7 @@ const Origin = ({ className }: { className?: string }) => {
                     >
                       {Boolean(data.introText.text.length)
                         ? data.introText.text
-                        : `${description}`}
+                        : `${description || '...'}`}
                     </div>
                   </div>
 
