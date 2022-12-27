@@ -5,11 +5,11 @@ import Head from 'next/head';
 
 const Loader = ({
   incLogo = true,
-  text = '',
+  text = "",
   fixed = true,
   color = undefined,
   sx = {},
-  head = true
+  head = true,
 }: {
   incLogo?: boolean;
   text?: any;
@@ -27,12 +27,11 @@ const Loader = ({
       }}
       className="h-full left-0 bg-white top-0 z-[10000000] flex flex-col justify-center items-center w-full"
     >
-
-      {head && <Head>
-
-        <title> Loading... | Cryptea </title>
-
-      </Head>}
+      {head && (
+        <Head>
+          <title> Loading... | Cryptea </title>
+        </Head>
+      )}
 
       {incLogo && (
         <div className="items-center flex justify-center">
@@ -43,15 +42,14 @@ const Loader = ({
       )}
       <Box
         className="text-[#F57059] justify-center "
-        sx={{ display: "flex", color, marginTop: incLogo ? '44px' : 0 }}
+        sx={{ display: "flex", color, marginTop: incLogo ? "44px" : 0 }}
       >
-        <CircularProgress
-          size={text ? 80 : 60}
-          color="inherit"
-        />
+        <CircularProgress size={text ? 80 : 60} color="inherit" />
       </Box>
       {text !== "" && (
-        <div style={{ color }} className="text-[#f57059] text-xl font-bold">{text}</div>
+        <div style={{ color }} className="text-[#f57059] text-xl font-bold">
+          {text}
+        </div>
       )}
     </div>
   );
