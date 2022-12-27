@@ -35,7 +35,9 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
       } else {
         ('user').get('*', true).then((e: any) => {
           
-            if (!Boolean(e.email)) {
+            const acc = JSON.parse(e.accounts);
+
+            if (!Boolean(e.email) || acc[0] == 'null' || acc[0] == 'undefined') {
 
                 router.push('/signup');
 

@@ -4,14 +4,18 @@ import { data } from "../../../templates/origin/data";
 import {
   Button,
   TextField,
-  LinearProgress,
   Box,
-  Alert
+  Alert,
+  InputAdornment,
+  CircularProgress
 } from "@mui/material";
 
 import Router from "next/router";
 import { useCryptea } from "../../../contexts/Cryptea";
 import Loader from "../loader";
+import LogoSpace from "../logo";
+import { BiEnvelope, BiUserCircle, BiWallet } from "react-icons/bi";
+import { MdOutlineDescription } from "react-icons/md";
 
 
 const SignupForm = () => {
@@ -30,6 +34,10 @@ const SignupForm = () => {
   const [error, setError] = useState("");
   const [loading, setMLoader] = useState(true);
 
+  const [userAddress, setUserAddress] = useState('');
+
+  const [eoa, setAoa] = useState(true);
+
   const submitForm = async () => {
 
     if (!isAuthenticated) {
@@ -37,13 +45,13 @@ const SignupForm = () => {
 
       setLoading(false);
     } else {
-      window.scrollTo(0, 0);
       setLoading(true);
       let more = true;
-      [userDescription, userEmail, userInfo].forEach((val) => {
+      [userDescription, userInfo].forEach((val) => {
         if (!val.length) {
           setError("Data Incomplete, Please required fields should be field");
           setLoading(false);
+          window.scrollTo(0, 0);
           more = false;
         }
       });
@@ -51,29 +59,54 @@ const SignupForm = () => {
       if (!validator.isAlphanumeric(userInfo)) {
         setError("Username cannot contain spaces or special characters");
         setLoading(false);
+        window.scrollTo(0, 0);
         more = false;
       }
 
-      if (!validator.isEmail(userEmail)) {
+      if (!validator.isEmail(userEmail) && eoa) {
         setError("The email provided is incorrect");
         setLoading(false);
+        window.scrollTo(0, 0);
         more = false;
       }
+
+      if(!validator.isEthereumAddress(userAddress) && !eoa){
+          setError("A valid Ethereum address is required");
+          setLoading(false);
+          window.scrollTo(0, 0);
+          more = false;
+      }
+      
 
       if (more) {
         try {
-          const email = await "user".get("email", true);
+          const e = await "user".get("*", true);
+          
+          const acc = JSON.parse(e.accounts);
 
-          if (!Boolean(email)) {
+          if (!Boolean(e.email) || acc[0] == "null" || acc[0] == "undefined") {
             try {
               const templateData = { name: "origin", data };
 
-              await "user".update({
-                username: userInfo,
-                email: validator.normalizeEmail(userEmail),
+              const def = {
                 desc: userDescription,
-                tz: window.jstz.determine().name()
-              });
+                tz: window.jstz.determine().name(),
+                username: userInfo,
+              };
+
+              let userObj = {
+                email: validator.normalizeEmail(userEmail),
+                init: true
+              };
+
+              if (!eoa) {
+                userObj = {
+                  address: userAddress,
+                  eoa
+                };
+              }
+
+              await "user".update({...userObj, ...def});
 
               await "links".save({
                 slug: userInfo.toLowerCase(),
@@ -81,7 +114,7 @@ const SignupForm = () => {
                 desc: userDescription,
                 onetime: "[]",
                 subscribers: "[]",
-                address: account,
+                address: eoa ? account : userAddress,
                 views: "[]",
                 type: "both",
                 amountMulti: JSON.stringify([0.1, 10, 50, 100]),
@@ -91,19 +124,20 @@ const SignupForm = () => {
               });
             } catch (err) {
               console.log(err);
-              if (err.message) {
+              if (err.response.message) {
                 setError(err.response.message);
+              } else if (err.message) {
+                setError(err.message);
               } else {
-                setError("Something Went Wrong Please Try Again Later");
+                setError("Something went wrong, please try again later");
               }
               setLoading(false);
               return;
             }
             console.log("sz");
             Router.push("/dashboard");
-
           } else {
-            console.log('s')
+            console.log("s");
             Router.push("/dashboard");
             setLoading(false);
           }
@@ -114,6 +148,7 @@ const SignupForm = () => {
           } else {
             setError("Something Went Wrong Please Try Again Later");
           }
+          window.scrollTo(0, 0);
           setLoading(false);
         }
       }
@@ -127,13 +162,30 @@ useEffect(() => {
 
       authenticate(true);
 
+      setMLoader(false);
+
     }else{
       
       authenticate(false);
+
+      ('user').get('*', true).then(e => {
+
+        console.log(e)
+
+        const addresses = JSON.parse(e.accounts);
+
+        if (addresses[0] == "null" || addresses[0] == "undefined") {
+          setAoa(false);
+        }
+
+        setMLoader(false);
+
+      }).catch(err => {
+        Router.push('/timeout');
+      })
       
     }
 
-    setMLoader(false);
   }
     
   }, [isAuthenticated, authenticate])
@@ -152,18 +204,23 @@ useEffect(() => {
           action="#"
           encType="multipart/form-data"
         >
-          <div className="w-full flex justify-center mt-8">
-            <div className="flex flex-col w-[900px] mx-7 items-center justify-center">
-              <div className="flex flex-row border-b border-[#F57059] justify-start w-full">
-                <div className="text-[#F57059] flex font-semibold py-4 w-full">
-                  <span className="text-xl">Signup</span>
+          <div className="3md:w-[296px] 2mdd:w-[370px] w-[340px] mx-auto flex flex-col justify-center h-screen">
+            <LogoSpace
+              className="mx-auto"
+              style={{
+                marginBottom: "60px",
+              }}
+            />
+
+            <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-row justify-start w-full">
+                <div className="text-[rgb(32, 33, 36)] justify-center flex font-bold py-4 w-full">
+                  <span className="text-[1.95rem] leading-[1.5rem]">
+                    Signup
+                  </span>
                 </div>
               </div>
-              {isLoading && (
-                <Box className="text-[#F57059]" sx={{ width: "100%" }}>
-                  <LinearProgress color="inherit" />
-                </Box>
-              )}
+              
 
               {error.length > 0 && <Alert severity="error">{error}</Alert>}
 
@@ -182,6 +239,13 @@ useEffect(() => {
                           "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
                             borderColor: `#f57059 !important`,
                           },
+                        }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <BiUserCircle size={20} color={"#121212"} />
+                            </InputAdornment>
+                          ),
                         }}
                         placeholder="wagmi"
                         name="username"
@@ -214,42 +278,96 @@ useEffect(() => {
                         name="desc"
                         fullWidth
                         multiline
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <MdOutlineDescription
+                                size={20}
+                                color={"#121212"}
+                              />
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     </div>
                   </div>
-                  <div name="inputEmail" className="rounded-md mt-8">
+                  <div className="rounded-md mt-8">
                     <div className="flex">
-                      <TextField
-                        label={"Email"}
-                        placeholder="wagmi@ngmi.eth"
-                        value={userEmail}
-                        sx={{
-                          "& .Mui-focused.MuiFormLabel-root": {
-                            color: "#f57059",
-                          },
-                          "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: `#f57059 !important`,
-                          },
-                        }}
-                        onChange={(e) => {
-                          setUserEmail(e.target.value);
-                          setError("");
-                        }}
-                        name="email"
-                        fullWidth
-                      />
+                      {eoa ? (
+                        <TextField
+                          label={"Email"}
+                          placeholder="wagmi@ngmi.eth"
+                          value={userEmail}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <BiEnvelope size={20} color={"#121212"} />
+                              </InputAdornment>
+                            ),
+                          }}
+                          sx={{
+                            "& .Mui-focused.MuiFormLabel-root": {
+                              color: "#f57059",
+                            },
+                            "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: `#f57059 !important`,
+                            },
+                          }}
+                          onChange={(e) => {
+                            setUserEmail(e.target.value);
+                            setError("");
+                          }}
+                          name="email"
+                          fullWidth
+                        />
+                      ) : (
+                        <TextField
+                          label={"Ethereum Address"}
+                          placeholder="0x340..."
+                          value={userAddress}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <BiWallet size={20} color={"#121212"} />
+                              </InputAdornment>
+                            ),
+                          }}
+                          sx={{
+                            "& .Mui-focused.MuiFormLabel-root": {
+                              color: "#f57059",
+                            },
+                            "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: `#f57059 !important`,
+                            },
+                          }}
+                          onChange={(e) => {
+                            setUserAddress(e.target.value);
+                            setError("");
+                          }}
+                          name="Ethereum Address"
+                          fullWidth
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-row justify-end w-full mt-8">
-                <Button
-                  variant="contained"
-                  type="submit"
-                  className="!text-sm !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-10"
-                >
-                  Save
+              <div className="flex flex-row w-full mt-3">
+                <Button onClick={submitForm} className="!py-3 !w-full !mt-3 !font-bold !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !transition-all !delay-500 !rounded-lg !text-[17px]">
+                  {isLoading ? (
+                    <>
+                      <div className="mr-3 h-[20px] text-[#fff]">
+                        <CircularProgress
+                          color={"inherit"}
+                          className="!w-[20px] !h-[20px]"
+                        />
+                      </div>{" "}
+                      <span>Just a sec...</span>
+                    </>
+                  ) : (
+                    <>Sign Up</>
+                  )}
                 </Button>
               </div>
             </div>

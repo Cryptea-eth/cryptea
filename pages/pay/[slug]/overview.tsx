@@ -401,7 +401,7 @@ const Overview = () => {
                         ) : (
                           <>
                             <div className="flex justify-between mb-[16px] items-center">
-                              <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
+                              <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] z-[1]">
                                 Subscribers
                               </h2>
 
@@ -434,7 +434,7 @@ const Overview = () => {
                     <div className="border-[rgb(218,220,224)] rounded-[8px] border relative bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
-                          <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
+                          <h2 className="font-[400] z-[1] text-[1.375rem] leading-[1.75rem] ">
                             Template
                           </h2>
 
@@ -461,7 +461,7 @@ const Overview = () => {
                     <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
-                          <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] ">
+                          <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] z-[1]">
                             SDK/APIs
                           </h2>
 

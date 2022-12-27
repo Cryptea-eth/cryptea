@@ -22,6 +22,8 @@ const Magic = () => {
 
     const [email, setEmail] = useState<string>('');
 
+    const [user, setUser] = useState<boolean>(true);
+
     const [loading, isLoading] = useState<boolean>(false);
 
     const [success, setSuccess] = useState<boolean>(false);
@@ -61,11 +63,13 @@ const Magic = () => {
 
         try {
 
-            await post_request("/login/magic/request", {
+           const req = await post_request("/login/magic/request", {
               email: validator.normalizeEmail(email),
             });
 
             isLoading(false);
+
+            setUser(req.data.user)              
 
             setSuccess(true);
 
@@ -88,8 +92,8 @@ const Magic = () => {
         }
     }
 
-    return (
-      !loader ? <div className="flex h-screen items-center flex-col justify-center">
+    return !loader ? (
+      <div className="flex h-screen items-center flex-col justify-center">
         <Head>
           <title>Request Magic Link | Cryptea</title>
           <meta
@@ -98,9 +102,11 @@ const Magic = () => {
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <div style={{
-            height: success ? '60px' : '90px'
-        }}>
+        <div
+          style={{
+            height: success ? "60px" : "90px",
+          }}
+        >
           <LogoSpace
             className="mx-auto"
             style={{
@@ -118,15 +124,22 @@ const Magic = () => {
               alt={"magic link sent"}
             />
 
-            <h2 className="mt-4 font-bold text-[25px]">Check your Email</h2>
+            <h2 className="mt-4 mb-2 font-bold text-[25px]">
+              Check your Email
+            </h2>
+            <span className="text-[18px] block text-center w-[320px] mx-auto font-[500]">
+              {user
+                ? "Magic link sent successfully, check your email and click the link provided to sign in."
+                : "Magic link sent successfully, check your email and click the link provided to sign up, or refresh the page to try another email address."}
+            </span>
           </div>
         ) : (
           <>
-            <h2 className="text-[rgb(32,33,36)] mb-[32px] font-[700] flex items-center justify-between relative mx-auto text-center text-[1.95rem] leading-[1.5rem]">
+            <h2 className="text-[rgb(32,33,36)] mb-[32px] font-[600] flex items-center justify-between relative mx-auto text-center text-[1.95rem] leading-[1.5rem]">
               Welcome
             </h2>
 
-            <div className="min-w-[340px] px-2">
+            <div className="3md:w-[296px] 2mdd:w-[370px] w-[340px] px-2">
               <TextField
                 value={email}
                 onChange={(e: any) => {
@@ -154,7 +167,7 @@ const Magic = () => {
                 fullWidth
                 helperText={Boolean(error) ? error : ""}
                 error={Boolean(error)}
-                placeholder="test@cryptea.me"
+                placeholder="hello@cryptea.me"
               />
 
               <Button
@@ -178,7 +191,9 @@ const Magic = () => {
             </div>
           </>
         )}
-      </div> : <Loader />
+      </div>
+    ) : (
+      <Loader />
     );
 }
 

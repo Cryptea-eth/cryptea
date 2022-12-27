@@ -1,4 +1,4 @@
-import empty from "../../../../public/images/empty2.png";
+import empty from "../../../../../public/images/empty2.png";
 import {
   Avatar,
   ClickAwayListener,
@@ -7,13 +7,13 @@ import {
   Popover,
   Tab,
   Tabs,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import Image from "next/image";
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { BiBell } from "react-icons/bi";
-import { get_request } from "../../../contexts/Cryptea/requests";
-import { dash, DashContext } from "../../../contexts/GenContext";
+import { get_request } from "../../../../contexts/Cryptea/requests";
+import { dash, DashContext } from "../../../../contexts/GenContext";
 
 const DashHeader = ({
   className,
@@ -44,52 +44,43 @@ const DashHeader = ({
 
   const [newNote, setNewNote] = useState<boolean>(false);
 
-  const [noteData, setNoteData] = useState<any>({})
+  const [noteData, setNoteData] = useState<any>({});
 
   const once = useRef<boolean>(true);
 
-  const mOnce = useRef<boolean>(true) 
+  const mOnce = useRef<boolean>(true);
 
   useEffect(() => {
-
     const itx = async () => {
-  
-       const dx = await get_request("/notifications", {}, undefined, false);
+      const dx = await get_request("/notifications", {}, undefined, false);
 
-        if (dx?.data) {
-          if (typeof dx?.data == "object") {
+      if (dx?.data) {
+        if (typeof dx?.data == "object") {
+          setData(dx?.data.data);
 
-            setData(dx?.data.data);
+          setNoteData({
+            current_page: dx.data.current_page,
+            last_page: dx.data.last_page,
+          });
 
-            setNoteData({
-              current_page: dx.data.current_page,
-              last_page: dx.data.last_page,
-            });            
+          // console.log(dx.data.data, 'ww')
 
-            // console.log(dx.data.data, 'ww')
+          setNewNote(
+            Boolean(dx?.data.data.filter((d: any) => d.read == "false").length)
+          );
 
-            setNewNote(
-              Boolean(dx?.data.data.filter((d: any) => d.read == "false").length)
-            );
-
-            if (isLoading) setLoading(false);
-
-          }
+          if (isLoading) setLoading(false);
         }
+      }
 
-          
-          setTimeout(itx, 5000);
+      setTimeout(itx, 5000);
+    };
 
-      };
-    
-  if (once.current) {
+    if (once.current) {
+      once.current = false;
 
-   once.current = false;
-
-   itx();
-
-  }
-
+      itx();
+    }
   }, []);
 
   const handleChange = (event: React.SyntheticEvent, e: any) => setValue(e);
@@ -239,7 +230,6 @@ const DashHeader = ({
               const height = scrollHeight - clientHeight;
 
               if (scrollTop >= height - 30 && mOnce.current) {
-
                 mOnce.current = false;
 
                 if (noteData.current_page != noteData.last_page) {
@@ -283,7 +273,8 @@ const DashHeader = ({
           >
             {data.map((d: any, i: number) => noteValues(d, i))}
 
-            {Boolean(odata) && odata.map((d: any, i: number) => noteValues(d, i))}
+            {Boolean(odata) &&
+              odata.map((d: any, i: number) => noteValues(d, i))}
 
             {mloader && (
               <div className="flex items-center py-2 justify-center">
@@ -370,6 +361,7 @@ const DashHeader = ({
             sx={{
               width: 40,
               height: 40,
+              fontWeight: "bold",
               bgcolor: !Boolean(dp) ? "#f57059" : undefined,
             }}
             alt={username}

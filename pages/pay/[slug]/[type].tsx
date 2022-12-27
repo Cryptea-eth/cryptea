@@ -501,9 +501,18 @@ const Onetime = () => {
                 </Tooltip>
                 <Avatar
                   alt={data.username}
-                  src={Boolean(data.img) ? data.img : ""}
-                  sx={{ width: 45, height: 45, marginLeft: "10px" }}
-                />
+                  src={Boolean(data.img) ? data.img : undefined}
+                  sx={{
+                    width: 45,
+                    height: 45,
+                    marginLeft: "10px",
+                    fontWeight: "bold",
+                    bgcolor: !Boolean(data.img) ? "#f57059" : undefined,
+                  }}
+                >
+                  {data.username?.charAt(0).toUpperCase()}
+                </Avatar>
+                
               </div>
             </div>
 
@@ -998,7 +1007,7 @@ const Onetime = () => {
                   <div className="p-6 relative">
                     <div className="flex justify-between mb-[16px] items-center">
                       <h2
-                        data-value={(rows.length < 10 ? '0' : '') + rows.length}
+                        data-value={(rows.length < 10 ? "0" : "") + rows.length}
                         className="text-[1.3rem] text-[rgb(32,33,36)] leading-[1.6rem] font-[400] after:content-[attr(data-value)] after:absolute after:bg-[#f57059] after:w-fit after:text-white after:-right-[30px] after:font-bold after:text-[12px] after:rounded-md after:px-[5px] after:h-fit relative"
                       >
                         {linkType == "onetime" ? "Payments" : "Subscribers"}

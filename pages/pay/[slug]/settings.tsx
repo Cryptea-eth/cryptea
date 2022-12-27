@@ -286,6 +286,8 @@ const Settings = () => {
         setData({
           id: mDx.id,
 
+          username: user.username,
+
           src,
 
           redirect: mDx.redirect,
@@ -470,713 +472,727 @@ const Settings = () => {
 
       {isLoading && <Loader />}
 
-      {!isLoading && <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
-        <Sidebar page={"link"} />
-
-        <div
-          className={`body pb-6 transition-all delay-500 ${
-            sidebar?.openPage ? "pl-[257px]" : "pl-[75px]"
-          } w-full h-full 2sm:!pl-[75px]`}
-        >
-          <ShareLink
-            data={{
-              src: data.src,
-              usrc: data.img,
-              title: data.title,
-              desc: data.desc,
-              userLk: `${window.location.origin}/pay/${slug}`,
-              slug: String(slug),
-            }}
-            toggleSocial={(ee: boolean) => toggleSocial(ee)}
-            open={social}
-          />
-
-          <div className="pl-5 pr-2 flex items-center justify-between min-h-[75px] py-3 border-b sticky top-0 bg-white z-10 w-full">
-            <div className="text-truncate capitalize text-[rgb(32,33,36)] text-[19px] mr-1">
-              <Link href={`/pay/${slug}/overview`}>
-                <a>{data.title !== undefined ? data.title : slug}</a>
-              </Link>
-            </div>
-
-            <div className="flex items-center">
-              <Tooltip arrow title="Share Link">
-                <IconButton
-                  onClick={() => toggleSocial(!social)}
-                  size="large"
-                  className="cursor-pointer flex items-center justify-center"
-                >
-                  <FiShare2 color={"rgb(32,33,36)"} size={22} />
-                </IconButton>
-              </Tooltip>
-              <Avatar
-                alt={data.username}
-                src={Boolean(data.img) ? data.img : ""}
-                sx={{ width: 45, height: 45, marginLeft: "10px" }}
-              />
-            </div>
-          </div>
+      {!isLoading && (
+        <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
+          <Sidebar page={"link"} />
 
           <div
-            style={{
-              maxWidth: !sidebar?.openPage ? "831px" : "661px",
-            }}
-            className="mb-6 mt-3 mx-auto 2sm:px-3"
+            className={`body pb-6 transition-all delay-500 ${
+              sidebar?.openPage ? "pl-[257px]" : "pl-[75px]"
+            } w-full h-full 2sm:!pl-[75px]`}
           >
-            <div className="flex relative items-center">
-              {" "}
-              <Link href={`/pay/${slug}/overview`}>
-                <a>
-                  <IconButton className="absolute bottom-[0px]">
-                    <MdArrowBackIos
-                      color={"rgb(32,33,36)"}
-                      className="relative left-[4px]"
-                      size={18}
-                    />
+            <ShareLink
+              data={{
+                src: data.src,
+                usrc: data.img,
+                title: data.title,
+                desc: data.desc,
+                userLk: `${window.location.origin}/pay/${slug}`,
+                slug: String(slug),
+              }}
+              toggleSocial={(ee: boolean) => toggleSocial(ee)}
+              open={social}
+            />
+
+            <div className="pl-5 pr-2 flex items-center justify-between min-h-[75px] py-3 border-b sticky top-0 bg-white z-10 w-full">
+              <div className="text-truncate capitalize text-[rgb(32,33,36)] text-[19px] mr-1">
+                <Link href={`/pay/${slug}/overview`}>
+                  <a>{data.title !== undefined ? data.title : slug}</a>
+                </Link>
+              </div>
+
+              <div className="flex items-center">
+                <Tooltip arrow title="Share Link">
+                  <IconButton
+                    onClick={() => toggleSocial(!social)}
+                    size="large"
+                    className="cursor-pointer flex items-center justify-center"
+                  >
+                    <FiShare2 color={"rgb(32,33,36)"} size={22} />
                   </IconButton>
-                </a>
-              </Link>{" "}
-              <h1 className="text-[rgb(32,33,36)] capitalize mb-[5px] font-[500] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
-                <>
-                  <FiSettings className="mr-2" size={23} />
-                  Link Settings
-                </>
-              </h1>
+                </Tooltip>
+                <Avatar
+                  alt={data.username}
+                  src={Boolean(data.img) ? data.img : undefined}
+                  sx={{
+                    width: 45,
+                    height: 45,
+                    marginLeft: "10px",
+                    fontWeight: "bold",
+                    bgcolor: !Boolean(data.img) ? "#f57059" : undefined,
+                  }}
+                >
+                  {data.username?.charAt(0).toUpperCase()}
+                </Avatar>
+              </div>
             </div>
 
-            <p
+            <div
               style={{
-                maxWidth: !sidebar?.openPage ? "1031px" : "861px",
+                maxWidth: !sidebar?.openPage ? "831px" : "661px",
               }}
-              className="text-[1.2rem] capitalize text-center text-[rgb(95,99,104)] leading-[1.25rem] tooltiprep block"
+              className="mb-6 mt-3 mx-auto 2sm:px-3"
             >
-              change everything about this link
-            </p>
-
-            {success && (
-              <Alert className="w-full mt-3" severity="success">
-                <AlertTitle>Link updated successfully</AlertTitle>
-              </Alert>
-            )}
-
-            {(checkError() || Boolean(genError.length)) && (
-              <Alert className="w-full font-bold mt-3 mb-2" severity="error">
-                {genError.length ? genError : "Incorrect input data"}
-              </Alert>
-            )}
-
-            <div className="col-span-full rounded-[8px] bg-white overflow-hidden mt-3">
-              <div className="px-6 pt-6 relative pb-3">
-                <div className="">
-                  <div id="basic" className="mb-5">
-                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.2rem]">
-                      Basic Details
-                    </h2>
-                    <span>Change Details of your link</span>
-                  </div>
-
-                  <div className="w-full">
-                    <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Title</p>
-                    </div>
-                    <div className="">
-                      <div className="rounded-md">
-                        <div className="flex">
-                          <TextField
-                            value={formdata["title"]}
-                            onChange={(e: any) => {
-                              setFormData({
-                                title: e.target.value,
-                              });
-                            }}
-                            className="bg-[white]"
-                            sx={{
-                              "& .Mui-focused.MuiFormLabel-root": {
-                                color: "#f57059",
-                              },
-                              "& .Mui-focused .MuiOutlinedInput-notchedOutline":
-                                {
-                                  borderColor: `#f57059 !important`,
-                                },
-                            }}
-                            fullWidth
-                            placeholder="Link title"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="w-full">
-                    <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Description</p>
-                    </div>
-                    <div className="">
-                      <div className="rounded-md">
-                        <div className="flex">
-                          <TextField
-                            multiline
-                            value={formdata["desc"]}
-                            onChange={(e: any) => {
-                              setFormData({
-                                desc: e.target.value,
-                              });
-                            }}
-                            minRows={3}
-                            className="bg-[white]"
-                            sx={{
-                              "& .Mui-focused.MuiFormLabel-root": {
-                                color: "#f57059",
-                              },
-                              "& .Mui-focused .MuiOutlinedInput-notchedOutline":
-                                {
-                                  borderColor: `#f57059 !important`,
-                                },
-                            }}
-                            fullWidth
-                            placeholder="Link Description"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="w-full">
-                    <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Link Type</p>
-                    </div>
-                    <div className="">
-                      <div className="rounded-md">
-                        <div className="flex">
-                          <ToggleButtonGroup
-                            value={formdata.type}
-                            sx={{
-                              justifyContent: "space-between",
-                              width: "100%",
-                              "& .Mui-selected": {
-                                backgroundColor: `rgba(245, 112, 89, 0.8) !important`,
-                                color: `#fff !important`,
-                              },
-                              "& .MuiButtonBase-root:first-of-type": {
-                                marginLeft: "0px !important",
-                              },
-                              "& .MuiButtonBase-root": {
-                                padding: "10px 15px !important",
-                              },
-                              "& .MuiToggleButtonGroup-grouped": {
-                                borderRadius: "4px !important",
-                                minWidth: 'fit-content',
-                                marginLeft: 3,
-                                backgroundColor: "#1212121a",
-                                border: "none",
-                              },
-                            }}
-                            exclusive
-                            className="w-full cusscroller overflow-y-hidden mb-2 pb-1"
-                            onChange={(e: any) => {
-                              if (e.target.value !== undefined) {
-                                setFormData({
-                                  ...data,
-                                  type: e.target.value,
-                                });
-                              }
-                            }}
-                          >
-                            <ToggleButton
-                              sx={{
-                                textTransform: "capitalize",
-                                fontWeight: "bold",
-                                marginRight: "5px",
-                              }}
-                              value={"onetime"}
-                            >
-                              <GiTwoCoins className="mr-2" size={20} /> Onetime
-                            </ToggleButton>
-                            <ToggleButton
-                              sx={{
-                                textTransform: "capitalize",
-                                fontWeight: "bold",
-                                marginRight: "5px",
-                              }}
-                              value={"sub"}
-                            >
-                              <FaCoins className="mr-2" size={20} />{" "}
-                              Subscription
-                            </ToggleButton>
-                            <ToggleButton
-                              sx={{
-                                textTransform: "capitalize",
-                                fontWeight: "bold",
-                                marginRight: "5px",
-                              }}
-                              value={"both"}
-                            >
-                              <RiCoinLine className="mr-2" size={20} /> Onetime
-                              & Subscription
-                            </ToggleButton>
-                          </ToggleButtonGroup>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="w-full">
-                    <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Required Data</p>
-                    </div>
-                    <div className="">
-                      <div className="rounded-md">
-                        <div className="flex">
-                          <Select
-                            isClearable={true}
-                            name="Required Inputs"
-                            placeholder={"Inputs..."}
-                            options={options}
-                            styles={{
-                              option: (provided, state) => {
-                                return {
-                                  ...provided,
-                                  backgroundColor: state.isSelected
-                                    ? "#f57059"
-                                    : "transparent",
-                                  zIndex: 1000,
-                                  position: "relative",
-                                  "&:active": {
-                                    backgroundColor: "#f57059",
-                                  },
-                                  "&:hover": {
-                                    backgroundColor: state.isSelected
-                                      ? undefined
-                                      : `#f5705929`,
-                                  },
-                                };
-                              },
-                              container: (provided, state) => ({
-                                ...provided,
-                                minHeight: "58px",
-                                width: "100%",
-                                "& .select__value-container": {
-                                  padding: "11.5px 14px",
-                                },
-                                "& .select__control:hover": {
-                                  borderColor: "#121212",
-                                },
-                                "& .select__control--is-focused": {
-                                  borderWidth: "2px",
-                                  borderColor: `#f57059 !important`,
-                                  boxShadow: "none",
-                                },
-                              }),
-                            }}
-                            isMulti
-                            value={formdata["rdata"]}
-                            onChange={(e: any) => {
-                              let p: boolean = true;
-                              console.log(e, 'wo');
-                              if (p) {
-                                setFormData({
-                                  rdata: e,
-                                });
-                              }
-                            
-                            }}
-                            classNamePrefix="select"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-10">
-                  <div className="mb-5" id="amount">
-                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.2rem]">
-                      Amount Config
-                    </h2>
-                    <span>Change link Amount Settings</span>
-                  </div>
-
-                  <div className="w-full">
-                    <Tooltip
-                      placement="bottom"
-                      arrow
-                      title={
-                        "Crypto accepted by link for payment, leaving this empty makes all supported crypto valid as payment"
-                      }
-                    >
-                      <div className="font-semibold w-fit cursor-default mt-4 flex items-center mb-2 text-[#525252]">
-                        <p className="block mr-1">Accepted Crypto</p>
-                        <MdInfo size={20} />
-                      </div>
-                    </Tooltip>
-
-                    <div className="">
-                      <div className="rounded-md">
-                        <div className="flex">
-                          <Select
-                            isClearable={true}
-                            filterOption={createFilter({
-                              stringify: (option) =>
-                                `${option.value} ${option.data.name}`,
-                            })}
-                            name="Accepted Crypto"
-                            placeholder={"Crypto..."}
-                            options={acceptOptions}
-                            styles={{
-                              option: (provided, state) => {
-                                return {
-                                  ...provided,
-                                  backgroundColor: state.isSelected
-                                    ? "#f57059"
-                                    : "transparent",
-                                  zIndex: 1000,
-                                  position: "relative",
-                                  "&:active": {
-                                    backgroundColor: "#f57059",
-                                  },
-                                  "&:hover": {
-                                    backgroundColor: state.isSelected
-                                      ? undefined
-                                      : `#f5705929`,
-                                  },
-                                };
-                              },
-                              container: (provided, state) => ({
-                                ...provided,
-                                minHeight: "58px",
-                                width: "100%",
-                                "& .select__value-container": {
-                                  padding: "11.5px 14px",
-                                },
-                                "& .select__control:hover": {
-                                  borderColor: "#121212",
-                                },
-                                "& .select__control--is-focused": {
-                                  borderWidth: "2px",
-                                  borderColor: `#f57059 !important`,
-                                  boxShadow: "none",
-                                },
-                              }),
-                            }}
-                            isMulti
-                            value={formdata["acceptedCrypto"]}
-                            onChange={(e: any) => {
-                              setFormData({
-                                acceptedCrypto: e,
-                              });
-                            }}
-                            classNamePrefix="select"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="w-full">
-                    <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Amount(USD)</p>
-                    </div>
-                    <div className="">
-                      <div className="rounded-md">
-                        <div className="flex">
-                          <TextField
-                            value={formdata["amount"]}
-                            helperText={
-                              Boolean(error["amount"])
-                                ? error["amount"]
-                                : "Leaving this empty, makes any amount valid"
-                            }
-                            error={Boolean(error["amount"])}
-                            className="bg-[white]"
-                            onChange={(txt: any) => {
-                              const val = txt.target.value;
-
-                              setFormData({
-                                amount: val.replace(/[^\d]/g, ""),
-                              });
-                            }}
-                            sx={{
-                              "& .Mui-focused.MuiFormLabel-root": {
-                                color: "#f57059",
-                              },
-                              "& .Mui-focused .MuiOutlinedInput-notchedOutline":
-                                {
-                                  borderColor: `#f57059 !important`,
-                                },
-                            }}
-                            fullWidth
-                            placeholder="Amount link accepts"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    onClick={() => {
-                      setMin(!min);
-                    }}
-                    className="w-full flex items-center justify-between"
-                  >
-                    <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Specify Minimum amount</p>
-                    </div>
-                    <div className="">
-                      <Switch
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setMin(e.target.checked);
-                        }}
-                        checked={min}
-                        inputProps={{ "aria-label": "minimum amount" }}
-                        sx={{
-                          "&& .MuiSwitch-switchBase.Mui-checked": {
-                            color: "#f57059",
-                          },
-                          "&& .Mui-checked+.MuiSwitch-track": {
-                            backgroundColor: "#f57059",
-                          },
-                        }}
+              <div className="flex relative items-center">
+                {" "}
+                <Link href={`/pay/${slug}/overview`}>
+                  <a>
+                    <IconButton className="absolute bottom-[0px]">
+                      <MdArrowBackIos
+                        color={"rgb(32,33,36)"}
+                        className="relative left-[4px]"
+                        size={18}
                       />
-                    </div>
-                  </div>
+                    </IconButton>
+                  </a>
+                </Link>{" "}
+                <h1 className="text-[rgb(32,33,36)] capitalize mb-[5px] font-[500] flex items-center text-[1.5rem] leading-[2.45rem] mx-auto w-fit relative text-center">
+                  <>
+                    <FiSettings className="mr-2" size={23} />
+                    Link Settings
+                  </>
+                </h1>
+              </div>
 
-                  {min && (
+              <p
+                style={{
+                  maxWidth: !sidebar?.openPage ? "1031px" : "861px",
+                }}
+                className="text-[1.2rem] capitalize text-center text-[rgb(95,99,104)] leading-[1.25rem] tooltiprep block"
+              >
+                change everything about this link
+              </p>
+
+              {success && (
+                <Alert className="w-full mt-3" severity="success">
+                  <AlertTitle>Link updated successfully</AlertTitle>
+                </Alert>
+              )}
+
+              {(checkError() || Boolean(genError.length)) && (
+                <Alert className="w-full font-bold mt-3 mb-2" severity="error">
+                  {genError.length ? genError : "Incorrect input data"}
+                </Alert>
+              )}
+
+              <div className="col-span-full rounded-[8px] bg-white overflow-hidden mt-3">
+                <div className="px-6 pt-6 relative pb-3">
+                  <div className="">
+                    <div id="basic" className="mb-5">
+                      <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.2rem]">
+                        Basic Details
+                      </h2>
+                      <span>Change Details of your link</span>
+                    </div>
+
                     <div className="w-full">
+                      <div className="font-semibold mt-4 mb-2 text-[#525252]">
+                        <p>Title</p>
+                      </div>
                       <div className="">
                         <div className="rounded-md">
                           <div className="flex">
                             <TextField
-                              value={formdata["minAmt"]}
-                              helperText={error["minAmt"]}
-                              error={Boolean(error["minAmt"])}
+                              value={formdata["title"]}
+                              onChange={(e: any) => {
+                                setFormData({
+                                  title: e.target.value,
+                                });
+                              }}
+                              className="bg-[white]"
+                              sx={{
+                                "& .Mui-focused.MuiFormLabel-root": {
+                                  color: "#f57059",
+                                },
+                                "& .Mui-focused .MuiOutlinedInput-notchedOutline":
+                                  {
+                                    borderColor: `#f57059 !important`,
+                                  },
+                              }}
+                              fullWidth
+                              placeholder="Link title"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="w-full">
+                      <div className="font-semibold mt-4 mb-2 text-[#525252]">
+                        <p>Description</p>
+                      </div>
+                      <div className="">
+                        <div className="rounded-md">
+                          <div className="flex">
+                            <TextField
+                              multiline
+                              value={formdata["desc"]}
+                              onChange={(e: any) => {
+                                setFormData({
+                                  desc: e.target.value,
+                                });
+                              }}
+                              minRows={3}
+                              className="bg-[white]"
+                              sx={{
+                                "& .Mui-focused.MuiFormLabel-root": {
+                                  color: "#f57059",
+                                },
+                                "& .Mui-focused .MuiOutlinedInput-notchedOutline":
+                                  {
+                                    borderColor: `#f57059 !important`,
+                                  },
+                              }}
+                              fullWidth
+                              placeholder="Link Description"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="w-full">
+                      <div className="font-semibold mt-4 mb-2 text-[#525252]">
+                        <p>Link Type</p>
+                      </div>
+                      <div className="">
+                        <div className="rounded-md">
+                          <div className="flex">
+                            <ToggleButtonGroup
+                              value={formdata.type}
+                              sx={{
+                                justifyContent: "space-between",
+                                width: "100%",
+                                "& .Mui-selected": {
+                                  backgroundColor: `rgba(245, 112, 89, 0.8) !important`,
+                                  color: `#fff !important`,
+                                },
+                                "& .MuiButtonBase-root:first-of-type": {
+                                  marginLeft: "0px !important",
+                                },
+                                "& .MuiButtonBase-root": {
+                                  padding: "10px 15px !important",
+                                },
+                                "& .MuiToggleButtonGroup-grouped": {
+                                  borderRadius: "4px !important",
+                                  minWidth: "fit-content",
+                                  marginLeft: 3,
+                                  backgroundColor: "#1212121a",
+                                  border: "none",
+                                },
+                              }}
+                              exclusive
+                              className="w-full cusscroller overflow-y-hidden mb-2 pb-1"
+                              onChange={(e: any) => {
+                                if (e.target.value !== undefined) {
+                                  setFormData({
+                                    ...data,
+                                    type: e.target.value,
+                                  });
+                                }
+                              }}
+                            >
+                              <ToggleButton
+                                sx={{
+                                  textTransform: "capitalize",
+                                  fontWeight: "bold",
+                                  marginRight: "5px",
+                                }}
+                                value={"onetime"}
+                              >
+                                <GiTwoCoins className="mr-2" size={20} />{" "}
+                                Onetime
+                              </ToggleButton>
+                              <ToggleButton
+                                sx={{
+                                  textTransform: "capitalize",
+                                  fontWeight: "bold",
+                                  marginRight: "5px",
+                                }}
+                                value={"sub"}
+                              >
+                                <FaCoins className="mr-2" size={20} />{" "}
+                                Subscription
+                              </ToggleButton>
+                              <ToggleButton
+                                sx={{
+                                  textTransform: "capitalize",
+                                  fontWeight: "bold",
+                                  marginRight: "5px",
+                                }}
+                                value={"both"}
+                              >
+                                <RiCoinLine className="mr-2" size={20} />{" "}
+                                Onetime & Subscription
+                              </ToggleButton>
+                            </ToggleButtonGroup>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="w-full">
+                      <div className="font-semibold mt-4 mb-2 text-[#525252]">
+                        <p>Required Data</p>
+                      </div>
+                      <div className="">
+                        <div className="rounded-md">
+                          <div className="flex">
+                            <Select
+                              isClearable={true}
+                              name="Required Inputs"
+                              placeholder={"Inputs..."}
+                              options={options}
+                              styles={{
+                                option: (provided, state) => {
+                                  return {
+                                    ...provided,
+                                    backgroundColor: state.isSelected
+                                      ? "#f57059"
+                                      : "transparent",
+                                    zIndex: 1000,
+                                    position: "relative",
+                                    "&:active": {
+                                      backgroundColor: "#f57059",
+                                    },
+                                    "&:hover": {
+                                      backgroundColor: state.isSelected
+                                        ? undefined
+                                        : `#f5705929`,
+                                    },
+                                  };
+                                },
+                                container: (provided, state) => ({
+                                  ...provided,
+                                  minHeight: "58px",
+                                  width: "100%",
+                                  "& .select__value-container": {
+                                    padding: "11.5px 14px",
+                                  },
+                                  "& .select__control:hover": {
+                                    borderColor: "#121212",
+                                  },
+                                  "& .select__control--is-focused": {
+                                    borderWidth: "2px",
+                                    borderColor: `#f57059 !important`,
+                                    boxShadow: "none",
+                                  },
+                                }),
+                              }}
+                              isMulti
+                              value={formdata["rdata"]}
+                              onChange={(e: any) => {
+                                let p: boolean = true;
+                                console.log(e, "wo");
+                                if (p) {
+                                  setFormData({
+                                    rdata: e,
+                                  });
+                                }
+                              }}
+                              classNamePrefix="select"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-10">
+                    <div className="mb-5" id="amount">
+                      <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.2rem]">
+                        Amount Config
+                      </h2>
+                      <span>Change link Amount Settings</span>
+                    </div>
+
+                    <div className="w-full">
+                      <Tooltip
+                        placement="bottom"
+                        arrow
+                        title={
+                          "Crypto accepted by link for payment, leaving this empty makes all supported crypto valid as payment"
+                        }
+                      >
+                        <div className="font-semibold w-fit cursor-default mt-4 flex items-center mb-2 text-[#525252]">
+                          <p className="block mr-1">Accepted Crypto</p>
+                          <MdInfo size={20} />
+                        </div>
+                      </Tooltip>
+
+                      <div className="">
+                        <div className="rounded-md">
+                          <div className="flex">
+                            <Select
+                              isClearable={true}
+                              filterOption={createFilter({
+                                stringify: (option) =>
+                                  `${option.value} ${option.data.name}`,
+                              })}
+                              name="Accepted Crypto"
+                              placeholder={"Crypto..."}
+                              options={acceptOptions}
+                              styles={{
+                                option: (provided, state) => {
+                                  return {
+                                    ...provided,
+                                    backgroundColor: state.isSelected
+                                      ? "#f57059"
+                                      : "transparent",
+                                    zIndex: 1000,
+                                    position: "relative",
+                                    "&:active": {
+                                      backgroundColor: "#f57059",
+                                    },
+                                    "&:hover": {
+                                      backgroundColor: state.isSelected
+                                        ? undefined
+                                        : `#f5705929`,
+                                    },
+                                  };
+                                },
+                                container: (provided, state) => ({
+                                  ...provided,
+                                  minHeight: "58px",
+                                  width: "100%",
+                                  "& .select__value-container": {
+                                    padding: "11.5px 14px",
+                                  },
+                                  "& .select__control:hover": {
+                                    borderColor: "#121212",
+                                  },
+                                  "& .select__control--is-focused": {
+                                    borderWidth: "2px",
+                                    borderColor: `#f57059 !important`,
+                                    boxShadow: "none",
+                                  },
+                                }),
+                              }}
+                              isMulti
+                              value={formdata["acceptedCrypto"]}
+                              onChange={(e: any) => {
+                                setFormData({
+                                  acceptedCrypto: e,
+                                });
+                              }}
+                              classNamePrefix="select"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="w-full">
+                      <div className="font-semibold mt-4 mb-2 text-[#525252]">
+                        <p>Amount(USD)</p>
+                      </div>
+                      <div className="">
+                        <div className="rounded-md">
+                          <div className="flex">
+                            <TextField
+                              value={formdata["amount"]}
+                              helperText={
+                                Boolean(error["amount"])
+                                  ? error["amount"]
+                                  : "Leaving this empty, makes any amount valid"
+                              }
+                              error={Boolean(error["amount"])}
                               className="bg-[white]"
                               onChange={(txt: any) => {
                                 const val = txt.target.value;
 
                                 setFormData({
-                                  minAmt: val.replace(/[^\d.]/, ""),
+                                  amount: val.replace(/[^\d]/g, ""),
                                 });
                               }}
                               sx={{
                                 "& .Mui-focused.MuiFormLabel-root": {
                                   color: "#f57059",
                                 },
-                                "& .MuiInputLabel-root": {
-                                  fontWeight: "600",
-                                  color: "#121212",
-                                },
-                                "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
+                                "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
                                     borderColor: `#f57059 !important`,
                                   },
                               }}
                               fullWidth
-                              variant="standard"
-                              placeholder="Minimum Amount"
+                              placeholder="Amount link accepts"
                             />
                           </div>
                         </div>
                       </div>
                     </div>
-                  )}
 
-                  <div
-                    onClick={() => {
-                      setMax(!max);
-                    }}
-                    className="w-full flex items-center justify-between"
-                  >
-                    <div className="font-semibold mt-4 mb-2 text-[#525252]">
-                      <p>Specify Maximum amount</p>
+                    <div
+                      onClick={() => {
+                        setMin(!min);
+                      }}
+                      className="w-full flex items-center justify-between"
+                    >
+                      <div className="font-semibold mt-4 mb-2 text-[#525252]">
+                        <p>Specify Minimum amount</p>
+                      </div>
+                      <div className="">
+                        <Switch
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setMin(e.target.checked);
+                          }}
+                          checked={min}
+                          inputProps={{ "aria-label": "minimum amount" }}
+                          sx={{
+                            "&& .MuiSwitch-switchBase.Mui-checked": {
+                              color: "#f57059",
+                            },
+                            "&& .Mui-checked+.MuiSwitch-track": {
+                              backgroundColor: "#f57059",
+                            },
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="">
-                      <Switch
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setMax(e.target.checked);
-                        }}
-                        checked={max}
-                        inputProps={{ "aria-label": "maximum amount" }}
+
+                    {min && (
+                      <div className="w-full">
+                        <div className="">
+                          <div className="rounded-md">
+                            <div className="flex">
+                              <TextField
+                                value={formdata["minAmt"]}
+                                helperText={error["minAmt"]}
+                                error={Boolean(error["minAmt"])}
+                                className="bg-[white]"
+                                onChange={(txt: any) => {
+                                  const val = txt.target.value;
+
+                                  setFormData({
+                                    minAmt: val.replace(/[^\d.]/, ""),
+                                  });
+                                }}
+                                sx={{
+                                  "& .Mui-focused.MuiFormLabel-root": {
+                                    color: "#f57059",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    fontWeight: "600",
+                                    color: "#121212",
+                                  },
+                                  "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
+                                    {
+                                      borderColor: `#f57059 !important`,
+                                    },
+                                }}
+                                fullWidth
+                                variant="standard"
+                                placeholder="Minimum Amount"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div
+                      onClick={() => {
+                        setMax(!max);
+                      }}
+                      className="w-full flex items-center justify-between"
+                    >
+                      <div className="font-semibold mt-4 mb-2 text-[#525252]">
+                        <p>Specify Maximum amount</p>
+                      </div>
+                      <div className="">
+                        <Switch
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setMax(e.target.checked);
+                          }}
+                          checked={max}
+                          inputProps={{ "aria-label": "maximum amount" }}
+                          sx={{
+                            "&& .MuiSwitch-switchBase.Mui-checked": {
+                              color: "#f57059",
+                            },
+                            "&& .Mui-checked+.MuiSwitch-track": {
+                              backgroundColor: "#f57059",
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {max && (
+                      <div className="w-full">
+                        <div className="">
+                          <div className="rounded-md">
+                            <div className="flex">
+                              <TextField
+                                variant="standard"
+                                className="bg-[white]"
+                                value={formdata["maxAmt"]}
+                                helperText={error["maxAmt"]}
+                                error={Boolean(error["maxAmt"])}
+                                onChange={(txt) => {
+                                  const val = txt.target.value;
+
+                                  setFormData({
+                                    maxAmt: val.replace(/[^\d]/g, ""),
+                                  });
+                                }}
+                                sx={{
+                                  "& .Mui-focused.MuiFormLabel-root": {
+                                    color: "#f57059",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    fontWeight: "600",
+                                    color: "#121212",
+                                  },
+                                  "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
+                                    {
+                                      borderColor: `#f57059 !important`,
+                                    },
+                                }}
+                                fullWidth
+                                placeholder="Maximum Amount"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="w-full">
+                      <div className="font-semibold mt-4 mb-1 text-[#525252]">
+                        <p>Amount Options</p>
+                      </div>
+
+                      <div className="flex cusscroller overflow-x-scroll overflow-y-hidden items-center">
+                        {formdata["amountOption"].map(
+                          (v: string | number | undefined, i: number) => {
+                            if (v !== undefined) {
+                              return (
+                                <button
+                                  key={i}
+                                  className="min-w-[70px] border-solid bg-white cursor-default p-[10px] border border-[#7c7c7c] rounded-[3px] flex justify-center text-[#7c7c7c] mr-3 items-center"
+                                >
+                                  ${v}
+                                  <MdClose
+                                    className="ml-2 cursor-pointer hover:text-[#121212]"
+                                    size={17}
+                                    onClick={() => {
+                                      const newD = formdata.amountOption;
+                                      delete newD[i];
+
+                                      setFormData({
+                                        amountOption: newD,
+                                      });
+                                    }}
+                                  />
+                                </button>
+                              );
+                            }
+                          }
+                        )}
+                      </div>
+
+                      <TextField
                         sx={{
-                          "&& .MuiSwitch-switchBase.Mui-checked": {
+                          "& .Mui-focused.MuiFormLabel-root": {
                             color: "#f57059",
                           },
-                          "&& .Mui-checked+.MuiSwitch-track": {
-                            backgroundColor: "#f57059",
+                          "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: `#f57059 !important`,
                           },
                         }}
+                        id="amountOptions"
+                        value={amountOpt}
+                        helperText={error["amountOption"]}
+                        error={Boolean(error["amountOption"])}
+                        placeholder="Enter Amount"
+                        onChange={(
+                          e: React.ChangeEvent<
+                            HTMLInputElement | HTMLTextAreaElement
+                          >
+                        ) => {
+                          const val = e.target.value;
+                          const sval = val.replace(/[^\d.]/g, "");
+                          setAmountOpt(sval);
+                        }}
+                        onKeyUp={(e: any) => {
+                          const val = e.target.value;
+                          const sval = val.replace(/[^\d.]/g, "");
+                          setAmountOpt(sval);
+
+                          if (e.keyCode == 13 || e.which === 13) {
+                            if (formdata["amountOption"].length) {
+                              addmultiprice(amountOpt);
+                            }
+                          }
+                        }}
+                        onBlur={(e: any) => {
+                          const val = e.target.value;
+                          const sval = val.replace(/[^\d.]/g, "");
+
+                          setAmountOpt(sval);
+
+                          if (formdata["amountOption"].length || true) {
+                            addmultiprice(amountOpt);
+                          }
+                        }}
+                        name="amountOptions"
+                        type="text"
+                        fullWidth
                       />
                     </div>
                   </div>
 
-                  {max && (
+                  <div className="mt-10">
+                    <div className="mb-5" id="payment">
+                      <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.2rem]">
+                        Complete Payment
+                      </h2>
+                      <span>What to do after payment is done</span>
+                    </div>
+
                     <div className="w-full">
+                      <Tooltip
+                        placement="bottom"
+                        arrow
+                        title={
+                          "Link to redirect to if payment is successful, Can be overwitten through API"
+                        }
+                      >
+                        <div className="font-semibold w-fit cursor-default mt-4 flex items-center mb-2 text-[#525252]">
+                          <p className="block mr-1">Redirect URL</p>
+                          <MdInfo size={20} />
+                        </div>
+                      </Tooltip>
+
                       <div className="">
                         <div className="rounded-md">
                           <div className="flex">
                             <TextField
-                              variant="standard"
                               className="bg-[white]"
-                              value={formdata["maxAmt"]}
-                              helperText={error["maxAmt"]}
-                              error={Boolean(error["maxAmt"])}
-                              onChange={(txt) => {
-                                const val = txt.target.value;
-
-                                setFormData({
-                                  maxAmt: val.replace(/[^\d]/g, ""),
-                                });
-                              }}
+                              value={formdata.redirect}
                               sx={{
                                 "& .Mui-focused.MuiFormLabel-root": {
                                   color: "#f57059",
                                 },
-                                "& .MuiInputLabel-root": {
-                                  fontWeight: "600",
-                                  color: "#121212",
-                                },
-                                "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
+                                "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
                                     borderColor: `#f57059 !important`,
                                   },
                               }}
+                              onChange={(txt) => {
+                                const redirect = txt.target.value;
+
+                                setFormData({ redirect });
+                              }}
                               fullWidth
-                              placeholder="Maximum Amount"
+                              placeholder="https://cryptea.me"
                             />
                           </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="w-full">
-                    <div className="font-semibold mt-4 mb-1 text-[#525252]">
-                      <p>Amount Options</p>
-                    </div>
-
-                    <div className="flex cusscroller overflow-x-scroll overflow-y-hidden items-center">
-                      {formdata["amountOption"].map(
-                        (v: string | number | undefined, i: number) => {
-                          if (v !== undefined) {
-                            return (
-                              <button
-                                key={i}
-                                className="min-w-[70px] border-solid bg-white cursor-default p-[10px] border border-[#7c7c7c] rounded-[3px] flex justify-center text-[#7c7c7c] mr-3 items-center"
-                              >
-                                ${v}
-                                <MdClose
-                                  className="ml-2 cursor-pointer hover:text-[#121212]"
-                                  size={17}
-                                  onClick={() => {
-                                    const newD = formdata.amountOption;
-                                    delete newD[i];
-
-                                    setFormData({
-                                      amountOption: newD,
-                                    });
-                                  }}
-                                />
-                              </button>
-                            );
-                          }
-                        }
-                      )}
-                    </div>
-
-                    <TextField
-                      sx={{
-                        "& .Mui-focused.MuiFormLabel-root": {
-                          color: "#f57059",
-                        },
-                        "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: `#f57059 !important`,
-                        },
-                      }}
-                      id="amountOptions"
-                      value={amountOpt}
-                      helperText={error["amountOption"]}
-                      error={Boolean(error["amountOption"])}
-                      placeholder="Enter Amount"
-                      onChange={(
-                        e: React.ChangeEvent<
-                          HTMLInputElement | HTMLTextAreaElement
-                        >
-                      ) => {
-                        const val = e.target.value;
-                        const sval = val.replace(/[^\d.]/g, "");
-                        setAmountOpt(sval);
-                      }}
-                      onKeyUp={(e: any) => {
-                        const val = e.target.value;
-                        const sval = val.replace(/[^\d.]/g, "");
-                        setAmountOpt(sval);
-
-                        if (e.keyCode == 13 || e.which === 13) {
-                          if (formdata["amountOption"].length) {
-                            addmultiprice(amountOpt);
-                          }
-                        }
-                      }}
-                      onBlur={(e: any) => {
-                        const val = e.target.value;
-                        const sval = val.replace(/[^\d.]/g, "");
-
-                        setAmountOpt(sval);
-
-                        if (formdata["amountOption"].length || true) {
-                          addmultiprice(amountOpt);
-                        }
-                      }}
-                      name="amountOptions"
-                      type="text"
-                      fullWidth
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-10">
-                  <div className="mb-5" id="payment">
-                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.2rem]">
-                      Complete Payment
-                    </h2>
-                    <span>What to do after payment is done</span>
-                  </div>
-
-                  <div className="w-full">
-                    <Tooltip
-                      placement="bottom"
-                      arrow
-                      title={
-                        "Link to redirect to if payment is successful, Can be overwitten through API"
-                      }
-                    >
-                      <div className="font-semibold w-fit cursor-default mt-4 flex items-center mb-2 text-[#525252]">
-                        <p className="block mr-1">Redirect URL</p>
-                        <MdInfo size={20} />
-                      </div>
-                    </Tooltip>
-
-                    <div className="">
-                      <div className="rounded-md">
-                        <div className="flex">
-                          <TextField
-                            className="bg-[white]"
-                            value={formdata.redirect}
-                            sx={{
-                              "& .Mui-focused.MuiFormLabel-root": {
-                                color: "#f57059",
-                              },
-                              "& .Mui-focused .MuiOutlinedInput-notchedOutline":
-                                {
-                                  borderColor: `#f57059 !important`,
-                                },
-                            }}
-                            onChange={(txt) => {
-                              const redirect = txt.target.value;
-
-                              setFormData({ redirect });
-                            }}
-                            fullWidth
-                            placeholder="https://cryptea.me"
-                          />
                         </div>
                       </div>
                     </div>
@@ -1184,34 +1200,33 @@ const Settings = () => {
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="button py-2 bg-white mt-2 bottom-0 w-full sticky flex items-center justify-center">
-            <Button
-              onClick={validateFields}
-              className="!py-2 !font-bold !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
-            >
-              {saving ? (
-                <>
-                  <div className="mr-3 h-[20px] text-[#fff]">
-                    <CircularProgress
-                      color={"inherit"}
-                      className="!w-[20px] !h-[20px]"
-                    />
-                  </div>{" "}
-                  <span>Updating...</span>
-                </>
-              ) : (
-                <>
-                  <MdLink size={25} className="mr-1" /> <span>Update Link</span>
-                </>
-              )}
-            </Button>
+            <div className="button py-2 bg-white mt-2 bottom-0 w-full sticky flex items-center justify-center">
+              <Button
+                onClick={validateFields}
+                className="!py-2 !font-bold !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+              >
+                {saving ? (
+                  <>
+                    <div className="mr-3 h-[20px] text-[#fff]">
+                      <CircularProgress
+                        color={"inherit"}
+                        className="!w-[20px] !h-[20px]"
+                      />
+                    </div>{" "}
+                    <span>Updating...</span>
+                  </>
+                ) : (
+                  <>
+                    <MdLink size={25} className="mr-1" />{" "}
+                    <span>Update Link</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
-      </div>}
-
-      
+      )}
     </>
   );
 };
