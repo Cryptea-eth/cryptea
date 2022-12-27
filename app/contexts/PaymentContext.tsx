@@ -960,7 +960,7 @@ export const PaymentProvider = ({
     if (!subValue[type]) {
       let proceed = true;
 
-      if (!apiState) {
+      if (!apiState && userD.rdata[type].length) {
         userD.rdata[type].forEach((val: string, i: number) => {
           if (
             !validForm(Boolean(pemail[i]) ? pemail[i] : "", val.toLowerCase())
@@ -976,7 +976,7 @@ export const PaymentProvider = ({
         return;
       }
     } else if (Number(amount) || subValue[type] == 1) {
-      if (!apiState) {
+      if (!apiState && userD.rdata[type].length) {
         if (
           !validForm(pemail[0], userD.rdata[type][0].toLowerCase()) &&
           userD.rdata[type].length == 1
