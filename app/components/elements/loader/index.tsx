@@ -29,7 +29,7 @@ const Loader = ({
     >
       {head && (
         <Head>
-          <title> Loading... | Cryptea </title>
+          <title>Easily Receive Payments in Crypto | Cryptea </title>
         </Head>
       )}
 

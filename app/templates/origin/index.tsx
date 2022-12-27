@@ -147,7 +147,7 @@ const Origin = ({ className }: { className?: string }) => {
   return (
     <div className={`origin ${className}`}>
       {isLoading ? (
-        <Loader head={false} color={data.colorScheme} fixed={false} />
+        <Loader color={data.colorScheme} fixed={false} />
       ) : (
         <>
           {is500 ? (

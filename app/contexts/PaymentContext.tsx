@@ -1169,7 +1169,6 @@ export const PaymentProvider = ({
             <div className="flex relative items-center flex-col justify-center mb-5">
               {manLoader && (
                 <Loader
-                  head={false}
                   sx={{
                     backgroundColor: "#ffffffeb",
                     width: 210,

@@ -148,7 +148,7 @@ const Carbon = ({ className }: { className?: string }) => {
   return (
     <div className={`carbon ${className}`}>
       {isLoading ? (
-        <Loader color={data.colorScheme} head={false} fixed={false} />
+        <Loader color={data.colorScheme} fixed={false} />
       ) : (
         <>
           {is500 ? (
