@@ -115,6 +115,7 @@ const Pages = () => {
                           width: 60,
                           height: 60,
                           backgroundColor: !Boolean(realS) ? "#f57059" : undefined,
+                          fontWeight: 600,
                           marginRight: "10px",
                         }}
                         src={realS}
@@ -127,7 +128,7 @@ const Pages = () => {
                       </Avatar>
 
                       <div className="w-[calc(100%-70px)]">
-                        <h3 className="truncate text-[17px] mb-[10px] font-bold text-[#242424]">
+                        <h3 className="truncate text-[17px] mb-[10px] font-[600] text-[#242424]">
                           {attributes.link}
                         </h3>
 

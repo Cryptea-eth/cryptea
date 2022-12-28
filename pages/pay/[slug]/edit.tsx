@@ -28,15 +28,13 @@ import "react-image-crop/dist/ReactCrop.css";
 import { makeStorageClient } from "../../../app/functions/clients";
 import dynamic from "next/dynamic";
 import Loader from "../../../app/components/elements/loader";
-import tmp from '../../../styles/temp.module.css'
+import tmp from "../../../styles/temp.module.css";
 import { get_request } from "../../../app/contexts/Cryptea/requests";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 import { PaymentProvider } from "../../../app/contexts/PaymentContext";
 
 const Edit = () => {
-
   const { isAuthenticated, validator, signer } = useCryptea();
-
 
   const [ndata, setData] = useState<string>("");
   const [rules, setRules] = useState<any>({});
@@ -47,8 +45,6 @@ const Edit = () => {
       editMode?: boolean;
     }>
   >();
-
-
 
   const [templates, setTemplates] = useState<any[]>([]);
 
@@ -71,7 +67,7 @@ const Edit = () => {
     x: 0,
     y: 0,
   });
-  
+
   const [simg, setsImg] = useState<string | undefined>("");
   const [isLoading, setLoader] = useState<boolean>(true);
 
@@ -85,111 +81,106 @@ const Edit = () => {
 
   let [editable, setEditable] = useState<string[]>([]);
 
-
-useEffect(() => {
-  const init = async () => {
-    if (isAuthenticated !== undefined) {
-
-      if (isAuthenticated) {
-        const linkx: any = await `links/${String(usern).toLowerCase()}`.get(
-          "link",
-          true
-        );
-
-        const temx:any = await ('templates').get('data', true);
-
-        setTemplates(temx);
-
-        setLinkx(linkx);
-
-        if (linkx?.template_data !== undefined) {
-          const { name, data: udata } = JSON.parse(linkx?.template_data);
-
-          const { rules, getData } = await import(
-            `../../../app/templates/${name}/data`
+  useEffect(() => {
+    const init = async () => {
+      if (isAuthenticated !== undefined) {
+        if (isAuthenticated) {
+          const linkx: any = await `links/${String(usern).toLowerCase()}`.get(
+            "link",
+            true
           );
 
-          setRules(rules);
+          const temx: any = await "templates".get("data", true);
 
-          setData(name);
+          setTemplates(temx);
 
-          getData(typeof udata == "string" ? JSON.parse(udata) : udata);
+          setLinkx(linkx);
 
-          const edx: string[] = [];
+          if (linkx?.template_data !== undefined) {
+            const { name, data: udata } = JSON.parse(linkx?.template_data);
 
-          for (let aa in rules) {
-            if (aa != "body") {
-              edx.push(aa);
+            const { rules, getData } = await import(
+              `../../../app/templates/${name}/data`
+            );
+
+            setRules(rules);
+
+            setData(name);
+
+            getData(typeof udata == "string" ? JSON.parse(udata) : udata);
+
+            const edx: string[] = [];
+
+            for (let aa in rules) {
+              if (aa != "body") {
+                edx.push(aa);
+              }
             }
+
+            setEditable(edx);
+
+            const Utemplate = dynamic(
+              () => import(`../../../app/templates/${name}`),
+              {
+                suspense: false,
+              }
+            );
+
+            setTemplate(Utemplate);
+
+            setLoader(false);
           }
-
-          
-          setEditable(edx);
-
-          const Utemplate = dynamic(
-            () => import(`../../../app/templates/${name}`),
-            {
-              suspense: false,
-            }
-          );
-
-          setTemplate(Utemplate);
-
-          setLoader(false);
+        } else {
+          router.push("/auth");
         }
-      } else {
-        router.push("/auth");
       }
+    };
+
+    init();
+  }, [usern, router, isAuthenticated]);
+
+  let times: any;
+
+  const saveSets = async () => {
+    clearTimeout(times);
+
+    try {
+      saveChanges({
+        ...isSaving,
+        one: true,
+      });
+
+      const { data } = await import(`../../../app/templates/${ndata}/data`);
+
+      const sdata = JSON.stringify({ name: ndata, data });
+
+      await `links/${linkx.id}`.update({ template_data: sdata });
+
+      saveChanges({
+        two: true,
+        one: false,
+      });
+
+      times = setTimeout(() => {
+        saveChanges({
+          ...isSaving,
+          two: false,
+        });
+      }, 2000);
+    } catch (err) {
+      const error = err as Error;
+
+      console.log(error);
     }
   };
 
-  init();
-  
-}, [usern, router, isAuthenticated]);
-
-let times: any;
-
-
-const saveSets = async () => {
-  clearTimeout(times);
-
-  try {
-    saveChanges({
-      ...isSaving,
-      one: true,
-    });
-
-    const { data } = await import(`../../../app/templates/${ndata}/data`);
-
-    const sdata = JSON.stringify({ name: ndata, data });
-
-    await `links/${linkx.id}`.update({ template_data: sdata });
-
-    saveChanges({
-      two: true,
-      one: false,
-    });
-
-    times = setTimeout(() => {
-      saveChanges({
-        ...isSaving,
-        two: false,
-      });
-    }, 2000);
-  } catch (err) {
-    const error = err as Error;
-
-    console.log(error);
-  }
-};
-
-const [isSaving, saveChanges] = useState<{
-  one: boolean;
-  two: boolean;
-}>({
-  one: false,
-  two: false,
-});
+  const [isSaving, saveChanges] = useState<{
+    one: boolean;
+    two: boolean;
+  }>({
+    one: false,
+    two: false,
+  });
 
   const [iimg, setIiimg] = useState({});
   const [getRules, setPart] = useState<string>("");
@@ -200,50 +191,61 @@ const [isSaving, saveChanges] = useState<{
 
   const [isUploading, setIsUploading] = useState<number>(0);
 
-   const setXTemplates = async (name: string) => {
+  const setXTemplates = async (name: string) => {
+    setLoader(true);
 
-    setLoader(true);     
+    const { rules, data: newData } = await import(
+      `../../../app/templates/${name}/data`
+    );
 
-     const { rules, data: newData } = await import(
-       `../../../app/templates/${name}/data`
-     );
+    const Utemplate = dynamic(() => import(`../../../app/templates/${name}`), {
+      suspense: true,
+    });
 
-     const Utemplate = dynamic(() => import(`../../../app/templates/${name}`), {
-       suspense: true,
-     });
+    setRules(rules);
 
-     setRules(rules);
+    const { data: Old } = JSON.parse(linkx.template_data);
 
-     const { data: Old } = JSON.parse(linkx.template_data);
+    const Olddata = typeof Old == "string" ? JSON.parse(Old) : Old;
 
-    const Olddata = typeof Old == 'string' ? JSON.parse(Old) : Old;
+    const cache = localStorage.getItem(`${String(usern)}-${name}-oldlink`) !== null;
 
-    const cache = localStorage.getItem(`${String(usern)}-oldlink`) !== null;
+    await`links/${linkx.id}`.update({
+      template_data: JSON.stringify({
+        name,
+        data: cache
+          ? localStorage.getItem(`${String(usern)}-${name}-oldlink`)
+          : {
+              ...newData,
+              colorScheme: Olddata.colorScheme,
+              errorColor: Olddata.errorColor || "#ff8f33",
+            },
+      }),
+    });
 
-     await (`links/${linkx.id}`).update({
-      template_data: JSON.stringify({name, data: cache ? localStorage.getItem(`${String(usern)}-oldlink`) : { ...newData, colorScheme: Olddata.colorScheme, errorColor: Olddata.errorColor || '' }})
-     });
+    localStorage.setItem(
+      `${String(usern)}-${name}-oldlink`,
+      JSON.stringify(Olddata)
+    );
 
-     localStorage.setItem(`${String(usern)}-oldlink`, JSON.stringify(Olddata));
+    setData(name);
 
-     setData(name);
+    const edx: string[] = [];
 
-     const edx: string[] = [];
+    for (let aa in rules) {
+      if (aa != "body") {
+        edx.push(aa);
+      }
+    }
 
-     for (let aa in rules) {
-       if (aa != "body") {
-         edx.push(aa);
-       }
-     }
+    setEditable(edx);
 
-     setEditable(edx);
+    setTemplate(Utemplate);
 
-     setTemplate(Utemplate);
+    setPart("");
 
-     setPart("");
-
-     setLoader(false)
-   };
+    setLoader(false);
+  };
 
   const imgCrop = (
     event: React.SyntheticEvent & { target: HTMLInputElement }
@@ -252,7 +254,7 @@ const [isSaving, saveChanges] = useState<{
     setViewColor("imgMChange");
     if (event.target.files !== null) {
       const fil = event.target.files[0];
-      
+
       const { type, size } = fil;
 
       const ee = ["image/jpeg", "image/jpg", "image/png"];
@@ -291,9 +293,9 @@ const [isSaving, saveChanges] = useState<{
       dataSent.imgChange({
         borderColor,
         size,
-        text: '',
+        text: "",
         display: display != "none",
-        src
+        src,
       });
     };
 
@@ -306,18 +308,15 @@ const [isSaving, saveChanges] = useState<{
 
       console.log(`Uploading... ${pct.toFixed(2)}% complete`);
 
-
       if (pct > 93) {
         setViewColor("");
         setIsUploading(0);
       }
     };
 
-    const token = await get_request('/storagekey', {}, undefined, false);
+    const token = await get_request("/storagekey", {}, undefined, false);
 
-    const client = makeStorageClient(
-      token!.data
-    );
+    const client = makeStorageClient(token!.data);
 
     return client.put(files, { onRootCidReady, onStoredChunk });
   };
@@ -403,17 +402,19 @@ const [isSaving, saveChanges] = useState<{
               <div className="max-w-[257px] w-[257px] h-screen bg-[white]">
                 <div>
                   <div className="flex flex-row items-center w-full bg-[#bbbbbb24] py-2">
-                    
-                      <IconButton onClick={() => {
+                    <IconButton
+                      onClick={() => {
                         if (!getRules.length) {
                           router.push("/dashboard/pages");
                         } else {
                           setPart("");
                           setViewColor("");
                         }
-                      }} className="ml-1">
-                        <MdChevronLeft color="#838383" size={24} />
-                      </IconButton>
+                      }}
+                      className="ml-1"
+                    >
+                      <MdChevronLeft color="#838383" size={24} />
+                    </IconButton>
 
                     <div className="text-[#838383] capitalize text-center text-[17px] font-[300] w-3/4">
                       {getRules.length

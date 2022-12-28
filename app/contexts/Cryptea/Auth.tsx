@@ -179,7 +179,7 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
             update: (e: userData | undefined) => setContext(e),
           }}
         >
-          {genLoader ? <Loader /> : children}
+          {genLoader ? <Loader head={false}/> : children}
         </AuthContextMain.Provider>
       </WagmiConfig>
     </Web3ReactProvider>

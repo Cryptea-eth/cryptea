@@ -236,7 +236,7 @@ const DashHome = () => {
                 sx={{ fontSize: "1.04rem", width: "80px" }}
               />
             ) : (
-              <span className="block uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
+              Boolean(dashData["sortBreakdown"].length) && <span className="block uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
                 Break Down
               </span>
             )}
