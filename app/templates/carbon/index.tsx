@@ -201,7 +201,7 @@ const Carbon = ({ className }: { className?: string }) => {
             </>
           ) : (
             <div
-              className={`${style.wrapper} flex justify-center min-h-screen`}
+              className={`${style.wrapper} flex items-center justify-center min-h-screen`}
               style={data.body}
             >
               <Head>
