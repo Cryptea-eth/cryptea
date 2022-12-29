@@ -18,7 +18,7 @@ const Notfound = () => {
 
       <div className="w-full h-fit flex flex-col justify-items-center my-8">
         <h2 className="text-black font-bold text-4xl mx-auto mt-24">
-          We think you&#39;re lost
+          We think we lost you
         </h2>
 
         <h3 className="text-[#F57059] font-semibold text-lg mx-auto mt-12">
