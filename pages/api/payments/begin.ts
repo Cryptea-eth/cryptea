@@ -101,6 +101,7 @@ export default function handler(
                     ...post,
                     remind: new Date().getTime() + mainIx(body.interval) * 1000,
                     renewal: body.interval,
+                    interval: body.interval
                   };
                 }
 

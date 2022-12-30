@@ -3,12 +3,12 @@ import { get_request } from "../../../../contexts/Cryptea/requests";
 
 let xd: any;
 
-export const initD = async (link: string, api?: string) => {
+export const initD = async (link: string, api?: string, renew?: string) => {
   
     xd = (
       (await get_request(`link/${link}`, {
         params: {
-          api,
+          api, renew
         },
       })) || { data: {} }
     ).data;

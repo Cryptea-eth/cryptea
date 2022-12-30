@@ -40,7 +40,6 @@ function a11yProps(index: number) {
 }
 
 const Origin = ({ className }: { className?: string }) => {
-  const [value, setValue] = useState<number>(0);
 
   const {
     userD,
@@ -62,6 +61,7 @@ const Origin = ({ className }: { className?: string }) => {
     setFailMessage,
     hash,
     setHash,
+    rnData,
     begin,
     interval,
     apiState,
@@ -79,6 +79,8 @@ const Origin = ({ className }: { className?: string }) => {
     subValue,
     setSubValue,
   } = useContext(PaymentContext);
+
+  const [value, setValue] = useState<number>(Number(Boolean(rnData!.amount)));
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -98,9 +100,8 @@ const Origin = ({ className }: { className?: string }) => {
   }, [signer]);
 
   useEffect(() => {
-    if (userD!.rdata !== undefined) {
+    if (userD!.rdata !== undefined && rnData!.data) {
       if (userD!.rdata[!value ? "onetime" : "sub"].length < 1 || apiState) {
-
         const nsVal = { ...subValue };
 
         nsVal[!value ? "onetime" : "sub"] = 1;
@@ -108,7 +109,7 @@ const Origin = ({ className }: { className?: string }) => {
         setSubValue?.(nsVal as subValueType);
       }
     }
-  }, [value, userD]);
+  }, [value, userD, rnData]);
 
   const {
     username: usern,
@@ -363,7 +364,7 @@ const Origin = ({ className }: { className?: string }) => {
                       </div>
                       <div className="form relative pt-[10px]">
                         <Box sx={{ width: "100%" }}>
-                          {userD?.linktype == "both" && (
+                          {(userD?.linktype == "both" && Boolean(rnData!.amount)) && (
                             <Box
                               sx={{
                                 borderBottom: 1,

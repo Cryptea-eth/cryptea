@@ -62,6 +62,7 @@ const Carbon = ({ className }: { className?: string }) => {
     options,
     eSubscription,
     setSigner,
+    rnData,
     subValue,
     setSubValue,
   } = useContext(PaymentContext);
@@ -112,7 +113,7 @@ const Carbon = ({ className }: { className?: string }) => {
       },
   };
 
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number>(Number(Boolean(rnData!.amount)));
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -133,8 +134,7 @@ const Carbon = ({ className }: { className?: string }) => {
   }, [signer]);
 
   useEffect(() => {
-    if (userD!.rdata !== undefined) {
-
+    if (userD!.rdata !== undefined && rnData!.data) {
       if (userD!.rdata[!value ? "onetime" : "sub"].length < 1 || apiState) {
         const nsVal = { ...subValue };
 
@@ -143,7 +143,7 @@ const Carbon = ({ className }: { className?: string }) => {
         setSubValue?.(nsVal as subValueType);
       }
     }
-  }, [value, userD]);
+  }, [value, userD, rnData]);
 
   return (
     <div className={`carbon ${className}`}>
@@ -437,7 +437,7 @@ const Carbon = ({ className }: { className?: string }) => {
                     </div>
                   )}
 
-                  {userD?.linktype == "both" && (
+                  {userD?.linktype == "both" && Boolean(rnData!.amount) && (
                     <Box
                       sx={{
                         borderBottom: 1,
@@ -862,7 +862,7 @@ const Carbon = ({ className }: { className?: string }) => {
                           </div>
                         )}
 
-                        <div className="mb-5">
+                        {!Boolean(rnData!.amount) && <div className="mb-5">
                           <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
                             Billed
                           </label>
@@ -926,7 +926,7 @@ const Carbon = ({ className }: { className?: string }) => {
                               Yearly
                             </ToggleButton>
                           </ToggleButtonGroup>
-                        </div>
+                        </div>}
 
                         {!amountFixed && (
                           <div className="mb-5">
