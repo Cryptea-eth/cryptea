@@ -598,14 +598,12 @@ export const PaymentProvider = ({
 
       setLoadingText("Processing payment");
 
-
       initContract
         .transferNative(ethAddress || "", {
           value: ethers.utils.parseEther(ether),
         }) //receiver
         .then(async (init: any) => {
           console.log(init);
-
           setHash(init.hash);
 
           const rx: { [index: string]: string | number | undefined } = {};

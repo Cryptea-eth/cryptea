@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as ethers from "ethers";
-import validator from "validator";
 import axios from "axios";
 import {
   AuroraTestnet,
@@ -59,25 +58,6 @@ export default function handler(
 
           let valid = true;
 
-          //   if (data.paytype == "manual") {
-          //     try {
-          //       const accounts = await axios.get(
-          //         `https://ab.cryptea.me/link/pay/accounts/${trx?.to}`,
-          //         {
-          //           headers: {
-          //             Authorization: process.env.APP_KEY || "",
-          //           },
-          //           timeout: 600000,
-          //         }
-          //       );
-
-          //       if (!Boolean(accounts?.data.address)) {
-          //         valid = false;
-          //       }
-          //     } catch (err) {
-          //       valid = false;
-          //     }
-          //   }
 
           if (
             !addressEqual(trx.from, data.address) &&
@@ -96,7 +76,7 @@ export default function handler(
                 headers: {
                   Authorization: process.env.APP_KEY || "",
                 },
-                timeout: 6000000,
+                timeout: 9000000,
               }
             );
 

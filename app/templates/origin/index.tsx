@@ -364,7 +364,7 @@ const Origin = ({ className }: { className?: string }) => {
                       </div>
                       <div className="form relative pt-[10px]">
                         <Box sx={{ width: "100%" }}>
-                          {(userD?.linktype == "both" && Boolean(rnData!.amount)) && (
+                          {(userD?.linktype == "both" && Boolean(rnData!.amount))&&(
                             <Box
                               sx={{
                                 borderBottom: 1,
