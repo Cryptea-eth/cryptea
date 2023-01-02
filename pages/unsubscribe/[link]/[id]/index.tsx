@@ -21,19 +21,18 @@ const Unsubscribe = () => {
   useEffect(() => {
     
     const init = async () => {
+
         const {
           link: lQ,
           renew
         } = await initD(String(link).toLowerCase(), undefined, id as string);
-
 
         if (lQ['id'] !== undefined && renew !== null) {
             setLoading(false);
         }else{
             router.push('/404');
         }
-
-    }
+      }
 
     if (link !== undefined) {
         init();
