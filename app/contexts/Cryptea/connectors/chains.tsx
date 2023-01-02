@@ -259,6 +259,10 @@ export const { chains, provider, webSocketProvider } = configureChains(
 export const tokenTrackers: {
   [index: string]: { name: string; link: string };
 } = {
+  137: {
+    name: "polygonscan",
+    link: "https://polygonscan.com/tx/"
+  },
   80001: {
     name: "polygonscan",
     link: "https://mumbai.polygonscan.com/tx/",
@@ -314,6 +318,28 @@ export const inputsList = [
 
 export const CryptoList = [
   {
+    value: 137,
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-2 relative w-[20px]">
+          <CustomImg
+            symbol={"matic"}
+            name="polygon"
+            size={20}
+            alt={"Polygon (mainnet)"}
+          />
+        </div>
+        <span className="text-[#121212]">Polygon (Mainnet)</span>
+      </div>
+    ),
+    name: "Polygon (Mainnet)",
+    symbol: "matic",
+    contractAddr: "0xf1BC5925641159a0d1388B17e3AB32D9416B3f09",
+    network: "polygon",
+    tokenAddr: "",
+    rpc: process.env.MATIC_LINK as string,
+  },
+  {
     value: 80001,
     label: (
       <div className="items-center flex">
@@ -332,7 +358,7 @@ export const CryptoList = [
     symbol: "matic",
     contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
     network: "polygon maticmum",
-    tokenAddr: "0x0000000000000000000000000000000000001010",
+    tokenAddr: "",
     rpc: process.env.MATIC_LINK as string,
   },
   {

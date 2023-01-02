@@ -180,6 +180,23 @@ export const PaymentProvider = ({
     }
   };
 
+  const matic = async (price: number) => {
+    const response = await axios.get("/simple/price", {
+      params: {
+        ids: "matic-network",
+        vs_currencies: "usd",
+      },
+      baseURL: "https://api.coingecko.com/api/v3",
+      withCredentials: false,
+    });
+
+    const e = response.data as { [index: string]: any };
+
+    const priceCurrency = Number(e["matic-network"]["usd"]);
+
+    return price / priceCurrency; 
+  }
+
   const getPrice = async (
     price: number,
     chain: string | number | undefined = 80001
@@ -188,22 +205,8 @@ export const PaymentProvider = ({
     setLoadingText("Loading price data...");
 
     const prices: { [index: string]: () => Promise<number> } = {
-      "80001": async () => {
-        const response = await axios.get("/simple/price", {
-          params: {
-            ids: "matic-network",
-            vs_currencies: "usd",
-          },
-          baseURL: "https://api.coingecko.com/api/v3",
-          withCredentials: false,
-        });
-
-        const e = response.data as { [index: string]: any };
-
-        const priceCurrency = Number(e["matic-network"]["usd"]);
-
-        return price / priceCurrency;
-      },
+      "80001": async () => await matic(price),
+      "137" : async () => await matic(price),
       "31415": async () => {
         const response = await axios.get("/simple/price", {
           params: {
