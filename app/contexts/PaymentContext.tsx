@@ -7,7 +7,6 @@ import * as ethers from "ethers";
 import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
 import { initD } from "../components/elements/dashboard/link/data";
 import { useSwitchNetwork } from "wagmi";
-import { GrConnect } from "react-icons/gr";
 import {
   PaymentContext as PaymentCont,
   subValueType,
@@ -53,11 +52,21 @@ export const PaymentProvider = ({
 
   const apiCode = router.query["trx"] as string | undefined;
 
+  const renew = router.query['renew'] as string | undefined;
+
   const [is500, setIs500] = useState<boolean>(false);
 
   const [interval, setTinterval] = useState<string>("daily");
 
   useEffect(() => {}, [username, router.isReady]);
+
+  const [rnData, setRData] = useState<any>({
+    renew: false,
+    data: false,
+    amount: null,
+    interval: null,
+    raw: {}
+  });
 
   const [paymentData, setPaymentData] = useState<{
     price: number;
@@ -171,6 +180,23 @@ export const PaymentProvider = ({
     }
   };
 
+  const matic = async (price: number) => {
+    const response = await axios.get("/simple/price", {
+      params: {
+        ids: "matic-network",
+        vs_currencies: "usd",
+      },
+      baseURL: "https://api.coingecko.com/api/v3",
+      withCredentials: false,
+    });
+
+    const e = response.data as { [index: string]: any };
+
+    const priceCurrency = Number(e["matic-network"]["usd"]);
+
+    return price / priceCurrency; 
+  }
+
   const getPrice = async (
     price: number,
     chain: string | number | undefined = 80001
@@ -179,22 +205,8 @@ export const PaymentProvider = ({
     setLoadingText("Loading price data...");
 
     const prices: { [index: string]: () => Promise<number> } = {
-      "80001": async () => {
-        const response = await axios.get("/simple/price", {
-          params: {
-            ids: "matic-network",
-            vs_currencies: "usd",
-          },
-          baseURL: "https://api.coingecko.com/api/v3",
-          withCredentials: false,
-        });
-
-        const e = response.data as { [index: string]: any };
-
-        const priceCurrency = Number(e["matic-network"]["usd"]);
-
-        return price / priceCurrency;
-      },
+      "80001": async () => await matic(price),
+      "137" : async () => await matic(price),
       "31415": async () => {
         const response = await axios.get("/simple/price", {
           params: {
@@ -321,20 +333,34 @@ export const PaymentProvider = ({
           link: lQ,
           user: userl,
           api,
-        } = await initD(String(username).toLowerCase(), apiCode);
+          renew: renewInfo
+        } = await initD(String(username).toLowerCase(), apiCode, renew);
 
-        if (lQ !== undefined) {
+        if (lQ["id"] !== undefined) {
+
           if (lQ.template_data !== undefined) {
-
             const { name, data: udata } = JSON.parse(lQ.template_data);
 
             if (!editMode) {
-              setData(typeof udata == 'string' ? JSON.parse(udata) : udata);
+              setData(typeof udata == "string" ? JSON.parse(udata) : udata);
             } else {
               const { data: mdata } = await import(`../templates/${name}/data`);
 
               setData(mdata);
             }
+          }
+
+          if (renewInfo !== null) {
+
+              setRData(renewInfo);
+          
+
+              setAmount(renewInfo.amount)
+
+              setTinterval(renewInfo.interval);
+
+              setAmountFixed(true);
+
           }
 
           let linkAmount: string | object | undefined | number;
@@ -575,19 +601,17 @@ export const PaymentProvider = ({
 
       setLoadingText("Processing payment");
 
-
       initContract
         .transferNative(ethAddress || "", {
           value: ethers.utils.parseEther(ether),
         }) //receiver
         .then(async (init: any) => {
           console.log(init);
-
           setHash(init.hash);
 
           const rx: { [index: string]: string | number | undefined } = {};
 
-          if (!apiState) {
+          if (!apiState && !rnData.data) {
             pemail.forEach((val: undefined | string, i: number) => {
               if (val !== undefined && val.length) {
                 if (userD.rdata[type][i] !== undefined) {
@@ -595,7 +619,7 @@ export const PaymentProvider = ({
                 }
               }
             });
-          } else {
+          } else if (apiState) {
             inputsList.forEach((val) => {
               const index = val.value.toLowerCase();
 
@@ -621,10 +645,14 @@ export const PaymentProvider = ({
           };
 
           if (type == "sub") {
+
+            if (Boolean(rnData.amount)) post['renew'] = renew; 
+
             post = {
               ...post,
               remind: new Date().getTime() + mainIx(interval) * 1000,
               renewal: interval,
+              interval
             };
           }
 
@@ -752,7 +780,7 @@ export const PaymentProvider = ({
 
             const rx: { [index: string]: string | number } = {};
 
-          if (apiState) {
+          if (!apiState && !rnData.data) {
             pemail.forEach((val: undefined | string, i: number) => {
               if (val !== undefined && val.length) {
                 if (userD.rdata[type][i] !== undefined) {
@@ -760,10 +788,9 @@ export const PaymentProvider = ({
                 }
               }
             });
-          }else{
+          } else if (apiState) {
             inputsList.forEach((val) => {
               const index = val.value.toLowerCase();
-
               rx[index] = apiData[index] || undefined;
             });
           }
@@ -779,9 +806,12 @@ export const PaymentProvider = ({
             };
 
             if (type == "sub") {
+
+              if (Boolean(rnData.amount)) post["renew"] = renew; 
+
               post = {
                 ...post,
-                interval,
+                interval
               };
             }
 
@@ -1003,6 +1033,7 @@ export const PaymentProvider = ({
         setPaymentData,
         data,
         setData,
+        rnData,
         isLoading,
         setIsLoading,
         explorer: tokenTrackers[token.value],

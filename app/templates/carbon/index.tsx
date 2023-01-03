@@ -62,6 +62,7 @@ const Carbon = ({ className }: { className?: string }) => {
     options,
     eSubscription,
     setSigner,
+    rnData,
     subValue,
     setSubValue,
   } = useContext(PaymentContext);
@@ -112,7 +113,7 @@ const Carbon = ({ className }: { className?: string }) => {
       },
   };
 
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number>(Number(Boolean(rnData!.amount)));
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -133,8 +134,7 @@ const Carbon = ({ className }: { className?: string }) => {
   }, [signer]);
 
   useEffect(() => {
-    if (userD!.rdata !== undefined) {
-
+    if (userD!.rdata !== undefined && rnData!.data) {
       if (userD!.rdata[!value ? "onetime" : "sub"].length < 1 || apiState) {
         const nsVal = { ...subValue };
 
@@ -143,7 +143,7 @@ const Carbon = ({ className }: { className?: string }) => {
         setSubValue?.(nsVal as subValueType);
       }
     }
-  }, [value, userD]);
+  }, [value, userD, rnData]);
 
   return (
     <div className={`carbon ${className}`}>
@@ -201,7 +201,7 @@ const Carbon = ({ className }: { className?: string }) => {
             </>
           ) : (
             <div
-              className={`${style.wrapper} flex justify-center min-h-screen`}
+              className={`${style.wrapper} flex items-center justify-center min-h-screen`}
               style={data.body}
             >
               <Head>
@@ -235,21 +235,23 @@ const Carbon = ({ className }: { className?: string }) => {
                 </Avatar>
 
                 <div className="items-center w-full flex mb-7">
-                  {userD!.rdata[!value ? "onetime" : "sub"].length >= 1 && subValue![!value ? "onetime" : "sub"] >= 1 && !apiState && (
-                    <IconButton
-                      className="mr-[6px] absolute top-5"
-                      onClick={() => {
-                        const nsVal = { ...subValue };
-                        nsVal[!value ? "onetime" : "sub"] = 0;
+                  {userD!.rdata[!value ? "onetime" : "sub"].length >= 1 &&
+                    subValue![!value ? "onetime" : "sub"] >= 1 &&
+                    !apiState && (
+                      <IconButton
+                        className="mr-[6px] absolute top-5"
+                        onClick={() => {
+                          const nsVal = { ...subValue };
+                          nsVal[!value ? "onetime" : "sub"] = 0;
 
-                        setFailMessage?.("");
+                          setFailMessage?.("");
 
-                        setSubValue?.(nsVal as subValueType);
-                      }}
-                    >
-                      <MdChevronLeft color="#302f2f" size={24} />
-                    </IconButton>
-                  )}
+                          setSubValue?.(nsVal as subValueType);
+                        }}
+                      >
+                        <MdChevronLeft color="#302f2f" size={24} />
+                      </IconButton>
+                    )}
                   <h2
                     className="!font-ubuntu w-full header"
                     style={{
@@ -437,7 +439,7 @@ const Carbon = ({ className }: { className?: string }) => {
                     </div>
                   )}
 
-                  {userD?.linktype == "both" && (
+                  {userD?.linktype == "both" && Boolean(rnData!.amount) && (
                     <Box
                       sx={{
                         borderBottom: 1,
@@ -724,29 +726,31 @@ const Carbon = ({ className }: { className?: string }) => {
                         )}
 
                         <div className="">
-                          <Button
-                            sx={{
-                              marginTop: "10px",
-                              backgroundColor: `${data.colorScheme} !important`,
-                              padding: "12px !important",
-                              textAlign: "center",
-                              fontWeight: "bold !important",
-                              lineHeight: "18px",
-                              fontSize: "16px",
-                              fontFamily: "'ubuntu', sans-serif !important",
-                              width: "100%",
-                              color: "#fff",
-                              borderRadius: "5px",
-                              textTransform: "none",
-                              cursor: "pointer",
-                              "&:hover": {
+                          {Boolean(token!.tokenAddr) && (
+                            <Button
+                              sx={{
+                                marginTop: "10px",
                                 backgroundColor: `${data.colorScheme} !important`,
-                              },
-                            }}
-                            onClick={() => begin?.("onetime", false)}
-                          >
-                            Pay Manually
-                          </Button>
+                                padding: "12px !important",
+                                textAlign: "center",
+                                fontWeight: "bold !important",
+                                lineHeight: "18px",
+                                fontSize: "16px",
+                                fontFamily: "'ubuntu', sans-serif !important",
+                                width: "100%",
+                                color: "#fff",
+                                borderRadius: "5px",
+                                textTransform: "none",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  backgroundColor: `${data.colorScheme} !important`,
+                                },
+                              }}
+                              onClick={() => begin?.("onetime", false)}
+                            >
+                              Pay Manually
+                            </Button>
+                          )}
                           <Button
                             sx={{
                               marginTop: "10px",
@@ -862,71 +866,73 @@ const Carbon = ({ className }: { className?: string }) => {
                           </div>
                         )}
 
-                        <div className="mb-5">
-                          <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
-                            Billed
-                          </label>
+                        {!Boolean(rnData!.amount) && (
+                          <div className="mb-5">
+                            <label className="block font-[600] text-[#555555] mb-[6px] !font-ubuntu">
+                              Billed
+                            </label>
 
-                          <ToggleButtonGroup
-                            value={interval}
-                            exclusive
-                            sx={{
-                              justifyContent: "space-between",
-                              width: "100%",
-                              "& .Mui-selected": {
-                                backgroundColor: `${data.colorScheme} !important`,
-                                color: `#fff !important`,
-                              },
-                              "& .MuiButtonBase-root:first-of-type": {
-                                marginRight: "0px !important",
-                                marginLeft: "0px !important",
-                              },
+                            <ToggleButtonGroup
+                              value={interval}
+                              exclusive
+                              sx={{
+                                justifyContent: "space-between",
+                                width: "100%",
+                                "& .Mui-selected": {
+                                  backgroundColor: `${data.colorScheme} !important`,
+                                  color: `#fff !important`,
+                                },
+                                "& .MuiButtonBase-root:first-of-type": {
+                                  marginRight: "0px !important",
+                                  marginLeft: "0px !important",
+                                },
 
-                              "& .MuiToggleButtonGroup-grouped": {
-                                borderRadius: "4px !important",
-                                minWidth: 55,
-                                padding: "5px",
-                                marginLeft: 3,
-                                border:
-                                  "1px solid rgba(0, 0, 0, 0.12) !important",
-                              },
-                            }}
-                            className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                            onChange={(e: any) => {
-                              setTransferFail?.(false);
-                              setLoadingText?.("");
-                              const val = e.target.value;
-                              setTinterval?.(val);
-                            }}
-                          >
-                            <ToggleButton
-                              className="capitalize font-bold"
-                              value="daily"
+                                "& .MuiToggleButtonGroup-grouped": {
+                                  borderRadius: "4px !important",
+                                  minWidth: 55,
+                                  padding: "5px",
+                                  marginLeft: 3,
+                                  border:
+                                    "1px solid rgba(0, 0, 0, 0.12) !important",
+                                },
+                              }}
+                              className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
+                              onChange={(e: any) => {
+                                setTransferFail?.(false);
+                                setLoadingText?.("");
+                                const val = e.target.value;
+                                setTinterval?.(val);
+                              }}
                             >
-                              Daily
-                            </ToggleButton>
+                              <ToggleButton
+                                className="capitalize font-bold"
+                                value="daily"
+                              >
+                                Daily
+                              </ToggleButton>
 
-                            <ToggleButton
-                              className="capitalize font-bold"
-                              value="weekly"
-                            >
-                              Weekly
-                            </ToggleButton>
-                            <ToggleButton
-                              className="capitalize font-bold"
-                              value="monthly"
-                            >
-                              Monthly
-                            </ToggleButton>
+                              <ToggleButton
+                                className="capitalize font-bold"
+                                value="weekly"
+                              >
+                                Weekly
+                              </ToggleButton>
+                              <ToggleButton
+                                className="capitalize font-bold"
+                                value="monthly"
+                              >
+                                Monthly
+                              </ToggleButton>
 
-                            <ToggleButton
-                              className="capitalize font-bold"
-                              value="yearly"
-                            >
-                              Yearly
-                            </ToggleButton>
-                          </ToggleButtonGroup>
-                        </div>
+                              <ToggleButton
+                                className="capitalize font-bold"
+                                value="yearly"
+                              >
+                                Yearly
+                              </ToggleButton>
+                            </ToggleButtonGroup>
+                          </div>
+                        )}
 
                         {!amountFixed && (
                           <div className="mb-5">

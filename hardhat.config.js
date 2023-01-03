@@ -31,7 +31,7 @@ task("account", "returns nonce and balance for specified address on multiple net
 
     const web3FilW = new web3('https://wallaby.node.glif.io/rpc/v0');
 
-    const networkIDArr = ["Cronos:", "Polygon:", "Aurora:", "Oasis:", "Optimism:", "FilWallaby"]
+    const networkIDArr = ["Cronos:", "Polygont:", "Aurora:", "Oasis:", "Optimism:", "FilWallaby"]
     const providerArr = [web3cronos, web3poly, web3aurora, web3oasis, web3Opt, web3FilW];
     const resultArr = [];
 
@@ -57,6 +57,10 @@ module.exports = {
   networks: {
     hardhat: {
       chainId: 1337
+    },
+    polygonMain:{
+      url: process.env.POLYGONMATIC,
+      accounts: [process.env.PRIVATE_KEY]
     },
     polygon: {
       url: process.env.MATIC_LINK,
