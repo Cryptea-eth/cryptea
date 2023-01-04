@@ -45,6 +45,7 @@ import {
   dash,
   Link as Linkx,
 } from "../../../../contexts/GenContext";
+import CrypSwitch from "../../CrypSwitch";
 
 const NewLink = () => {
   const StepperLine = styled(StepConnector)(({ theme }) => ({
@@ -878,7 +879,7 @@ const NewLink = () => {
                           </div>
 
                           <div className="">
-                            <Switch
+                            <CrypSwitch
                               onChange={(
                                 e: React.ChangeEvent<HTMLInputElement>
                               ) => {
@@ -886,14 +887,6 @@ const NewLink = () => {
                               }}
                               checked={minMax}
                               inputProps={{ "aria-label": "minimum amount" }}
-                              sx={{
-                                "&& .MuiSwitch-switchBase.Mui-checked": {
-                                  color: "#f57059",
-                                },
-                                "&& .Mui-checked+.MuiSwitch-track": {
-                                  backgroundColor: "#f57059",
-                                },
-                              }}
                             />
                           </div>
                         </div>

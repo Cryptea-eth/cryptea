@@ -338,6 +338,7 @@ export const CryptoList = [
     network: "polygon",
     tokenAddr: "",
     rpc: process.env.MATIC_LINK as string,
+    testnet: false,
   },
   {
     value: 80001,
@@ -360,6 +361,7 @@ export const CryptoList = [
     network: "polygon maticmum",
     tokenAddr: "",
     rpc: process.env.MATIC_LINK as string,
+    testnet: true,
   },
   {
     value: 31415,
@@ -382,6 +384,7 @@ export const CryptoList = [
     tokenAddr: "",
     contractAddr: "0x2d9E5Cd304A84DC15Bb28749Cf0769A0bdc2CD6F",
     rpc: FileCoinWallaby.rpcUrls.default,
+    testnet: true,
   },
   {
     value: 338,
@@ -404,6 +407,7 @@ export const CryptoList = [
     network: CronosTest.network as string,
     tokenAddr: "",
     rpc: CronosTest.rpcUrls.default,
+    testnet: true,
   },
   {
     value: 1313161555,
@@ -425,11 +429,13 @@ export const CryptoList = [
     symbol: "aurora",
     network: AuroraTestnet.network as string,
     tokenAddr: "",
+    testnet: true,
     rpc: AuroraTestnet.rpcUrls.default,
   },
   {
     value: 420,
     contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    testnet: true,
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
@@ -452,6 +458,7 @@ export const CryptoList = [
   {
     value: 42261,
     contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    testnet: true,
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">

@@ -134,8 +134,12 @@ const Carbon = ({ className }: { className?: string }) => {
   }, [signer]);
 
   useEffect(() => {
-    if (userD!.rdata !== undefined && rnData!.data) {
-      if (userD!.rdata[!value ? "onetime" : "sub"].length < 1 || apiState) {
+    if (userD!.rdata !== undefined) {
+      if (
+        userD!.rdata[!value ? "onetime" : "sub"].length < 1 ||
+        apiState ||
+        rnData!.data
+      ) {
         const nsVal = { ...subValue };
 
         nsVal[!value ? "onetime" : "sub"] = 1;

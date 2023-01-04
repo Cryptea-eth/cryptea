@@ -139,6 +139,7 @@ export const PaymentProvider = ({
       label: string | JSX.Element;
       symbol: string;
       network: string;
+      testnet: boolean;
       contractAddr: string;
       name: string;
       rpc: string;
@@ -201,6 +202,7 @@ export const PaymentProvider = ({
     price: number,
     chain: string | number | undefined = 80001
   ) => {
+
     let final: number = 0;
     setLoadingText("Loading price data...");
 
@@ -390,6 +392,26 @@ export const PaymentProvider = ({
             if (sOptions[0] !== undefined) {
               setToken(sOptions[0]);
             }
+          }
+
+          if (userl.live == 'Yes') {
+              const sOptions = [...options].filter(
+                (v: token) => !v.testnet
+              );
+
+              setOptions(sOptions);
+
+              if (sOptions[0] !== undefined) {
+                setToken(sOptions[0]);
+              }
+          } else {
+               const sOptions = [...options].sort((v, x) => Number(x.testnet) - Number(v.testnet));
+
+               setOptions(sOptions);
+
+               if (sOptions[0] !== undefined) {
+                 setToken(sOptions[0]);
+               }
           }
 
           if (
@@ -641,6 +663,7 @@ export const PaymentProvider = ({
             contractAddr: token.contractAddr,
             paytype: "auto",
             linkId,
+            pay_type: token.testnet ? "test" : "main",
             chain: token.value,
           };
 
@@ -800,6 +823,7 @@ export const PaymentProvider = ({
               type,
               amount,
               api: apiCode,
+              pay_type: token.testnet ? 'test' : 'main',
               explorer: tokenTrackers[token.value].link,
               amountCrypto: price,
               label: token.name,

@@ -91,6 +91,7 @@ export default function handler(
                   type: body.type,
                   amount: body.amount,
                   hash: trx.hash,
+                  pay_type: body.pay_type,
                   explorer: body.explorer,
                   amountCrypto: body.price,
                   token: body.label
