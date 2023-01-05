@@ -97,7 +97,7 @@ export default function handler(
           // }
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           return res
             .status(408)
             .json({

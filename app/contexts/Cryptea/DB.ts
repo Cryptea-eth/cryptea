@@ -255,7 +255,7 @@ String.prototype.delete = async function (this: string, id?: number) {
       }
     } catch (error) {
       const err = error as AxiosError;
-      console.log(err);
+      // console.log(err);
       if (err.response) {
         throw err.response.data;
       }

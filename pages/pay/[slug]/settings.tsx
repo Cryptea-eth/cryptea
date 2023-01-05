@@ -452,7 +452,7 @@ const Settings = () => {
     } catch (err) {
       const error = err as any;
 
-      console.log(error, "oer");
+      // console.log(error, "oer");
       saveData(false);
 
       if (error.response) {
@@ -784,7 +784,7 @@ const Settings = () => {
                               value={formdata["rdata"]}
                               onChange={(e: any) => {
                                 let p: boolean = true;
-                                console.log(e, "wo");
+                                // console.log(e, "wo");
                                 if (p) {
                                   setFormData({
                                     rdata: e,

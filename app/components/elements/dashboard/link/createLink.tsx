@@ -455,7 +455,7 @@ const NewLink = () => {
       } catch (e) {
         const errorObject = e as any;
 
-        console.log(errorObject);
+        // console.log(errorObject);
 
         if (errorObject.error) {
 

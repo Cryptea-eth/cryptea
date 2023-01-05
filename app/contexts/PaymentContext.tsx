@@ -314,7 +314,7 @@ export const PaymentProvider = ({
         setFailMessage("Your amount is invalid");
       }
     } catch (x) {
-      console.log(x);
+      // console.log(x);
       setTransferFail(true);
       setFailMessage("Something went wrong, Please try again");
     }
@@ -470,7 +470,7 @@ export const PaymentProvider = ({
         }
       } catch (err) {
         const error = err as Error;
-        console.log(error);
+        // console.log(error);
         setIs500(true);
       }
     };
@@ -576,7 +576,7 @@ export const PaymentProvider = ({
   ) => {
     let from = "";
 
-    console.log(signer, "sign");
+    // console.log(signer, "sign");
 
     if (!connected || chainId != token.value || !signer) {
       setLoadingText("");
@@ -584,7 +584,7 @@ export const PaymentProvider = ({
       if (chainId != token.value) {
         const switchNet = await switchNetworkAsync?.(token.value);
 
-        console.log(switchNet, "hehe");
+        // console.log(switchNet, "hehe");
 
         if (connected) {
           disconnect();
@@ -628,7 +628,7 @@ export const PaymentProvider = ({
           value: ethers.utils.parseEther(ether),
         }) //receiver
         .then(async (init: any) => {
-          console.log(init);
+          // console.log(init);
           setHash(init.hash);
 
           const rx: { [index: string]: string | number | undefined } = {};
@@ -735,7 +735,7 @@ export const PaymentProvider = ({
               setFailMessage("Transaction underpriced, please try again");
             }
 
-            console.log(err);
+            // console.log(err);
             setLoadingText("");
           }
         });
@@ -745,9 +745,9 @@ export const PaymentProvider = ({
   useEffect(() => {
     if (connected && paymentData !== undefined) {
       if (chainId == token.value) {
-        console.log("ee");
+        // console.log("ee");
         if (Boolean(signer)) {
-          console.log("kekr");
+          // console.log("kekr");
           beginPayment(paymentData.price, paymentData.type);
           setPaymentData(undefined);
         }
@@ -792,7 +792,7 @@ export const PaymentProvider = ({
           baseURL: window.origin,
         });
 
-        console.log(queryBalance);
+        // console.log(queryBalance);
 
         if (queryBalance.data.proceed) {
           clearInterval(timer.current);
@@ -848,7 +848,7 @@ export const PaymentProvider = ({
               }
             );
 
-            console.log(trxx);
+            // console.log(trxx);
 
             if (trxx.data.success) {
               const trx = trxx.data;
@@ -891,7 +891,7 @@ export const PaymentProvider = ({
             } else {
               setManLoader(false);
               openModal(false);
-              console.log(trxx.data.message);
+              // console.log(trxx.data.message);
               clearInterval(timer.current);
               setTransferFail(true);
               setTimeCounted(0);
@@ -900,7 +900,7 @@ export const PaymentProvider = ({
           } catch (err) {
             setManLoader(false);
             openModal(false);
-            console.log(err);
+            // console.log(err);
             setTransferFail(true);
             clearInterval(timer.current);
             setTimeCounted(0);
@@ -919,7 +919,7 @@ export const PaymentProvider = ({
           );
         }
       } catch (err) {
-        console.log(err);
+        // // console.log(err);
         timerTimeout = setTimeout(
           () =>
             checkWallet({
@@ -962,7 +962,7 @@ export const PaymentProvider = ({
         baseURL: window.origin,
       })
       .then(async (address) => {
-        console.log(address, "here");
+        // console.log(address, "here");
 
         let wallet: string = address!.data.data;
 
@@ -1000,7 +1000,7 @@ export const PaymentProvider = ({
       .catch((err) => {
         const error = err as Error | AxiosError;
 
-        console.log(error);
+        // console.log(error);
 
         beginManual(amount, type);
       });

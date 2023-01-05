@@ -123,7 +123,7 @@ const SignupForm = () => {
                 rdata: '{"sub":[],"onetime":[]}',
               });
             } catch (err) {
-              console.log(err);
+              // console.log(err);
               if (err.response.message) {
                 setError(err.response.message);
               } else if (err.message) {
@@ -134,15 +134,15 @@ const SignupForm = () => {
               setLoading(false);
               return;
             }
-            console.log("sz");
+            // console.log("sz");
             Router.push("/dashboard");
           } else {
-            console.log("s");
+            // console.log("s");
             Router.push("/dashboard");
             setLoading(false);
           }
         } catch (err) {
-          console.log(err);
+          // console.log(err);
           if (err.response) {
             setError(err.response.message);
           } else {
@@ -170,7 +170,7 @@ useEffect(() => {
 
       ('user').get('*', true).then(e => {
 
-        console.log(e)
+        // console.log(e)
 
         const addresses = JSON.parse(e.accounts);
 

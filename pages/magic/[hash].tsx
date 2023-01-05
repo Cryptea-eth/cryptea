@@ -69,7 +69,7 @@ const VerifyHash = () => {
           .catch((err) => {
             const error = err as AxiosError;
 
-            console.log(error);
+            // console.log(error);
 
             setLoading(false);
           });

@@ -30,7 +30,7 @@ const EmailHash = () => {
 
               })
               .catch((err) => {
-                console.log(err);
+                // console.log(err);
 
                 setLoading(false);
                 
