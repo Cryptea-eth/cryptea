@@ -139,6 +139,7 @@ export const PaymentProvider = ({
       label: string | JSX.Element;
       symbol: string;
       network: string;
+      testnet: boolean;
       contractAddr: string;
       name: string;
       rpc: string;
@@ -201,6 +202,7 @@ export const PaymentProvider = ({
     price: number,
     chain: string | number | undefined = 80001
   ) => {
+
     let final: number = 0;
     setLoadingText("Loading price data...");
 
@@ -312,7 +314,7 @@ export const PaymentProvider = ({
         setFailMessage("Your amount is invalid");
       }
     } catch (x) {
-      console.log(x);
+      // console.log(x);
       setTransferFail(true);
       setFailMessage("Something went wrong, Please try again");
     }
@@ -392,6 +394,26 @@ export const PaymentProvider = ({
             }
           }
 
+          if (userl.live == 'Yes') {
+              const sOptions = [...options].filter(
+                (v: token) => !v.testnet
+              );
+
+              setOptions(sOptions);
+
+              if (sOptions[0] !== undefined) {
+                setToken(sOptions[0]);
+              }
+          } else {
+               const sOptions = [...options].sort((v, x) => Number(x.testnet) - Number(v.testnet));
+
+               setOptions(sOptions);
+
+               if (sOptions[0] !== undefined) {
+                 setToken(sOptions[0]);
+               }
+          }
+
           if (
             rdata["sub"] !== undefined &&
             rdata["sub"].indexOf("Email") == -1 &&
@@ -448,7 +470,7 @@ export const PaymentProvider = ({
         }
       } catch (err) {
         const error = err as Error;
-        console.log(error);
+        // console.log(error);
         setIs500(true);
       }
     };
@@ -554,7 +576,7 @@ export const PaymentProvider = ({
   ) => {
     let from = "";
 
-    console.log(signer, "sign");
+    // console.log(signer, "sign");
 
     if (!connected || chainId != token.value || !signer) {
       setLoadingText("");
@@ -562,7 +584,7 @@ export const PaymentProvider = ({
       if (chainId != token.value) {
         const switchNet = await switchNetworkAsync?.(token.value);
 
-        console.log(switchNet, "hehe");
+        // console.log(switchNet, "hehe");
 
         if (connected) {
           disconnect();
@@ -606,7 +628,7 @@ export const PaymentProvider = ({
           value: ethers.utils.parseEther(ether),
         }) //receiver
         .then(async (init: any) => {
-          console.log(init);
+          // console.log(init);
           setHash(init.hash);
 
           const rx: { [index: string]: string | number | undefined } = {};
@@ -641,6 +663,7 @@ export const PaymentProvider = ({
             contractAddr: token.contractAddr,
             paytype: "auto",
             linkId,
+            pay_type: token.testnet ? "test" : "main",
             chain: token.value,
           };
 
@@ -712,7 +735,7 @@ export const PaymentProvider = ({
               setFailMessage("Transaction underpriced, please try again");
             }
 
-            console.log(err);
+            // console.log(err);
             setLoadingText("");
           }
         });
@@ -722,9 +745,9 @@ export const PaymentProvider = ({
   useEffect(() => {
     if (connected && paymentData !== undefined) {
       if (chainId == token.value) {
-        console.log("ee");
+        // console.log("ee");
         if (Boolean(signer)) {
-          console.log("kekr");
+          // console.log("kekr");
           beginPayment(paymentData.price, paymentData.type);
           setPaymentData(undefined);
         }
@@ -769,7 +792,7 @@ export const PaymentProvider = ({
           baseURL: window.origin,
         });
 
-        console.log(queryBalance);
+        // console.log(queryBalance);
 
         if (queryBalance.data.proceed) {
           clearInterval(timer.current);
@@ -800,6 +823,7 @@ export const PaymentProvider = ({
               type,
               amount,
               api: apiCode,
+              pay_type: token.testnet ? 'test' : 'main',
               explorer: tokenTrackers[token.value].link,
               amountCrypto: price,
               label: token.name,
@@ -824,7 +848,7 @@ export const PaymentProvider = ({
               }
             );
 
-            console.log(trxx);
+            // console.log(trxx);
 
             if (trxx.data.success) {
               const trx = trxx.data;
@@ -867,7 +891,7 @@ export const PaymentProvider = ({
             } else {
               setManLoader(false);
               openModal(false);
-              console.log(trxx.data.message);
+              // console.log(trxx.data.message);
               clearInterval(timer.current);
               setTransferFail(true);
               setTimeCounted(0);
@@ -876,7 +900,7 @@ export const PaymentProvider = ({
           } catch (err) {
             setManLoader(false);
             openModal(false);
-            console.log(err);
+            // console.log(err);
             setTransferFail(true);
             clearInterval(timer.current);
             setTimeCounted(0);
@@ -895,7 +919,7 @@ export const PaymentProvider = ({
           );
         }
       } catch (err) {
-        console.log(err);
+        // // console.log(err);
         timerTimeout = setTimeout(
           () =>
             checkWallet({
@@ -938,7 +962,7 @@ export const PaymentProvider = ({
         baseURL: window.origin,
       })
       .then(async (address) => {
-        console.log(address, "here");
+        // console.log(address, "here");
 
         let wallet: string = address!.data.data;
 
@@ -976,7 +1000,7 @@ export const PaymentProvider = ({
       .catch((err) => {
         const error = err as Error | AxiosError;
 
-        console.log(error);
+        // console.log(error);
 
         beginManual(amount, type);
       });

@@ -8,7 +8,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();
 
   for (const account of accounts) {
-    console.log(account.address);
+    // console.log(account.address);
   }
 });
 
@@ -41,7 +41,7 @@ task("account", "returns nonce and balance for specified address on multiple net
       resultArr.push([networkIDArr[i], nonce, parseFloat(providerArr[i].utils.fromWei(balance, "ether")).toFixed(2) + "ETH"]);
     }
     resultArr.unshift(["  |NETWORK|   |NONCE|   |BALANCE|  "])
-    console.log(resultArr);
+    // console.log(resultArr);
   });
 
 module.exports = {

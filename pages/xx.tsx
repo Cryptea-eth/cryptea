@@ -18,7 +18,7 @@ const Xx = () => {
     undefined,
     false
   ).then((e: any) => {
-    console.log(Object.values(e.data.data));
+    // console.log(Object.values(e.data.data));
   });
 
  }, [router.isReady, router]);

@@ -16,7 +16,7 @@ var jstz = function () {
     };
     return {
         determine_timezone: function () {
-            "undefined" !== typeof console && console.log("jstz.determine_timezone() is deprecated and will be removed in an upcoming version. Please use jstz.determine() instead.");
+            // "undefined" !== typeof console && console.log("jstz.determine_timezone() is deprecated and will be removed in an upcoming version. Please use jstz.determine() instead.");
             return e()
         },
         determine: e,

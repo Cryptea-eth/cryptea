@@ -169,7 +169,7 @@ useEffect(() => {
     }catch (err) {
         const error = err as Error;
 
-        console.log(error)
+        // console.log(error)
 
     }
   }
@@ -245,7 +245,7 @@ useEffect(() => {
 
       const pct:number = (totalSize / uploaded) * 100;
 
-      console.log(`Uploading... ${pct.toFixed(2)}% complete`);
+      // console.log(`Uploading... ${pct.toFixed(2)}% complete`);
 
       setIsUploading(pct);
       if (pct > 98) {

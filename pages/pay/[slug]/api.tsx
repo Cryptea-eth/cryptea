@@ -321,7 +321,7 @@ const Api = () => {
                           } catch (err) {
                             const errx = err as any;
 
-                            console.log(errx, "ee");
+                            // console.log(errx, "ee");
 
                             if (errx.response) {
                               setError(errx.response.data.message);
@@ -630,7 +630,7 @@ const Api = () => {
                         } catch (err) {
                           const errx = err as any;
 
-                          console.log(errx, "ee");
+                          // console.log(errx, "ee");
 
                           if (errx.response) {
                             setError(errx.response.data.message);

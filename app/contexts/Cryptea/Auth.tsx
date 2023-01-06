@@ -69,7 +69,7 @@ export const AuthAddress = async ({address, signature, message }: AuthAddressTyp
       
   }catch (err) {
       const error = err as AxiosError;
-      console.log(err);
+      // console.log(err);
       if (error.response) {
         throw "Invalid Login Details";
       }
@@ -109,7 +109,7 @@ export const AuthUser = async ({
         });
         return main;
       } catch (err) {
-        console.log(err);
+        // console.log(err);
         throw "Something went wrong, please try again";
       }
     } else {

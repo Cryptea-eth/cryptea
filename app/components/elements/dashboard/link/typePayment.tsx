@@ -53,7 +53,7 @@ const TypePayment = ({
 
          saving(false)
 
-         console.log(error, "oer");
+         // console.log(error, "oer");
 
          if (error.response) {
            setGenError(error.response.data.message);

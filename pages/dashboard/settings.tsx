@@ -172,7 +172,7 @@ const Settings = () => {
             });               
 
           } else {
-            console.log(erro.message)
+            // console.log(erro.message)
              setError({ ...error, account: "Something went wrong, please try again" });     
           }
          
@@ -237,7 +237,7 @@ const Settings = () => {
 
       const pct = (totalSize / uploaded) * 100;
 
-      console.log(`Uploading... ${pct.toFixed(2)}% complete`);
+      // console.log(`Uploading... ${pct.toFixed(2)}% complete`);
 
       setLoading({ ...isLoading, progress: [pct, uploaded] });
     };

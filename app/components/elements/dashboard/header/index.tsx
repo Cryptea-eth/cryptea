@@ -63,7 +63,7 @@ const DashHeader = ({
             last_page: dx.data.last_page,
           });
 
-          // console.log(dx.data.data, 'ww')
+          // // console.log(dx.data.data, 'ww')
 
           setNewNote(
             Boolean(dx?.data.data.filter((d: any) => d.read == "false").length)
@@ -246,7 +246,7 @@ const DashHeader = ({
                     false
                   );
 
-                  // console.log("wpeo", Object.values(dxx?.data.data).length);
+                  // // console.log("wpeo", Object.values(dxx?.data.data).length);
 
                   setOdata([...odata, ...Object.values(dxx?.data.data)]);
 
@@ -334,7 +334,7 @@ const DashHeader = ({
 
                   get_request("/notifications/view", {}, undefined, false).then(
                     (e) => {
-                      console.log(e?.data);
+                      // console.log(e?.data);
                     }
                   );
                 }}

@@ -33,6 +33,7 @@ import { GiTwoCoins } from "react-icons/gi";
 import { FaCoins } from "react-icons/fa";
 import { RiCoinLine } from 'react-icons/ri'
 import Loader from "../../../app/components/elements/loader";
+import CrypSwitch from "../../../app/components/elements/CrypSwitch";
 
 const Settings = () => {
   const { isAuthenticated, validator } = useCryptea();
@@ -451,7 +452,7 @@ const Settings = () => {
     } catch (err) {
       const error = err as any;
 
-      console.log(error, "oer");
+      // console.log(error, "oer");
       saveData(false);
 
       if (error.response) {
@@ -783,7 +784,7 @@ const Settings = () => {
                               value={formdata["rdata"]}
                               onChange={(e: any) => {
                                 let p: boolean = true;
-                                console.log(e, "wo");
+                                // console.log(e, "wo");
                                 if (p) {
                                   setFormData({
                                     rdata: e,
@@ -932,7 +933,7 @@ const Settings = () => {
                         <p>Specify Minimum amount</p>
                       </div>
                       <div className="">
-                        <Switch
+                        <CrypSwitch
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
@@ -940,14 +941,6 @@ const Settings = () => {
                           }}
                           checked={min}
                           inputProps={{ "aria-label": "minimum amount" }}
-                          sx={{
-                            "&& .MuiSwitch-switchBase.Mui-checked": {
-                              color: "#f57059",
-                            },
-                            "&& .Mui-checked+.MuiSwitch-track": {
-                              backgroundColor: "#f57059",
-                            },
-                          }}
                         />
                       </div>
                     </div>
@@ -1002,7 +995,7 @@ const Settings = () => {
                         <p>Specify Maximum amount</p>
                       </div>
                       <div className="">
-                        <Switch
+                        <CrypSwitch
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
@@ -1010,14 +1003,6 @@ const Settings = () => {
                           }}
                           checked={max}
                           inputProps={{ "aria-label": "maximum amount" }}
-                          sx={{
-                            "&& .MuiSwitch-switchBase.Mui-checked": {
-                              color: "#f57059",
-                            },
-                            "&& .Mui-checked+.MuiSwitch-track": {
-                              backgroundColor: "#f57059",
-                            },
-                          }}
                         />
                       </div>
                     </div>

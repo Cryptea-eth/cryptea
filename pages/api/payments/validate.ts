@@ -23,6 +23,7 @@ const addressEqual = (address1: string, address2: string): boolean => {
 
 const providers: { [index: string]: string } = {
   338: CronosTest.rpcUrls.default,
+  137: process.env.POLYGONMATIC as string,
   80001: process.env.MATIC_LINK as string,
   42261: OasisEmeraldTestnet.rpcUrls.default,
   1313161555: AuroraTestnet.rpcUrls.default,

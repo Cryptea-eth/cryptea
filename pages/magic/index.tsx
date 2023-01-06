@@ -88,7 +88,7 @@ const Magic = () => {
 
             }
 
-            console.log(error, 'eor');
+            // console.log(error, 'eor');
         }
     }
 

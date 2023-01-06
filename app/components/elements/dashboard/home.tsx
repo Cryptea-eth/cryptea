@@ -1,4 +1,4 @@
-import { Avatar, Button, IconButton, Skeleton } from "@mui/material";
+import { Avatar, Button, FormControlLabel, FormGroup, IconButton, Skeleton, Switch, SwitchProps, ToggleButton, ToggleButtonGroup, Tooltip, styled } from "@mui/material";
 import Link from "next/link";
 import NumberFormat from "react-number-format";
 import LineChart from "../Extras/Rep/lineChart";
@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { cryptoDeets } from "../../../functions/crypto";
 import axios from "axios";
 import CustomImg from "../customImg";
+import CrypSwitch from "../CrypSwitch";
 
 const DashHome = () => {
   const [dashData, setDashData] = useState<any>({
@@ -26,10 +27,23 @@ const DashHome = () => {
 
   const [rand, setRand] = useState<number>(0);
 
+  const [checked, setChecked] = useState<boolean>(false);
+
+  const changeChecked = async () => {
+      setChecked(!checked);
+      
+      try {
+      await 'user'.update({ live: !checked ? 'Yes' : 'No' });    
+      }catch (err) {
+          setChecked(!checked);
+      }
+  }
+
   useEffect(() => {
     setRand(Math.floor(Math.random() * 4));
 
     const init = async () => {
+
       const dashmain = await get_request(
         "/dashboard/home",
         {},
@@ -120,8 +134,10 @@ const DashHome = () => {
 
       once.current = false;
 
-    init();
-    
+      'user'.get('*', true).then(e => {
+        setChecked((e as any).live == 'Yes');
+        init();
+      });
   }
   }, []);
 
@@ -143,10 +159,55 @@ const DashHome = () => {
     return { value: Math.abs(value), direction: value >= 0 ? "up" : "down" };
   };
 
+  
+
   return (
     <div className="px-5 pt-[75px]">
       <div className="flex items-start justify-between">
-        <div className="mainx w-[calc(100%-340px)] 2sm:w-full">
+        <div className="mainx relative w-[calc(100%-340px)] 2sm:w-full">
+          <div className="w-full flex items-end justify-end absolute">
+            <div className="mt-1">
+              {blur ? (
+                <div className="flex items-center">
+                  <Skeleton
+                    sx={{ fontSize: "1rem", width: "32px", marginRight: "3px" }}
+                  />
+
+                  <Skeleton
+                    variant={"rounded"}
+                    sx={{ fontSize: ".9rem", width: "46px", height: "26px" }}
+                  />
+                </div>
+              ) : (
+                <Tooltip
+                  placement="bottom"
+                  arrow
+                  title={
+                    "Add testnet tokens support, not supported for production"
+                  }
+                >
+                  <FormControlLabel
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontWeight: "600",
+                        color: "#818181",
+                        fontSize: ".9rem",
+                      },
+                    }}
+                    control={
+                      <CrypSwitch
+                        sx={{ m: 1 }}
+                        checked={checked}
+                        onChange={changeChecked}
+                      />
+                    }
+                    labelPlacement="start"
+                    label={"Only. live"}
+                  />
+                </Tooltip>
+              )}
+            </div>
+          </div>
           <div className="py-3">
             {blur ? (
               <Skeleton
@@ -236,9 +297,11 @@ const DashHome = () => {
                 sx={{ fontSize: "1.04rem", width: "80px" }}
               />
             ) : (
-              Boolean(dashData["sortBreakdown"].length) && <span className="block uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
-                Break Down
-              </span>
+              Boolean(dashData["sortBreakdown"].length) && (
+                <span className="block uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
+                  Break Down
+                </span>
+              )
             )}
 
             <div className="flex items-center cusscroller overflow-x-scroll overflow-y-hidden pb-1">

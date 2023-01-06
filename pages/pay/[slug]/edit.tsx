@@ -170,7 +170,7 @@ const Edit = () => {
     } catch (err) {
       const error = err as Error;
 
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -306,7 +306,7 @@ const Edit = () => {
 
       const pct: number = (totalSize / uploaded) * 100;
 
-      console.log(`Uploading... ${pct.toFixed(2)}% complete`);
+      // console.log(`Uploading... ${pct.toFixed(2)}% complete`);
 
       if (pct > 93) {
         setViewColor("");
@@ -1883,7 +1883,7 @@ const Edit = () => {
                         className="ml-3"
                         size="large"
                         onClick={() => {
-                          console.log("here");
+                          // console.log("here");
                         }}
                       >
                         <RiDeleteBin5Line

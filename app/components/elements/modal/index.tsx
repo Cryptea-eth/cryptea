@@ -113,7 +113,7 @@ const AuthModal = ({
     updateLogin?.(false);
 
     if (pathname == "/") {
-        console.log(router.isReady)
+        // console.log(router.isReady)
       if (!Boolean(email)) {
         Router.push("/signup");
       } else {
@@ -227,12 +227,12 @@ const AuthModal = ({
             setIsAuth({ ...isAuth, uauth: false });
           }
         } catch (error) {
-          console.log(error);
+          // console.log(error);
           updAuthError("Something went wrong please try again");
           setIsAuth({ ...isAuth, uauth: false });
         }
       }else{
-        console.log('here authenticated', isAuthenticated, localStorage.getItem('userToken'))
+        // console.log('here authenticated', isAuthenticated, localStorage.getItem('userToken'))
       }
     }
   };
@@ -259,7 +259,7 @@ const AuthModal = ({
           storeAuth("metaauth");
 
           if (supported.includes(chainId ? Number(chainId) : 137)) {
-            console.log(chainId);
+            // console.log(chainId);
 
             if (isAuthing !== undefined) {
               if (userAuth) {
@@ -288,7 +288,7 @@ const AuthModal = ({
           }
         } catch (err) {
           const error = err as Error;
-          console.log(error);
+          // console.log(error);
           updAuthError("Something went wrong please try again");
           setIsAuth({ ...isAuth, metamask: false });
         }
@@ -325,7 +325,7 @@ const AuthModal = ({
           storeAuth("coinbaseauth");
 
           if (supported.includes(chainId ? Number(chainId) : 137)) {
-            console.log(chainId);
+            // console.log(chainId);
 
             if (isAuthing !== undefined) {
               if (userAuth) {
@@ -354,7 +354,7 @@ const AuthModal = ({
           }
         } catch (err) {
           const error = err as Error;
-          console.log(error);
+          // console.log(error);
           updAuthError("Something went wrong please try again");
           setIsAuth({ ...isAuth, coinbase: false });
         }
@@ -443,7 +443,7 @@ const AuthModal = ({
           }
         } catch (err) {
           const error = err as Error;
-          console.log(error);
+          // console.log(error);
           updAuthError("Something went wrong please try again");
           setIsAuth({ ...isAuth, walletconnect: false });
         }

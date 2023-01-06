@@ -100,8 +100,8 @@ const Origin = ({ className }: { className?: string }) => {
   }, [signer]);
 
   useEffect(() => {
-    if (userD!.rdata !== undefined && rnData!.data) {
-      if (userD!.rdata[!value ? "onetime" : "sub"].length < 1 || apiState) {
+    if (userD!.rdata !== undefined) {
+      if (userD!.rdata[!value ? "onetime" : "sub"].length < 1 || apiState || rnData!.data) {
         const nsVal = { ...subValue };
 
         nsVal[!value ? "onetime" : "sub"] = 1;
@@ -612,7 +612,7 @@ const Origin = ({ className }: { className?: string }) => {
                                 >
                                   {userD!.rdata["onetime"].map(
                                     (ixn: string, i: number) => (
-                                      <>
+                                      <div key={i}>
                                         <div
                                           style={{
                                             paddingTop:
@@ -648,7 +648,7 @@ const Origin = ({ className }: { className?: string }) => {
                                             setPemail?.([...pemail!]);
                                           }}
                                         />
-                                      </>
+                                      </div>
                                     )
                                   )}
 
@@ -909,7 +909,7 @@ const Origin = ({ className }: { className?: string }) => {
                                 >
                                   {userD!.rdata["sub"].map(
                                     (ixn: string, i: number) => (
-                                      <>
+                                      <div key={i}>
                                         <div
                                           style={{
                                             paddingTop:
@@ -946,7 +946,7 @@ const Origin = ({ className }: { className?: string }) => {
                                             setPemail?.([...pemail!]);
                                           }}
                                         />
-                                      </>
+                                      </div>
                                     )
                                   )}
 

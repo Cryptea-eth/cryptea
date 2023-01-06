@@ -109,6 +109,7 @@ export type token = {
   symbol: string;
   network: string;
   tokenAddr: string;
+  testnet: boolean;
   rpc: string;
   name: string;
   contractAddr: string;
