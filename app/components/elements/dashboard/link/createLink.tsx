@@ -449,6 +449,9 @@ const NewLink = () => {
       };
 
       try {
+
+        // drop here - link creation
+
         await "links".save(newData);
 
         Router.push(`/pay/${newData.slug}/overview`);

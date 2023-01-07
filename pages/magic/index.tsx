@@ -62,17 +62,17 @@ const Magic = () => {
         }
 
         try {
+          // drop here - magic link
 
-           const req = await post_request("/login/magic/request", {
-              email: validator.normalizeEmail(email),
-            });
+          const req = await post_request("/login/magic/request", {
+            email: validator.normalizeEmail(email),
+          });
 
-            isLoading(false);
+          isLoading(false);
 
-            setUser(req.data.user)              
+          setUser(req.data.user);
 
-            setSuccess(true);
-
+          setSuccess(true);
         }catch (err) {
             const error = err as AxiosError;
 

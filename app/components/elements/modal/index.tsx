@@ -210,6 +210,9 @@ const AuthModal = ({
             });
 
             if (Boolean(main)) {
+
+              // drop here - unstoppable
+
               if (userAuth) {
                 storeAuth("uauth");
 
@@ -263,6 +266,9 @@ const AuthModal = ({
 
             if (isAuthing !== undefined) {
               if (userAuth) {
+
+                // drop here - metamask
+
                 const email = await "user".get("email");
 
                 setIsAuth({ ...isAuth, metamask: false });
@@ -314,6 +320,7 @@ const AuthModal = ({
           let isAuthing: any;
 
           if (userAuth) {
+            // drop here - coinbase
             isAuthing = await authenticateUser({
               signMessage: message ?? "Welcome to Cryptea",
               type: connectors[0],
@@ -407,6 +414,9 @@ const AuthModal = ({
         try {
           let isAuthing: any;
           if (userAuth) {
+
+            // drop here - walletconnect
+
             isAuthing = await authenticateUser({
               signMessage: message ?? "Welcome to Cryptea",
               type: connectors[1],
