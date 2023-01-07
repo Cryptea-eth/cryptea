@@ -1039,6 +1039,8 @@ export const PaymentProvider = ({
         }
       }
 
+      // drop here - payment
+
       if (auto) initMain(Number(amount), type);
       else beginManual(Number(amount), type);
     } else {
