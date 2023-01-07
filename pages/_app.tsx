@@ -11,6 +11,8 @@ import { HomeProvider } from '../app/contexts/HomeContext';
 import '../app/contexts/Cryptea/types.d.ts';
 import { CrypteaProvider } from "../app/contexts/Cryptea/Auth";
 import { crypteaCon, stylesCon } from '../app/contexts/Cryptea/icon';
+import Script from 'next/script';
+import Head from 'next/head'
 
 function MyApp({ Component, pageProps }: AppProps) {
 
@@ -18,7 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   React.useEffect(() => {
 
-    if(once.current){
+    if (once.current) {
 
       once.current = false;
 
@@ -29,6 +31,26 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [])
 
   return (
+    <>
+      <Script strategy="lazyOnload" src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`} />
+
+      <Script id="my-script" strategy="lazyOnload">
+        {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
+                    page_path: window.location.pathname,
+                    });
+                `}
+      </Script>
+      <Script strategy="lazyOnload" src={`https://www.googleoptimize.com/optimize.js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`} />
+
+      <Head>
+        <title>Welcome!</title>
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
+      </Head>
+
       <CrypteaProvider>
         <GenProvider>
           <HomeProvider>
@@ -36,6 +58,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           </HomeProvider>
         </GenProvider>
       </CrypteaProvider>
+    </>
   );
 }
 

@@ -202,7 +202,7 @@ const DashHome = () => {
                       />
                     }
                     labelPlacement="start"
-                    label={"Only. live"}
+                    label={"Only live"}
                   />
                 </Tooltip>
               )}

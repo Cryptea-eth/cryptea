@@ -9,8 +9,7 @@ import AuthModal from "../modal";
 function Nav() {
   const router = useRouter();
 
-  const { authenticate, user, isAuthenticated } =
-    useCryptea();
+  const { authenticate, user, isAuthenticated } = useCryptea();
 
 
   // const walletconnect = async () => {
@@ -23,7 +22,7 @@ function Nav() {
   //       provider: "walletConnect",
   //     })
   //       .then(function (user) {
-          
+
   //         setIsAuth({ ...isAuth, walletconnect: false });
 
   //         if(supported.includes(chainId ? Number(chainId) : 137)){
@@ -68,17 +67,17 @@ function Nav() {
           </Link>
         </div>
 
-       <AuthModal />
+        <AuthModal />
 
         <div className="right mmd:hidden">
           <div>
             {isAuthenticated! ? (
               <Link href={"/dashboard"}>
-              <a 
-                className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] block text-white font-semibold py-4 px-4"
-              >
-                Dashboard
-              </a>
+                <a
+                  className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] block text-white font-semibold py-4 px-4"
+                >
+                  Dashboard
+                </a>
               </Link>
             ) : (
               <div>
