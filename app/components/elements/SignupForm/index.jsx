@@ -9,7 +9,7 @@ import {
   InputAdornment,
   CircularProgress
 } from "@mui/material";
-
+import analytics from "../../../../analytics";
 import Router from "next/router";
 import { useCryptea } from "../../../contexts/Cryptea";
 import Loader from "../loader";
@@ -81,6 +81,10 @@ const SignupForm = () => {
       if (more) {
         
         // drop here - signup
+        analytics.track("Signup", {
+          email: userEmail,
+          username: userInfo,
+        });
 
         try {
           const e = await "user".get("*", true);

@@ -12,32 +12,15 @@ const analytics = Analytics({
         trackingOptions: {
           city: true,
           country: true,
-          device_manufacturer: true,
-          device_model: true,
-          dma: true,
           ip_address: true,
           language: true,
-          os_name: true,
-          os_version: true,
           region: true,
           version_name: true,
-          carrier: true,
           platform: true,
         },
       },
     }),
   ],
 });
-
-analytics.page(
-  {
-    path: '/',
-    title: 'Home',
-  },
-)
-
-analytics.track('req')
-
-analytics.identify()
 
 export default analytics

@@ -15,6 +15,7 @@ import Image from 'next/image';
 import emailImg from "../../public/images/email_success.svg";
 import { useRouter } from "next/router";
 import Loader from "../../app/components/elements/loader";
+import analytics from "../../analytics"
 
 const Magic = () => {
 
@@ -45,6 +46,7 @@ const Magic = () => {
         }
       }
     }, [isAuthenticated, router])
+  
 
     const auth = async () => {
         if (loading) {
@@ -63,6 +65,7 @@ const Magic = () => {
 
         try {
           // drop here - magic link
+          analytics.track('Magic Link')
 
           const req = await post_request("/login/magic/request", {
             email: validator.normalizeEmail(email),

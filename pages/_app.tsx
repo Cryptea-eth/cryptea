@@ -11,8 +11,8 @@ import { HomeProvider } from "../app/contexts/HomeContext";
 import "../app/contexts/Cryptea/types.d.ts";
 import { CrypteaProvider } from "../app/contexts/Cryptea/Auth";
 import { crypteaCon, stylesCon } from "../app/contexts/Cryptea/icon";
+import analytics from "../analytics";
 import Script from "next/script";
-import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const once = React.useRef<boolean>(true);
@@ -24,6 +24,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       console.log(`${crypteaCon} \n\n   %c Pay with Cryptea😊`, stylesCon);
     }
   }, []);
+
+  analytics.page()
+
+  analytics.track('onClick')
+
+  // analytics.identify()
 
   return (
     <>
@@ -45,11 +51,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 `,
         }}
       />
-
-      <Head>
-        <title>Welcome!</title>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-      </Head>
 
       <CrypteaProvider>
         <GenProvider>

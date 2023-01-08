@@ -7,6 +7,8 @@ import * as ethers from "ethers";
 import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
 import { initD } from "../components/elements/dashboard/link/data";
 import { useSwitchNetwork } from "wagmi";
+import analytics from "../../analytics"
+
 import {
   PaymentContext as PaymentCont,
   subValueType,
@@ -58,7 +60,7 @@ export const PaymentProvider = ({
 
   const [interval, setTinterval] = useState<string>("daily");
 
-  useEffect(() => {}, [username, router.isReady]);
+  useEffect(() => { }, [username, router.isReady]);
 
   const [rnData, setRData] = useState<any>({
     renew: false,
@@ -195,7 +197,7 @@ export const PaymentProvider = ({
 
     const priceCurrency = Number(e["matic-network"]["usd"]);
 
-    return price / priceCurrency; 
+    return price / priceCurrency;
   }
 
   const getPrice = async (
@@ -208,7 +210,7 @@ export const PaymentProvider = ({
 
     const prices: { [index: string]: () => Promise<number> } = {
       "80001": async () => await matic(price),
-      "137" : async () => await matic(price),
+      "137": async () => await matic(price),
       "31415": async () => {
         const response = await axios.get("/simple/price", {
           params: {
@@ -354,14 +356,14 @@ export const PaymentProvider = ({
 
           if (renewInfo !== null) {
 
-              setRData(renewInfo);
-          
+            setRData(renewInfo);
 
-              setAmount(renewInfo.amount)
 
-              setTinterval(renewInfo.interval);
+            setAmount(renewInfo.amount)
 
-              setAmountFixed(true);
+            setTinterval(renewInfo.interval);
+
+            setAmountFixed(true);
 
           }
 
@@ -395,23 +397,23 @@ export const PaymentProvider = ({
           }
 
           if (userl.live == 'Yes') {
-              const sOptions = [...options].filter(
-                (v: token) => !v.testnet
-              );
+            const sOptions = [...options].filter(
+              (v: token) => !v.testnet
+            );
 
-              setOptions(sOptions);
+            setOptions(sOptions);
 
-              if (sOptions[0] !== undefined) {
-                setToken(sOptions[0]);
-              }
+            if (sOptions[0] !== undefined) {
+              setToken(sOptions[0]);
+            }
           } else {
-               const sOptions = [...options].sort((v, x) => Number(x.testnet) - Number(v.testnet));
+            const sOptions = [...options].sort((v, x) => Number(x.testnet) - Number(v.testnet));
 
-               setOptions(sOptions);
+            setOptions(sOptions);
 
-               if (sOptions[0] !== undefined) {
-                 setToken(sOptions[0]);
-               }
+            if (sOptions[0] !== undefined) {
+              setToken(sOptions[0]);
+            }
           }
 
           if (
@@ -669,7 +671,7 @@ export const PaymentProvider = ({
 
           if (type == "sub") {
 
-            if (Boolean(rnData.amount)) post['renew'] = renew; 
+            if (Boolean(rnData.amount)) post['renew'] = renew;
 
             post = {
               ...post,
@@ -803,20 +805,20 @@ export const PaymentProvider = ({
 
             const rx: { [index: string]: string | number } = {};
 
-          if (!apiState && !rnData.data) {
-            pemail.forEach((val: undefined | string, i: number) => {
-              if (val !== undefined && val.length) {
-                if (userD.rdata[type][i] !== undefined) {
-                  rx[userD.rdata[type][i].toLowerCase()] = val;
+            if (!apiState && !rnData.data) {
+              pemail.forEach((val: undefined | string, i: number) => {
+                if (val !== undefined && val.length) {
+                  if (userD.rdata[type][i] !== undefined) {
+                    rx[userD.rdata[type][i].toLowerCase()] = val;
+                  }
                 }
-              }
-            });
-          } else if (apiState) {
-            inputsList.forEach((val) => {
-              const index = val.value.toLowerCase();
-              rx[index] = apiData[index] || undefined;
-            });
-          }
+              });
+            } else if (apiState) {
+              inputsList.forEach((val) => {
+                const index = val.value.toLowerCase();
+                rx[index] = apiData[index] || undefined;
+              });
+            }
 
             let post: any = {
               rx,
@@ -831,7 +833,7 @@ export const PaymentProvider = ({
 
             if (type == "sub") {
 
-              if (Boolean(rnData.amount)) post["renew"] = renew; 
+              if (Boolean(rnData.amount)) post["renew"] = renew;
 
               post = {
                 ...post,
@@ -865,27 +867,27 @@ export const PaymentProvider = ({
 
               clearTimeout(timerTimeout);
 
-               if (Boolean(userD.redirect) && validator.isURL(userD.redirect)) {
-                 let link = String(userD.redirect).split("?");
+              if (Boolean(userD.redirect) && validator.isURL(userD.redirect)) {
+                let link = String(userD.redirect).split("?");
 
-                 if (apiCode !== undefined) {
-                   if (Boolean(link[1])) {
-                     if (!link[1].length) {
-                       link[0] += `?trx=${apiCode}`;
-                     } else {
-                       link[1] += `&trx=${apiCode}`;
+                if (apiCode !== undefined) {
+                  if (Boolean(link[1])) {
+                    if (!link[1].length) {
+                      link[0] += `?trx=${apiCode}`;
+                    } else {
+                      link[1] += `&trx=${apiCode}`;
 
-                       link[0] += "?";
-                     }
-                   } else {
-                     link[0] += `?trx=${apiCode}`;
-                   }
-                 }
+                      link[0] += "?";
+                    }
+                  } else {
+                    link[0] += `?trx=${apiCode}`;
+                  }
+                }
 
-                 const mLink = link.join("");
+                const mLink = link.join("");
 
-                 router.push(mLink);
-               }
+                router.push(mLink);
+              }
 
               setTimeout(reset, 12000);
             } else {
@@ -1041,288 +1043,295 @@ export const PaymentProvider = ({
 
       // drop here - payment
 
-      if (auto) initMain(Number(amount), type);
-      else beginManual(Number(amount), type);
-    } else {
-      setFailMessage("The amount set is invalid");
-    }
+
+      if (auto) {
+        initMain(Number(amount), type)
+        analytics.track('Automatic Payments')
+      }
+        
+      else {
+      beginManual(Number(amount), type)
+      analytics.track('Manual Payments')
+    };
+  } else {
+    setFailMessage("The amount set is invalid");
+}
   };
 
-  return (
-    <PaymentContext.Provider
-      value={{
-        userD,
-        setUserD,
-        token,
-        setToken,
-        paymentData,
-        setPaymentData,
-        data,
-        setData,
-        rnData,
-        isLoading,
-        setIsLoading,
-        explorer: tokenTrackers[token.value],
-        pemail,
-        setPemail,
-        loadingText,
-        setLoadingText,
-        transferSuccess,
-        setTransferSuccess,
-        transferFail,
-        setTransferFail,
-        failMessage,
-        setFailMessage,
-        hash,
-        setHash,
-        interval,
-        setTinterval,
-        is500,
-        setIs500,
-        reset,
-        initMain,
-        amount,
-        setAmount,
-        subCheck,
-        setSubCheck,
-        begin,
-        apiState,
-        subValue,
-        setSubValue,
-        eSubscription,
-        options,
-        amountFixed,
-        setESubscription,
-        setSigner,
-      }}
-    >
-      <AuthModal userAuth={false} />
+return (
+  <PaymentContext.Provider
+    value={{
+      userD,
+      setUserD,
+      token,
+      setToken,
+      paymentData,
+      setPaymentData,
+      data,
+      setData,
+      rnData,
+      isLoading,
+      setIsLoading,
+      explorer: tokenTrackers[token.value],
+      pemail,
+      setPemail,
+      loadingText,
+      setLoadingText,
+      transferSuccess,
+      setTransferSuccess,
+      transferFail,
+      setTransferFail,
+      failMessage,
+      setFailMessage,
+      hash,
+      setHash,
+      interval,
+      setTinterval,
+      is500,
+      setIs500,
+      reset,
+      initMain,
+      amount,
+      setAmount,
+      subCheck,
+      setSubCheck,
+      begin,
+      apiState,
+      subValue,
+      setSubValue,
+      eSubscription,
+      options,
+      amountFixed,
+      setESubscription,
+      setSigner,
+    }}
+  >
+    <AuthModal userAuth={false} />
 
-      {nullSwitch && (
-        <>
-          <Modal
-            open={nullSwitch}
+    {nullSwitch && (
+      <>
+        <Modal
+          open={nullSwitch}
+          sx={{
+            "&& .MuiBackdrop-root": {
+              backdropFilter: "blur(5px)",
+            },
+          }}
+          onClose={closeSwitch}
+          className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+          aria-labelledby="Generate New Api Key"
+          aria-describedby="Generate Api"
+        >
+          <Box
+            className="sm:w-full h-fit 3mdd:px-[2px]"
             sx={{
-              "&& .MuiBackdrop-root": {
-                backdropFilter: "blur(5px)",
-              },
+              minWidth: 300,
+              width: "70%",
+              maxWidth: 800,
+              borderRadius: 6,
+              outline: "none",
+              p: 4,
+              position: "relative",
+              margin: "auto",
             }}
-            onClose={closeSwitch}
-            className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
-            aria-labelledby="Generate New Api Key"
-            aria-describedby="Generate Api"
           >
-            <Box
-              className="sm:w-full h-fit 3mdd:px-[2px]"
-              sx={{
-                minWidth: 300,
-                width: "70%",
-                maxWidth: 800,
-                borderRadius: 6,
-                outline: "none",
-                p: 4,
-                position: "relative",
-                margin: "auto",
-              }}
-            >
-              <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
-                <div className="mb-2 flex items-start justify-between">
-                  <div>
-                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
-                      Switch Network
-                    </h2>
-                    <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
-                      You have to switch networks to continue
-                    </span>
-                  </div>
-
-                  <IconButton size={"medium"} onClick={closeSwitch}>
-                    <MdClose
-                      size={20}
-                      color={"rgb(32,33,36)"}
-                      className="cursor-pointer"
-                    />
-                  </IconButton>
+            <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+              <div className="mb-2 flex items-start justify-between">
+                <div>
+                  <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                    Switch Network
+                  </h2>
+                  <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
+                    You have to switch networks to continue
+                  </span>
                 </div>
 
-                <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
-                  This popup came up, because you are using the wrong network on
-                  your crypto wallet, kindly switch networks to{" "}
-                  <b>{token.network}</b> after which click the reconnect button,
-                  <span className="block text-center w-full font-bold">or</span>Click reconnect and select <b>{token.network}</b> on your crypto wallet then connect. <br/> Based on your wallet configuration.
-                </span>
+                <IconButton size={"medium"} onClick={closeSwitch}>
+                  <MdClose
+                    size={20}
+                    color={"rgb(32,33,36)"}
+                    className="cursor-pointer"
+                  />
+                </IconButton>
               </div>
 
-              <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
-                <div className="flex items-center">
-                  <Button
-                    onClick={validSwitch}
-                    className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
-                  >
-                    <TbPlugConnected
-                      color={"inherit"}
-                      className={"mr-2 !fill-white"}
-                      size={23}
-                    />{" "}
-                    Reconnect
-                  </Button>
-                </div>
-              </div>
-            </Box>
-          </Modal>
-        </>
-      )}
-
-      <Modal
-        open={isOpened}
-        sx={{
-          zIndex: 100000000,
-          "&& .MuiBackdrop-root": {
-            backdropFilter: "blur(5px)",
-            width: "calc(100% - 8px)",
-          },
-        }}
-        onClose={closeModal}
-        className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
-        aria-labelledby="Begin Manual Payment"
-        aria-describedby="Make quick manual payment"
-      >
-        <Box className="sm:w-full h-fit 3mdd:px-[2px]" sx={style}>
-          <div className="py-4 px-6 bg-white -mb-[1px] rounded-[.9rem]">
-            <div className="mb-5 flex items-center relative justify-between">
-              <LogoSpace />
-
-              <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
-                ${amount} ( ${(Number(amount) * 1) / 100} fee )
-              </span>
-
-              <IconButton
-                size={"medium"}
-                className="-top-full -right-[30px] !absolute !bg-[#fff]"
-                onClick={closeModal}
-              >
-                <MdClose
-                  size={20}
-                  color={"rgb(32,33,36)"}
-                  className="cursor-pointer"
-                />
-              </IconButton>
-            </div>
-
-            <div className="py-3 mb-2">
-              <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
-                Scan the qr code below or copy the address, Send the exact
-                amount required for this transaction to complete the
-                transaction.
+              <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
+                This popup came up, because you are using the wrong network on
+                your crypto wallet, kindly switch networks to{" "}
+                <b>{token.network}</b> after which click the reconnect button,
+                <span className="block text-center w-full font-bold">or</span>Click reconnect and select <b>{token.network}</b> on your crypto wallet then connect. <br /> Based on your wallet configuration.
               </span>
             </div>
 
-            <div className="flex items-center justify-center mb-2">
-              <span className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
-                {amountMn} {token.symbol.toUpperCase()}
-              </span>
-            </div>
-
-            <div className="flex relative items-center flex-col justify-center mb-5">
-              {manLoader && (
-                <Loader
-                  sx={{
-                    backgroundColor: "#ffffffeb",
-                    width: 210,
-                    height: 210,
-                    margin: "auto",
-                    right: "0px",
-                    left: "0px",
-                  }}
-                  incLogo={false}
-                  fixed={false}
-                />
-              )}
-              <QrCode
-                style={{
-                  marginBottom: "16px",
-                }}
-                data={genAddr || ""}
-              />
-
-              <span className="text-[rgb(80,80,82)] font-bold text-center block text-[15px]">
-                Send Payment Within{" "}
-                <span className="text-[17px]">
-                  {String((720 - timeCounted) / 60).split(".")[0] +
-                    ":" +
-                    `${(720 - timeCounted) % 60 <= 9 ? 0 : ""}${
-                      (720 - timeCounted) % 60
-                    }`}
-                </span>
-              </span>
-            </div>
-
-            <div className="w-full items-center my-3 rounded-md flex justify-between bg-[#2e2e2e0e] py-1 px-3">
-              <div className="mr-2">
-                <span className="font-bold text-[#919191] text-[13px]">
-                  Address
-                </span>
-                <span className="text-[#919191] truncate block h-fit">
-                  {genAddr}
-                </span>
-              </div>
-              <ClickAwayListener onClickAway={() => mainCopy(false)}>
-                <Tooltip
-                  placement="top"
-                  onClose={() => mainCopy(false)}
-                  open={copied}
-                  disableFocusListener
-                  disableHoverListener
-                  disableTouchListener
-                  PopperProps={{
-                    disablePortal: true,
-                  }}
-                  arrow
-                  title="Copied"
+            <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+              <div className="flex items-center">
+                <Button
+                  onClick={validSwitch}
+                  className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                 >
-                  <IconButton
-                    size={"large"}
-                    onClick={() => {
-                      mainCopy(true);
-                      copy(genAddr as string);
-                    }}
-                  >
-                    <FaRegClone
-                      color={"#919191"}
-                      className="cursor-pointer"
-                      size={16}
-                    />
-                  </IconButton>
-                </Tooltip>
-              </ClickAwayListener>
-            </div>
-
-            <div className="w-full items-center mt-3 mb-5 rounded-md flex flex-col">
-              <div className="bg-[#2e2e2e0e] w-full mb-1 py-1 px-3">
-                <span className="font-bold text-[#919191] text-[13px]">
-                  Network
-                </span>
-                <span className="text-[#919191] truncate block h-fit">
-                  {token.network}
-                </span>
+                  <TbPlugConnected
+                    color={"inherit"}
+                    className={"mr-2 !fill-white"}
+                    size={23}
+                  />{" "}
+                  Reconnect
+                </Button>
               </div>
-              <span className="text-[rgb(113,114,116)] block font-[500] text-[14px]">
-                Note that sending tokens from the wrong network could result in
-                loss of tokens
+            </div>
+          </Box>
+        </Modal>
+      </>
+    )}
+
+    <Modal
+      open={isOpened}
+      sx={{
+        zIndex: 100000000,
+        "&& .MuiBackdrop-root": {
+          backdropFilter: "blur(5px)",
+          width: "calc(100% - 8px)",
+        },
+      }}
+      onClose={closeModal}
+      className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+      aria-labelledby="Begin Manual Payment"
+      aria-describedby="Make quick manual payment"
+    >
+      <Box className="sm:w-full h-fit 3mdd:px-[2px]" sx={style}>
+        <div className="py-4 px-6 bg-white -mb-[1px] rounded-[.9rem]">
+          <div className="mb-5 flex items-center relative justify-between">
+            <LogoSpace />
+
+            <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
+              ${amount} ( ${(Number(amount) * 1) / 100} fee )
+            </span>
+
+            <IconButton
+              size={"medium"}
+              className="-top-full -right-[30px] !absolute !bg-[#fff]"
+              onClick={closeModal}
+            >
+              <MdClose
+                size={20}
+                color={"rgb(32,33,36)"}
+                className="cursor-pointer"
+              />
+            </IconButton>
+          </div>
+
+          <div className="py-3 mb-2">
+            <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
+              Scan the qr code below or copy the address, Send the exact
+              amount required for this transaction to complete the
+              transaction.
+            </span>
+          </div>
+
+          <div className="flex items-center justify-center mb-2">
+            <span className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+              {amountMn} {token.symbol.toUpperCase()}
+            </span>
+          </div>
+
+          <div className="flex relative items-center flex-col justify-center mb-5">
+            {manLoader && (
+              <Loader
+                sx={{
+                  backgroundColor: "#ffffffeb",
+                  width: 210,
+                  height: 210,
+                  margin: "auto",
+                  right: "0px",
+                  left: "0px",
+                }}
+                incLogo={false}
+                fixed={false}
+              />
+            )}
+            <QrCode
+              style={{
+                marginBottom: "16px",
+              }}
+              data={genAddr || ""}
+            />
+
+            <span className="text-[rgb(80,80,82)] font-bold text-center block text-[15px]">
+              Send Payment Within{" "}
+              <span className="text-[17px]">
+                {String((720 - timeCounted) / 60).split(".")[0] +
+                  ":" +
+                  `${(720 - timeCounted) % 60 <= 9 ? 0 : ""}${(720 - timeCounted) % 60
+                  }`}
+              </span>
+            </span>
+          </div>
+
+          <div className="w-full items-center my-3 rounded-md flex justify-between bg-[#2e2e2e0e] py-1 px-3">
+            <div className="mr-2">
+              <span className="font-bold text-[#919191] text-[13px]">
+                Address
+              </span>
+              <span className="text-[#919191] truncate block h-fit">
+                {genAddr}
               </span>
             </div>
-
-            <Button
-              onClick={closeModal}
-              className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
-            >
-              <RiCloseCircleLine size={22} className="mr-2" /> Dismiss
-            </Button>
+            <ClickAwayListener onClickAway={() => mainCopy(false)}>
+              <Tooltip
+                placement="top"
+                onClose={() => mainCopy(false)}
+                open={copied}
+                disableFocusListener
+                disableHoverListener
+                disableTouchListener
+                PopperProps={{
+                  disablePortal: true,
+                }}
+                arrow
+                title="Copied"
+              >
+                <IconButton
+                  size={"large"}
+                  onClick={() => {
+                    mainCopy(true);
+                    copy(genAddr as string);
+                  }}
+                >
+                  <FaRegClone
+                    color={"#919191"}
+                    className="cursor-pointer"
+                    size={16}
+                  />
+                </IconButton>
+              </Tooltip>
+            </ClickAwayListener>
           </div>
-        </Box>
-      </Modal>
 
-      {children}
-    </PaymentContext.Provider>
-  );
+          <div className="w-full items-center mt-3 mb-5 rounded-md flex flex-col">
+            <div className="bg-[#2e2e2e0e] w-full mb-1 py-1 px-3">
+              <span className="font-bold text-[#919191] text-[13px]">
+                Network
+              </span>
+              <span className="text-[#919191] truncate block h-fit">
+                {token.network}
+              </span>
+            </div>
+            <span className="text-[rgb(113,114,116)] block font-[500] text-[14px]">
+              Note that sending tokens from the wrong network could result in
+              loss of tokens
+            </span>
+          </div>
+
+          <Button
+            onClick={closeModal}
+            className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+          >
+            <RiCloseCircleLine size={22} className="mr-2" /> Dismiss
+          </Button>
+        </div>
+      </Box>
+    </Modal>
+
+    {children}
+  </PaymentContext.Provider>
+);
 };
