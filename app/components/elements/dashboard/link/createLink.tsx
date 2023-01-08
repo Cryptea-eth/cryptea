@@ -46,6 +46,7 @@ import {
   Link as Linkx,
 } from "../../../../contexts/GenContext";
 import CrypSwitch from "../../CrypSwitch";
+import  analytics  from "../../../../../analytics";
 
 const NewLink = () => {
   const StepperLine = styled(StepConnector)(({ theme }) => ({
@@ -451,6 +452,8 @@ const NewLink = () => {
       try {
 
         // drop here - link creation
+        analytics.track("Link creation");
+
 
         await "links".save(newData);
 

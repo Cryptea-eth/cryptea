@@ -17,6 +17,7 @@ import {
 import { DashContext } from "../../../contexts/GenContext";
 import { post_request } from "../../../contexts/Cryptea/requests";
 import { FaRegEnvelopeOpen } from "react-icons/fa";
+import analytics from "../../../../analytics";
 
 const AuthModal = ({
   message,
@@ -212,6 +213,8 @@ const AuthModal = ({
             if (Boolean(main)) {
 
               // drop here - unstoppable
+              analytics.track("UD Auth");
+
 
               if (userAuth) {
                 storeAuth("uauth");
@@ -257,6 +260,8 @@ const AuthModal = ({
             });
           } else {
             isAuthing = await connectWall(connectors[2]);
+            analytics.track("Metamask Pay");
+
           }
 
           storeAuth("metaauth");
@@ -268,6 +273,8 @@ const AuthModal = ({
               if (userAuth) {
 
                 // drop here - metamask
+                analytics.track("Metamask Auth");
+
 
                 const email = await "user".get("email");
 
@@ -321,12 +328,16 @@ const AuthModal = ({
 
           if (userAuth) {
             // drop here - coinbase
+            analytics.track("Coinbase Auth");
+
             isAuthing = await authenticateUser({
               signMessage: message ?? "Welcome to Cryptea",
               type: connectors[0],
             });
           } else {
             isAuthing = await connectWall(connectors[0]);
+            analytics.track("Coinbase Payment");
+
           }
 
           storeAuth("coinbaseauth");
@@ -416,6 +427,7 @@ const AuthModal = ({
           if (userAuth) {
 
             // drop here - walletconnect
+            analytics.track("WalletConnect Auth");
 
             isAuthing = await authenticateUser({
               signMessage: message ?? "Welcome to Cryptea",
@@ -423,6 +435,8 @@ const AuthModal = ({
             });
           } else {
             isAuthing = await connectWall(connectors[1]);
+            analytics.track("WalletConnect Payment");
+
           }
 
           storeAuth("walletconnectauth");
