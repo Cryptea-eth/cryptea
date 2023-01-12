@@ -33,6 +33,13 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <CrypteaProvider>
+        <GenProvider>
+          <HomeProvider>
+            <Component {...pageProps} />
+          </HomeProvider>
+        </GenProvider>
+      </CrypteaProvider>
       <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
@@ -51,14 +58,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 `,
         }}
       />
-
-      <CrypteaProvider>
-        <GenProvider>
-          <HomeProvider>
-            <Component {...pageProps} />
-          </HomeProvider>
-        </GenProvider>
-      </CrypteaProvider>
     </>
   );
 }
