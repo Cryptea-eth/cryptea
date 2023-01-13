@@ -420,7 +420,7 @@ const DashHome = () => {
           </div>
         </div>
 
-        <div className="min-w-[337px] 2sm:hidden pt-5 h-full">
+        <div className="min-w-[337px] 2sm:hidden pt-[5px] h-full">
           <div className="px-4 pt-3 bg-white rounded-[4px]">
             {blur ? (
               <Skeleton

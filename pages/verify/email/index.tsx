@@ -89,9 +89,9 @@ const Email = () => {
       <Nav />
 
       <div className="w-full h-fit flex flex-col justify-items-center px-5 my-8">
-        <Image src={emailImg} width={200} height={222} alt={"Email Sent"} />
+        <Image src={emailImg} width={130} height={152} alt={"Email Sent"} />
 
-        <h2 className="text-[#F57059] 2md:text-2xl font-[400] text-4xl mx-auto mt-24">
+        <h2 className="text-[#F57059] 2md:text-2xl font-[400] text-4xl mx-auto mt-9">
           We Sent a Verification Mail
         </h2>
 
