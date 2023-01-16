@@ -19,12 +19,9 @@ import { RiSettingsLine } from "react-icons/ri";
 import logo from "../../../../public/images/cryptea-logo.svg";
 import logo2 from "../../../../public/images/cryptea.png";
 import { useContext } from 'react';
-import { useCryptea } from '../../../contexts/Cryptea';
 
 
 const Sidebar = ({ page }: {page: string | string[] | undefined}) => {
-
-  const { logout, authenticate } = useCryptea();
 
   const router = useRouter();
 
@@ -183,15 +180,7 @@ const Sidebar = ({ page }: {page: string | string[] | undefined}) => {
           <div className="rounded-tr-[4px] rounded-br-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid flex items-center hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#F5F8FE] py-[9px]">
             <div
               className="text-inherit flex items-center text-[14px]"
-              onClick={async () => {
-                await logout();
-
-                authenticate(false);
-
-                update?.(true);
-
-                router.push("/");
-              }}
+              onClick={() => router.push('/dashboard/logout')}
             >
               <BiLogOut
                 size={sidebar?.openDelay ? 16.5 : 21}

@@ -11,6 +11,7 @@ import { cryptoDeets } from "../../../functions/crypto";
 import axios from "axios";
 import CustomImg from "../customImg";
 import CrypSwitch from "../CrypSwitch";
+import { MdOutlineRefresh } from "react-icons/md";
 
 const DashHome = () => {
   const [dashData, setDashData] = useState<any>({
@@ -29,13 +30,24 @@ const DashHome = () => {
 
   const [checked, setChecked] = useState<boolean>(false);
 
+  const [refresh, setRefresh] = useState<boolean>(false);
+
   const changeChecked = async () => {
       setChecked(!checked);
+
+      removeBlur(true);
       
       try {
-      await 'user'.update({ live: !checked ? 'Yes' : 'No' });    
+
+      await 'user'.update({ live: !checked ? 'Yes' : 'No' }); 
+
+      once.current = true;
+    
+      setRefresh(!refresh)
+
       }catch (err) {
           setChecked(!checked);
+          removeBlur(false);
       }
   }
 
@@ -139,7 +151,8 @@ const DashHome = () => {
         init();
       });
   }
-  }, []);
+
+  }, [refresh]);
 
   const change = (data: any[]): { value: number; direction: "up" | "down" } => {
     const [current, initial = 0] = data;
@@ -158,8 +171,6 @@ const DashHome = () => {
 
     return { value: Math.abs(value), direction: value >= 0 ? "up" : "down" };
   };
-
-  
 
   return (
     <div className="px-5 pt-[75px]">
