@@ -22,7 +22,7 @@ const Logout = () => {
 
         if(once.current){
 
-            once.current = false;
+          once.current = false;
 
           logout().then(() => {
              authenticate(false);

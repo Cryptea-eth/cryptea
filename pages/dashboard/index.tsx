@@ -87,14 +87,16 @@ const DashboardIndex = () => {
         <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
           <Sidebar page={"home"} />
           <div
-            className={`body transition-all delay-500 ${
+            className={`body 2sm:!pl-[77px] transition-all delay-500 ${
               sidebar?.openPage ? "pl-[247px]" : "pl-[77px]"
             } w-full h-full`}
           >
             <DashHeader
               className={
                 "flex transition-all delay-500 z-10 fixed px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
-              } dp={data.img} username={data.username}
+              }
+              dp={data.img}
+              username={data.username}
             />
 
             <DashHome />
