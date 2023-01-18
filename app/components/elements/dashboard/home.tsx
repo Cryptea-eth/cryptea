@@ -11,7 +11,7 @@ import { cryptoDeets } from "../../../functions/crypto";
 import axios from "axios";
 import CustomImg from "../customImg";
 import CrypSwitch from "../CrypSwitch";
-import { MdOutlineRefresh } from "react-icons/md";
+import { MdOutlineRefresh, MdInfo } from "react-icons/md";
 
 const DashHome = () => {
   const [dashData, setDashData] = useState<any>({
@@ -176,7 +176,7 @@ const DashHome = () => {
     <div className="px-5 pt-[75px]">
       <div className="flex items-start justify-between">
         <div className="mainx relative w-[calc(100%-340px)] 2sm:w-full">
-          <div className="w-full flex items-end justify-end absolute">
+          <div className="w-full flex items-end z-0 justify-end absolute">
             <div className="mt-1">
               {blur ? (
                 <div className="flex items-center">
@@ -220,7 +220,7 @@ const DashHome = () => {
             </div>
           </div>
 
-          <div className="flex items-start 3mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
+          <div className="flex items-start relative z-10 3mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
             <div className="min-w-[100px]">
               {blur ? (
                 <Skeleton
@@ -228,7 +228,7 @@ const DashHome = () => {
                   sx={{ fontSize: "1.04rem", width: "80px" }}
                 />
               ) : (
-                <span className="uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
+                <span className="uppercase flex mb-2 text-[#818181] font-bold text-[.64rem]">
                   Total Received
                 </span>
               )}
@@ -310,12 +310,17 @@ const DashHome = () => {
                   sx={{ fontSize: "1.04rem", width: "80px" }}
                 />
               ) : (
-                <span className="uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
-                 Account Balance
-                </span>
+                <Tooltip placement="bottom"
+                  arrow
+                  title={
+                    "Balance subject to change, based on price data from coingecko"
+                  }>
+                <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
+                 Account Balance <MdInfo size={16} className="ml-1"/>
+                </span></Tooltip>
               )}
 
-              <div className="flex cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
+              <div className="flex relative z-10 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
                 {blur ? (
                   <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
                 ) : (

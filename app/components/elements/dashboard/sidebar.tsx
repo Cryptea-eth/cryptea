@@ -127,7 +127,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
 
         <div
           className={`rounded-tr-[4px] rounded-br-[4px]  border-l-[3px] overflow-hidden flex-nowrap my-1 ${
-            page === "userpages" || page === "pages" || page === "page"
+            page === "settlements" || page === "settlement" || page === "settle"
               ? active
               : ""
           } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#d3d3d333] flex cursor-pointer items-center py-[9px]`}
