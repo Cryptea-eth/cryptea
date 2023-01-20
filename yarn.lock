@@ -9051,6 +9051,13 @@ react-number-format@^4.9.3:
   dependencies:
     prop-types "^15.7.2"
 
+react-pin-field@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/react-pin-field/-/react-pin-field-3.1.2.tgz#2b3e040deb81e8ad6470644fe7331c147d826074"
+  integrity sha512-p8+1x6gSoHjge39CRQrQs8UfDonrvRgPTmMGlaDjF4AypO7HCjudrKI2OHw+gYwSFWGJxndJbxlvfCiunJR6QA==
+  dependencies:
+    react-use-bireducer "^1.1.1"
+
 react-qr-code@^2.0.7:
   version "2.0.11"
   resolved "https://repo.huaweicloud.com/repository/npm/react-qr-code/-/react-qr-code-2.0.11.tgz#444c759a2100424972e17135fbe0e32eaffa19e8"
@@ -9137,6 +9144,11 @@ react-transition-group@^4.3.0, react-transition-group@^4.4.5:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-use-bireducer@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-use-bireducer/-/react-use-bireducer-1.1.1.tgz#9d79bf09a1c85a6c1687bc48c717aa05685d52ed"
+  integrity sha512-FysDYTxA9TQnzt4HURQBvB2FdFqyNytjIGzvzj3qv7YlOkcDnkJQPNlzcC7RbfDiepxdtbxCgovvLGm/DHjzUA==
 
 react@18.2.0:
   version "18.2.0"
