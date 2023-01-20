@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import Loader from '../app/components/elements/loader';
-import AuthModal from '../app/components/elements/modal';
+import AuthModal, { methods } from "../app/components/elements/modal";
 import { useCryptea } from '../app/contexts/Cryptea';
 import Router from 'next/router';
 
@@ -18,7 +18,20 @@ const Home: NextPage = () => {
       if (isAuthenticated && localStorage.getItem("userToken") !== null) {
         Router.push("/dashboard");
       } else {
-        setLoading(false);
+
+        if (localStorage.getItem('defaultAuth') !== null) {
+
+          if (localStorage.getItem("defaultAuth") == 'magicauth') {
+            
+              Router.push('/magic')
+            
+          }else{
+            setLoading(false);
+          }
+          
+        }else{
+          setLoading(false);
+        }
       }
   }
 
