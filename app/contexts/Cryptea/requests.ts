@@ -32,6 +32,7 @@ export const get_request = async (
           if (redirect) {
             Router.push("/timeout");
           }else{
+            console.log(ee)
              throw "Something went wrong, please try again";
           }
         }

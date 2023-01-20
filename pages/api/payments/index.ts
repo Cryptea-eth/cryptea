@@ -12,33 +12,32 @@ export default function handler(
   res: NextApiResponse<Data>
 ) {
 
-    if (req.method == 'POST') {
+    if (req.method == "POST") {
+      const body = req.body;
 
-        const body = req.body;
+      let provider = new ethers.providers.JsonRpcProvider(body.rpc);
 
-        let provider = new ethers.providers.JsonRpcProvider(body.rpc);
+      let balance = new ethers.Contract(body.tokenAddr, balanceABI, provider);
 
-        let balance = new ethers.Contract(body.tokenAddr, balanceABI, provider);
-        
-        balance.balanceOf(body.account).then(async (mbalance: any) => {
-            const currentBalance = Number(ethers.utils.formatEther(mbalance));
+      balance.balanceOf(body.account).then(async (mbalance: any) => {
+        const currentBalance = Number(ethers.utils.formatEther(mbalance));
 
-            console.log(body.initial + Number(body.price), currentBalance);
+        console.log(body.initial + Number(body.price), currentBalance);
 
-            if (
-              body.initial != currentBalance &&
-              (body.initial + Number(body.price)).toFixed(6) == currentBalance.toFixed(6)
-            ) {
-              
-                return res.status(200).json({ proceed: true });
-
-            }else{
-
-                 return res.status(200).json({ proceed: false });
-            }
-
-        });
-
+        if (
+          body.initial != currentBalance &&
+          (body.initial + Number(body.price)).toFixed(6) ==
+            currentBalance.toFixed(6)
+        ) {
+          res.status(200).json({ proceed: true });
+        } else {
+          res.status(200).json({ proceed: false });
+        }
+      });
+    } else {
+      res.status(200).json({
+        proceed: false
+      });
     }
 
 }

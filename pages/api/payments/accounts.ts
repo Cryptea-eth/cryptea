@@ -25,12 +25,10 @@ export default function handler(
 
   }, 780000)
   
-    if(req.method == 'GET'){
-
+    if (req.method == "GET") {
       const { query } = req;
 
-      const type = Boolean(query['type']) ? query['type'] : 'evm';
-
+      const type = Boolean(query["type"]) ? query["type"] : "evm";
 
       axios
         .get(`https://ab.cryptea.me/link/pay/account/${type}`, {
@@ -39,35 +37,29 @@ export default function handler(
           },
         })
         .then(async (accounts) => {
-
           const selected: any = accounts.data.data;
-
 
           if (Boolean(selected.private)) {
             const encrypted = selected.private;
 
-
             try {
+              let wallet = ethers.Wallet.fromEncryptedJsonSync(
+                encrypted,
+                process.env.KEY || ""
+              );
 
-            let wallet = ethers.Wallet.fromEncryptedJsonSync(
-              encrypted,
-              process.env.KEY || ""
-            );
+              console.log(wallet.address);
 
-            console.log(wallet.address);
+              timeout(wallet.address);
 
-            timeout(wallet.address);
-
-            return res.status(200).json({ error: false, data: wallet.address });
-            
-            }catch (err) {
+              res.status(200).json({ error: false, data: wallet.address });
+            } catch (err) {
               const error = err as Error;
 
-              return res.status(400).json({ error: true, message: error.message });
+              res.status(400).json({ error: true, message: error.message });
             }
-
-          }else {
-              console.log('here')
+          } else {
+            console.log("here");
           }
           // } else {
 
@@ -93,19 +85,21 @@ export default function handler(
 
           //   timeout(wallet.address);
 
-          //   return res.status(200).json({ error: false, data: wallet.address });
+          //    res.status(200).json({ error: false, data: wallet.address });
           // }
         })
         .catch((err) => {
           // console.log(err);
-          return res
-            .status(408)
-            .json({
-              error: true,
-              message: "Something went wrong please try again",
-            });
-        });         
-        
+          res.status(408).json({
+            error: true,
+            message: "Something went wrong please try again",
+          });
+        });
+    } else {
+      res.status(422).json({
+        message: "Method not supported",
+        error: true,
+      });
     }
 
 }

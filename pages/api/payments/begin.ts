@@ -35,111 +35,108 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-    if (req.method == 'POST') {
+    if (req.method == "POST") {
+      const body = req.body;
 
-        const body = req.body;
+      const tx = {
+        to: body.ethAddress,
+        value: ethers.utils.parseEther(body.price),
+      };
 
-        const tx = {
-            to: body.ethAddress,
-            value: ethers.utils.parseEther(body.price),
-        };
+      axios
+        .get(`https://ab.cryptea.me/link/pay/accounts/${body.account}`, {
+          headers: {
+            Authorization: process.env.APP_KEY || "",
+          },
+        })
+        .then(async ({ data }) => {
+          console.log(data);
 
-        axios
-          .get(`https://ab.cryptea.me/link/pay/accounts/${body.account}`, {
-            headers: {
-              Authorization: process.env.APP_KEY || '',
-            },
-          })
-          .then(async ({ data }) => {
+          if (Boolean(data.private)) {
+            try {
+              const provider = new ethers.providers.JsonRpcProvider(body.rpc);
 
-            console.log(data);
+              const wallet = await ethers.Wallet.fromEncryptedJson(
+                data.private,
+                process.env.KEY || ""
+              );
 
-            if (Boolean(data.private)) {
-              try {
-                const provider = new ethers.providers.JsonRpcProvider(body.rpc);
+              const walletConnect = wallet.connect(provider);
 
-                const wallet = await ethers.Wallet.fromEncryptedJson(
-                  data.private,
-                  process.env.KEY || ''
-                );
+              await walletConnect.signTransaction(tx);
 
-                const walletConnect = wallet.connect(provider);
+              const trx = await walletConnect.sendTransaction(tx);
 
-                await walletConnect.signTransaction(tx);
+              //     ...rx,
+              // date: new Date().getTime(),
+              // address: from,
+              // api: apiCode,
+              // type,
+              // amount: price,
+              // hash: init.hash,
+              // explorer: tokenTrackers[token.value].link,
+              // amountCrypto: ether,
+              // token: token.name,
+              // contractAddr: token.contractAddr,
+              // paytype: "auto",
+              // linkId,
+              // chain: token.value,
 
-                const trx = await walletConnect.sendTransaction(tx);
+              let post: any = {
+                ...body.rx,
+                date: new Date().getTime(),
+                address: walletConnect.address,
+                type: body.type,
+                amount: body.amount,
+                hash: trx.hash,
+                pay_type: body.pay_type,
+                explorer: body.explorer,
+                amountCrypto: body.price,
+                token: body.label,
+              };
 
-            //     ...rx,
-            // date: new Date().getTime(),
-            // address: from,
-            // api: apiCode,
-            // type,
-            // amount: price,
-            // hash: init.hash,
-            // explorer: tokenTrackers[token.value].link,
-            // amountCrypto: ether,
-            // token: token.name,
-            // contractAddr: token.contractAddr,
-            // paytype: "auto",
-            // linkId,
-          // chain: token.value,
-
-                let post: any = {
-                  ...body.rx,
-                  date: new Date().getTime(),
-                  address: walletConnect.address,
-                  type: body.type,
-                  amount: body.amount,
-                  hash: trx.hash,
-                  pay_type: body.pay_type,
-                  explorer: body.explorer,
-                  amountCrypto: body.price,
-                  token: body.label
+              if (body.type == "sub") {
+                post = {
+                  ...post,
+                  remind: new Date().getTime() + mainIx(body.interval) * 1000,
+                  renewal: body.interval,
+                  interval: body.interval,
                 };
-
-                if (body.type == "sub") {
-                  post = {
-                    ...post,
-                    remind: new Date().getTime() + mainIx(body.interval) * 1000,
-                    renewal: body.interval,
-                    interval: body.interval
-                  };
-                }
-
-                await axios.post(
-                  `https://ab.cryptea.me/link/payments/${body.linkId}`,
-                  {
-                    ...post,
-                    paymentAddress: walletConnect.address,
-                  },
-                  {
-                    headers: {
-                      Authorization: process.env.APP_KEY || "",
-                    },
-                    timeout: 600000
-                  }
-                );
-
-                return res
-                  .status(200)
-                  .json({ success: true, message: trx.hash });
-              } catch (err) {
-                const error = err as AxiosError | Error;
-                return res
-                  .status(400)
-                  .json({ success: false, message: String(error.message) });
               }
-            } else {
-              return res
-                .status(404)
-                .json({
-                  success: false,
-                  message:
-                    "Something went wrong, please refresh the page or contact support",
-                });
+
+              await axios.post(
+                `https://ab.cryptea.me/link/payments/${body.linkId}`,
+                {
+                  ...post,
+                  paymentAddress: walletConnect.address,
+                },
+                {
+                  headers: {
+                    Authorization: process.env.APP_KEY || "",
+                  },
+                  timeout: 600000,
+                }
+              );
+
+              res.status(200).json({ success: true, message: trx.hash });
+            } catch (err) {
+              const error = err as AxiosError | Error;
+              res
+                .status(400)
+                .json({ success: false, message: String(error.message) });
             }
-          });
-
-
+          } else {
+            res.status(404).json({
+              success: false,
+              message:
+                "Something went wrong, please refresh the page or contact support",
+            });
+          }
+        });
+    } else {
+      res.status(422).json({
+        message: "Method not supported",
+        success: false,
+      });
     }
 }

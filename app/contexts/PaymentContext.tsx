@@ -454,7 +454,7 @@ export const PaymentProvider = ({
             description: lQ.desc,
             username: lQ.title !== undefined ? lQ.title : userl.username,
             email: userl.email,
-            ethAddress: lQ.address,
+            ethAddress: userl.address === null ? lQ.address : userl.address,
             img: userl.img !== undefined ? userl.img : undefined,
             id: lQ.id,
             linktype: lQ.type,
@@ -467,6 +467,7 @@ export const PaymentProvider = ({
           });
 
           if (setIsLoading !== undefined) setIsLoading(false);
+          
         } else {
           router.push("/404");
         }
