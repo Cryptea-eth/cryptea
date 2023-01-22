@@ -5,6 +5,7 @@ import LineChart from "../Extras/Rep/lineChart";
 import sortData from "./linkOverview/generateData";
 import Image from "next/image";
 import Direction from "./direction";
+import * as ethers from 'ethers';
 import { get_request } from "../../../contexts/Cryptea/requests";
 import { useEffect, useRef, useState } from "react";
 import { cryptoDeets } from "../../../functions/crypto";
@@ -19,12 +20,14 @@ import {
   MdOutlineVisibilityOff,
 } from "react-icons/md";
 import { PinField } from "react-pin-field";
+import { CryptoList } from "../../../contexts/Cryptea/connectors/chains";
 
 const DashHome = () => {
   const [dashData, setDashData] = useState<any>({
     payments: [],
     views: [],
     link: [],
+    balance: [],
     breakdown: [],
     sortBreakdown: [],
   });
@@ -34,6 +37,8 @@ const DashHome = () => {
   const once = useRef<boolean>(true)
 
   const [rand, setRand] = useState<number>(0);
+
+  const [balance, setBalance] = useState<{[index:string]: {amount: number; name: string}}>({});
 
   const [checked, setChecked] = useState<boolean>(false);
 
@@ -156,6 +161,7 @@ const DashHome = () => {
   useEffect(() => {
     setRand(Math.floor(Math.random() * 4));
 
+
     const init = async () => {
 
       const dashmain = await get_request(
@@ -167,6 +173,7 @@ const DashHome = () => {
 
       let { payments, views, links } = dashmain?.data;
 
+
       const breakdown: {
         [index: string]: {
           created_at: number;
@@ -174,6 +181,10 @@ const DashHome = () => {
           token: string;
         }[];
       } = {};
+      
+      let finalBalance: {[index:string]: number} = {}
+
+      const fees: { [index: string]: number } = {};
 
       payments.forEach((value: any) => {
         if (breakdown[value.token || "matic"] === undefined) {
@@ -185,7 +196,29 @@ const DashHome = () => {
           amount: value.amount,
           token: value.token || "matic",
         });
+
+        if (value.meta !== null && !blur) {
+
+            const metadata = JSON.parse(value.meta);
+
+            fees[metadata["chainId"]] = Number(metadata['discount']);
+            
+        }
+
       });
+
+      if (!blur) {
+          Object.keys(balance).map(async (index) => {
+
+           const total = balance[index].amount - (fees[index] !== undefined ? fees[index] : 0);
+
+           const res = await get_request(`/token/price/${(balance[index].name).toLowerCase()}`, {}, undefined, false);
+
+           const price = res?.data.price;
+
+            finalBalance[index] = total * price;
+        })
+    }
 
       const sortBreak = Object.values(breakdown)
         .map((a: { created_at: number; amount: number; token: string }[]) => {
@@ -234,6 +267,7 @@ const DashHome = () => {
       setDashData({
         payments,
         views,
+        balance: !blur ? Object.values(finalBalance) : dashData['balance'],
         breakdown,
         links: (psort[0].prevViews > 0 ? psort : tsort).slice(0, 5),
         sortBreakdown: sortBreak,
@@ -248,9 +282,38 @@ const DashHome = () => {
 
       once.current = false;
 
-       'user'.get('*', true).then(e => {
-        setChecked((e as any).live == 'Yes');
-        setSettlePin(!Boolean((e as any).settlement.length));
+       'user'.get('*', true).then((e: any) => {
+        setChecked(e.live == 'Yes');
+        setSettlePin(!Boolean(e.settlement.length));
+
+        if (e.settlement[0] !== undefined) {
+
+          const account = e.settlement[0];
+
+          CryptoList.forEach(async (token) => {
+            if (token.type == "native") {
+              try{
+              const provider = new ethers.providers.JsonRpcProvider(token.rpc);
+
+              balance[token.value] = {amount: Number(ethers.utils.formatEther(await provider.getBalance(account.address))), 'name': (token.name).split(' ')[0]};
+            }catch (err) {
+              console.log(err);
+
+              balance[token.value] = {
+                amount: 0,
+                name: token.name.split(" ")[0],
+              };
+            }
+
+            } else if (token.type == 'non-native') {
+              // do stuff here
+            }
+          });
+
+          setBalance({ ...balance })
+
+        }
+
         init();
       });
   }
@@ -578,7 +641,14 @@ const DashHome = () => {
                 ) : (
                   <>
                     <NumberFormat
-                      value={"0"}
+                      value={
+                        String(
+                          dashData["balance"].reduce(
+                            (a: any, b: any) => a + b,
+                            0
+                          )
+                        ).split(".")[0]
+                      }
                       style={{
                         fontSize: "1.95rem",
                         color: "#121212",
@@ -588,7 +658,13 @@ const DashHome = () => {
                       prefix={"$"}
                     />
                     <span className="leading-[2.38rem] text-[20px] text-[#898989]">
-                      .{"00"}
+                      .
+                      {
+                        dashData["balance"]
+                          .reduce((a: any, b: any) => a + b, 0)
+                          .toFixed(2)
+                          .split(".")[1]
+                      }
                     </span>
                   </>
                 )}

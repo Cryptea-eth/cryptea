@@ -26,6 +26,7 @@ export default function handler(
           const { settlement } = rx?.data;
 
           if (settlement.length) {
+            
             if (data.oldpin !== undefined) {
               const main = settlement[0];
 

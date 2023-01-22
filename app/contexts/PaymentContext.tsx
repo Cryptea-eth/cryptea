@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect, useRef } from "react";
 import { useCryptea } from "./Cryptea";
 import { useRouter } from "next/router";
@@ -7,7 +6,7 @@ import * as ethers from "ethers";
 import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
 import { initD } from "../components/elements/dashboard/link/data";
 import { useSwitchNetwork } from "wagmi";
-import analytics from "../../analytics"
+import analytics from "../../analytics";
 
 import {
   PaymentContext as PaymentCont,
@@ -54,20 +53,20 @@ export const PaymentProvider = ({
 
   const apiCode = router.query["trx"] as string | undefined;
 
-  const renew = router.query['renew'] as string | undefined;
+  const renew = router.query["renew"] as string | undefined;
 
   const [is500, setIs500] = useState<boolean>(false);
 
   const [interval, setTinterval] = useState<string>("daily");
 
-  useEffect(() => { }, [username, router.isReady]);
+  useEffect(() => {}, [username, router.isReady]);
 
   const [rnData, setRData] = useState<any>({
     renew: false,
     data: false,
     amount: null,
     interval: null,
-    raw: {}
+    raw: {},
   });
 
   const [paymentData, setPaymentData] = useState<{
@@ -102,7 +101,7 @@ export const PaymentProvider = ({
 
   const [isOpened, openModal] = useState<boolean>(false);
 
-  const closeModal = () => openModal(!isOpened);
+  const closeModal = () => openModal(false);
 
   const {
     connected,
@@ -145,6 +144,7 @@ export const PaymentProvider = ({
       contractAddr: string;
       name: string;
       rpc: string;
+      type: 'native' | 'non-native';
       tokenAddr: string;
     }[]
   >(CryptoList);
@@ -198,13 +198,12 @@ export const PaymentProvider = ({
     const priceCurrency = Number(e["matic-network"]["usd"]);
 
     return price / priceCurrency;
-  }
+  };
 
   const getPrice = async (
     price: number,
     chain: string | number | undefined = 80001
   ) => {
-
     let final: number = 0;
     setLoadingText("Loading price data...");
 
@@ -337,11 +336,10 @@ export const PaymentProvider = ({
           link: lQ,
           user: userl,
           api,
-          renew: renewInfo
+          renew: renewInfo,
         } = await initD(String(username).toLowerCase(), apiCode, renew);
 
         if (lQ["id"] !== undefined) {
-
           if (lQ.template_data !== undefined) {
             const { name, data: udata } = JSON.parse(lQ.template_data);
 
@@ -355,16 +353,13 @@ export const PaymentProvider = ({
           }
 
           if (renewInfo !== null) {
-
             setRData(renewInfo);
 
-
-            setAmount(renewInfo.amount)
+            setAmount(renewInfo.amount);
 
             setTinterval(renewInfo.interval);
 
             setAmountFixed(true);
-
           }
 
           let linkAmount: string | object | undefined | number;
@@ -396,10 +391,8 @@ export const PaymentProvider = ({
             }
           }
 
-          if (userl.live == 'Yes') {
-            const sOptions = [...options].filter(
-              (v: token) => !v.testnet
-            );
+          if (userl.live == "Yes") {
+            const sOptions = [...options].filter((v: token) => !v.testnet);
 
             setOptions(sOptions);
 
@@ -407,7 +400,9 @@ export const PaymentProvider = ({
               setToken(sOptions[0]);
             }
           } else {
-            const sOptions = [...options].sort((v, x) => Number(x.testnet) - Number(v.testnet));
+            const sOptions = [...options].sort(
+              (v, x) => Number(x.testnet) - Number(v.testnet)
+            );
 
             setOptions(sOptions);
 
@@ -467,7 +462,6 @@ export const PaymentProvider = ({
           });
 
           if (setIsLoading !== undefined) setIsLoading(false);
-          
         } else {
           router.push("/404");
         }
@@ -671,14 +665,13 @@ export const PaymentProvider = ({
           };
 
           if (type == "sub") {
-
-            if (Boolean(rnData.amount)) post['renew'] = renew;
+            if (Boolean(rnData.amount)) post["renew"] = renew;
 
             post = {
               ...post,
               remind: new Date().getTime() + mainIx(interval) * 1000,
               renewal: interval,
-              interval
+              interval,
             };
           }
 
@@ -771,92 +764,85 @@ export const PaymentProvider = ({
   let timerTimeout: any = null;
 
   const checkWallet = async ({
-    initialBalance,
     price,
     type,
     wallet,
   }: {
-    initialBalance: any;
     price: string;
     type: "onetime" | "sub";
     wallet: string;
   }) => {
     if (timeCounted <= 720) {
+
       const base = {
-        initial: initialBalance,
+        initial: 0,
         rpc: token.rpc,
         tokenAddr: token.tokenAddr,
         price,
         account: wallet,
+        chain: token.value
       };
 
-      try {
-        const queryBalance = await axios.post("/api/payments", base, {
-          baseURL: window.origin,
+      const rx: { [index: string]: string | number } = {};
+
+      if (!apiState && !rnData.data) {
+        pemail.forEach((val: undefined | string, i: number) => {
+          if (val !== undefined && val.length) {
+            if (userD.rdata[type][i] !== undefined) {
+              rx[userD.rdata[type][i].toLowerCase()] = val;
+            }
+          }
         });
+      } else if (apiState) {
+        inputsList.forEach((val) => {
+          const index = val.value.toLowerCase();
+          rx[index] = apiData[index] || undefined;
+        });
+      }
+
+      let post: any = {
+        rx,
+        type,
+        amount,
+        api: apiCode,
+        pay_type: token.testnet ? "test" : "main",
+        explorer: tokenTrackers[token.value].link,
+        amountCrypto: price,
+        label: token.name,
+      };
+
+      if (type == "sub") {
+        if (Boolean(rnData.amount)) post["renew"] = renew;
+
+        post = {
+          ...post,
+          interval,
+        };
+      }
+
+      try {
+        const queryBalance = await axios.post(
+          "/api/payments",
+          { ...base, ...post, ethAddress, linkId },
+          {
+            baseURL: window.origin,
+          }
+        );
 
         // console.log(queryBalance);
 
         if (queryBalance.data.proceed) {
+         
           clearInterval(timer.current);
 
           setManLoader(true);
 
-          try {
-
-            const rx: { [index: string]: string | number } = {};
-
-            if (!apiState && !rnData.data) {
-              pemail.forEach((val: undefined | string, i: number) => {
-                if (val !== undefined && val.length) {
-                  if (userD.rdata[type][i] !== undefined) {
-                    rx[userD.rdata[type][i].toLowerCase()] = val;
-                  }
-                }
-              });
-            } else if (apiState) {
-              inputsList.forEach((val) => {
-                const index = val.value.toLowerCase();
-                rx[index] = apiData[index] || undefined;
-              });
-            }
-
-            let post: any = {
-              rx,
-              type,
-              amount,
-              api: apiCode,
-              pay_type: token.testnet ? 'test' : 'main',
-              explorer: tokenTrackers[token.value].link,
-              amountCrypto: price,
-              label: token.name,
-            };
-
-            if (type == "sub") {
-
-              if (Boolean(rnData.amount)) post["renew"] = renew;
-
-              post = {
-                ...post,
-                interval
-              };
-            }
-
-            const trxx = await post_request(
-              "/api/payments/begin",
-              { ...base, ...post, linkId, ethAddress },
-              {
-                baseURL: window.origin,
-                timeout: 600000,
-              }
-            );
-
+        
             // console.log(trxx);
 
-            if (trxx.data.success) {
-              const trx = trxx.data;
+              const trx = queryBalance.data;
 
-              setHash(trx.message);
+              setHash(trx.hash);
 
               setTransferSuccess(true);
 
@@ -891,48 +877,31 @@ export const PaymentProvider = ({
               }
 
               setTimeout(reset, 12000);
-            } else {
-              setManLoader(false);
-              openModal(false);
-              // console.log(trxx.data.message);
-              clearInterval(timer.current);
-              setTransferFail(true);
-              setTimeCounted(0);
-              setFailMessage(trxx.data.message);
-            }
-          } catch (err) {
-            setManLoader(false);
-            openModal(false);
-            // console.log(err);
-            setTransferFail(true);
-            clearInterval(timer.current);
-            setTimeCounted(0);
-            setFailMessage("Something went wrong, Please try again");
-          }
+           
+          
         } else {
+
           timerTimeout = setTimeout(
             () =>
               checkWallet({
-                initialBalance,
                 price,
                 type,
                 wallet,
               }),
             2000
           );
+
         }
       } catch (err) {
-        // // console.log(err);
-        timerTimeout = setTimeout(
-          () =>
-            checkWallet({
-              initialBalance,
-              price,
-              type,
-              wallet,
-            }),
-          2000
-        );
+      
+          setManLoader(false);
+          openModal(false);
+          // console.log(err);
+          setTransferFail(true);
+          clearInterval(timer.current);
+          setTimeCounted(0);
+          setFailMessage("Something went wrong, Please try again");
+
       }
     } else {
       clearTimeout(timerTimeout);
@@ -971,24 +940,9 @@ export const PaymentProvider = ({
 
         setGenAddr(wallet);
 
-        const price = await getPrice(
-          amount + (Number(amount) * 1) / 100,
-          token.chain
-        );
+        const price = await getPrice(amount, token.chain);
 
         setAmountMn(Number(price));
-
-        const provider = new ethers.providers.JsonRpcProvider(token.rpc);
-
-        const balance = new ethers.Contract(
-          token.tokenAddr,
-          balanceABI,
-          provider
-        );
-
-        const initialBalance = Number(
-          ethers.utils.formatEther(await balance.balanceOf(wallet))
-        );
 
         openModal(true);
 
@@ -998,12 +952,12 @@ export const PaymentProvider = ({
           setTimeCounted((timeCounted) => timeCounted + 1);
         }, 1000);
 
-        await checkWallet({ initialBalance, type, price, wallet });
+        await checkWallet({ type, price, wallet });
       })
       .catch((err) => {
-        const error = err as Error | AxiosError;
+        const error = err as any;
 
-        // console.log(error);
+        console.log(error);
 
         beginManual(amount, type);
       });
@@ -1044,295 +998,296 @@ export const PaymentProvider = ({
 
       // drop here - payment
 
-
       if (auto) {
-        initMain(Number(amount), type)
-        analytics.track('Automatic Payments')
+        initMain(Number(amount), type);
+        analytics.track("Automatic Payments");
+      } else {
+        beginManual(Number(amount), type);
+        analytics.track("Manual Payments");
       }
-        
-      else {
-      beginManual(Number(amount), type)
-      analytics.track('Manual Payments')
-    };
-  } else {
-    setFailMessage("The amount set is invalid");
-}
+    } else {
+      setFailMessage("The amount set is invalid");
+    }
   };
 
-return (
-  <PaymentContext.Provider
-    value={{
-      userD,
-      setUserD,
-      token,
-      setToken,
-      paymentData,
-      setPaymentData,
-      data,
-      setData,
-      rnData,
-      isLoading,
-      setIsLoading,
-      explorer: tokenTrackers[token.value],
-      pemail,
-      setPemail,
-      loadingText,
-      setLoadingText,
-      transferSuccess,
-      setTransferSuccess,
-      transferFail,
-      setTransferFail,
-      failMessage,
-      setFailMessage,
-      hash,
-      setHash,
-      interval,
-      setTinterval,
-      is500,
-      setIs500,
-      reset,
-      initMain,
-      amount,
-      setAmount,
-      subCheck,
-      setSubCheck,
-      begin,
-      apiState,
-      subValue,
-      setSubValue,
-      eSubscription,
-      options,
-      amountFixed,
-      setESubscription,
-      setSigner,
-    }}
-  >
-    <AuthModal userAuth={false} />
+  return (
+    <PaymentContext.Provider
+      value={{
+        userD,
+        setUserD,
+        token,
+        setToken,
+        paymentData,
+        setPaymentData,
+        data,
+        setData,
+        rnData,
+        isLoading,
+        setIsLoading,
+        explorer: tokenTrackers[token.value],
+        pemail,
+        setPemail,
+        loadingText,
+        setLoadingText,
+        transferSuccess,
+        setTransferSuccess,
+        transferFail,
+        setTransferFail,
+        failMessage,
+        setFailMessage,
+        hash,
+        setHash,
+        interval,
+        setTinterval,
+        is500,
+        setIs500,
+        reset,
+        initMain,
+        amount,
+        setAmount,
+        subCheck,
+        setSubCheck,
+        begin,
+        apiState,
+        subValue,
+        setSubValue,
+        eSubscription,
+        options,
+        amountFixed,
+        setESubscription,
+        setSigner,
+      }}
+    >
+      <AuthModal userAuth={false} />
 
-    {nullSwitch && (
-      <>
-        <Modal
-          open={nullSwitch}
-          sx={{
-            "&& .MuiBackdrop-root": {
-              backdropFilter: "blur(5px)",
-            },
-          }}
-          onClose={closeSwitch}
-          className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
-          aria-labelledby="Generate New Api Key"
-          aria-describedby="Generate Api"
-        >
-          <Box
-            className="sm:w-full h-fit 3mdd:px-[2px]"
+      {nullSwitch && (
+        <>
+          <Modal
+            open={nullSwitch}
             sx={{
-              minWidth: 300,
-              width: "70%",
-              maxWidth: 800,
-              borderRadius: 6,
-              outline: "none",
-              p: 4,
-              position: "relative",
-              margin: "auto",
+              "&& .MuiBackdrop-root": {
+                backdropFilter: "blur(5px)",
+              },
             }}
+            onClose={closeSwitch}
+            className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+            aria-labelledby="Switch Networks to continue"
+            aria-describedby="Switch Networks"
           >
-            <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
-              <div className="mb-2 flex items-start justify-between">
-                <div>
-                  <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
-                    Switch Network
-                  </h2>
-                  <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
-                    You have to switch networks to continue
-                  </span>
+            <Box
+              className="sm:w-full h-fit 3mdd:px-[2px]"
+              sx={{
+                minWidth: 300,
+                width: "70%",
+                maxWidth: 800,
+                borderRadius: 6,
+                outline: "none",
+                p: 4,
+                position: "relative",
+                margin: "auto",
+              }}
+            >
+              <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+                <div className="mb-2 flex items-start justify-between">
+                  <div>
+                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                      Switch Network
+                    </h2>
+                    <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
+                      You have to switch networks to continue
+                    </span>
+                  </div>
+
+                  <IconButton size={"medium"} onClick={closeSwitch}>
+                    <MdClose
+                      size={20}
+                      color={"rgb(32,33,36)"}
+                      className="cursor-pointer"
+                    />
+                  </IconButton>
                 </div>
 
-                <IconButton size={"medium"} onClick={closeSwitch}>
-                  <MdClose
-                    size={20}
-                    color={"rgb(32,33,36)"}
-                    className="cursor-pointer"
-                  />
-                </IconButton>
+                <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
+                  This popup came up, because you are using the wrong network on
+                  your crypto wallet, kindly switch networks to{" "}
+                  <b>{token.network}</b> after which click the reconnect button,
+                  <span className="block text-center w-full font-bold">or</span>
+                  Click reconnect and select <b>{token.network}</b> on your
+                  crypto wallet then connect. <br /> Based on your wallet
+                  configuration.
+                </span>
               </div>
 
-              <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
-                This popup came up, because you are using the wrong network on
-                your crypto wallet, kindly switch networks to{" "}
-                <b>{token.network}</b> after which click the reconnect button,
-                <span className="block text-center w-full font-bold">or</span>Click reconnect and select <b>{token.network}</b> on your crypto wallet then connect. <br /> Based on your wallet configuration.
-              </span>
-            </div>
-
-            <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
-              <div className="flex items-center">
-                <Button
-                  onClick={validSwitch}
-                  className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
-                >
-                  <TbPlugConnected
-                    color={"inherit"}
-                    className={"mr-2 !fill-white"}
-                    size={23}
-                  />{" "}
-                  Reconnect
-                </Button>
+              <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+                <div className="flex items-center">
+                  <Button
+                    onClick={validSwitch}
+                    className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                  >
+                    <TbPlugConnected
+                      color={"inherit"}
+                      className={"mr-2 !fill-white"}
+                      size={23}
+                    />{" "}
+                    Reconnect
+                  </Button>
+                </div>
               </div>
-            </div>
-          </Box>
-        </Modal>
-      </>
-    )}
+            </Box>
+          </Modal>
+        </>
+      )}
 
-    <Modal
-      open={isOpened}
-      sx={{
-        zIndex: 100000000,
-        "&& .MuiBackdrop-root": {
-          backdropFilter: "blur(5px)",
-          width: "calc(100% - 8px)",
-        },
-      }}
-      onClose={closeModal}
-      className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
-      aria-labelledby="Begin Manual Payment"
-      aria-describedby="Make quick manual payment"
-    >
-      <Box className="sm:w-full h-fit 3mdd:px-[2px]" sx={style}>
-        <div className="py-4 px-6 bg-white -mb-[1px] rounded-[.9rem]">
-          <div className="mb-5 flex items-center relative justify-between">
-            <LogoSpace />
+      <Modal
+        open={isOpened}
+        sx={{
+          zIndex: 100000000,
+          "&& .MuiBackdrop-root": {
+            backdropFilter: "blur(5px)",
+            width: "calc(100% - 8px)",
+          },
+        }}
+        onClose={() => false}
+        className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+        aria-labelledby="Begin Manual Payment"
+        aria-describedby="Make quick manual payment"
+      >
+        <Box className="sm:w-full h-fit 3mdd:px-[2px]" sx={style}>
+          <div className="py-4 px-6 bg-white -mb-[1px] rounded-[.9rem]">
+            <div className="mb-5 flex items-center relative justify-between">
+              <LogoSpace />
 
-            <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
-              ${amount} ( ${(Number(amount) * 1) / 100} fee )
-            </span>
-
-            <IconButton
-              size={"medium"}
-              className="-top-full -right-[30px] !absolute !bg-[#fff]"
-              onClick={closeModal}
-            >
-              <MdClose
-                size={20}
-                color={"rgb(32,33,36)"}
-                className="cursor-pointer"
-              />
-            </IconButton>
-          </div>
-
-          <div className="py-3 mb-2">
-            <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
-              Scan the qr code below or copy the address, Send the exact
-              amount required for this transaction to complete the
-              transaction.
-            </span>
-          </div>
-
-          <div className="flex items-center justify-center mb-2">
-            <span className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
-              {amountMn} {token.symbol.toUpperCase()}
-            </span>
-          </div>
-
-          <div className="flex relative items-center flex-col justify-center mb-5">
-            {manLoader && (
-              <Loader
-                sx={{
-                  backgroundColor: "#ffffffeb",
-                  width: 210,
-                  height: 210,
-                  margin: "auto",
-                  right: "0px",
-                  left: "0px",
-                }}
-                incLogo={false}
-                fixed={false}
-              />
-            )}
-            <QrCode
-              style={{
-                marginBottom: "16px",
-              }}
-              data={genAddr || ""}
-            />
-
-            <span className="text-[rgb(80,80,82)] font-bold text-center block text-[15px]">
-              Send Payment Within{" "}
-              <span className="text-[17px]">
-                {String((720 - timeCounted) / 60).split(".")[0] +
-                  ":" +
-                  `${(720 - timeCounted) % 60 <= 9 ? 0 : ""}${(720 - timeCounted) % 60
-                  }`}
+              <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
+                ${amount} ( ${(Number(amount) * 1) / 100} fee )
               </span>
-            </span>
-          </div>
 
-          <div className="w-full items-center my-3 rounded-md flex justify-between bg-[#2e2e2e0e] py-1 px-3">
-            <div className="mr-2">
-              <span className="font-bold text-[#919191] text-[13px]">
-                Address
-              </span>
-              <span className="text-[#919191] truncate block h-fit">
-                {genAddr}
-              </span>
-            </div>
-            <ClickAwayListener onClickAway={() => mainCopy(false)}>
-              <Tooltip
-                placement="top"
-                onClose={() => mainCopy(false)}
-                open={copied}
-                disableFocusListener
-                disableHoverListener
-                disableTouchListener
-                PopperProps={{
-                  disablePortal: true,
-                }}
-                arrow
-                title="Copied"
+              <IconButton
+                size={"medium"}
+                className="-top-full -right-[30px] !absolute !bg-[#fff]"
+                onClick={closeModal}
               >
-                <IconButton
-                  size={"large"}
-                  onClick={() => {
-                    mainCopy(true);
-                    copy(genAddr as string);
-                  }}
-                >
-                  <FaRegClone
-                    color={"#919191"}
-                    className="cursor-pointer"
-                    size={16}
-                  />
-                </IconButton>
-              </Tooltip>
-            </ClickAwayListener>
-          </div>
+                <MdClose
+                  size={20}
+                  color={"rgb(32,33,36)"}
+                  className="cursor-pointer"
+                />
+              </IconButton>
+            </div>
 
-          <div className="w-full items-center mt-3 mb-5 rounded-md flex flex-col">
-            <div className="bg-[#2e2e2e0e] w-full mb-1 py-1 px-3">
-              <span className="font-bold text-[#919191] text-[13px]">
-                Network
-              </span>
-              <span className="text-[#919191] truncate block h-fit">
-                {token.network}
+            <div className="py-3 mb-2">
+              <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
+                Scan the qr code below or copy the address, Send the exact
+                amount required for this transaction to complete the
+                transaction.
               </span>
             </div>
-            <span className="text-[rgb(113,114,116)] block font-[500] text-[14px]">
-              Note that sending tokens from the wrong network could result in
-              loss of tokens
-            </span>
+
+            <div className="flex items-center justify-center mb-2">
+              <span className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                {amountMn} {token.symbol.toUpperCase()}
+              </span>
+            </div>
+
+            <div className="flex relative items-center flex-col justify-center mb-5">
+              {manLoader && (
+                <Loader
+                  sx={{
+                    backgroundColor: "#ffffffeb",
+                    width: 210,
+                    height: 210,
+                    margin: "auto",
+                    right: "0px",
+                    left: "0px",
+                  }}
+                  incLogo={false}
+                  fixed={false}
+                />
+              )}
+              <QrCode
+                style={{
+                  marginBottom: "16px",
+                }}
+                data={genAddr || ""}
+              />
+
+              <span className="text-[rgb(80,80,82)] font-bold text-center block text-[15px]">
+                Send Payment Within{" "}
+                <span className="text-[17px]">
+                  {String((720 - timeCounted) / 60).split(".")[0] +
+                    ":" +
+                    `${(720 - timeCounted) % 60 <= 9 ? 0 : ""}${
+                      (720 - timeCounted) % 60
+                    }`}
+                </span>
+              </span>
+            </div>
+
+            <div className="w-full items-center my-3 rounded-md flex justify-between bg-[#2e2e2e0e] py-1 px-3">
+              <div className="mr-2">
+                <span className="font-bold text-[#919191] text-[13px]">
+                  Address
+                </span>
+                <span className="text-[#919191] truncate block h-fit">
+                  {genAddr}
+                </span>
+              </div>
+              <ClickAwayListener onClickAway={() => mainCopy(false)}>
+                <Tooltip
+                  placement="top"
+                  onClose={() => mainCopy(false)}
+                  open={copied}
+                  disableFocusListener
+                  disableHoverListener
+                  disableTouchListener
+                  PopperProps={{
+                    disablePortal: true,
+                  }}
+                  arrow
+                  title="Copied"
+                >
+                  <IconButton
+                    size={"large"}
+                    onClick={() => {
+                      mainCopy(true);
+                      copy(genAddr as string);
+                    }}
+                  >
+                    <FaRegClone
+                      color={"#919191"}
+                      className="cursor-pointer"
+                      size={16}
+                    />
+                  </IconButton>
+                </Tooltip>
+              </ClickAwayListener>
+            </div>
+
+            <div className="w-full items-center mt-3 mb-5 rounded-md flex flex-col">
+              <div className="bg-[#2e2e2e0e] w-full mb-1 py-1 px-3">
+                <span className="font-bold text-[#919191] text-[13px]">
+                  Network
+                </span>
+                <span className="text-[#919191] truncate block h-fit">
+                  {token.network}
+                </span>
+              </div>
+              <span className="text-[rgb(113,114,116)] block font-[500] text-[14px]">
+                Note that sending tokens from the wrong network could result in
+                loss of tokens
+              </span>
+            </div>
+
+            <Button
+              onClick={closeModal}
+              className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+            >
+              <RiCloseCircleLine size={22} className="mr-2" /> Dismiss
+            </Button>
           </div>
+        </Box>
+      </Modal>
 
-          <Button
-            onClick={closeModal}
-            className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
-          >
-            <RiCloseCircleLine size={22} className="mr-2" /> Dismiss
-          </Button>
-        </div>
-      </Box>
-    </Modal>
-
-    {children}
-  </PaymentContext.Provider>
-);
+      {children}
+    </PaymentContext.Provider>
+  );
 };
