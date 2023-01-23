@@ -1,12 +1,27 @@
+import soonImg from "../../../public/images/coming-soon.svg";
+import * as ethers from "ethers";
 import NumberFormat from "react-number-format";
 import Page from "../../../app/components/elements/dashboard";
-import Head from 'next/head';
-import { Skeleton, Tooltip, Button, CircularProgress, Modal, Box, IconButton } from "@mui/material";
-import { MdInfo, MdOutlineVisibility, MdPayment, MdOutlineVisibilityOff, MdSubscriptions } from "react-icons/md";
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router'
-import { IoMdCash } from "react-icons/io";
-import { FaCoins, FaCopy, FaWallet } from "react-icons/fa";
+import Head from "next/head";
+import empty from "../../../public/images/empty2.png";
+import {
+  Tooltip,
+  Button,
+  CircularProgress,
+  Modal,
+  Box,
+  IconButton,
+} from "@mui/material";
+import {
+  MdInfo,
+  MdOutlineVisibility,
+  MdPayment,
+  MdOutlineVisibilityOff,
+  MdSubscriptions,
+} from "react-icons/md";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import { FaCoins, FaCopy, FaEthereum, FaWallet } from "react-icons/fa";
 import CustomImg from "../../../app/components/elements/customImg";
 import { BiCopy } from "react-icons/bi";
 import copy from "copy-to-clipboard";
@@ -17,146 +32,474 @@ import Link from "next/link";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 import { PinField } from "react-pin-field";
 import axios, { AxiosError } from "axios";
+import { CryptoList } from "../../../app/contexts/Cryptea/connectors/chains";
+import { get_request } from "../../../app/contexts/Cryptea/requests";
+import Image from "next/image";
+import Loader from "../../../app/components/elements/loader";
+import { months } from "../../../app/components/elements/dashboard/linkOverview/generateData";
+
 const Settlements = () => {
+  const router = useRouter();
 
-    const router = useRouter();
+  const [blur, setBlur] = useState<boolean>(true);
 
-    const [blur, setBlur] = useState<boolean>(false);
+  const [dashData, setDashData] = useState<any>({
+    payments: [],
+    pending: 0,
+    settlements: [],
+    balance: [],
+    breakdown: [],
+  });
 
-    const [pins, setPin] = useState<{ [index: string]: string }>({
-      newpin: "",
-      renewpin: "",
-    });
+  const once = useRef<boolean>(true);
 
-    const [pinsVisibility, setPinVisibility] = useState<{
+  const [pins, setPin] = useState<{ [index: string]: string }>({
+    newpin: "",
+    renewpin: "",
+  });
+
+  type bal = {
+    [index: string]: {
+      amount: number;
+      name: string;
+      test: boolean;
+      symbol: string;
+    };
+  };
+
+  type balVal = {
+    amount: number;
+    amtFiat: number;
+    token: string;
+    test: boolean;
+    symbol: string;
+  };
+
+  type bal2 = {
+    [index: string]: balVal;
+  };
+
+  const [balance, setBalance] = useState<bal>({});
+
+  const [pinsVisibility, setPinVisibility] = useState<{
     [index: string]: boolean;
   }>({
     newpin: true,
     renewpin: true,
   });
 
-    const [pinLoading, setPinLoading] = useState<boolean>(false);
+  const [pinLoading, setPinLoading] = useState<boolean>(false);
 
-    const [settlePin, setSettlePin] = useState<boolean>(false);
+  const [settlePin, setSettlePin] = useState<boolean>(false);
 
-    const closeSettleModal = () => setSettlePin(false);
+  const closeSettleModal = () => setSettlePin(false);
 
-    const [genSetError, setGenSetError] = useState<string>("");
+  const [genSetError, setGenSetError] = useState<string>("");
 
-    const { isAuthenticated } = useCryptea();
+  const [data, setData] = useState<any>({});
 
-    const [data, setData] = useState<any>({});
+  const [soon, setSoon] = useState<boolean>(false);
 
-    const [copied, mainCopy] = useState<boolean[]>([false]);
+  const [copied, mainCopy] = useState<boolean[]>([false]);
 
-    const switchCopy = (val: boolean, index: number) => {
-      const copx = [...copied];
-      copx[index] = val;
-      mainCopy(copx);
+  const [pageCheck, setPageCheck] = useState<any>({});
+
+  const [altPageData, setAltPageData] = useState<any[]>([]);
+
+  const [pageLoading, setPageLoad] = useState<boolean>(false);
+
+  const switchCopy = (val: boolean, index: number) => {
+    const copx = [...copied];
+    copx[index] = val;
+    mainCopy(copx);
+  };
+
+
+  // ethers.utils.isAddress("0x8ba1f109551bd432803012645ac136ddd64dba72");
+
+  const trx = (val: any, key: number) => {
+
+    const date = new Date(val.created_at);
+
+    const settData = JSON.parse(val.data);
+
+    const hrx = date.getHours() % 12 || 12;
+
+    return (
+      <div key={key} className="mx-4 flex items-start py-4">
+        <div className="text-[#F57059] mt-2 flex-shrink-0">
+          {val.type == "fiat" && <MdPayment size={18} />}
+          {val.type == "crypto" && <FaCoins size={18} />}
+          {val.type == "swap" && <RiCoinFill size={18} />}
+        </div>
+
+        <span className="font-body text-gray-800 px-4 flex flex-col flex-1">
+          {val.type == "fiat" && (
+            <span className="text-[14px] text-[#747474] font-[500]">
+              {val.desc}
+            </span>
+          )}
+
+          {(val.type == "crypto" || val.type == "swap") && (
+            <Link href={settData["explorer"]} className="cursor-pointer">
+              <a
+                className="text-[14px] text-[#747474] font-[500]"
+                target={"_blank"}
+              >
+                {val.desc}
+              </a>
+            </Link>
+          )}
+
+          <span className="text-xs text-gray-600">
+            {months[date.getMonth()]}{" "}
+            {String(date.getDate()).length == 1
+              ? "0" + date.getDate()
+              : date.getDate()}{" "}
+            {date.getFullYear()} {hrx}:
+            {String(date.getMinutes()).length < 2
+              ? `0${date.getMinutes()}`
+              : date.getMinutes()}{" "}
+            {hrx > 12 ? "pm" : "am"}
+          </span>
+        </span>
+
+        <span className="font-body text-gray-800 flex flex-col">
+          <NumberFormat
+            value={
+              val.type == "fiat" ? val["amount"].toFixed(2) : val["amount"]
+            }
+            className="text-sm"
+            thousandSeparator={val.type == "fiat"}
+            displayType={"text"}
+            prefix={val.type == "fiat" ? "$" : ""}
+          />
+        </span>
+      </div>
+    );
+  };
+
+  const savePin = async () => {
+    setGenSetError("");
+
+    if (pinLoading) {
+      return;
     }
 
-    const savePin = async () => {
-      setGenSetError("");
+    let more = true;
 
-      if (pinLoading) {
-        return;
-      }
-      
-      let more = true;
+    setPinLoading(true);
 
-      setPinLoading(true);
-
-      Object.values(pins).forEach((e) => {
-        if (!Boolean(e) || e.length != 5) {
-          document.querySelector(".pinerror")?.scrollIntoView();
-
-          setGenSetError(
-            "Data Incomplete, Please required fields should be field"
-          );
-          setPinLoading(false);
-
-          more = false;
-        }
-      });
-
-      if (pins["newpin"] != pins["renewpin"]) {
+    Object.values(pins).forEach((e) => {
+      if (!Boolean(e) || e.length != 5) {
         document.querySelector(".pinerror")?.scrollIntoView();
 
-        setGenSetError("Re-entered pin does not match new pin");
+        setGenSetError(
+          "Data Incomplete, Please required fields should be field"
+        );
         setPinLoading(false);
 
         more = false;
       }
+    });
 
-      if (more) {
-        try {
-          const newData: { [index: string]: string } = {
-            newpin: pins["newpin"],
-          };
+    if (pins["newpin"] != pins["renewpin"]) {
+      document.querySelector(".pinerror")?.scrollIntoView();
 
-          await axios.post(
-            `/api/settlement/new`,
-            {
-              ...newData,
-              token: localStorage.getItem("userToken"),
-            },
-            {
-              baseURL: window.origin,
-            }
+      setGenSetError("Re-entered pin does not match new pin");
+      setPinLoading(false);
+
+      more = false;
+    }
+
+    if (more) {
+      try {
+        const newData: { [index: string]: string } = {
+          newpin: pins["newpin"],
+        };
+
+        await axios.post(
+          `/api/settlement/new`,
+          {
+            ...newData,
+            token: localStorage.getItem("userToken"),
+          },
+          {
+            baseURL: window.origin,
+          }
+        );
+
+        setPinLoading(false);
+
+        closeSettleModal();
+
+        window.scroll(0, 0);
+      } catch (err) {
+        const erro = err as AxiosError;
+
+        if (erro.response) {
+          const errorx: any = erro.response.data;
+
+          setGenSetError(errorx.message);
+        } else {
+          // console.log(erro.message)
+          setGenSetError("Something went wrong, please try again");
+        }
+
+        document.querySelector(".pinerror")?.scrollIntoView();
+
+        setPinLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+
+    const init = async () => {
+      const dashmain = await get_request(
+        "/dashboard/settlement",
+        {},
+        undefined,
+        false
+      );
+
+      let { payments, user, account, pending } = dashmain?.data;
+
+      const breakdown: bal2 = {};
+
+      let finalBalance: { [index: string]: number } = {};
+
+      const fees: { [index: string]: number } = {};
+
+      payments.forEach((value: any) => {
+        if (value.meta !== null) {
+          const metadata = JSON.parse(value.meta);
+
+          fees[metadata["chainId"]] = Number(metadata["discount"]);
+        }
+      });
+
+      let totalPending = 0;
+
+      if (pending.length) {
+        pending.forEach(async (dax: any) => {
+          const amt = dax.amountCrypto;
+
+          const token = dax.token.split(" ")[0];
+
+          const res = await get_request(
+            `/token/price/${token.toLowerCase()}`,
+            {},
+            undefined,
+            false
           );
 
-          setPinLoading(false);
+          const price = res?.data.price;
 
-          closeSettleModal();
-
-          window.scroll(0, 0);
-        } catch (err) {
-
-          const erro = err as AxiosError;
-
-          if (erro.response) {
-            const errorx: any = erro.response.data;
-
-            setGenSetError(errorx.message);
-          } else {
-            // console.log(erro.message)
-            setGenSetError("Something went wrong, please try again");
-          }
-
-          document.querySelector(".pinerror")?.scrollIntoView();
-
-          setPinLoading(false);
-        }
+          totalPending += amt * price;
+        });
       }
+
+      for (let i = 0; i < Object.keys(balance).length; i++) {
+
+        const index = Object.keys(balance)[i];
+
+        const total =
+          balance[index].amount - (fees[index] !== undefined ? fees[index] : 0);
+
+        const res = await get_request(
+          `/token/price/${balance[index].name.toLowerCase()}`,
+          {},
+          undefined,
+          false
+        );
+
+        const price = res?.data.price;
+
+        finalBalance[index] = total * price;
+
+        breakdown[index] = {
+          amount: total,
+          amtFiat: total * price,
+          token: balance[index].name,
+          test: balance[index].test,
+          symbol: balance[index].symbol,
+        };
+
+      }
+  
+
+      const { data: settlements } = (await get_request(
+        `/settlements/transactions`,
+        {},
+        undefined,
+        false
+      )) || { data: { trx: {} } };
+
+      if (settlements.trx.current_page !== undefined) {
+        const { current_page, last_page } = settlements.trx.current_page;
+
+        setPageCheck({ current_page, last_page });
+      }
+
+
+
+      setDashData({
+        payments,
+        balance: Object.values(finalBalance),
+        breakdown: Object.values(breakdown).sort(
+          (a, b) => Number(a.test) - Number(b.test)
+        ).sort((a, b) => b.amount - a.amount),
+        settlements: settlements.trx,
+        pending: totalPending + (totalPending ? (totalPending * 1) / 100 : 0),
+      });
+
+      if (blur) setBlur(false);
+
     };
 
-    useEffect(() => {
-      if (isAuthenticated !== undefined) {
-        if (!isAuthenticated) {
-          router.push("/auth");
-        } else {
-          "user".get("*", true).then((e: any) => {
-            setData(e);
+    if (once.current) {
+      once.current = true;
 
-            setSettlePin(!Boolean(e.settlement.length));
+      "user".get("*", true).then(async (e: any) => {
 
-            setBlur(false);
-          });
+        setData(e);
+
+        setSettlePin(!Boolean(e.settlement.length));
+
+        if (e.settlement[0] !== undefined) {
+          const account = e.settlement[0];
+
+          for (let i = 0; i < CryptoList.length; i++) {
+
+            const token = CryptoList[i];            
+
+            if (token.type == "native") {
+
+              try {
+                const provider = new ethers.providers.JsonRpcProvider(
+                  token.rpc
+                );
+
+                balance[token.value] = {
+                  amount: Number(
+                    ethers.utils.formatEther(
+                      await provider.getBalance(account.address)
+                    )
+                  ),
+                  name: token.name.split(" ")[0],
+                  test: token.testnet,
+                  symbol: token.symbol,
+                };
+              } catch (err) {
+
+                console.log(err);
+
+                balance[token.value] = {
+                  amount: 0,
+                  name: token.name.split(" ")[0],
+                  test: token.testnet,
+                  symbol: token.symbol,
+                };
+
+              }
+            } else if (token.type == "non-native") {
+              // do stuff here
+            }
+
+          }
+
+          setBalance({ ...balance });
+
+
+          await init();
+
         }
-      }
-    }, [isAuthenticated]);
+      });
+    }
+  }, []);
 
-    return (
-      <Page>
-        <Head>
-          <title>Settlements | Dashboard | Cryptea</title>
-          <meta
-            name="description"
-            content={`Distribute and receive all your funds in crypto and fiat`}
-          />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
+  return (
+    <Page>
+      <Head>
+        <title>Settlements | Dashboard | Cryptea</title>
+        <meta
+          name="description"
+          content={`Distribute and receive all your funds in crypto and fiat`}
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      {blur ? (
+        <Loader />
+      ) : (
         <div className="pt-[75px] px-5 relative z-[1]">
+          <Modal
+            open={soon}
+            sx={{
+              "&& .MuiBackdrop-root": {
+                backdropFilter: "blur(5px)",
+                width: "calc(100% - 8px)",
+              },
+            }}
+            onClose={() => setSoon(false)}
+            className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+            aria-labelledby="Change settlement pin, to approve transactions"
+            aria-describedby="Change Pin"
+          >
+            <Box
+              className="sm:w-full h-fit 3mdd:px-[2px]"
+              sx={{
+                minWidth: 300,
+                width: "70%",
+                maxWidth: 800,
+                borderRadius: 6,
+                outline: "none",
+                p: 4,
+                position: "relative",
+                margin: "auto",
+              }}
+            >
+              <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+                <div className="mb-2 flex items-start justify-between">
+                  <div>
+                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                      Coming Soon
+                    </h2>
+                    <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
+                      This feature is coming soon
+                    </span>
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <Image
+                    src={soonImg}
+                    width={200}
+                    height={200}
+                    alt="coming soon"
+                  />
+                </div>
+                <span className="text-[#7c7c7c] mt-3 block font-[500] text-[16px]">
+                  We are working hard to ensure that this feature is released
+                  and soon as possible, you would receive a mail when it is
+                  released, while you wait you could checkout our other cool
+                  features
+                </span>
+              </div>
+
+              <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+                <div className="flex items-center">
+                  <Button
+                    onClick={() => setSoon(false)}
+                    className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                  >
+                    Thank you
+                  </Button>
+                </div>
+              </div>
+            </Box>
+          </Modal>
+
           {settlePin && (
             <>
               <Modal
@@ -310,88 +653,76 @@ const Settlements = () => {
 
           <div className="flex items-start relative z-10 3mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3 mt-2 mb-1">
             <div className="min-w-[100px]">
-              {blur ? (
-                <Skeleton
-                  className="mb-2"
-                  sx={{ fontSize: "1.04rem", width: "80px" }}
-                />
-              ) : (
-                <Tooltip
-                  placement="bottom"
-                  arrow
-                  title={
-                    "Cash Available for withdrawal, Balance subject to change, based on price data from coingecko"
-                  }
-                >
-                  <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
-                    Account Balance <MdInfo size={16} className="ml-1" />
-                  </span>
-                </Tooltip>
-              )}
+              <Tooltip
+                placement="bottom"
+                arrow
+                title={
+                  "Cash Available for withdrawal, Balance subject to change, based on price data from coingecko"
+                }
+              >
+                <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
+                  Account Balance <MdInfo size={16} className="ml-1" />
+                </span>
+              </Tooltip>
 
               <div className="flex mb-1 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
-                {blur ? (
-                  <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
-                ) : (
-                  <>
-                    <NumberFormat
-                      value={"100"}
-                      style={{
-                        fontSize: "2.3rem",
-                        color: "#121212",
-                      }}
-                      thousandSeparator={true}
-                      displayType={"text"}
-                      prefix={"$"}
-                    />
-                    <span className="leading-[2.7rem] text-[20px] text-[#898989]">
-                      .{"01"}
-                    </span>
-                  </>
-                )}
+                <>
+                  <NumberFormat
+                    value={
+                      String(
+                        dashData["balance"].reduce((a: any, b: any) => a + b, 0)
+                      ).split(".")[0]
+                    }
+                    style={{
+                      fontSize: "2.3rem",
+                      color: "#121212",
+                    }}
+                    thousandSeparator={true}
+                    displayType={"text"}
+                    prefix={"$"}
+                  />
+                  <span className="leading-[2.7rem] text-[20px] text-[#898989]">
+                    .
+                    {
+                      dashData["balance"]
+                        .reduce((a: any, b: any) => a + b, 0)
+                        .toFixed(2)
+                        .split(".")[1]
+                    }
+                  </span>
+                </>
               </div>
             </div>
 
             <div className="min-w-[100px]">
-              {blur ? (
-                <Skeleton
-                  className="mb-2"
-                  sx={{ fontSize: "1.04rem", width: "80px" }}
-                />
-              ) : (
-                <Tooltip
-                  placement="bottom"
-                  arrow
-                  title={
-                    "Amount that are pending and would be added to account balance in a bit, Amount subject to change, based on price data from coingecko"
-                  }
-                >
-                  <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
-                    Pending Amount <MdInfo size={16} className="ml-1" />
-                  </span>
-                </Tooltip>
-              )}
+              <Tooltip
+                placement="bottom"
+                arrow
+                title={
+                  "Amount that are pending and would be added to account balance in a bit, Amount subject to change, based on price data from coingecko"
+                }
+              >
+                <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
+                  Pending Amount <MdInfo size={16} className="ml-1" />
+                </span>
+              </Tooltip>
 
               <div className="flex relative z-10 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
-                {blur ? (
-                  <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
-                ) : (
-                  <>
-                    <NumberFormat
-                      value={"0"}
-                      style={{
-                        fontSize: "2.3rem",
-                        color: "#121212",
-                      }}
-                      thousandSeparator={true}
-                      displayType={"text"}
-                      prefix={"$"}
-                    />
-                    <span className="leading-[2.7rem] text-[20px] text-[#898989]">
-                      .{"00"}
-                    </span>
-                  </>
-                )}
+                <>
+                  <NumberFormat
+                    value={String(dashData["pending"]).split(".")[0]}
+                    style={{
+                      fontSize: "2.3rem",
+                      color: "#121212",
+                    }}
+                    thousandSeparator={true}
+                    displayType={"text"}
+                    prefix={"$"}
+                  />
+                  <span className="leading-[2.7rem] text-[20px] text-[#898989]">
+                    .{dashData["pending"].toFixed(2).split(".")[1]}
+                  </span>
+                </>
               </div>
             </div>
           </div>
@@ -402,179 +733,216 @@ const Settlements = () => {
             </Button>
 
             <Button
-              onClick={() => router.push("/working")}
+              onClick={() => setSoon(true)}
               className="!py-2 !px-3 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !min-w-fit !transition-all !delay-500 !rounded-lg !text-[14px] mx-[2px]"
             >
               <MdPayment size={16} className="mr-1" /> Withdraw
             </Button>
 
-            <Button className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] mx-[2px]">
+            <Button
+              onClick={() => setSoon(true)}
+              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] mx-[2px]"
+            >
               <RiCoinFill size={16} className="mr-1" /> Swap USDT
             </Button>
 
-            <Button className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] mx-[2px]">
+            <Button
+              onClick={() => setSoon(true)}
+              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] mx-[2px]"
+            >
               <MdSubscriptions size={16} className="mr-1" /> Auto Withdrawals
             </Button>
           </div>
 
-          <div className="py-3">
-            {blur ? (
-              <Skeleton
-                className="mb-2"
-                sx={{ fontSize: "1.04rem", width: "80px" }}
-              />
-            ) : (
+          {Boolean(dashData["breakdown"].length) && (
+            <div className="py-3">
               <span className="block uppercase mb-1 text-[#818181] font-bold text-[.64rem]">
                 Cryptos
               </span>
-            )}
 
-            <div className="flex items-center cusscroller overflow-x-scroll overflow-y-hidden pb-1">
-              <div className="flex flex-col items-start">
-                <Tooltip
-                  placement="top"
-                  open={copied[0]}
-                  arrow
-                  title={"Copied"}
-                >
-                  <div
-                    onClick={() => {
-                      copy("0xA36dbla bla");
+              <div className="flex items-end cusscroller overflow-x-scroll overflow-y-hidden pb-1">
+                {dashData["breakdown"].map((val: balVal, key: number) => {
+                  return (
+                    <div key={key} className="flex flex-col items-start">
+                      {!Boolean(key) && (
+                        <Tooltip
+                          placement="top"
+                          open={copied[0]}
+                          arrow
+                          title={"Copied"}
+                        >
+                          <div
+                            onClick={() => {
+                              const acct = data.settlement[0];
 
-                      switchCopy(true, 0);
+                              copy(acct.address);
 
-                      setTimeout(() => switchCopy(false, 0), 2000);
-                    }}
-                    className="cursor-pointer justify-between flex text-[#979797] items-center mb-2 w-[160px]"
-                  >
-                    <div className="flex items-center">
-                      <FaWallet size={14} />
-                      <span className="ml-1 text-[14px]">0xA36d...26a4</span>
+                              switchCopy(true, 0);
+
+                              setTimeout(() => switchCopy(false, 0), 2000);
+                            }}
+                            className="cursor-pointer justify-between flex text-[#979797] items-center mb-2 w-[160px]"
+                          >
+                            <div className="flex items-center">
+                              <FaEthereum size={14} />
+                              <span className="ml-1 text-[14px]">{`${data.settlement[0].address.substring(
+                                0,
+                                6
+                              )}...${data.settlement[0].address.substring(
+                                38,
+                                42
+                              )}`}</span>
+                            </div>
+
+                            <BiCopy size={16} />
+                          </div>
+                        </Tooltip>
+                      )}
+
+                      <div className="border-solid flex items-center w-[350px] justify-between text-[#6a6a6ab0] p-4 mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border">
+                        <div className="flex items-center">
+                          <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
+                            <CustomImg
+                              alt={val["token"]}
+                              name={val["token"]}
+                              symbol={val["symbol"] as string}
+                            />
+                          </div>
+                          <div className="ml-3 relative top-[2px]">
+                            <p className="font-[600] capitalize truncate leading-[14px] text-[14px]">
+                              {val["token"] + (val.test ? " (Testnet)" : "")}
+                            </p>
+                            <span className="font-[400] uppercase text-[11px]">
+                              {val["symbol"]}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-end flex-col">
+                          <NumberFormat
+                            value={Number(val["amount"].toFixed(6))}
+                            className="truncate text-[#414141b0] mb-[1px] block text-[1.5rem] leading-[24px]"
+                            thousandSeparator={true}
+                            displayType={"text"}
+                          />
+
+                          <NumberFormat
+                            value={val["amtFiat"].toFixed(2)}
+                            className="truncate text-[#6a6a6ab0] leading-[15px] block text-[0.9rem]"
+                            thousandSeparator={true}
+                            displayType={"text"}
+                            prefix={"$"}
+                          />
+                        </div>
+                      </div>
                     </div>
-
-                    <BiCopy size={16} />
-                  </div>
-                </Tooltip>
-
-                <div className="border-solid flex items-center w-[350px] justify-between text-[#6a6a6ab0] p-4 mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border">
-                  <div className="flex items-center">
-                    <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
-                      <CustomImg
-                        alt={"polygon"}
-                        name={"polygon"}
-                        symbol={"matic" as string}
-                      />
-                    </div>
-                    <div className="ml-3 relative top-[2px]">
-                      <p className="font-[600] capitalize truncate leading-[14px] text-[14px]">
-                        {"Polygon"}
-                      </p>
-                      <span className="font-[400] uppercase text-[11px]">
-                        {"MATIC"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-end flex-col">
-                    <NumberFormat
-                      value={"1000"}
-                      className="truncate text-[#414141b0] mb-[1px] block text-[1.5rem] leading-[24px]"
-                      thousandSeparator={true}
-                      displayType={"text"}
-                    />
-
-                    <NumberFormat
-                      value={"1000"}
-                      className="truncate text-[#6a6a6ab0] leading-[15px] block text-[0.9rem]"
-                      thousandSeparator={true}
-                      displayType={"text"}
-                      prefix={"$"}
-                    />
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
-          </div>
+          )}
 
           <div className="py-2">
-            {blur ? (
-              <Skeleton
-                className="mb-2"
-                sx={{ fontSize: "1.04rem", width: "80px" }}
-              />
+            <span className="block uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
+              Past Settlements
+            </span>
+
+            {Boolean(dashData["settlements"].data) &&
+            Boolean(dashData["settlements"].data.length) ? (
+              <>
+                <div className="max-w-[650px] border border-solid border-[rgb(218,220,224)] rounded-lg py-3 flex flex-col w-full">
+                  {dashData["settlements"].data.map((val: any, key: number) =>
+                    trx(val, key)
+                  )}
+
+                  {Boolean(altPageData.length) &&
+                    altPageData.map((val: any, key: number) => trx(val, key))}
+                </div>
+
+                {pageCheck.current_page !== undefined &&
+                  pageCheck.current_page != pageCheck.last_page && (
+                    <div className="flex items-center justify-center">
+                      <Button
+                        onClick={async () => {
+                          if (pageLoading) return false;
+
+                          setPageLoad(true);
+
+                          const ndata = await get_request(
+                            "/settlements/transactions",
+                            {
+                              params: {
+                                page: pageCheck.current_page + 1,
+                              },
+                            },
+                            undefined,
+                            false
+                          );
+
+                          const { data, current_page, last_page } = ndata?.data;
+
+                          setAltPageData([...altPageData, ...data]);
+
+                          setPageCheck({ current_page, last_page });
+
+                          setPageLoad(false);
+                        }}
+                        className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                      >
+                        {pageLoading ? (
+                          <>
+                            <div className="mr-3 h-[20px] text-[#fff]">
+                              <CircularProgress
+                                color={"inherit"}
+                                className="!w-[20px] !h-[20px]"
+                              />
+                            </div>{" "}
+                            <span>Loading...</span>
+                          </>
+                        ) : (
+                          <>Load More</>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+              </>
             ) : (
-              <span className="block uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
-                Past Settlements
-              </span>
+              <div
+                className="empty border border-solid border-[rgb(218,220,224)] rounded-lg py-3"
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  maxWidth: "650px",
+                  height: "fit-content",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div className="w-[240px]">
+                  <Image
+                    src={empty}
+                    className="mb-3 object-scale-down"
+                    layout={"intrinsic"}
+                    alt="Quite empty here"
+                  />
+                </div>
+
+                <div className="mt-2 mb-3">
+                  <h2 className="text-[20px] text-[#3e3e3e] capitalize text-center font-[400]">
+                    No Settlement Made Yet
+                  </h2>
+                  <span className="mt-2 text-[17px] text-[#949494] block w-full text-center">
+                    This place would be filled anytime soon😊
+                  </span>
+                </div>
+              </div>
             )}
-
-            <div className="max-w-[650px] border border-solid border-[rgb(218,220,224)] rounded-lg py-3 flex flex-col w-full">
-              <div className="mx-4 flex items-start py-4">
-                <div className="text-[#F57059] mt-2 flex-shrink-0">
-                  <MdPayment size={18} />
-                </div>
-                <span className="font-body text-gray-800 px-4 flex flex-col flex-1">
-                  <span className="text-[14px] text-[#747474] font-[500]">
-                    Withdrawal Made
-                  </span>
-                  <span className="text-xs text-gray-600">
-                    Mon, 07 Nov 2022 12:02:45 GMT
-                  </span>
-                </span>
-                <span className="font-body text-gray-800 flex flex-col">
-                  <span className="text-sm">$-260.00</span>
-                </span>
-              </div>
-
-              <div className="mx-4 flex items-start py-4">
-                <div className="text-[#F57059] mt-2 flex-shrink-0">
-                  <FaCoins size={18} />
-                </div>
-                <span className="font-body text-gray-800 px-4 flex flex-col flex-1">
-                  <Link href={"https://local.me"} className="cursor-pointer">
-                    <a
-                      className="text-[14px] text-[#747474] font-[500]"
-                      target={"_blank"}
-                    >
-                      Crypto Withdrawal Made to 0xA36d...26a4{" "}
-                    </a>
-                  </Link>
-                  <span className="text-xs text-gray-600">
-                    Mon, 07 Nov 2022 12:02:45 GMT
-                  </span>
-                </span>
-                <span className="font-body text-gray-800 flex flex-col">
-                  <span className="text-sm">$-260.00</span>
-                </span>
-              </div>
-
-              <div className="mx-4 flex items-start py-4">
-                <div className="text-[#F57059] mt-2 flex-shrink-0">
-                  <RiCoinFill size={18} />
-                </div>
-                <span className="font-body text-gray-800 px-4 flex flex-col flex-1">
-                  <Link href={"https://local.me"} className="cursor-pointer">
-                    <a
-                      className="text-[14px] text-[#747474] font-[500]"
-                      target={"_blank"}
-                    >
-                      Usdt swap transfer to 0xA36d...26a4{" "}
-                    </a>
-                  </Link>
-                  <span className="text-xs text-gray-600">
-                    Mon, 07 Nov 2022 12:02:45 GMT
-                  </span>
-                </span>
-                <span className="font-body text-gray-800 flex flex-col">
-                  <span className="text-sm">$-260.00</span>
-                </span>
-              </div>
-            </div>
           </div>
         </div>
-      </Page>
-    );
-
-}
+      )}
+    </Page>
+  );
+};
 
 export default Settlements;

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import * as ethers from 'ethers'; 
 
 type Data = {
@@ -13,89 +13,53 @@ export default function handler(
   res: NextApiResponse<Data>
 ) {
 
-  const timeout = (address: string) => setTimeout(() => {
-    
-    axios.post("https://ab.cryptea.me/link/pay/accounts/revert", {
-      address 
-    }, {
-      headers: {
-          Authorization: process.env.APP_KEY || ''
-      }
-    });
-
-  }, 780000)
   
     if (req.method == "GET") {
       const { query } = req;
 
       const type = Boolean(query["type"]) ? query["type"] : "evm";
 
-      axios
-        .get(`https://ab.cryptea.me/link/pay/account/${type}`, {
-          headers: {
-            Authorization: process.env.APP_KEY || "",
+      let wallet = ethers.Wallet.createRandom();
+
+      wallet.encrypt(process.env.KEY || '').then(async (encrypted) => {  
+        try {
+        await axios.post(
+          "https://ab.cryptea.me/link/pay/accounts",
+          {
+            account: wallet.address,
+            private: encrypted,
+            type,
           },
-        })
-        .then(async (accounts) => {
-          const selected: any = accounts.data.data;
-
-          if (Boolean(selected.private)) {
-            const encrypted = selected.private;
-
-            try {
-              let wallet = ethers.Wallet.fromEncryptedJsonSync(
-                encrypted,
-                process.env.KEY || ""
-              );
-
-              console.log(wallet.address);
-
-              timeout(wallet.address);
-
-              res.status(200).json({ error: false, data: wallet.address });
-            } catch (err) {
-              const error = err as Error;
-
-              res.status(400).json({ error: true, message: error.message });
-            }
-          } else {
-            console.log("here");
+          {
+            headers: {
+              Authorization: process.env.APP_KEY || "",
+            },
           }
-          // } else {
+        )
 
-          //   console.log('here')
+        res.status(200).json({ error: false, data: wallet.address });
 
-          //   let wallet = ethers.Wallet.createRandom();
+        }catch (err) {
 
-          //   const encrypted = await wallet.encrypt("123456");
+          const errx = err as any;
 
-          //   await axios.post(
-          //     "https://ab.cryptea.me/link/pay/accounts",
-          //     {
-          //       account: wallet.address,
-          //       private: encrypted,
-          //       type,
-          //     },
-          //     {
-          //       headers: {
-          //         Authorization: process.env.APP_KEY || "",
-          //       },
-          //     }
-          //   );
-
-          //   timeout(wallet.address);
-
-          //    res.status(200).json({ error: false, data: wallet.address });
-          // }
-        })
-        .catch((err) => {
-          // console.log(err);
-          res.status(408).json({
+          res.status(400).json({
+            message: errx.response.data.message,
             error: true,
-            message: "Something went wrong please try again",
           });
+
+        }
+
+      }).catch(error => {
+
+        res.status(400).json({
+          message: error.message,
+          error: true,
         });
-    } else {
+
+      });
+
+      } else {
       res.status(422).json({
         message: "Method not supported",
         error: true,

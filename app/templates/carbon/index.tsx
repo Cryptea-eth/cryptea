@@ -730,7 +730,7 @@ const Carbon = ({ className }: { className?: string }) => {
                         )}
 
                         <div className="">
-                          {Boolean(token!.tokenAddr) && (
+                          
                             <Button
                               sx={{
                                 marginTop: "10px",
@@ -754,7 +754,6 @@ const Carbon = ({ className }: { className?: string }) => {
                             >
                               Pay Manually
                             </Button>
-                          )}
                           <Button
                             sx={{
                               marginTop: "10px",
@@ -1016,7 +1015,7 @@ const Carbon = ({ className }: { className?: string }) => {
                           </div>
                         )}
 
-                        {Boolean(token!.tokenAddr) && (
+                       
                           <Button
                             sx={{
                               marginTop: "10px",
@@ -1040,7 +1039,6 @@ const Carbon = ({ className }: { className?: string }) => {
                           >
                             Pay Manually
                           </Button>
-                        )}
 
                         <Button
                           sx={{

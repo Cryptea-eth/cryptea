@@ -37,6 +37,7 @@ import {
 import Loader from "../components/elements/loader";
 import axios, { AxiosError } from "axios";
 import { TbPlugConnected } from "react-icons/tb";
+import { BsCheck, BsCheck2 } from "react-icons/bs";
 
 export const PaymentContext = createContext<PaymentCont>({});
 
@@ -58,6 +59,8 @@ export const PaymentProvider = ({
   const [is500, setIs500] = useState<boolean>(false);
 
   const [interval, setTinterval] = useState<string>("daily");
+
+  const [paymentType, setPaymentType] = useState<'onetime' | 'sub'>('onetime');
 
   useEffect(() => {}, [username, router.isReady]);
 
@@ -338,6 +341,7 @@ export const PaymentProvider = ({
           api,
           renew: renewInfo,
         } = await initD(String(username).toLowerCase(), apiCode, renew);
+        
 
         if (lQ["id"] !== undefined) {
           if (lQ.template_data !== undefined) {
@@ -498,6 +502,8 @@ export const PaymentProvider = ({
   const [subCheck, setSubCheck] = useState<boolean>(true);
 
   const [eSubscription, setESubscription] = useState<string[]>([]);
+
+
 
   const mainIx = (inter: string) => {
     const date = new Date();
@@ -888,7 +894,7 @@ export const PaymentProvider = ({
                 type,
                 wallet,
               }),
-            2000
+            3000
           );
 
         }
@@ -923,6 +929,7 @@ export const PaymentProvider = ({
     }
   }, [timeCounted, timer]);
 
+
   const beginManual = async (amount: number, type: "onetime" | "sub") => {
     setLoadingText("Just a sec...");
 
@@ -940,7 +947,10 @@ export const PaymentProvider = ({
 
         setGenAddr(wallet);
 
-        const price = await getPrice(amount, token.chain);
+        const price = await getPrice(
+          amount + ((Number(amount) * 1) / 100),
+          token.chain
+        );
 
         setAmountMn(Number(price));
 
@@ -952,7 +962,8 @@ export const PaymentProvider = ({
           setTimeCounted((timeCounted) => timeCounted + 1);
         }, 1000);
 
-        await checkWallet({ type, price, wallet });
+        // await checkWallet({ type, price, wallet });
+        
       })
       .catch((err) => {
         const error = err as any;
@@ -967,6 +978,8 @@ export const PaymentProvider = ({
     setFailMessage("");
     setTransferFail(false);
     setHash("");
+
+    setPaymentType(type);
 
     if (!subValue[type]) {
       let proceed = true;
@@ -1177,8 +1190,7 @@ export const PaymentProvider = ({
             <div className="py-3 mb-2">
               <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
                 Scan the qr code below or copy the address, Send the exact
-                amount required for this transaction to complete the
-                transaction.
+                amount required for this transaction to complete the transaction
               </span>
             </div>
 
@@ -1221,7 +1233,16 @@ export const PaymentProvider = ({
                 </span>
               </span>
             </div>
-
+            <div className="w-full items-center flex justify-center">
+              <Button
+                onClick={async () =>
+                  await checkWallet({ type: paymentType, price: (amountMn).toString(), wallet: genAddr || '' })
+                }
+                className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+              >
+                <BsCheck2 size={20} className="mr-1" /> I have sent the crypto
+              </Button>
+            </div>
             <div className="w-full items-center my-3 rounded-md flex justify-between bg-[#2e2e2e0e] py-1 px-3">
               <div className="mr-2">
                 <span className="font-bold text-[#919191] text-[13px]">

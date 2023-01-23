@@ -135,8 +135,7 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
       router.pathname.indexOf("/settings") == -1 &&
       router.pathname.indexOf("/verify/email") == -1
     ) {
-      "user".get("*", true).then((cacheUser: any) => {
-
+      "user".get("*").then((cacheUser: any) => {
         if (
           !Boolean(cacheUser?.email_verified_at) &&
           Boolean(cacheUser?.email)

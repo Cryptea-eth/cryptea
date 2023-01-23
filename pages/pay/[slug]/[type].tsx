@@ -22,7 +22,7 @@ import {
 import { useRouter } from "next/router";
 import Loader from "../../../app/components/elements/loader";
 import copy from "copy-to-clipboard";
-import sortData, { totSub } from "../../../app/components/elements/dashboard/linkOverview/generateData";
+import sortData, { months, totSub } from "../../../app/components/elements/dashboard/linkOverview/generateData";
 import { initD } from "../../../app/components/elements/dashboard/link/data";
 import { dash, DashContext } from "../../../app/contexts/GenContext";
 import TypePayment from "../../../app/components/elements/dashboard/link/typePayment";
@@ -221,29 +221,15 @@ const Onetime = () => {
                     const msupply = { ...supply, ...vmain };
 
 
-                    const date = new Date(msupply.created_at);
+                    const date = (msupply.created_at);
 
                     const hrx = date.getHours() % 12 || 12;
+
                     const rowD: { [index: string]: any } = {};
 
                     addColumn.forEach(
                       (v: { [index: string]: string | number }) => {
-                        const ddx = [
-                          "Jan",
-                          "Feb",
-                          "Mar",
-                          "Apr",
-                          "May",
-                          "Jun",
-                          "Jul",
-                          "Aug",
-                          "Sep",
-                          "Oct",
-                          "Nov",
-                          "Dec",
-                        ];
-
-                       
+                        const ddx = months;                       
 
                         if (v["id"] == "name") {
                           rowD["name"] = (

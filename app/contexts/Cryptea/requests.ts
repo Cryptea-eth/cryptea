@@ -20,6 +20,7 @@ export const get_request = async (
   
   const token: string = localStorage.getItem("userToken") ?? "";
       try {
+        
         return await axios.get(url, {
           ...config,
           headers: { ...headers, Authorization: `Bearer ${token}` },

@@ -11,7 +11,9 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+
   if (req.method == "POST") {
+    
     const data = req.body;
 
 
@@ -26,7 +28,7 @@ export default function handler(
           const { settlement } = rx?.data;
 
           if (settlement.length) {
-            
+
             if (data.oldpin !== undefined) {
               const main = settlement[0];
 

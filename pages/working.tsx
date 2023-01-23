@@ -24,7 +24,7 @@ const Working = () => {
         <div className="text-black font-bold text-4xl mx-auto mt-10">
             This feature is coming soon
         </div>
-        <div className="text-[#F57059] font-semibold text-lg mx-auto mt-12">
+        <div className="text-[#aa9996] font-semibold text-lg mx-auto mt-12">
           We are still working on this feature and would be done soon
         </div>
       </div>

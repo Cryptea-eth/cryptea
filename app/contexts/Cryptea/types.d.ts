@@ -110,6 +110,7 @@ export type token = {
   network: string;
   tokenAddr: string;
   testnet: boolean;
+  type: 'native' | 'non-native';
   rpc: string;
   name: string;
   contractAddr: string;
