@@ -315,7 +315,7 @@ const DashHeader = ({
           width: sidebar?.openPage ? "calc(100% - 247px)" : "calc(100% - 77px)",
           right: 0,
         }}
-        className={`${
+        className={`2sm:!w-[calc(100%-77px)] ${
           className === undefined
             ? "flex transition-all delay-500 z-10 px-[20px] fixed py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
             : className

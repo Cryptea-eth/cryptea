@@ -35,6 +35,7 @@ import {
   Link as Linkx,
 } from "../../../app/contexts/GenContext";
 import { json } from "stream/consumers";
+import Head from "next/head";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -295,6 +296,16 @@ const Links = () => {
 
   return (
     <Page>
+      <Head>
+        <title>
+         Links | Dashboard | Cryptea
+        </title>
+        <meta
+          name="description"
+          content={`View, update, delete your links`}
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <div className="pt-[75px] px-5">
         {isLoading && <Loader />}
 

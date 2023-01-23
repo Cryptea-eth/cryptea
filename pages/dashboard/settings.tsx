@@ -43,12 +43,14 @@ const Settings = () => {
   const [userDescription, setUserDescription] = useState<string>("");
   const [userEmail, setUserEmail] = useState<string>("");
   const [userInfo, setuserInfo] = useState<string>("");
+  
   const [isLoading, setLoading] = useState({
     account: false,
     security: false,
     link: false,
     progress: [0, 0],
   });
+
   const [crop, setCrop] = useState<PixelCrop>({
     width: 50,
     unit: "px",
@@ -56,8 +58,11 @@ const Settings = () => {
     x: 0,
     y: 0,
   });
+  
   const [simg, setsImg] = useState<string | undefined>("");
+  
   const [iimg, setIiimg] = useState({});
+
   const [result, setResult] = useState(null);
 
   const [data, setData] = useState<any>({});
@@ -250,7 +255,9 @@ const Settings = () => {
   };
 
   const cropImg = () => {
+    
     const img = document.querySelector(".img") as HTMLImageElement;
+
     try {
       const canvas = document.createElement("canvas") as HTMLCanvasElement;
       const scaleX = img.naturalWidth / img.width;
@@ -289,7 +296,6 @@ const Settings = () => {
       setError({ ...error, account: err?.message });
     }
   };
-
 
   const { username, email } = data;
 

@@ -11,6 +11,7 @@ import { cryptoDeets } from "../../../functions/crypto";
 import axios from "axios";
 import CustomImg from "../customImg";
 import CrypSwitch from "../CrypSwitch";
+import { MdOutlineRefresh, MdInfo } from "react-icons/md";
 
 const DashHome = () => {
   const [dashData, setDashData] = useState<any>({
@@ -29,13 +30,24 @@ const DashHome = () => {
 
   const [checked, setChecked] = useState<boolean>(false);
 
+  const [refresh, setRefresh] = useState<boolean>(false);
+
   const changeChecked = async () => {
       setChecked(!checked);
+
+      removeBlur(true);
       
       try {
-      await 'user'.update({ live: !checked ? 'Yes' : 'No' });    
+
+      await 'user'.update({ live: !checked ? 'Yes' : 'No' }); 
+
+      once.current = true;
+    
+      setRefresh(!refresh)
+
       }catch (err) {
           setChecked(!checked);
+          removeBlur(false);
       }
   }
 
@@ -139,7 +151,8 @@ const DashHome = () => {
         init();
       });
   }
-  }, []);
+
+  }, [refresh]);
 
   const change = (data: any[]): { value: number; direction: "up" | "down" } => {
     const [current, initial = 0] = data;
@@ -159,13 +172,11 @@ const DashHome = () => {
     return { value: Math.abs(value), direction: value >= 0 ? "up" : "down" };
   };
 
-  
-
   return (
     <div className="px-5 pt-[75px]">
       <div className="flex items-start justify-between">
         <div className="mainx relative w-[calc(100%-340px)] 2sm:w-full">
-          <div className="w-full flex items-end justify-end absolute">
+          <div className="w-full flex items-end z-0 justify-end absolute">
             <div className="mt-1">
               {blur ? (
                 <div className="flex items-center">
@@ -208,85 +219,133 @@ const DashHome = () => {
               )}
             </div>
           </div>
-          <div className="py-3">
-            {blur ? (
-              <Skeleton
-                className="mb-2"
-                sx={{ fontSize: "1.04rem", width: "80px" }}
-              />
-            ) : (
-              <span className="uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
-                Total Received
-              </span>
-            )}
 
-            <div className="flex mb-3 items-end w-fit">
-              {blur ? (
-                <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
-              ) : (
-                <>
-                  <NumberFormat
-                    value={
-                      String(
-                        dashData["payments"].reduce(
-                          (a: any, b: any) => Number(a) + Number(b.amount),
-                          0
-                        )
-                      ).split(".")[0]
-                    }
-                    style={{
-                      fontSize: "1.95rem",
-                      color: "#121212",
-                    }}
-                    thousandSeparator={true}
-                    displayType={"text"}
-                    prefix={"$"}
-                  />
-                  <span className="leading-[2.38rem] text-[20px] text-[#898989]">
-                    .
-                    {
-                      dashData["payments"]
-                        .reduce(
-                          (a: any, b: any) => Number(a) + Number(b.amount),
-                          0
-                        )
-                        .toFixed(2)
-                        .split(".")[1]
-                    }
-                  </span>
-                </>
-              )}
-            </div>
-
-            <div className="w-fit">
+          <div className="flex items-start relative z-10 3mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
+            <div className="min-w-[100px]">
               {blur ? (
                 <Skeleton
-                  variant="rounded"
-                  className="p-[5px] rounded-[8px] text-[14px]"
-                  sx={{ fontSize: "14px", height: "31px", width: "70px" }}
+                  className="mb-2"
+                  sx={{ fontSize: "1.04rem", width: "80px" }}
                 />
               ) : (
-                <Direction
-                  direction={
-                    change(
-                      dashData["payments"].sort(
-                        (a: any, b: any) =>
-                          new Date(b.created_at).getTime() -
-                          new Date(a.created_at).getTime()
-                      )
-                    ).direction
-                  }
-                  value={
-                    change(
-                      dashData["payments"].sort(
-                        (a: any, b: any) =>
-                          new Date(b.created_at).getTime() -
-                          new Date(a.created_at).getTime()
-                      )
-                    ).value
-                  }
-                />
+                <span className="uppercase flex mb-2 text-[#818181] font-bold text-[.64rem]">
+                  Total Received
+                </span>
               )}
+
+              <div className="flex mb-1 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
+                {blur ? (
+                  <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
+                ) : (
+                  <>
+                    <NumberFormat
+                      value={
+                        String(
+                          dashData["payments"].reduce(
+                            (a: any, b: any) => Number(a) + Number(b.amount),
+                            0
+                          )
+                        ).split(".")[0]
+                      }
+                      style={{
+                        fontSize: "1.95rem",
+                        color: "#121212",
+                      }}
+                      thousandSeparator={true}
+                      displayType={"text"}
+                      prefix={"$"}
+                    />
+                    <span className="leading-[2.38rem] text-[20px] text-[#898989]">
+                      .
+                      {
+                        dashData["payments"]
+                          .reduce(
+                            (a: any, b: any) => Number(a) + Number(b.amount),
+                            0
+                          )
+                          .toFixed(2)
+                          .split(".")[1]
+                      }
+                    </span>
+                  </>
+                )}
+              </div>
+
+              <div className="w-fit">
+                {blur ? (
+                  <Skeleton
+                    variant="rounded"
+                    className="p-[5px] rounded-[8px] text-[14px]"
+                    sx={{ fontSize: "14px", height: "31px", width: "70px" }}
+                  />
+                ) : (
+                  <Direction
+                    direction={
+                      change(
+                        dashData["payments"].sort(
+                          (a: any, b: any) =>
+                            new Date(b.created_at).getTime() -
+                            new Date(a.created_at).getTime()
+                        )
+                      ).direction
+                    }
+                    value={
+                      change(
+                        dashData["payments"].sort(
+                          (a: any, b: any) =>
+                            new Date(b.created_at).getTime() -
+                            new Date(a.created_at).getTime()
+                        )
+                      ).value
+                    }
+                  />
+                )}
+              </div>
+            </div>
+
+            <div className="min-w-[100px]">
+              {blur ? (
+                <Skeleton
+                  className="mb-2"
+                  sx={{ fontSize: "1.04rem", width: "80px" }}
+                />
+              ) : (
+                <Tooltip placement="bottom"
+                  arrow
+                  title={
+                    "Balance subject to change, based on price data from coingecko"
+                  }>
+                <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
+                 Account Balance <MdInfo size={16} className="ml-1"/>
+                </span></Tooltip>
+              )}
+
+              <div className="flex relative z-10 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
+                {blur ? (
+                  <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
+                ) : (
+                  <>
+                    <NumberFormat
+                      value={
+                        '0'
+                      }
+                      style={{
+                        fontSize: "1.95rem",
+                        color: "#121212",
+                      }}
+                      thousandSeparator={true}
+                      displayType={"text"}
+                      prefix={"$"}
+                    />
+                    <span className="leading-[2.38rem] text-[20px] text-[#898989]">
+                      .
+                      {
+                        '00'
+                      }
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
@@ -299,7 +358,7 @@ const DashHome = () => {
             ) : (
               Boolean(dashData["sortBreakdown"].length) && (
                 <span className="block uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
-                  Break Down
+                  Cryptos Received
                 </span>
               )
             )}
@@ -420,7 +479,7 @@ const DashHome = () => {
           </div>
         </div>
 
-        <div className="min-w-[337px] 2sm:hidden pt-5 h-full">
+        <div className="min-w-[337px] 2sm:hidden pt-[5px] h-full">
           <div className="px-4 pt-3 bg-white rounded-[4px]">
             {blur ? (
               <Skeleton
@@ -553,7 +612,7 @@ const DashHome = () => {
         </div>
       </div>
 
-      <div className="mt-2 pt-1 pb-3 2iism:flex-row sm:flex-col w-full flex">
+      <div className="mt-2 pt-1 pb-3 2sm:flex-col w-full flex">
         {blur ? (
           <Skeleton
             variant={"rounded"}
