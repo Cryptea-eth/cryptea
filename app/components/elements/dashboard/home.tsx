@@ -23,6 +23,9 @@ import { PinField } from "react-pin-field";
 import { CryptoList } from "../../../contexts/Cryptea/connectors/chains";
 
 const DashHome = () => {
+
+  const [dashBal, setDashBal] = useState<any[]>([]);
+
   const [dashData, setDashData] = useState<any>({
     payments: [],
     views: [],
@@ -34,11 +37,17 @@ const DashHome = () => {
 
   const [blur, removeBlur] = useState<boolean>(true);
 
+  const onceBal = useRef<boolean>(true);
+
+  const [blurBal, removeBlurBal] = useState<boolean>(true);
+
   const once = useRef<boolean>(true)
+
+  const [data, setData] = useState<any>({});
 
   const [rand, setRand] = useState<number>(0);
 
-  const [balance, setBalance] = useState<{[index:string]: {amount: number; name: string}}>({});
+  const [payments, setPayments] = useState<any[]>([]);
 
   const [checked, setChecked] = useState<boolean>(false);
 
@@ -48,18 +57,22 @@ const DashHome = () => {
       setChecked(!checked);
 
       removeBlur(true);
+
+      removeBlurBal(true);
       
       try {
 
       await 'user'.update({ live: !checked ? 'Yes' : 'No' }); 
 
       once.current = true;
+      onceBal.current = true
     
       setRefresh(!refresh)
 
       }catch (err) {
           setChecked(!checked);
           removeBlur(false);
+          removeBlurBal(false);
       }
   }
 
@@ -161,7 +174,7 @@ const DashHome = () => {
   useEffect(() => {
     setRand(Math.floor(Math.random() * 4));
 
-
+   
     const init = async () => {
 
       const dashmain = await get_request(
@@ -173,7 +186,6 @@ const DashHome = () => {
 
       let { payments, views, links } = dashmain?.data;
 
-
       const breakdown: {
         [index: string]: {
           created_at: number;
@@ -181,10 +193,8 @@ const DashHome = () => {
           token: string;
         }[];
       } = {};
-      
-      let finalBalance: {[index:string]: number} = {}
 
-      const fees: { [index: string]: number } = {};
+      setPayments(payments);
 
       payments.forEach((value: any) => {
         if (breakdown[value.token || "matic"] === undefined) {
@@ -197,28 +207,8 @@ const DashHome = () => {
           token: value.token || "matic",
         });
 
-        if (value.meta !== null && !blur) {
-
-            const metadata = JSON.parse(value.meta);
-
-            fees[metadata["chainId"]] = Number(metadata['discount']);
-            
-        }
-
       });
 
-      if (!blur) {
-          Object.keys(balance).map(async (index) => {
-
-           const total = balance[index].amount - (fees[index] !== undefined ? fees[index] : 0);
-
-           const res = await get_request(`/token/price/${(balance[index].name).toLowerCase()}`, {}, undefined, false);
-
-           const price = res?.data.price;
-
-            finalBalance[index] = total * price;
-        })
-    }
 
       const sortBreak = Object.values(breakdown)
         .map((a: { created_at: number; amount: number; token: string }[]) => {
@@ -267,7 +257,6 @@ const DashHome = () => {
       setDashData({
         payments,
         views,
-        balance: !blur ? Object.values(finalBalance) : dashData['balance'],
         breakdown,
         links: (psort[0].prevViews > 0 ? psort : tsort).slice(0, 5),
         sortBreakdown: sortBreak,
@@ -282,21 +271,54 @@ const DashHome = () => {
 
       once.current = false;
 
-       'user'.get('*', true).then((e: any) => {
+   'user'.get('*', true).then(async (e: any) => {
+    
+        setData(e);
+
         setChecked(e.live == 'Yes');
         setSettlePin(!Boolean(e.settlement.length));
 
-        if (e.settlement[0] !== undefined) {
+        await init();
 
-          const account = e.settlement[0];
+    })
 
-          CryptoList.forEach(async (token) => {
-            if (token.type == "native") {
-              try{
+  }
+
+  }, [refresh]);
+
+
+  useEffect(() => {
+
+    const initBal = async () => {
+
+      if (data.settlement[0] !== undefined) {
+        let finalBalance: { [index: string]: number } = {};
+
+        const fees: { [index: string]: number } = {};
+
+        const balance: {
+          [index: string]: { amount: number; name: string };
+        } = {};
+
+        const account = data.settlement[0];
+
+        for (let i = 0; i < CryptoList.length; i++) {
+
+          const token = CryptoList[i];
+
+          if (token.type == "native") {
+            try {
               const provider = new ethers.providers.JsonRpcProvider(token.rpc);
 
-              balance[token.value] = {amount: Number(ethers.utils.formatEther(await provider.getBalance(account.address))), 'name': (token.name).split(' ')[0]};
-            }catch (err) {
+              balance[token.value] = {
+                amount: Number(
+                  ethers.utils.formatEther(
+                    await provider.getBalance(account.address)
+                  )
+                ),
+                name: token.name.split(" ")[0],
+              };
+            } catch (err) {
               console.log(err);
 
               balance[token.value] = {
@@ -304,21 +326,58 @@ const DashHome = () => {
                 name: token.name.split(" ")[0],
               };
             }
-
-            } else if (token.type == 'non-native') {
-              // do stuff here
-            }
-          });
-
-          setBalance({ ...balance })
-
+          } else if (token.type == "non-native") {
+            // do stuff here
+          }
         }
 
-        init();
-      });
-  }
+        for (let m = 0; m < payments.length; m++) {
+          const value = payments[m];
 
-  }, [refresh]);
+          if (value.meta !== null) {
+            const metadata = JSON.parse(value.meta);
+
+            fees[metadata["chainId"]] = Number(metadata["discount"]);
+          }
+        }
+
+        for (let i = 0; i < Object.keys(balance).length; i++) {
+
+          const index = Object.keys(balance)[i];
+
+          const total =
+            balance[index].amount -
+            (fees[index] !== undefined ? fees[index] : 0);
+
+          const res = await get_request(
+            `/token/price/${balance[index].name.toLowerCase()}`,
+            {},
+            undefined,
+            false
+          );
+
+          const price = res?.data.price;
+
+          finalBalance[index] = total * price;
+        }
+
+        setDashBal(Object.values(finalBalance));
+
+        if (blurBal) removeBlurBal(false);
+
+      }
+    };
+
+    if (payments.length && onceBal.current) {
+
+      onceBal.current = false;
+
+      initBal();
+
+    }
+
+  }, [refresh, payments])
+
 
   const change = (data: any[]): { value: number; direction: "up" | "down" } => {
     const [current, initial = 0] = data;
@@ -616,7 +675,7 @@ const DashHome = () => {
             </div>
 
             <div className="min-w-[100px]">
-              {blur ? (
+              {blurBal ? (
                 <Skeleton
                   className="mb-2"
                   sx={{ fontSize: "1.04rem", width: "80px" }}
@@ -636,17 +695,14 @@ const DashHome = () => {
               )}
 
               <div className="flex relative z-10 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
-                {blur ? (
+                {blurBal ? (
                   <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
                 ) : (
                   <>
                     <NumberFormat
                       value={
                         String(
-                          dashData["balance"].reduce(
-                            (a: any, b: any) => a + b,
-                            0
-                          )
+                          (dashBal || []).reduce((a: any, b: any) => a + b, 0)
                         ).split(".")[0]
                       }
                       style={{
@@ -660,7 +716,7 @@ const DashHome = () => {
                     <span className="leading-[2.38rem] text-[20px] text-[#898989]">
                       .
                       {
-                        dashData["balance"]
+                        (dashBal || [])
                           .reduce((a: any, b: any) => a + b, 0)
                           .toFixed(2)
                           .split(".")[1]
