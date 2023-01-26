@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { post_request } from "./Cryptea/requests";
 import * as ethers from "ethers";
 import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
+import Link from "next/link";
 import { initD } from "../components/elements/dashboard/link/data";
 import { useSwitchNetwork } from "wagmi";
 import analytics from "../../analytics";
@@ -22,6 +23,7 @@ import {
   ClickAwayListener,
   Tooltip,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import { MdClose } from "react-icons/md";
 import copy from "copy-to-clipboard";
@@ -37,7 +39,10 @@ import {
 import Loader from "../components/elements/loader";
 import axios, { AxiosError } from "axios";
 import { TbPlugConnected } from "react-icons/tb";
-import { BsCheck, BsCheck2 } from "react-icons/bs";
+import { BsCheck, BsCheck2, BsMailbox } from "react-icons/bs";
+
+import TabPanel from "../components/elements/dashboard/link/TabPanel";
+import { BiMailSend, BiSync } from "react-icons/bi";
 
 export const PaymentContext = createContext<PaymentCont>({});
 
@@ -60,7 +65,7 @@ export const PaymentProvider = ({
 
   const [interval, setTinterval] = useState<string>("daily");
 
-  const [paymentType, setPaymentType] = useState<'onetime' | 'sub'>('onetime');
+  const [paymentType, setPaymentType] = useState<"onetime" | "sub">("onetime");
 
   useEffect(() => {}, [username, router.isReady]);
 
@@ -104,7 +109,18 @@ export const PaymentProvider = ({
 
   const [isOpened, openModal] = useState<boolean>(false);
 
-  const closeModal = () => openModal(false);
+  const timerTimeout = useRef<any>(null);
+
+  const closeModal = () => {
+    openModal(false);
+    clearInterval(timer.current);
+    setTimeCounted(0);
+    clearTimeout(timerTimeout.current);
+    setManValue(0);
+    setManLoader(false);
+    setTransferFail(true);
+    setFailMessage("Payment Cancelled");
+  };
 
   const {
     connected,
@@ -127,12 +143,14 @@ export const PaymentProvider = ({
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const [manValue, setManValue] = useState<number>(0);
+
   const [userD, setUserD] = useState<{ [index: string]: any }>({});
 
   const [pemail, setPemail] = useState<string[]>([]);
 
   const [loadingText, setLoadingText] = useState<any>("");
-  const [method, setMethod] = useState<'manual' | 'auto'>('auto');
+  const [method, setMethod] = useState<"manual" | "auto">("auto");
   const [transferSuccess, setTransferSuccess] = useState<boolean>(false);
   const [transferFail, setTransferFail] = useState<boolean>(false);
   const [failMessage, setFailMessage] = useState<string>("");
@@ -148,7 +166,7 @@ export const PaymentProvider = ({
       contractAddr: string;
       name: string;
       rpc: string;
-      type: 'native' | 'non-native';
+      type: "native" | "non-native";
       tokenAddr: string;
     }[]
   >(CryptoList);
@@ -303,7 +321,7 @@ export const PaymentProvider = ({
     type: "sub" | "onetime" = "onetime"
   ) => {
     setAuth(false);
-    setMethod('auto')
+    setMethod("auto");
     setLoadingText("Initializing payment");
     try {
       if (Number(price)) {
@@ -343,7 +361,6 @@ export const PaymentProvider = ({
           api,
           renew: renewInfo,
         } = await initD(String(username).toLowerCase(), apiCode, renew);
-        
 
         if (lQ["id"] !== undefined) {
           if (lQ.template_data !== undefined) {
@@ -504,8 +521,6 @@ export const PaymentProvider = ({
   const [subCheck, setSubCheck] = useState<boolean>(true);
 
   const [eSubscription, setESubscription] = useState<string[]>([]);
-
-
 
   const mainIx = (inter: string) => {
     const date = new Date();
@@ -769,7 +784,6 @@ export const PaymentProvider = ({
 
   const [manLoader, setManLoader] = useState<boolean>(false);
 
-  let timerTimeout: any = null;
 
   const checkWallet = async ({
     price,
@@ -780,7 +794,9 @@ export const PaymentProvider = ({
     type: "onetime" | "sub";
     wallet: string;
   }) => {
-    if (timeCounted <= 720) {
+    if (timeCounted <= 720 && timeCounted > 0) {
+
+      console.log('checking again...')
 
       const base = {
         initial: 0,
@@ -788,7 +804,7 @@ export const PaymentProvider = ({
         tokenAddr: token.tokenAddr,
         price,
         account: wallet,
-        chain: token.value
+        chain: token.value,
       };
 
       const rx: { [index: string]: string | number } = {};
@@ -829,6 +845,8 @@ export const PaymentProvider = ({
       }
 
       try {
+        setManLoader(true);
+
         const queryBalance = await axios.post(
           "/api/payments",
           { ...base, ...post, ethAddress, linkId },
@@ -840,56 +858,52 @@ export const PaymentProvider = ({
         // console.log(queryBalance);
 
         if (queryBalance.data.proceed) {
-         
           clearInterval(timer.current);
 
-          setManLoader(true);
+          // console.log(trxx);
 
-        
-            // console.log(trxx);
+          const trx = queryBalance.data;
 
-              const trx = queryBalance.data;
+          setHash(trx.hash);
 
-              setHash(trx.hash);
+          setTransferSuccess(true);
 
-              setTransferSuccess(true);
+          openModal(false);
 
-              openModal(false);
+          setManLoader(false);
 
-              setManLoader(false);
-              setTimeCounted(0);
-              if (type == "sub") setSubCheck(true);
+          setTimeCounted(0);
 
-              clearTimeout(timerTimeout);
+          if (type == "sub") setSubCheck(true);
 
-              if (Boolean(userD.redirect) && validator.isURL(userD.redirect)) {
-                let link = String(userD.redirect).split("?");
+          clearTimeout(timerTimeout.current);
 
-                if (apiCode !== undefined) {
-                  if (Boolean(link[1])) {
-                    if (!link[1].length) {
-                      link[0] += `?trx=${apiCode}`;
-                    } else {
-                      link[1] += `&trx=${apiCode}`;
+          if (Boolean(userD.redirect) && validator.isURL(userD.redirect)) {
+            let link = String(userD.redirect).split("?");
 
-                      link[0] += "?";
-                    }
-                  } else {
-                    link[0] += `?trx=${apiCode}`;
-                  }
+            if (apiCode !== undefined) {
+              if (Boolean(link[1])) {
+                if (!link[1].length) {
+                  link[0] += `?trx=${apiCode}`;
+                } else {
+                  link[1] += `&trx=${apiCode}`;
+
+                  link[0] += "?";
                 }
-
-                const mLink = link.join("");
-
-                router.push(mLink);
+              } else {
+                link[0] += `?trx=${apiCode}`;
               }
+            }
 
-              setTimeout(reset, 12000);
-           
-          
+            const mLink = link.join("");
+
+            router.push(mLink);
+          }
+
+          setTimeout(reset, 12000);
         } else {
 
-          timerTimeout = setTimeout(
+          timerTimeout.current = setTimeout(
             () =>
               checkWallet({
                 price,
@@ -898,21 +912,19 @@ export const PaymentProvider = ({
               }),
             3000
           );
-
-        }
+      }
       } catch (err) {
-      
-          setManLoader(false);
-          openModal(false);
-          // console.log(err);
-          setTransferFail(true);
-          clearInterval(timer.current);
-          setTimeCounted(0);
-          setFailMessage("Something went wrong, Please try again");
-
+        setManLoader(false);
+        openModal(false);
+        // console.log(err);
+        setTransferFail(true);
+        clearInterval(timer.current);
+        clearTimeout(timerTimeout.current);
+        setTimeCounted(0);
+        setFailMessage("Something went wrong, Please try again");
       }
     } else {
-      clearTimeout(timerTimeout);
+      clearTimeout(timerTimeout.current);
       openModal(false);
       setTransferFail(true);
       clearInterval(timer.current);
@@ -925,16 +937,18 @@ export const PaymentProvider = ({
     if (timeCounted >= 720) {
       clearInterval(timer.current);
       setTimeCounted(0);
-      openModal(false);
-      setTransferFail(true);
-      setFailMessage("No crypto received, please try again");
+      setManLoader(false);
+      setManValue(1);
+      clearTimeout(timerTimeout.current);
+      setLoadingText("");
     }
   }, [timeCounted, timer]);
 
-
   const beginManual = async (amount: number, type: "onetime" | "sub") => {
+
     setLoadingText("Just a sec...");
     setMethod("manual");
+
     axios
       .get("/api/payments/accounts", {
         params: {
@@ -950,13 +964,17 @@ export const PaymentProvider = ({
         setGenAddr(wallet);
 
         const price = await getPrice(
-          amount + ((Number(amount) * 1) / 100),
+          amount + (Number(amount) * 1) / 100,
           token.chain
         );
 
         setAmountMn(Number(price));
 
-        openModal(true);
+        if (!isOpened) {
+          openModal(true);
+        } else {
+          setManValue(0);
+        }
 
         setLoadingText("");
 
@@ -965,7 +983,6 @@ export const PaymentProvider = ({
         }, 1000);
 
         // await checkWallet({ type, price, wallet });
-        
       })
       .catch((err) => {
         const error = err as any;
@@ -1163,150 +1180,226 @@ export const PaymentProvider = ({
             width: "calc(100% - 8px)",
           },
         }}
-        onClose={() => false}
+        onClose={() => (manValue == 1 ? closeModal() : false)}
         className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
         aria-labelledby="Begin Manual Payment"
         aria-describedby="Make quick manual payment"
       >
         <Box className="sm:w-full h-fit 3mdd:px-[2px]" sx={style}>
           <div className="py-4 px-6 bg-white -mb-[1px] rounded-[.9rem]">
-            <div className="mb-5 flex items-center relative justify-between">
-              <LogoSpace />
+            <TabPanel padding={0} value={manValue} index={0}>
+              <div className="mb-5 flex items-center relative justify-between">
+                <LogoSpace />
 
-              <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
-                ${amount} ( ${(Number(amount) * 1) / 100} fee )
-              </span>
-
-              <IconButton
-                size={"medium"}
-                className="-top-full -right-[30px] !absolute !bg-[#fff]"
-                onClick={closeModal}
-              >
-                <MdClose
-                  size={20}
-                  color={"rgb(32,33,36)"}
-                  className="cursor-pointer"
-                />
-              </IconButton>
-            </div>
-
-            <div className="py-3 mb-2">
-              <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
-                Scan the qr code below or copy the address, Send the exact
-                amount required for this transaction to complete the transaction
-              </span>
-            </div>
-
-            <div className="flex items-center justify-center mb-2">
-              <span className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
-                {amountMn} {token.symbol.toUpperCase()}
-              </span>
-            </div>
-
-            <div className="flex relative items-center flex-col justify-center mb-5">
-              {manLoader && (
-                <Loader
-                  sx={{
-                    backgroundColor: "#ffffffeb",
-                    width: 210,
-                    height: 210,
-                    margin: "auto",
-                    right: "0px",
-                    left: "0px",
-                  }}
-                  incLogo={false}
-                  fixed={false}
-                />
-              )}
-              <QrCode
-                style={{
-                  marginBottom: "16px",
-                }}
-                data={genAddr || ""}
-              />
-
-              <span className="text-[rgb(80,80,82)] font-bold text-center block text-[15px]">
-                Send Payment Within{" "}
-                <span className="text-[17px]">
-                  {String((720 - timeCounted) / 60).split(".")[0] +
-                    ":" +
-                    `${(720 - timeCounted) % 60 <= 9 ? 0 : ""}${
-                      (720 - timeCounted) % 60
-                    }`}
+                <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
+                  ${amount} ( ${(Number(amount) * 1) / 100} fee )
                 </span>
-              </span>
-            </div>
-            <div className="w-full items-center flex justify-center">
-              <Button
-                onClick={async () =>
-                  await checkWallet({ type: paymentType, price: (amountMn).toString(), wallet: genAddr || '' })
-                }
-                className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
-              >
-                <BsCheck2 size={20} className="mr-1" /> I have sent the crypto
-              </Button>
-            </div>
-            <div className="w-full items-center my-3 rounded-md flex justify-between bg-[#2e2e2e0e] py-1 px-3">
-              <div className="mr-2">
-                <span className="font-bold text-[#919191] text-[13px]">
-                  Address
-                </span>
-                <span className="text-[#919191] truncate block h-fit">
-                  {genAddr}
-                </span>
-              </div>
-              <ClickAwayListener onClickAway={() => mainCopy(false)}>
-                <Tooltip
-                  placement="top"
-                  onClose={() => mainCopy(false)}
-                  open={copied}
-                  disableFocusListener
-                  disableHoverListener
-                  disableTouchListener
-                  PopperProps={{
-                    disablePortal: true,
-                  }}
-                  arrow
-                  title="Copied"
+
+                <IconButton
+                  size={"medium"}
+                  className="-top-full -right-[30px] !absolute !bg-[#fff]"
+                  onClick={closeModal}
                 >
-                  <IconButton
-                    size={"large"}
-                    onClick={() => {
-                      mainCopy(true);
-                      copy(genAddr as string);
-                    }}
-                  >
-                    <FaRegClone
-                      color={"#919191"}
-                      className="cursor-pointer"
-                      size={16}
-                    />
-                  </IconButton>
-                </Tooltip>
-              </ClickAwayListener>
-            </div>
+                  <MdClose
+                    size={20}
+                    color={"rgb(32,33,36)"}
+                    className="cursor-pointer"
+                  />
+                </IconButton>
+              </div>
 
-            <div className="w-full items-center mt-3 mb-5 rounded-md flex flex-col">
-              <div className="bg-[#2e2e2e0e] w-full mb-1 py-1 px-3">
-                <span className="font-bold text-[#919191] text-[13px]">
-                  Network
-                </span>
-                <span className="text-[#919191] truncate block h-fit">
-                  {token.network}
+              <div className="py-3 mb-2">
+                <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
+                  Scan the qr code below or copy the address, Send the exact
+                  amount required for this transaction to complete the
+                  transaction, after sending the amount click the &ldquo;I have
+                  sent the crypto button&ldquo;
                 </span>
               </div>
-              <span className="text-[rgb(113,114,116)] block font-[500] text-[14px]">
-                Note that sending tokens from the wrong network could result in
-                loss of tokens
-              </span>
-            </div>
 
-            <Button
-              onClick={closeModal}
-              className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
-            >
-              <RiCloseCircleLine size={22} className="mr-2" /> Dismiss
-            </Button>
+              <div className="flex items-center justify-center mb-2">
+                <span className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                  {amountMn} {token.symbol.toUpperCase()}
+                </span>
+              </div>
+
+              <div className="flex relative items-center flex-col justify-center mb-5">
+                {manLoader && (
+                  <Loader
+                    sx={{
+                      backgroundColor: "#ffffffeb",
+                      width: 210,
+                      height: 210,
+                      margin: "auto",
+                      right: "0px",
+                      left: "0px",
+                    }}
+                    incLogo={false}
+                    fixed={false}
+                  />
+                )}
+                <QrCode
+                  style={{
+                    marginBottom: "16px",
+                  }}
+                  data={genAddr || ""}
+                />
+
+                <span className="text-[rgb(80,80,82)] font-bold text-center block text-[15px]">
+                  Send Payment Within{" "}
+                  <span className="text-[17px]">
+                    {String((720 - timeCounted) / 60).split(".")[0] +
+                      ":" +
+                      `${(720 - timeCounted) % 60 <= 9 ? 0 : ""}${
+                        (720 - timeCounted) % 60
+                      }`}
+                  </span>
+                </span>
+              </div>
+              <div className="w-full items-center flex justify-center">
+                <Button
+                  onClick={async () => {
+                    if (!manLoader)
+                      await checkWallet({
+                        type: paymentType,
+                        price: amountMn.toString(),
+                        wallet: genAddr || "",
+                      });
+                  }}
+                  className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                >
+                  <BsCheck2 size={20} className="mr-1" /> I have sent the crypto
+                </Button>
+              </div>
+              <div className="w-full items-center my-3 rounded-md flex justify-between bg-[#2e2e2e0e] py-1 px-3">
+                <div className="mr-2">
+                  <span className="font-bold text-[#919191] text-[13px]">
+                    Address
+                  </span>
+                  <span className="text-[#919191] truncate block h-fit">
+                    {genAddr}
+                  </span>
+                </div>
+                <ClickAwayListener onClickAway={() => mainCopy(false)}>
+                  <Tooltip
+                    placement="top"
+                    onClose={() => mainCopy(false)}
+                    open={copied}
+                    disableFocusListener
+                    disableHoverListener
+                    disableTouchListener
+                    PopperProps={{
+                      disablePortal: true,
+                    }}
+                    arrow
+                    title="Copied"
+                  >
+                    <IconButton
+                      size={"large"}
+                      onClick={() => {
+                        mainCopy(true);
+                        copy(genAddr as string);
+                      }}
+                    >
+                      <FaRegClone
+                        color={"#919191"}
+                        className="cursor-pointer"
+                        size={16}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                </ClickAwayListener>
+              </div>
+
+              <div className="w-full items-center mt-3 mb-5 rounded-md flex flex-col">
+                <div className="bg-[#2e2e2e0e] w-full mb-1 py-1 px-3">
+                  <span className="font-bold text-[#919191] text-[13px]">
+                    Network
+                  </span>
+                  <span className="text-[#919191] truncate block h-fit">
+                    {token.network}
+                  </span>
+                </div>
+                <span className="text-[rgb(113,114,116)] block font-[500] text-[14px]">
+                  Note that sending tokens from the wrong network could result
+                  in loss of tokens
+                </span>
+              </div>
+
+              <Button
+                onClick={closeModal}
+                className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+              >
+                <RiCloseCircleLine size={22} className="mr-2" /> Dismiss
+              </Button>
+            </TabPanel>
+
+            <TabPanel padding={0} value={manValue} index={1}>
+              <div className="mb-5 flex items-center relative justify-between">
+                <LogoSpace />
+
+                <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
+                  ${amount} ( ${(Number(amount) * 1) / 100} fee )
+                </span>
+
+                <IconButton
+                  size={"medium"}
+                  className="-top-full -right-[30px] !absolute !bg-[#fff]"
+                  onClick={closeModal}
+                >
+                  <MdClose
+                    size={20}
+                    color={"rgb(32,33,36)"}
+                    className="cursor-pointer"
+                  />
+                </IconButton>
+              </div>
+
+              <h2 className="font-[500] text-[rgb(32,33,36)] text-center text-[1.55rem]">
+                No Crypto Received,
+              </h2>
+
+              <div className="py-3 mb-2">
+                <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
+                  Although if you have sent the crypto to {genAddr}, Please{" "}
+                  <Link
+                    href={`mailto:hello@cryptea.me?subject=Issue with transfer&body=Hello Cryptea \n I made a transfer to ${genAddr} but I did not get any confirmation that it was successful`}
+                  >
+                    <a className="text-[#F57059]" target="_blank">
+                      click me to contact us immediately
+                    </a>
+                  </Link>
+                  , else cancel or retry the transaction
+                </span>
+              </div>
+
+              <div className="w-full items-center flex justify-center">
+                <Button
+                  onClick={async () => {
+                    if (Boolean(loadingText)) return;
+
+                    beginManual(amountMn, paymentType);
+                  }}
+                  className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                >
+                  {Boolean(loadingText) ? (
+                    <>
+                      <div className="mr-3 h-[20px] text-[#fff]">
+                        <CircularProgress
+                          color={"inherit"}
+                          className="!w-[20px] !h-[20px]"
+                        />
+                      </div>{" "}
+                      <span>Retrying...</span>
+                    </>
+                  ) : (
+                    <>
+                      <BiSync size={20} className="mr-1" /> Retry
+                    </>
+                  )}
+                </Button>
+              </div>
+            </TabPanel>
           </div>
         </Box>
       </Modal>
