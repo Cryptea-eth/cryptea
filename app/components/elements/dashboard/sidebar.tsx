@@ -132,7 +132,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
               : ""
           } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#d3d3d333] flex cursor-pointer items-center py-[9px]`}
         >
-          <Link href="/working">
+          <Link href="/dashboard/settlements">
             <a className="text-inherit flex font-[600] w-full items-center text-[14px]">
               <BiCreditCard
                 size={sidebar?.openDelay ? 16.5 : 21}

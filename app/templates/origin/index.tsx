@@ -860,7 +860,7 @@ const Origin = ({ className }: { className?: string }) => {
                                     )}
 
                                     <div className="2mmd:flex-col usm:flex usm:items-center">
-                                      {Boolean(token!.tokenAddr) && (
+                                      
                                         <Button
                                           sx={{
                                             backgroundColor: `${data.colorScheme} !important`,
@@ -877,7 +877,6 @@ const Origin = ({ className }: { className?: string }) => {
                                         >
                                           Pay Manually
                                         </Button>
-                                      )}
                                       <Button
                                         sx={{
                                           backgroundColor: `${data.colorScheme} !important`,

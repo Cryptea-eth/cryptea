@@ -17,15 +17,15 @@ export default function handler(
 
         const mainRs = rs.data.link;
 
-        return res.status(200).json(mainRs);        
+         res.status(200).json(mainRs);        
 
       }).catch((err) => {
 
-        return res.status(200).json(generic['GENERIC'].icon)
+         res.status(200).json(generic['GENERIC'].icon)
 
       });
   }else{
-     return res.status(422).json({ 
+      res.status(422).json({ 
         message: 'Method not supported',
         error: true
     });

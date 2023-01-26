@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { IoMdClose } from "react-icons/io";
 import { makeStorageClient } from "../../app/functions/clients";
-import { MdVisibilityOff, MdVisibility } from "react-icons/md";
+import { MdVisibilityOff, MdVisibility, MdOutlineVisibility, MdOutlineVisibilityOff, MdClose } from "react-icons/md";
+import PinField from "react-pin-field";
 import {
   Button,
   OutlinedInput,
@@ -16,11 +17,12 @@ import {
   Box,
   TextField,
   LinearProgress,
+  CircularProgress,
   Alert,
 } from "@mui/material";
 import Image from "next/image";
-import { get_request } from "../../app/contexts/Cryptea/requests";
-import { AxiosError } from "axios";
+import { get_request, post_request } from "../../app/contexts/Cryptea/requests";
+import axios, { AxiosError } from "axios";
 import Router from "next/router";
 import { useCryptea } from "../../app/contexts/Cryptea";
 import Page from "../../app/components/elements/dashboard";
@@ -36,14 +38,13 @@ interface PixelCrop {
 }
 
 const Settings = () => {
-
-  const { isAuthenticated, validator } = useCryptea();
+  const { isAuthenticated, validator, logout } = useCryptea();
   const [dp, setDp] = useState<string | undefined>();
   const [userLink, setUserLink] = useState<string>("");
   const [userDescription, setUserDescription] = useState<string>("");
   const [userEmail, setUserEmail] = useState<string>("");
   const [userInfo, setuserInfo] = useState<string>("");
-  
+
   const [isLoading, setLoading] = useState({
     account: false,
     security: false,
@@ -58,9 +59,9 @@ const Settings = () => {
     x: 0,
     y: 0,
   });
-  
+
   const [simg, setsImg] = useState<string | undefined>("");
-  
+
   const [iimg, setIiimg] = useState({});
 
   const [result, setResult] = useState(null);
@@ -71,6 +72,20 @@ const Settings = () => {
 
   const handleOpenM = () => setOpenM(true);
   const handleCloseM = () => setOpenM(false);
+
+  const [pins, setPin] = useState<{ [index: string]: string }>({
+    oldpin: "",
+    newpin: "",
+    renewpin: "",
+  });
+
+  const [pinsVisibility, setPinVisibility] = useState<{
+    [index: string]: boolean;
+  }>({
+    oldpin: true,
+    newpin: true,
+    renewpin: true,
+  });
 
   const [pageLoading, loading] = useState<boolean>(true);
 
@@ -87,24 +102,19 @@ const Settings = () => {
   });
 
   useEffect(() => {
-      if (isAuthenticated !== undefined) {
-        if (!isAuthenticated) {
-
-          Router.push("/auth");
-
-        } else {
-          
-          "user".get("*", true).then((e:any) => {
-            setData(e);
-            setDp(e.img);
-            loading(false);
-          });
-        }
+    if (isAuthenticated !== undefined) {
+      if (!isAuthenticated) {
+        Router.push("/auth");
+      } else {
+        "user".get("*", true).then((e: any) => {
+          setData(e);
+          setDp(e.img);
+          if(!Boolean(e.settlement.length)) setPin({ ...pins, oldpin: '00000' });
+          loading(false);
+        });
       }
-
-  }, [isAuthenticated])
-
-  
+    }
+  }, [isAuthenticated]);
 
   const submitAccount = async () => {
     document.querySelector("#account_sett")?.scrollIntoView();
@@ -133,7 +143,6 @@ const Settings = () => {
     });
 
     if (more) {
-
       if (!validator.isAlphanumeric(userInfo)) {
         setError({
           ...error,
@@ -142,45 +151,47 @@ const Settings = () => {
         setLoading({ ...isLoading, account: false });
       }
 
-      const email = validator.normalizeEmail(userEmail)
+      const email = validator.normalizeEmail(userEmail);
 
-      if (!validator.isEmail(email ? email : '')) {
+      if (!validator.isEmail(email ? email : "")) {
         setError({ ...error, account: "Email Address Is Incorrect" });
         setLoading({ ...isLoading, account: false });
       }
 
       if (!error["account"].length) {
         try {
-
-          await "user".update({
+          await post_request("/user/update", {
             username: userInfo,
             email: validator.normalizeEmail(userEmail),
             tz: window.jstz.determine().name(),
           });
 
-         
+          await logout();
+
           setSuccess({
             ...success,
-            account: "Account Details Saved Successfully",
+            account: `Account Details Saved, we sent a mail to your account email, click the link to complete update`,
           });
 
           setLoading({ ...isLoading, account: false });
         } catch (err) {
           const erro = err as AxiosError;
 
-          if(erro.response){
-            const errorx:any = erro.response.data;
+          if (erro.response) {
+            const errorx: any = erro.response.data;
 
             setError({
               ...error,
               account: errorx.message,
-            });               
-
+            });
           } else {
             // console.log(erro.message)
-             setError({ ...error, account: "Something went wrong, please try again" });     
+            setError({
+              ...error,
+              account: "Something went wrong, please try again",
+            });
           }
-         
+
           setLoading({ ...isLoading, account: false });
         }
       }
@@ -228,8 +239,8 @@ const Settings = () => {
       const img = `https://${cid}.ipfs.dweb.link/${data.username}.${type}`;
       setDp(img);
 
-      ("user").update({
-        img
+      "user".update({
+        img,
       });
 
       handleCloseM();
@@ -246,16 +257,15 @@ const Settings = () => {
 
       setLoading({ ...isLoading, progress: [pct, uploaded] });
     };
-    
+
     const token = await get_request("/storagekey", {}, undefined, false);
-    
+
     const client = makeStorageClient(token!.data);
 
     return client.put(files, { onRootCidReady, onStoredChunk });
   };
 
   const cropImg = () => {
-    
     const img = document.querySelector(".img") as HTMLImageElement;
 
     try {
@@ -282,9 +292,7 @@ const Settings = () => {
       canvas.toBlob(
         (blob) => {
           if (blob !== null && ext !== undefined) {
-            const files = [
-              new File([blob], `${data.username}.${ext[1]}`),
-            ];
+            const files = [new File([blob], `${data.username}.${ext[1]}`)];
             beginUpload(files, ext[1]);
           }
         },
@@ -299,6 +307,119 @@ const Settings = () => {
 
   const { username, email } = data;
 
+  const [settlePin, updateSettlePin] = useState<boolean>(false);
+
+  const [genSetError, setGenSetError] = useState<string>("");
+
+  const closeSettleModal = () => updateSettlePin(false);
+
+  const [pinLoading, setPinLoading] = useState<boolean>(false);
+
+  const savePin = async () => {
+
+   
+    if (pinLoading) {
+      return;
+    }
+
+    setGenSetError("");
+
+    setSuccess({
+      ...success,
+      account: "",
+    });
+
+    let more = true;
+
+    setPinLoading(true);
+
+    Object.values(pins).forEach((e) => {
+      if (
+        !Boolean(e) || e.length != 5 
+      ) {
+        document.querySelector(".pinerror")?.scrollIntoView();
+
+        setGenSetError(
+          "Data Incomplete, Please required fields should be field"
+        );
+        setPinLoading(false);
+
+        more = false;
+      }
+    })
+
+    if (pins['newpin'] != pins['renewpin']) {
+      document.querySelector(".pinerror")?.scrollIntoView();
+
+        setGenSetError(
+          "Re-entered pin does not match new pin"
+        );
+        setPinLoading(false);
+
+        more = false;
+    }
+
+    if (pins["newpin"] == pins["oldpin"]) {
+      document.querySelector(".pinerror")?.scrollIntoView();
+
+      setGenSetError("Current pin and new pin should not match");
+      setPinLoading(false);
+
+      more = false;
+    }
+
+    if (more && !error["account"].length) {
+
+        try {
+
+          const newData: {[index:string]: string} = {
+            newpin: pins['newpin']
+          };
+
+          if (Boolean(data.settlement.length)) newData['oldpin'] = pins['oldpin'];
+        
+          await axios.post(`/api/settlement/update`, {  
+              ...newData, token: localStorage.getItem('userToken')
+          }, {
+            baseURL: window.origin,
+          });
+
+          await logout();
+
+          setSuccess({
+            ...success,
+            account: `Account Details Saved, we sent a mail to your account email, click the link to complete update`,
+          });
+
+          setPinLoading(false);
+
+          closeSettleModal(); 
+
+            setTimeout(() => {
+              window.scrollTo(0, 0);
+            }, 1000);  
+
+        } catch (err) {
+          const erro = err as AxiosError;
+
+          if (erro.response) {
+            const errorx: any = erro.response.data;
+
+            setGenSetError(errorx.message);
+            
+          } else {
+            // console.log(erro.message)
+            setGenSetError("Something went wrong, please try again");
+          }
+
+          document.querySelector(".pinerror")?.scrollIntoView();
+
+          setPinLoading(false);
+
+        }
+    }
+  };
+
   return (
     <Page>
       <Head>
@@ -311,6 +432,205 @@ const Settings = () => {
 
         {!pageLoading && (
           <div className="2sm:pr-1 pt-[75px] sett dashbody cusscroller overflow-y-scroll overflow-x-hidden px-5 pb-5 h-[calc(100%-75px)]">
+            {settlePin && (
+              <>
+                <Modal
+                  open={settlePin}
+                  sx={{
+                    "&& .MuiBackdrop-root": {
+                      backdropFilter: "blur(5px)",
+                      width: "calc(100% - 8px)",
+                    },
+                  }}
+                  onClose={closeSettleModal}
+                  className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+                  aria-labelledby="Change settlement pin, to approve transactions"
+                  aria-describedby="Change Pin"
+                >
+                  <Box
+                    className="sm:w-full h-fit 3mdd:px-[2px]"
+                    sx={{
+                      minWidth: 300,
+                      width: "70%",
+                      maxWidth: 800,
+                      borderRadius: 6,
+                      outline: "none",
+                      p: 4,
+                      position: "relative",
+                      margin: "auto",
+                    }}
+                  >
+                    <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+                      <div className="mb-2 flex items-start justify-between">
+                        <div>
+                          <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                            {Boolean(data.settlement.length)
+                              ? "Update Settlement Pin"
+                              : "Create Settlement Pin"}
+                          </h2>
+                          <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
+                            {Boolean(data.settlement.length)
+                              ? "Change Pin to approve settlement transactions"
+                              : "Create pin to be able to approve settlement transactions"}
+                          </span>
+                        </div>
+
+                        <IconButton size={"medium"} onClick={closeSettleModal}>
+                          <MdClose
+                            size={20}
+                            color={"rgb(32,33,36)"}
+                            className="cursor-pointer"
+                          />
+                        </IconButton>
+                      </div>
+
+                      {Boolean(genSetError) && (
+                        <div className="bg-[#ff8f33] text-white rounded-md w-[95%] font-bold mt-2 pinerror mx-auto p-3">
+                          {genSetError}
+                        </div>
+                      )}
+
+                      {Boolean(data.settlement.length) && (
+                        <div className="py-3">
+                          <div className="flex text-[#565656] items-center justify-between">
+                            <label className="text-[#565656] mb-2 font-[600]">
+                              Current Pin
+                            </label>
+
+                            <IconButton
+                              onClick={() =>
+                                setPinVisibility({
+                                  ...pinsVisibility,
+                                  oldpin: !pinsVisibility["oldpin"],
+                                })
+                              }
+                              size={"medium"}
+                            >
+                              {pinsVisibility["oldpin"] ? (
+                                <MdOutlineVisibility size={23} />
+                              ) : (
+                                <MdOutlineVisibilityOff size={23} />
+                              )}
+                            </IconButton>
+                          </div>
+                          <div className="flex justify-center item-center ">
+                            <PinField
+                              length={5}
+                              type={
+                                !pinsVisibility["oldpin"] ? "text" : "password"
+                              }
+                              onComplete={(e) => setPin({ ...pins, oldpin: e })}
+                              className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                              validate={/^[0-9]$/}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="py-3">
+                        <div className="flex text-[#565656] items-center justify-between">
+                          <label className="text-[#565656] mb-2 font-[600]">
+                            New Pin
+                          </label>
+
+                          <IconButton
+                            onClick={() =>
+                              setPinVisibility({
+                                ...pinsVisibility,
+                                newpin: !pinsVisibility["newpin"],
+                              })
+                            }
+                            size={"medium"}
+                          >
+                            {pinsVisibility["newpin"] ? (
+                              <MdOutlineVisibility size={23} />
+                            ) : (
+                              <MdOutlineVisibilityOff size={23} />
+                            )}
+                          </IconButton>
+                        </div>
+                        <div className="flex justify-center item-center ">
+                          <PinField
+                            length={5}
+                            type={
+                              !pinsVisibility["newpin"] ? "text" : "password"
+                            }
+                            onComplete={(e) => setPin({ ...pins, newpin: e })}
+                            className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                            validate={/^[0-9]$/}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="py-3">
+                        <div className="flex text-[#565656] items-center justify-between">
+                          <label className="text-[#565656] mb-2 font-[600]">
+                            Re Enter New Pin
+                          </label>
+
+                          <IconButton
+                            onClick={() =>
+                              setPinVisibility({
+                                ...pinsVisibility,
+                                renewpin: !pinsVisibility["renewpin"],
+                              })
+                            }
+                            size={"medium"}
+                          >
+                            {pinsVisibility["renewpin"] ? (
+                              <MdOutlineVisibility size={23} />
+                            ) : (
+                              <MdOutlineVisibilityOff size={23} />
+                            )}
+                          </IconButton>
+                        </div>
+                        <div className="flex justify-center item-center ">
+                          <PinField
+                            length={5}
+                            type={
+                              !pinsVisibility["renewpin"] ? "text" : "password"
+                            }
+                            onComplete={(e) => setPin({ ...pins, renewpin: e })}
+                            className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                            validate={/^[0-9]$/}
+                          />
+                        </div>
+                      </div>
+
+                      <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
+                        <b>Please Note: </b> Forgetting your pin or your pin
+                        getting into the wrong hands, could lead to loss of
+                        funds, please keep it safe.
+                      </span>
+                    </div>
+
+                    <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+                      <div className="flex items-center">
+                        <Button
+                          onClick={savePin}
+                          className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                        >
+                          {pinLoading ? (
+                            <>
+                              <div className="mr-3 h-[20px] text-[#fff]">
+                                <CircularProgress
+                                  color={"inherit"}
+                                  className="!w-[20px] !h-[20px]"
+                                />
+                              </div>{" "}
+                              <span>Just a Sec...</span>
+                            </>
+                          ) : (
+                            <>Change Pin</>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </Box>
+                </Modal>
+              </>
+            )}
+
             <Modal
               open={openM}
               onClose={handleCloseM}
@@ -415,10 +735,10 @@ const Settings = () => {
                 >
                   <div className="w-full justify-center mt-4">
                     <div className="flex flex-col mx-7 items-center justify-center">
-                      <div className="flex flex-row border-b mmd:flex-col justify-start w-full">
+                      <div className="flex flex-row border-b 3sm:flex-col justify-start w-full">
                         <div className="flex items-center justify-between font-semibold w-full">
                           <span className="text-[25px] font-[800] mb-2">
-                            Account
+                            Profile
                           </span>
                         </div>
                       </div>
@@ -440,17 +760,16 @@ const Settings = () => {
                         </Alert>
                       )}
                       <div className="username w-full">
-                        <div className="flex mmd:flex-col-reverse mmd:items-center justify-between items-start">
-                          <div className="w-[54%] mmd:w-full">
+                        <div className="flex 3sm:flex-col-reverse 3sm:items-center justify-between items-start">
+                          <div className="w-[54%] 3sm:w-full">
                             <div className="font-semibold mt-5 mb-4 text-[#777]">
-                              Change Username
+                              Username
                             </div>
                             <div className="mt-2">
                               <div className="rounded-md">
                                 <div className="flex">
                                   <TextField
                                     className="bg-[white]"
-                                    label={"Username"}
                                     sx={{
                                       "& .Mui-focused.MuiFormLabel-root": {
                                         color: "#f57059",
@@ -460,7 +779,7 @@ const Settings = () => {
                                           borderColor: `#f57059 !important`,
                                         },
                                     }}
-                                    value={userInfo}
+                                    value={userInfo || username}
                                     fullWidth
                                     placeholder={username}
                                     name="username"
@@ -484,7 +803,7 @@ const Settings = () => {
                               </div>
 
                               <div className="font-semibold mt-5 mb-4 text-[#777]">
-                                Change Email
+                                Email
                               </div>
                               <div className="rounded-md mt-2">
                                 <div className="flex">
@@ -499,9 +818,8 @@ const Settings = () => {
                                           borderColor: `#f57059 !important`,
                                         },
                                     }}
-                                    label={"Email"}
                                     placeholder={email}
-                                    value={userEmail}
+                                    value={userEmail || email}
                                     onChange={(
                                       e: React.ChangeEvent<
                                         HTMLInputElement | HTMLTextAreaElement
@@ -527,14 +845,14 @@ const Settings = () => {
                                 <Button
                                   variant="contained"
                                   type="submit"
-                                  className="!text-sm !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-10"
+                                  className="!py-2 !min-w-[110px] !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                                 >
-                                  Save
+                                  Save Info
                                 </Button>
                               </div>
                             </div>
                           </div>
-                          <div className="min-w-[300px] mmd:mb-3 flex items-center flex-col relative">
+                          <div className="min-w-[300px] 3sm:mb-3 flex items-center flex-col relative">
                             <div className="font-semibold mt-5 mb-4 text-[#777]">
                               Profile Picture
                             </div>
@@ -572,7 +890,7 @@ const Settings = () => {
                                   element.click();
                                 }}
                                 variant="contained"
-                                className="!text-sm !rounded-lg !capitalize !bg-[#F57059] !text-white !font-semibold !p-[10px]"
+                                className="!py-2 !min-w-[110px] !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                               >
                                 Update
                               </Button>
@@ -584,8 +902,41 @@ const Settings = () => {
                   </div>
                 </form>
               </div>
+            </div>
 
-          
+            <div className="w-full mt-10">
+              <div className="mx-7 items-center">
+                <div className="flex items-center justify-between font-semibold w-[54%] 3sm:w-full mmd:flex-col">
+                  <div className="w-[70%] mmd:w-full">
+                    <h2
+                      style={{
+                        fontSize: "15px !important",
+                      }}
+                      className="font-[600] mmd:mb-4 mmd:!text-[17px]"
+                    >
+                      Settlement Pin
+                    </h2>
+
+                    <span className="font-[400] text-[15px]">
+                      This pin is used to approve settlement transactions,
+                      please keep it safe as forgetting this pin might lead to
+                      loss of funds.
+                    </span>
+                  </div>
+
+                  <div className="flex mmd:w-full mmd:justify-end justify-center mmd:mt-8">
+                    <Button
+                      onClick={() => updateSettlePin(true)}
+                      variant="contained"
+                      className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !transition-all !delay-500 !min-w-[110px] !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                    >
+                      {Boolean(data.settlement.length)
+                        ? "Change Pin"
+                        : "Create Pin"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}

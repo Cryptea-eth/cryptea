@@ -46,6 +46,7 @@ const Email = () => {
             });
 
             if (Boolean(mx.data.time)) {
+              
               setTimer(mx.data.time);
             }
 

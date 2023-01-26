@@ -20,6 +20,7 @@ export const get_request = async (
   
   const token: string = localStorage.getItem("userToken") ?? "";
       try {
+        
         return await axios.get(url, {
           ...config,
           headers: { ...headers, Authorization: `Bearer ${token}` },
@@ -32,6 +33,7 @@ export const get_request = async (
           if (redirect) {
             Router.push("/timeout");
           }else{
+            console.log(ee)
              throw "Something went wrong, please try again";
           }
         }

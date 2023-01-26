@@ -27,7 +27,7 @@ const VerifyHash = () => {
               .determine()
               .name()}`,
             {
-              magic: String(hash),
+              hash: String(hash),
             }
           )
           .then((userx) => {

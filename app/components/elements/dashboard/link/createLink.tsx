@@ -327,7 +327,7 @@ const NewLink = () => {
 
           return;
         } else if (
-          data.range[0] > (data.range[1] as number) &&
+          Number(data.range[0]) > Number(data.range[1]) &&
           data.range[1] !== undefined
         ) {
 
@@ -555,7 +555,7 @@ const NewLink = () => {
       if (data["amountType"] == "range") {
         if (
           Boolean(data["range"][0]) &&
-          val < (data["range"][0] as number | string)
+          val < Number(data["range"][0])
         ) {
           uerror({
             ...error,
@@ -563,7 +563,7 @@ const NewLink = () => {
           });
         } else if (
           Boolean(data["range"][1]) &&
-          val > (data["range"][1] as number | string)
+          val > Number(data["range"][1])
         ) {
           uerror({
             ...error,

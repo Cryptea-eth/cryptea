@@ -35,7 +35,8 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
       } else {
         ('user').get('*', true).then((e: any) => {
           
-            const acc = JSON.parse(e.accounts);
+          
+            const acc = JSON.parse(e.accounts || '[]');
 
             if (!Boolean(e.email) || acc[0] == 'null' || acc[0] == 'undefined') {
 

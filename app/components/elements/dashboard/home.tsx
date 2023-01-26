@@ -1,32 +1,53 @@
-import { Avatar, Button, FormControlLabel, FormGroup, IconButton, Skeleton, Switch, SwitchProps, ToggleButton, ToggleButtonGroup, Tooltip, styled } from "@mui/material";
+import { Avatar, Box, Button, CircularProgress, FormControlLabel, FormGroup, IconButton, Modal, Skeleton, Switch, SwitchProps, ToggleButton, ToggleButtonGroup, Tooltip, styled } from "@mui/material";
 import Link from "next/link";
 import NumberFormat from "react-number-format";
 import LineChart from "../Extras/Rep/lineChart";
 import sortData from "./linkOverview/generateData";
 import Image from "next/image";
 import Direction from "./direction";
+import * as ethers from 'ethers';
 import { get_request } from "../../../contexts/Cryptea/requests";
 import { useEffect, useRef, useState } from "react";
 import { cryptoDeets } from "../../../functions/crypto";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import CustomImg from "../customImg";
 import CrypSwitch from "../CrypSwitch";
-import { MdOutlineRefresh, MdInfo } from "react-icons/md";
+import {
+  MdOutlineRefresh,
+  MdInfo,
+  MdClose,
+  MdOutlineVisibility,
+  MdOutlineVisibilityOff,
+} from "react-icons/md";
+import { PinField } from "react-pin-field";
+import { CryptoList } from "../../../contexts/Cryptea/connectors/chains";
 
 const DashHome = () => {
+
+  const [dashBal, setDashBal] = useState<any[]>([]);
+
   const [dashData, setDashData] = useState<any>({
     payments: [],
     views: [],
     link: [],
+    balance: [],
     breakdown: [],
     sortBreakdown: [],
   });
 
   const [blur, removeBlur] = useState<boolean>(true);
 
+  const onceBal = useRef<boolean>(true);
+
+  const [blurBal, removeBlurBal] = useState<boolean>(true);
+
   const once = useRef<boolean>(true)
 
+  const [data, setData] = useState<any>({});
+
   const [rand, setRand] = useState<number>(0);
+
+  const [payments, setPayments] = useState<any[]>([]);
 
   const [checked, setChecked] = useState<boolean>(false);
 
@@ -36,24 +57,124 @@ const DashHome = () => {
       setChecked(!checked);
 
       removeBlur(true);
+
+      removeBlurBal(true);
       
       try {
 
       await 'user'.update({ live: !checked ? 'Yes' : 'No' }); 
 
       once.current = true;
+      onceBal.current = true
     
       setRefresh(!refresh)
 
       }catch (err) {
           setChecked(!checked);
           removeBlur(false);
+          removeBlurBal(false);
       }
   }
+
+  const [settlePin, setSettlePin] = useState<boolean>(false);
+
+  const closeSettleModal = () => setSettlePin(false)
+
+  const [genSetError, setGenSetError] = useState<string>('');
+
+    const [pins, setPin] = useState<{ [index: string]: string }>({
+      newpin: "",
+      renewpin: "",
+    });
+
+    const [pinsVisibility, setPinVisibility] = useState<{
+    [index: string]: boolean;
+  }>({
+    newpin: true,
+    renewpin: true,
+  });
+
+  const [pinLoading, setPinLoading] = useState<boolean>(false);
+
+
+  const savePin = async () => {
+    setGenSetError("");
+    
+    if (pinLoading) {
+      return;
+    }
+
+    let more = true;
+
+    setPinLoading(true);
+
+    Object.values(pins).forEach((e) => {
+      if (!Boolean(e) || e.length != 5) {
+        document.querySelector(".pinerror")?.scrollIntoView();
+
+        setGenSetError(
+          "Data Incomplete, Please required fields should be field"
+        );
+        setPinLoading(false);
+
+        more = false;
+      }
+    });
+
+    if (pins["newpin"] != pins["renewpin"]) {
+      document.querySelector(".pinerror")?.scrollIntoView();
+
+      setGenSetError("Re-entered pin does not match new pin");
+      setPinLoading(false);
+
+      more = false;
+    }
+
+    if (more) {
+      try {
+        const newData: { [index: string]: string } = {
+          newpin: pins["newpin"],
+        };
+
+        await axios.post(
+          `/api/settlement/new`,
+          {
+            ...newData,
+            token: localStorage.getItem("userToken"),
+          },
+          {
+            baseURL: window.origin,
+          }
+        );
+
+        setPinLoading(false);
+
+        closeSettleModal();
+
+        window.scroll(0, 0);
+      } catch (err) {
+        const erro = err as AxiosError;
+
+        if (erro.response) {
+          const errorx: any = erro.response.data;
+
+          setGenSetError(errorx.message);
+        } else {
+          // console.log(erro.message)
+          setGenSetError("Something went wrong, please try again");
+        }
+
+        document.querySelector(".pinerror")?.scrollIntoView();
+
+        setPinLoading(false);
+      }
+    }
+  };
 
   useEffect(() => {
     setRand(Math.floor(Math.random() * 4));
 
+   
     const init = async () => {
 
       const dashmain = await get_request(
@@ -73,6 +194,8 @@ const DashHome = () => {
         }[];
       } = {};
 
+      setPayments(payments);
+
       payments.forEach((value: any) => {
         if (breakdown[value.token || "matic"] === undefined) {
           breakdown[value.token || "matic"] = [];
@@ -83,7 +206,9 @@ const DashHome = () => {
           amount: value.amount,
           token: value.token || "matic",
         });
+
       });
+
 
       const sortBreak = Object.values(breakdown)
         .map((a: { created_at: number; amount: number; token: string }[]) => {
@@ -146,13 +271,113 @@ const DashHome = () => {
 
       once.current = false;
 
-      'user'.get('*', true).then(e => {
-        setChecked((e as any).live == 'Yes');
-        init();
-      });
+   'user'.get('*', true).then(async (e: any) => {
+    
+        setData(e);
+
+        setChecked(e.live == 'Yes');
+        setSettlePin(!Boolean(e.settlement.length));
+
+        await init();
+
+    })
+
   }
 
   }, [refresh]);
+
+
+  useEffect(() => {
+
+    const initBal = async () => {
+
+      if (data.settlement[0] !== undefined) {
+        let finalBalance: { [index: string]: number } = {};
+
+        const fees: { [index: string]: number } = {};
+
+        const balance: {
+          [index: string]: { amount: number; name: string };
+        } = {};
+
+        const account = data.settlement[0];
+
+        for (let i = 0; i < CryptoList.length; i++) {
+
+          const token = CryptoList[i];
+
+          if (token.type == "native") {
+            try {
+              const provider = new ethers.providers.JsonRpcProvider(token.rpc);
+
+              balance[token.value] = {
+                amount: Number(
+                  ethers.utils.formatEther(
+                    await provider.getBalance(account.address)
+                  )
+                ),
+                name: token.name.split(" ")[0],
+              };
+            } catch (err) {
+              console.log(err);
+
+              balance[token.value] = {
+                amount: 0,
+                name: token.name.split(" ")[0],
+              };
+            }
+          } else if (token.type == "non-native") {
+            // do stuff here
+          }
+        }
+
+        for (let m = 0; m < payments.length; m++) {
+          const value = payments[m];
+
+          if (value.meta !== null) {
+            const metadata = JSON.parse(value.meta);
+
+            fees[metadata["chainId"]] = Number(metadata["discount"]);
+          }
+        }
+
+        for (let i = 0; i < Object.keys(balance).length; i++) {
+
+          const index = Object.keys(balance)[i];
+
+          const total =
+            balance[index].amount -
+            (fees[index] !== undefined ? fees[index] : 0);
+
+          const res = await get_request(
+            `/token/price/${balance[index].name.toLowerCase()}`,
+            {},
+            undefined,
+            false
+          );
+
+          const price = res?.data.price;
+
+          finalBalance[index] = total * price;
+        }
+
+        setDashBal(Object.values(finalBalance));
+
+        if (blurBal) removeBlurBal(false);
+
+      }
+    };
+
+    if (payments.length && onceBal.current) {
+
+      onceBal.current = false;
+
+      initBal();
+
+    }
+
+  }, [refresh, payments])
+
 
   const change = (data: any[]): { value: number; direction: "up" | "down" } => {
     const [current, initial = 0] = data;
@@ -174,6 +399,152 @@ const DashHome = () => {
 
   return (
     <div className="px-5 pt-[75px]">
+      {settlePin && (
+        <>
+          <Modal
+            open={settlePin}
+            sx={{
+              "&& .MuiBackdrop-root": {
+                backdropFilter: "blur(5px)",
+                width: "calc(100% - 8px)",
+              },
+            }}
+            onClose={() => setSettlePin(true)}
+            className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+            aria-labelledby="Change settlement pin, to approve transactions"
+            aria-describedby="Change Pin"
+          >
+            <Box
+              className="sm:w-full h-fit 3mdd:px-[2px]"
+              sx={{
+                minWidth: 300,
+                width: "70%",
+                maxWidth: 800,
+                borderRadius: 6,
+                outline: "none",
+                p: 4,
+                position: "relative",
+                margin: "auto",
+              }}
+            >
+              <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+                <div className="mb-2 flex items-start justify-between">
+                  <div>
+                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                      Create Settlement Pin
+                    </h2>
+                    <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
+                      Create pin to be able to approve settlement transactions
+                    </span>
+                  </div>
+                </div>
+
+                {Boolean(genSetError) && (
+                  <div className="bg-[#ff8f33] text-white rounded-md w-[95%] font-bold mt-2 pinerror mx-auto p-3">
+                    {genSetError}
+                  </div>
+                )}
+
+                <div className="py-3">
+                  <div className="flex text-[#565656] items-center justify-between">
+                    <label className="text-[#565656] mb-2 font-[600]">
+                      New Pin
+                    </label>
+
+                    <IconButton
+                      onClick={() =>
+                        setPinVisibility({
+                          ...pinsVisibility,
+                          newpin: !pinsVisibility["newpin"],
+                        })
+                      }
+                      size={"medium"}
+                    >
+                      {pinsVisibility["newpin"] ? (
+                        <MdOutlineVisibility size={23} />
+                      ) : (
+                        <MdOutlineVisibilityOff size={23} />
+                      )}
+                    </IconButton>
+                  </div>
+                  <div className="flex justify-center item-center ">
+                    <PinField
+                      type={!pinsVisibility["newpin"] ? "text" : "password"}
+                      length={5}
+                      onComplete={(e) => setPin({ ...pins, newpin: e })}
+                      className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                      validate={/^[0-9]$/}
+                    />
+                  </div>
+                </div>
+
+                <div className="py-3">
+                  <div className="flex text-[#565656] items-center justify-between">
+                    <label className="text-[#565656] mb-2 font-[600]">
+                      Re Enter New Pin
+                    </label>
+
+                    <IconButton
+                      onClick={() =>
+                        setPinVisibility({
+                          ...pinsVisibility,
+                          renewpin: !pinsVisibility["renewpin"],
+                        })
+                      }
+                      size={"medium"}
+                    >
+                      {pinsVisibility["renewpin"] ? (
+                        <MdOutlineVisibility size={23} />
+                      ) : (
+                        <MdOutlineVisibilityOff size={23} />
+                      )}
+                    </IconButton>
+                  </div>
+                  <div className="flex justify-center item-center ">
+                    <PinField
+                      type={!pinsVisibility["renewpin"] ? "text" : "password"}
+                      length={5}
+                      onComplete={(e) => setPin({ ...pins, renewpin: e })}
+                      className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                      validate={/^[0-9]$/}
+                    />
+                  </div>
+                </div>
+
+                <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
+                  <b>Please Note: </b> Forgetting your pin or your pin getting
+                  into the wrong hands, could lead to loss of funds, please keep
+                  it safe.
+                </span>
+              </div>
+
+              <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+                <div className="flex items-center">
+                  <Button
+                    onClick={savePin}
+                    className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                  >
+                    {pinLoading ? (
+                      <>
+                        <div className="mr-3 h-[20px] text-[#fff]">
+                          <CircularProgress
+                            color={"inherit"}
+                            className="!w-[20px] !h-[20px]"
+                          />
+                        </div>{" "}
+                        <span>Just a Sec...</span>
+                      </>
+                    ) : (
+                      <>Create Pin</>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </Box>
+          </Modal>
+        </>
+      )}
+
       <div className="flex items-start justify-between">
         <div className="mainx relative w-[calc(100%-340px)] 2sm:w-full">
           <div className="w-full flex items-end z-0 justify-end absolute">
@@ -228,7 +599,7 @@ const DashHome = () => {
                   sx={{ fontSize: "1.04rem", width: "80px" }}
                 />
               ) : (
-                <span className="uppercase flex mb-2 text-[#818181] font-bold text-[.64rem]">
+                <span className="uppercase flex text-[#818181] font-bold text-[.64rem]">
                   Total Received
                 </span>
               )}
@@ -304,30 +675,35 @@ const DashHome = () => {
             </div>
 
             <div className="min-w-[100px]">
-              {blur ? (
+              {blurBal ? (
                 <Skeleton
                   className="mb-2"
                   sx={{ fontSize: "1.04rem", width: "80px" }}
                 />
               ) : (
-                <Tooltip placement="bottom"
+                <Tooltip
+                  placement="bottom"
                   arrow
                   title={
                     "Balance subject to change, based on price data from coingecko"
-                  }>
-                <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
-                 Account Balance <MdInfo size={16} className="ml-1"/>
-                </span></Tooltip>
+                  }
+                >
+                  <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
+                    Account Balance <MdInfo size={16} className="ml-1" />
+                  </span>
+                </Tooltip>
               )}
 
               <div className="flex relative z-10 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
-                {blur ? (
+                {blurBal ? (
                   <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
                 ) : (
                   <>
                     <NumberFormat
                       value={
-                        '0'
+                        String(
+                          (dashBal || []).reduce((a: any, b: any) => a + b, 0)
+                        ).split(".")[0]
                       }
                       style={{
                         fontSize: "1.95rem",
@@ -340,7 +716,10 @@ const DashHome = () => {
                     <span className="leading-[2.38rem] text-[20px] text-[#898989]">
                       .
                       {
-                        '00'
+                        (dashBal || [])
+                          .reduce((a: any, b: any) => a + b, 0)
+                          .toFixed(2)
+                          .split(".")[1]
                       }
                     </span>
                   </>

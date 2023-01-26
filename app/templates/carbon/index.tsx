@@ -8,6 +8,7 @@ import {
   Tab,
   Tabs,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
@@ -40,6 +41,7 @@ const Carbon = ({ className }: { className?: string }) => {
     setPemail,
     loadingText,
     setLoadingText,
+    method,
     transferSuccess,
     setTransferSuccess,
     explorer,
@@ -76,6 +78,14 @@ const Carbon = ({ className }: { className?: string }) => {
     };
   }
 
+  const load = (type: "manual" | "auto") => {
+    return (
+      Boolean(loadingText) &&
+      !transferFail &&
+      !transferSuccess &&
+      type == method
+    );
+  };
 
   useEffect(() => {
     const elem = document.querySelector(".carbon") as HTMLDivElement;
@@ -87,7 +97,6 @@ const Carbon = ({ className }: { className?: string }) => {
         elem.style.width = "calc(100% - 258px)";
       }
     }
-
   });
 
   const {
@@ -730,31 +739,6 @@ const Carbon = ({ className }: { className?: string }) => {
                         )}
 
                         <div className="">
-                          {Boolean(token!.tokenAddr) && (
-                            <Button
-                              sx={{
-                                marginTop: "10px",
-                                backgroundColor: `${data.colorScheme} !important`,
-                                padding: "12px !important",
-                                textAlign: "center",
-                                fontWeight: "bold !important",
-                                lineHeight: "18px",
-                                fontSize: "16px",
-                                fontFamily: "'ubuntu', sans-serif !important",
-                                width: "100%",
-                                color: "#fff",
-                                borderRadius: "5px",
-                                textTransform: "none",
-                                cursor: "pointer",
-                                "&:hover": {
-                                  backgroundColor: `${data.colorScheme} !important`,
-                                },
-                              }}
-                              onClick={() => begin?.("onetime", false)}
-                            >
-                              Pay Manually
-                            </Button>
-                          )}
                           <Button
                             sx={{
                               marginTop: "10px",
@@ -774,9 +758,62 @@ const Carbon = ({ className }: { className?: string }) => {
                                 backgroundColor: `${data.colorScheme} !important`,
                               },
                             }}
-                            onClick={() => begin?.("onetime", true)}
+                            onClick={() => {
+                              if (!load("manual")) begin?.("onetime", false);
+                            }}
                           >
-                            Pay
+                            {load("manual") ? (
+                              <>
+                                <div className="mr-3 h-[20px] text-[#fff]">
+                                  <CircularProgress
+                                    color={"inherit"}
+                                    className="!w-[20px] !h-[20px]"
+                                  />
+                                </div>{" "}
+                                <span>Just a Sec...</span>
+                              </>
+                            ) : (
+                              <>Pay Manually</>
+                            )}
+                          </Button>
+                          <Button
+                            sx={{
+                              marginTop: "10px",
+                              backgroundColor: `${data.colorScheme} !important`,
+                              padding: "12px !important",
+                              textAlign: "center",
+                              fontWeight: "bold !important",
+                              lineHeight: "18px",
+                              fontSize: "16px",
+                              fontFamily: "'ubuntu', sans-serif !important",
+                              width: "100%",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              display: "flex",
+                              alignItems: "center",
+                              textTransform: "none",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: `${data.colorScheme} !important`,
+                              },
+                            }}
+                            onClick={() => {
+                              if (!load("auto")) begin?.("onetime", true);
+                            }}
+                          >
+                            {load("auto") ? (
+                              <>
+                                <div className="mr-3 h-[20px] text-[#fff]">
+                                  <CircularProgress
+                                    color={"inherit"}
+                                    className="!w-[20px] !h-[20px]"
+                                  />
+                                </div>{" "}
+                                <span>Just a Sec...</span>
+                              </>
+                            ) : (
+                              <>Pay</>
+                            )}
                           </Button>
                         </div>
                       </TabPanel>
@@ -1016,31 +1053,43 @@ const Carbon = ({ className }: { className?: string }) => {
                           </div>
                         )}
 
-                        {Boolean(token!.tokenAddr) && (
-                          <Button
-                            sx={{
-                              marginTop: "10px",
+                        <Button
+                          sx={{
+                            marginTop: "10px",
+                            backgroundColor: `${data.colorScheme} !important`,
+                            padding: "12px !important",
+                            textAlign: "center",
+                            fontWeight: "bold !important",
+                            lineHeight: "18px",
+                            fontSize: "16px",
+                            fontFamily: "'ubuntu', sans-serif !important",
+                            width: "100%",
+                            color: "#fff",
+                            borderRadius: "5px",
+                            textTransform: "none",
+                            cursor: "pointer",
+                            "&:hover": {
                               backgroundColor: `${data.colorScheme} !important`,
-                              padding: "12px !important",
-                              textAlign: "center",
-                              fontWeight: "bold !important",
-                              lineHeight: "18px",
-                              fontSize: "16px",
-                              fontFamily: "'ubuntu', sans-serif !important",
-                              width: "100%",
-                              color: "#fff",
-                              borderRadius: "5px",
-                              textTransform: "none",
-                              cursor: "pointer",
-                              "&:hover": {
-                                backgroundColor: `${data.colorScheme} !important`,
-                              },
-                            }}
-                            onClick={() => begin?.("sub", false)}
-                          >
-                            Pay Manually
-                          </Button>
-                        )}
+                            },
+                          }}
+                          onClick={() => {
+                            if (!load("manual")) begin?.("sub", false);
+                          }}
+                        >
+                          {load("manual") ? (
+                            <>
+                              <div className="mr-3 h-[20px] text-[#fff]">
+                                <CircularProgress
+                                  color={"inherit"}
+                                  className="!w-[20px] !h-[20px]"
+                                />
+                              </div>{" "}
+                              <span>Just a Sec...</span>
+                            </>
+                          ) : (
+                            <>Pay Manually</>
+                          )}
+                        </Button>
 
                         <Button
                           sx={{
@@ -1061,9 +1110,23 @@ const Carbon = ({ className }: { className?: string }) => {
                               backgroundColor: `${data.colorScheme} !important`,
                             },
                           }}
-                          onClick={() => begin?.("sub", true)}
+                          onClick={() => {
+                            if (!load("auto")) begin?.("sub", true);
+                          }}
                         >
-                          Pay
+                          {load("auto") ? (
+                            <>
+                              <div className="mr-3 h-[20px] text-[#fff]">
+                                <CircularProgress
+                                  color={"inherit"}
+                                  className="!w-[20px] !h-[20px]"
+                                />
+                              </div>{" "}
+                              <span>Just a Sec...</span>
+                            </>
+                          ) : (
+                            <>Pay</>
+                          )}
                         </Button>
                       </TabPanel>
                       {/* </SwipeableViews> */}

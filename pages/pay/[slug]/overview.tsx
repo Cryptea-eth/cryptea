@@ -46,7 +46,7 @@ const Overview = () => {
           
         setUserX(await ('user').get('*', true))
 
-        const { link:mDx, user, onetime, sub, views } = await initD(String(slug).toLowerCase());
+        const { link:mDx, user, onetime, sub, views } = await initD(String(slug).toLowerCase()) || { link: {}, user: {}, onetime: {}, sub: {}, views: {} };
 
         setUserLk(`${window.location.origin}/pay/${slug}`); 
 
@@ -179,12 +179,8 @@ const Overview = () => {
                       </Link>
 
                       <Link href={`/pay/${slug}`}>
-                        <a className="cursor-pointer text-[1.95rem] leading-[2.45rem] mx-auto flex items-center">
-                          <span className="mr-2">
+                        <a className="cursor-pointer w-[calc(100%-20px)] text-[1.95rem] leading-[2.45rem] truncate">
                             {data.title !== undefined ? data.title : slug}
-                          </span>
-
-                          <MdLink className="relative top-[2px]" size={30} />
                         </a>
                       </Link>
 
@@ -476,7 +472,7 @@ const Overview = () => {
                         </div>
 
                         <div className="w-full relative z-[10] items-center flex text-[rgb(95,99,104)] h-[100px]">
-                          To Integrate This link through our API, Click Below
+                          To Integrate this link with our API, Click Below
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/api`}>

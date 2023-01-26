@@ -19,6 +19,14 @@ import { post_request } from "../../../contexts/Cryptea/requests";
 import { FaRegEnvelopeOpen } from "react-icons/fa";
 import analytics from "../../../../analytics";
 
+export const methods = [
+  "metaauth",
+  "walletconnectauth",
+  "coinbaseauth",
+  "uauth",
+  "magicauth",
+];
+
 const AuthModal = ({
   message,
   blur = true,
@@ -146,7 +154,6 @@ const AuthModal = ({
     }
   };
 
-  const methods = ["metaauth", "walletconnectauth", "coinbaseauth", "uauth", "magicauth"];
 
   const storeAuth = (authMethod: string) => {
     const cache = localStorage.getItem('auths');

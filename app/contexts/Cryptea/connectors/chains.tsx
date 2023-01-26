@@ -3,6 +3,7 @@ import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import CustomImg from "../../../components/elements/customImg";
 import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi";
+import { token } from "../types";
 
 export const avalancheChain: Chain = {
   id: 43_114,
@@ -316,7 +317,7 @@ export const inputsList = [
   },
 ];
 
-export const CryptoList = [
+export const CryptoList: token[] = [
   {
     value: 137,
     label: (
@@ -337,11 +338,13 @@ export const CryptoList = [
     contractAddr: "0xf1BC5925641159a0d1388B17e3AB32D9416B3f09",
     network: "polygon",
     tokenAddr: "",
-    rpc: process.env.MATIC_LINK as string,
+    rpc: process.env.POLYGONMATIC as string,
     testnet: false,
+    type: "native",
   },
   {
     value: 80001,
+    type: "native",
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
@@ -365,6 +368,7 @@ export const CryptoList = [
   },
   {
     value: 31415,
+    type: "native",
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
@@ -388,6 +392,7 @@ export const CryptoList = [
   },
   {
     value: 338,
+    type: "native",
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
@@ -411,6 +416,7 @@ export const CryptoList = [
   },
   {
     value: 1313161555,
+    type: "native",
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
@@ -436,6 +442,7 @@ export const CryptoList = [
     value: 420,
     contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
     testnet: true,
+    type: "native",
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
@@ -457,6 +464,7 @@ export const CryptoList = [
   },
   {
     value: 42261,
+    type: "native",
     contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
     testnet: true,
     label: (

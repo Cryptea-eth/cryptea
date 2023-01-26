@@ -222,14 +222,14 @@ const Settings = () => {
       if (Boolean(formdata["maxAmt"]) || Boolean(formdata["minAmt"])) {
         if (
           Boolean(formdata["minAmt"]) &&
-          val < (formdata["minAmt"] as number | string)
+          val < Number(formdata["minAmt"])
         ) {
           setError({
             amountOption: "Amount cannot be lower than minimum amount",
           });
         } else if (
           Boolean(formdata["maxAmt"]) &&
-          val > (formdata["maxAmt"] as number | string)
+          val > Number(formdata["maxAmt"])
         ) {
           setError({
             amountOption: "Amount cannot be lower than maximum amount",
@@ -434,8 +434,10 @@ const Settings = () => {
 
     if (Boolean(formdata.title)) payload["title"] = formdata.title;
     if (Boolean(formdata.desc)) payload["desc"] = formdata.desc;
+
     if (Boolean(formdata.amountOption))
-      payload["amountMulti"] = JSON.stringify(formdata.amountOption);
+      payload["amountMulti"] = JSON.stringify(formdata.amountOption.filter((a) => Number(a)));
+
 
     try {
 
@@ -561,7 +563,7 @@ const Settings = () => {
                 }}
                 className="text-[1.2rem] capitalize text-center text-[rgb(95,99,104)] leading-[1.25rem] tooltiprep block"
               >
-                change everything about this link
+                Change everything about this link
               </p>
 
               {success && (
@@ -1067,6 +1069,7 @@ const Settings = () => {
                                     size={17}
                                     onClick={() => {
                                       const newD = formdata.amountOption;
+
                                       delete newD[i];
 
                                       setFormData({

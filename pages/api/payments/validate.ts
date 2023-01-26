@@ -59,7 +59,6 @@ export default function handler(
 
           let valid = true;
 
-
           if (
             !addressEqual(trx.from, data.address) &&
             data.paytype == "auto" &&
@@ -69,7 +68,6 @@ export default function handler(
           }
 
           if (valid) {
-
             const resMain = await axios.post(
               `https://ab.cryptea.me/link/payments/${data.linkId}`,
               data,
@@ -81,16 +79,18 @@ export default function handler(
               }
             );
 
-            return res.status(resMain.status).json(resMain.data);
-
+            res.status(resMain.status).json(resMain.data);
           } else {
-            return res
-              .status(400)
-              .json({ error: true, message: "data incorrect" });
+            res.status(400).json({ error: true, message: "data incorrect" });
           }
         });
     } else {
-      return res.status(400).json({ error: true, message: "Data Incomplete" });
+      res.status(400).json({ error: true, message: "Data Incomplete" });
     }
+  } else {
+    res.status(422).json({
+      message: "Method not supported",
+      error: true,
+    });
   }
 }

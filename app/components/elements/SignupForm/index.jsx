@@ -89,7 +89,7 @@ const SignupForm = () => {
         try {
           const e = await "user".get("*", true);
           
-          const acc = JSON.parse(e.accounts);
+          const acc = JSON.parse(e.accounts || '[]');
 
           if (!Boolean(e.email) || acc[0] == "null" || acc[0] == "undefined") {
             try {
@@ -177,15 +177,19 @@ useEffect(() => {
 
       ('user').get('*', true).then(e => {
 
-        // console.log(e)
-
-        const addresses = JSON.parse(e.accounts);
+        const addresses = JSON.parse(e.accounts || '[]');
 
         if (addresses[0] == "null" || addresses[0] == "undefined") {
           setAoa(false);
-        }
 
-        setMLoader(false);
+          setMLoader(false);
+        }else if (Boolean(e.email)) {
+         
+          Router.push('/dashboard');
+        
+        }else{
+          setMLoader(false);
+        }
 
       }).catch(err => {
         Router.push('/timeout');

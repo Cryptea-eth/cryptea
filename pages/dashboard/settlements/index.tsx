@@ -1,0 +1,1819 @@
+import soonImg from "../../../public/images/coming-soon.svg";
+import * as ethers from "ethers";
+import NumberFormat from "react-number-format";
+import Page from "../../../app/components/elements/dashboard";
+import Head from "next/head";
+import empty from "../../../public/images/empty2.png";
+import Select, { createFilter } from "react-select";
+import {
+  Tooltip,
+  Button,
+  CircularProgress,
+  Modal,
+  Box,
+  IconButton,
+  Skeleton,
+  TextField,
+  InputAdornment,
+  Alert,
+  ClickAwayListener,
+} from "@mui/material";
+import {
+  MdInfo,
+  MdOutlineVisibility,
+  MdPayment,
+  MdOutlineVisibilityOff,
+  MdSubscriptions,
+  MdClose,
+  MdOutlinePermContactCalendar,
+} from "react-icons/md";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import { FaCoins, FaCopy, FaEthereum, FaWallet } from "react-icons/fa";
+import CustomImg from "../../../app/components/elements/customImg";
+import { BiCopy } from "react-icons/bi";
+import copy from "copy-to-clipboard";
+import { BsCoin } from "react-icons/bs";
+import { HiCurrencyDollar } from "react-icons/hi";
+import { RiCoinFill } from "react-icons/ri";
+import Link from "next/link";
+import { useCryptea } from "../../../app/contexts/Cryptea";
+import { PinField } from "react-pin-field";
+import axios, { AxiosError } from "axios";
+import { CryptoList } from "../../../app/contexts/Cryptea/connectors/chains";
+import { get_request } from "../../../app/contexts/Cryptea/requests";
+import Image from "next/image";
+import Loader from "../../../app/components/elements/loader";
+import { months } from "../../../app/components/elements/dashboard/linkOverview/generateData";
+import TabPanel from "../../../app/components/elements/dashboard/link/TabPanel";
+import { token } from "../../../app/contexts/Cryptea/types";
+
+
+const Settlements = () => {
+
+  const router = useRouter();
+
+  const [blur, setBlur] = useState<boolean>(true);
+
+  const [blurPending, setBlurPending] = useState<boolean>(true);
+
+  const [blurTrx, setBlurTrx] = useState<boolean>(true);
+
+  const [addresses, setAddresses] = useState<any>({});
+
+  const [dashData, setDashData] = useState<any>({
+    payments: [],
+    fees: {},
+    pending: 0,
+    settlement_acct: [],
+    breakDownObj: [],
+    settlements: [],
+    balance: [],
+    breakdown: [],
+  });
+
+  const [withdrawToken, setWithdrawToken] = useState<any>();
+
+  const [addressTo, setAddressTo] = useState<string>('');
+
+  const [cryptoRate, setCryptoRate] = useState<string | number>(0);
+
+  const [amount, setAmount] = useState<{
+    fiat: string,
+    crypto: string
+  }>({
+    fiat: '',
+    crypto: ''
+  });
+
+  const once = useRef<boolean>(true);
+
+  const [pins, setPin] = useState<{ [index: string]: string }>({
+    newpin: "",
+    renewpin: "",
+  });
+
+  type bal = {
+    [index: string]: {
+      amount: number;
+      name: string;
+      test: boolean;
+      symbol: string;
+    };
+  };
+
+  type balVal = {
+    amount: number;
+    amtFiat: number;
+    token: string;
+    test: boolean;
+    symbol: string;
+  };
+
+  type bal2 = {
+    [index: string]: balVal;
+  };
+
+  const [openPast, setOpenPast] = useState(false);
+
+  const [balance, setBalance] = useState<bal>({});
+
+  const [balToken, setBalToken] = useState<string | number>();
+
+  const [pinsVisibility, setPinVisibility] = useState<{
+    [index: string]: boolean;
+  }>({
+    newpin: true,
+    renewpin: true,
+  });
+
+  const [pinLoading, setPinLoading] = useState<boolean>(false);
+
+  const [settlePin, setSettlePin] = useState<boolean>(false);
+
+  const closeSettleModal = () => setSettlePin(false);
+
+  const [genSetError, setGenSetError] = useState<string>("");
+
+  const [data, setData] = useState<any>({});
+
+  const [soon, setSoon] = useState<boolean>(false);
+
+  const [copied, mainCopy] = useState<boolean[]>([false]);
+
+  const [pageCheck, setPageCheck] = useState<any>({});
+
+  const [withdrawError, setWithdrawError] = useState<string>("");
+
+  const [cryptoWithdrawStage, setCryptoStage] = useState<number>(0);
+
+
+  const [refresh, setRefresh] = useState<boolean>(false);
+
+  const [withdrawLoading, setWithdrawLoading] = useState<boolean>(false);
+
+  const [openCryptoW, setCryptoW] = useState<boolean>(false);
+
+  const [altPageData, setAltPageData] = useState<any[]>([]);
+
+  const [pageLoading, setPageLoad] = useState<boolean>(false);
+
+  const switchCopy = (val: boolean, index: number) => {
+    const copx = [...copied];
+    copx[index] = val;
+    mainCopy(copx);
+  };
+
+  
+  const withdrawCrypto = async () => {
+
+    if (withdrawLoading) {
+      return;
+    }
+
+    setWithdrawError('')
+
+    setWithdrawLoading(true);
+
+    if (!cryptoWithdrawStage) {
+
+     if (
+       !addressTo.length ||
+       !ethers.utils.isAddress(addressTo)
+     ) {
+
+       document.querySelector('.witherror')?.scrollIntoView();
+
+       setWithdrawError("A valid ethereum address is required");
+
+       setWithdrawLoading(false);       
+
+       return;
+     }
+
+     if (!Boolean(amount['fiat']) && !Boolean(amount['crypto'])) {
+
+        document.querySelector(".witherror")?.scrollIntoView();
+
+        setWithdrawError("Amount is required");
+
+        setWithdrawLoading(false);
+
+        return;  
+
+     }
+
+     setWithdrawError("");
+
+     setWithdrawLoading(false);
+
+     setCryptoStage(1);
+
+    } else {
+      try{
+
+        const data = {
+          addressTo,
+          amountCrypto: amount["crypto"],
+          token: withdrawToken,
+          fee:
+            dashData["fees"][withdrawToken.value] !== undefined
+              ? dashData["fees"][withdrawToken.value]
+              : 0,
+          pin: pins["newpin"],
+        };
+
+        const token = localStorage.getItem('userToken');
+
+        await axios.post('/api/settlement/withdrawal/crypto', data, {
+            baseURL: window.origin,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+        });
+
+        setGenSetError('');
+
+        setCryptoW(false);
+
+        setRefresh(!refresh);
+
+        setCryptoStage(0);
+
+        setWithdrawLoading(false);  
+
+      }catch (err) {
+
+        const error = (err as any).response !== undefined ? (err as any).response.data : err as any;
+
+         console.log(error);
+
+         if (error.message == "timeout of 30000ms exceeded") {
+            setWithdrawError('Something went wrong, please try again');
+         } else {
+            setWithdrawError(error.message);
+        }
+
+        document.querySelector(".witherror")?.scrollIntoView();
+       
+        setWithdrawLoading(false);
+
+        if (error.errorType !== undefined) {
+
+          const x = ['address', 'amount'];
+
+          if (x.includes(error.errorType)) {
+            setCryptoStage(0);  
+          }
+
+        }
+
+      }
+        
+    }
+  };
+
+
+
+  const trx = (val: any, key: number) => {
+    const date = new Date(val.created_at);
+
+    const settData = JSON.parse(val.data);
+
+    const hrx = date.getHours() % 12 || 12;
+
+    return (
+      <div key={key} className="mx-4 flex items-start py-4">
+        <div className="text-[#F57059] mt-2 flex-shrink-0">
+          {val.type == "fiat" && <MdPayment size={18} />}
+          {val.type == "crypto" && <FaCoins size={18} />}
+          {val.type == "swap" && <RiCoinFill size={18} />}
+        </div>
+
+        <span className="font-body text-gray-800 px-4 flex flex-col flex-1">
+          {val.type == "fiat" && (
+            <span className="text-[14px] text-[#747474] font-[500]">
+              {val.desc}
+            </span>
+          )}
+
+          {(val.type == "crypto" || val.type == "swap") && (
+            <Link href={settData["explorer"]} className="cursor-pointer">
+              <a
+                className="text-[14px] text-[#747474] font-[500]"
+                target={"_blank"}
+              >
+                {val.desc}
+              </a>
+            </Link>
+          )}
+
+          <span className="text-xs text-gray-600">
+            {months[date.getMonth()]}{" "}
+            {String(date.getDate()).length == 1
+              ? "0" + date.getDate()
+              : date.getDate()}{" "}
+            {date.getFullYear()} {hrx}:
+            {String(date.getMinutes()).length < 2
+              ? `0${date.getMinutes()}`
+              : date.getMinutes()}{" "}
+            {hrx > 12 ? "pm" : "am"}
+          </span>
+        </span>
+
+        <span className="font-body text-gray-800 flex flex-col">
+          <NumberFormat
+            value={
+              val.type == "fiat" ? val["amount"].toFixed(2) : val["amount"]
+            }
+            className="text-sm"
+            thousandSeparator={val.type == "fiat"}
+            displayType={"text"}
+            prefix={val.type == "fiat" ? "$" : ""}
+          />
+        </span>
+      </div>
+    );
+  };
+
+  const savePin = async () => {
+    setGenSetError("");
+
+    if (pinLoading) {
+      return;
+    }
+
+    let more = true;
+
+    setPinLoading(true);
+
+    Object.values(pins).forEach((e) => {
+      if (!Boolean(e) || e.length != 5) {
+        document.querySelector(".pinerror")?.scrollIntoView();
+
+        setGenSetError(
+          "Data Incomplete, Please required fields should be field"
+        );
+        setPinLoading(false);
+
+        more = false;
+      }
+    });
+
+    if (pins["newpin"] != pins["renewpin"]) {
+      document.querySelector(".pinerror")?.scrollIntoView();
+
+      setGenSetError("Re-entered pin does not match new pin");
+      setPinLoading(false);
+
+      more = false;
+    }
+
+    if (more) {
+      try {
+        const newData: { [index: string]: string } = {
+          newpin: pins["newpin"],
+        };
+
+        await axios.post(
+          `/api/settlement/new`,
+          {
+            ...newData,
+            token: localStorage.getItem("userToken"),
+          },
+          {
+            baseURL: window.origin,
+          }
+        );
+
+        setPinLoading(false);
+
+        closeSettleModal();
+
+        window.scroll(0, 0);
+      } catch (err) {
+        const erro = err as AxiosError;
+
+        if (erro.response) {
+          const errorx: any = erro.response.data;
+
+          setGenSetError(errorx.message);
+        } else {
+          // console.log(erro.message)
+          setGenSetError("Something went wrong, please try again");
+        }
+
+        document.querySelector(".pinerror")?.scrollIntoView();
+
+        setPinLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      const dashmain = await get_request(
+        "/dashboard/settlement",
+        {},
+        undefined,
+        false
+      );
+
+      let { payments, allTrx, user, account, pending } = dashmain?.data;
+
+      const breakdown: bal2 = {};
+
+      let finalBalance: { [index: string]: number } = {};
+
+      const fees: { [index: string]: number } = {};
+
+      const settlement_acct: string[] = [];
+
+
+      if (allTrx.length) {
+
+        allTrx.forEach((v: any) => {
+
+            const data = JSON.parse(v.data)
+
+            if (v.type == 'crypto' || v.type == 'swap') {
+
+                const add = data.receiver;
+
+                if (!settlement_acct.includes(add)) {
+                    settlement_acct.push(add);
+                }
+
+            }
+
+        });
+
+      }
+
+      const userAddresses = JSON.parse(user.accounts || "[]");
+
+      if(Boolean(userAddresses[0])){
+
+      if (!settlement_acct.includes(userAddresses[0])) {
+
+        settlement_acct.push(userAddresses[0]);
+      }
+
+    }
+
+
+      payments.forEach((value: any) => {
+        if (value.meta !== null) {
+          const metadata = JSON.parse(value.meta);
+
+          fees[metadata["chainId"]] = Number(metadata["discount"]);
+
+        }
+      });
+
+      let totalPending = 0;
+
+      if (pending.length) {
+        pending.forEach(async (dax: any) => {
+          const amt = dax.amountCrypto;
+
+          const token = dax.token.split(" ")[0];
+
+          const res = await get_request(
+            `/token/price/${token.toLowerCase()}`,
+            {},
+            undefined,
+            false
+          );
+
+          const price = res?.data.price;
+
+          totalPending += amt * price;
+        });
+      }
+
+      setBlurPending(false);
+
+      const { data: settlements } = (await get_request(
+        `/settlements/transactions`,
+        {},
+        undefined,
+        false
+      )) || { data: { trx: {} } };
+
+      if (settlements.trx.current_page !== undefined) {
+        const { current_page, last_page } = settlements.trx.current_page;
+
+        setPageCheck({ current_page, last_page });
+      }
+
+      setBlurTrx(false);
+
+      for (let i = 0; i < Object.keys(balance).length; i++) {
+        const index = Object.keys(balance)[i];
+
+        const total =
+          balance[index].amount - (fees[index] !== undefined ? fees[index] : 0);
+
+        const res = await get_request(
+          `/token/price/${balance[index].name.toLowerCase()}`,
+          {},
+          undefined,
+          false
+        );
+
+        const price = res?.data.price;
+
+        finalBalance[index] = total * price;
+
+        breakdown[index] = {
+          amount: total,
+          amtFiat: total * price,
+          token: balance[index].name,
+          test: balance[index].test,
+          symbol: balance[index].symbol,
+        };
+      }
+
+      const maxAmt = Object.keys(breakdown).sort(
+        (a, b) => breakdown[b].amount - breakdown[a].amount
+      );
+
+      CryptoList.forEach((a) => {
+        
+        if(a.value == Number(maxAmt[0])){
+            setWithdrawToken(a);          
+
+        }  
+
+      });
+
+      setDashData({
+        payments,
+        fees: fees,
+        balance: Object.values(finalBalance),
+        breakDownObj: breakdown,
+        settlement_acct: settlement_acct.map((e: string) => ({
+          label: e,
+          value: e
+        })),
+        breakdown: Object.values(breakdown)
+          .sort((a, b) => Number(a.test) - Number(b.test))
+          .sort((a, b) => b.amount - a.amount),
+        settlements: settlements.trx,
+        pending: totalPending + (totalPending ? (totalPending * 1) / 100 : 0),
+      });
+
+      if (blur) setBlur(false);
+    };
+
+    if (once.current) {
+      once.current = true;
+
+      "user".get("*", true).then(async (e: any) => {
+
+        
+
+        setData(e);
+
+        setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
+
+        const userAddresses = JSON.parse(e.accounts || "[]");
+
+        if(Boolean(userAddresses[0])) setAddressTo(userAddresses[0]);
+
+        if (e.settlement[0] !== undefined) {
+
+          const account = e.settlement[0];
+
+          for (let i = 0; i < CryptoList.length; i++) {
+            const token = CryptoList[i];
+
+            if (token.type == "native") {
+              try {
+                const provider = new ethers.providers.JsonRpcProvider(
+                  token.rpc
+                );
+
+                balance[token.value] = {
+                  amount: Number(
+                    ethers.utils.formatEther(
+                      await provider.getBalance(account.address)
+                    )
+                  ),
+                  name: token.name.split(" ")[0],
+                  test: token.testnet,
+                  symbol: token.symbol,
+                };
+              } catch (err) {
+                console.log(err);
+
+                balance[token.value] = {
+                  amount: 0,
+                  name: token.name.split(" ")[0],
+                  test: token.testnet,
+                  symbol: token.symbol,
+                };
+              }
+            } else if (token.type == "non-native") {
+              // do stuff here
+            }
+          }
+
+          setBalance({ ...balance });
+
+          await init();
+        }
+      });
+    }
+  }, [refresh]);
+
+  const getBalance = async (e: token, address: string) => {
+
+    setBalToken(0);
+
+    if (e.type == "native") {
+
+      try {
+
+        const provider = new ethers.providers.JsonRpcProvider(e.rpc);
+
+        const res = await get_request(
+          `/token/price/${e.name.split(" ")[0].toLowerCase()}`,
+          {},
+          undefined,
+          false
+        );
+
+        setCryptoRate(res?.data.price);
+
+
+         setBalToken(
+          Number(ethers.utils.formatEther(await provider.getBalance(address)))
+        );
+
+      } catch (err) {
+        console.log(err);
+
+        setCryptoRate(0);
+
+         setBalToken(0);
+      }
+    } else if (e.type == "non-native") {
+      // do stuff here
+    
+    }
+
+  }
+
+  return (
+    <Page>
+      <Head>
+        <title>Settlements | Dashboard | Cryptea</title>
+        <meta
+          name="description"
+          content={`Distribute and receive all your funds in crypto and fiat`}
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <div className="pt-[75px] px-5 relative z-[1]">
+        {!blur && (
+          <Modal
+            open={openCryptoW}
+            sx={{
+              "&& .MuiBackdrop-root": {
+                backdropFilter: "blur(5px)",
+                width: "calc(100% - 8px)",
+              },
+            }}
+            onClose={() => setCryptoW(false)}
+            className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+            aria-labelledby="add new link"
+            aria-describedby="New Link Short Cut"
+          >
+            <Box
+              className="sm:w-full h-fit 3mdd:px-[2px]"
+              sx={{
+                minWidth: 300,
+                width: "70%",
+                maxWidth: 800,
+                borderRadius: 6,
+                outline: "none",
+                p: 4,
+                position: "relative",
+                margin: "auto",
+              }}
+            >
+              <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+                <div className="mb-1 flex items-start justify-between">
+                  <div>
+                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                      Crypto Withdraw
+                    </h2>
+                    <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
+                      Withdraw your received crypto easily
+                    </span>
+                  </div>
+
+                  <IconButton size={"medium"} onClick={() => setCryptoW(false)}>
+                    <MdClose
+                      size={20}
+                      color={"rgb(32,33,36)"}
+                      className="cursor-pointer"
+                    />
+                  </IconButton>
+                </div>
+
+                {Boolean(withdrawError) && (
+                  <div className="bg-[#ff8f33] text-white rounded-md w-[95%] font-bold mt-2 witherror mx-auto p-3">
+                    {withdrawError}
+                  </div>
+                )}
+
+                <TabPanel index={0} value={cryptoWithdrawStage}>
+                  <form
+                    encType="multipart/form-data"
+                    onSubmit={(f) => {
+                      f.preventDefault();
+                    }}
+                    action="#"
+                  >
+                    <div className="flex mb-5 bg-white items-center">
+                      <div className="bg-[#ebebeb] px-2 font-[600] truncate mr-3 rounded py-2 w-full text-[#7a7a7a]">
+                        {Boolean(data.username) ? data.username : ""}{" "}
+                        {"Cryptea Wallet"}
+                      </div>
+
+                      <div className="bg-[#ebebeb] px-2 rounded py-2 min-w-fit font-[600] text-[#7a7a7a]">
+                        {data.settlement !== undefined
+                          ? `${data.settlement[0].address.substring(
+                              0,
+                              6
+                            )}...${data.settlement[0].address.substring(
+                              38,
+                              42
+                            )}`
+                          : ""}
+                      </div>
+                    </div>
+
+                    <div className="my-3">
+                      <label className="text-[#565656] block mb-2 font-[600]">
+                        Token
+                      </label>
+
+                      <Select
+                        isClearable={false}
+                        name="Tokens"
+                        filterOption={createFilter({
+                          stringify: (option) =>
+                            `${option.value} ${option.data.name}`,
+                        })}
+                        placeholder={"Tokens..."}
+                        options={CryptoList.filter(
+                          (a) => dashData["breakDownObj"][a.value].amtFiat > 0
+                        )}
+                        styles={{
+                          option: (provided, state) => {
+                            return {
+                              ...provided,
+                              backgroundColor: state.isSelected
+                                ? "#dfdfdf"
+                                : "transparent",
+                              cursor: "pointer",
+                              "&:active": {
+                                backgroundColor: "#dfdfdf",
+
+                                color: "#121212 !important",
+                              },
+                              "&:hover": {
+                                backgroundColor: state.isSelected
+                                  ? undefined
+                                  : `#dfdfdff2`,
+                              },
+                            };
+                          },
+                          container: (provided, state) => ({
+                            ...provided,
+                            "& .select__control": {
+                              borderWidth: "0px",
+                              borderRadius: "0px",
+                              backgroundColor: "transparent",
+                              borderBottomWidth: "1px",
+                            },
+                            "& .select__value-container": {
+                              paddingLeft: "0px",
+                            },
+                            "& .select__control:hover": {
+                              borderBottomWidth: "2px",
+                              borderBottomColor: "#121212",
+                            },
+                            "& .select__control--is-focused": {
+                              borderWidth: "0px",
+                              borderBottomWidth: "2px",
+                              borderBottomColor: `#F57059 !important`,
+                              boxShadow: "none",
+                            },
+                          }),
+                        }}
+                        value={withdrawToken}
+                        onChange={async (e) => {
+                          setWithdrawToken(e);
+
+                          getBalance(e, data.settlement[0].address);
+                        }}
+                        classNamePrefix="select"
+                      />
+                    </div>
+
+                    <div className="my-3">
+                      <div className="flex text-[#565656] items-center justify-between">
+                        <label className="block mb-2 font-[600]">To</label>
+
+                        <div className="relative">
+                          <IconButton
+                            style={{
+                              backgroundColor: openPast ? "#ececec" : undefined,
+                            }}
+                            size={"large"}
+                            onClick={() => {
+                              setOpenPast(!openPast);
+
+                            }}
+                          >
+                            <MdOutlinePermContactCalendar size={20} />
+                          </IconButton>
+
+                          <div
+                            style={{
+                              display: openPast ? "flex" : "none",
+                            }}
+                            className="w-[270px] border border-[#f0f0f0] z-[1000000] bg-white flex-col max-h-[300px] top-[45px] right-0 shadow-md absolute"
+                          >
+                            <Tooltip
+                              placement="bottom"
+                              arrow
+                              title={
+                                "Previous Addresses used for Crypto Withdrawals"
+                              }
+                            >
+                              <div className="flex pt-1 mb-2 items-center w-fit cursor-pointer px-1">
+                                <label className="block font-[500] text-[14px]">
+                                  Addresses
+                                </label>
+                                <MdInfo size={14} className="ml-1" />
+                              </div>
+                            </Tooltip>
+
+                            <Select
+                              isClearable={false}
+                              name="Address"
+                              placeholder={"Address..."}
+                              options={dashData["settlement_acct"]}
+                              styles={{
+                                option: (provided, state) => {
+                                  return {
+                                    ...provided,
+                                    backgroundColor: state.isSelected
+                                      ? "#dfdfdf"
+                                      : "transparent",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    cursor: "pointer",
+                                    "&:active": {
+                                      backgroundColor: "#dfdfdf",
+                                      color: "#121212 !important",
+                                    },
+                                    "&:hover": {
+                                      backgroundColor: state.isSelected
+                                        ? undefined
+                                        : `#dfdfdff2`,
+                                    },
+                                  };
+                                },
+                                container: (provided, state) => ({
+                                  ...provided,
+                                  "& .select__control": {
+                                    borderWidth: "1px",
+                                    borderRadius: "0px",
+                                    backgroundColor: "transparent",
+                                  },
+
+                                  "& .select__control--is-focused": {
+                                    borderWidth: "2px",
+                                    borderColor: `#F57059 !important`,
+                                    boxShadow: "none",
+                                  },
+                                }),
+                              }}
+                              value={addresses}
+                              onChange={async (e) => {
+                                setAddresses(e);
+
+                                setAddressTo(e.label);
+
+                                setOpenPast(false);
+                              }}
+                              classNamePrefix="select"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <TextField
+                        fullWidth
+                        id="outlined-basic"
+                        variant="standard"
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment
+                              onClick={async () => {
+                                const text =
+                                  await navigator.clipboard.readText();
+
+                                setAddressTo(text);
+                              }}
+                              className="cursor-pointer"
+                              sx={{
+                                "& p": {
+                                  color: "#F57059",
+                                },
+                              }}
+                              position="end"
+                            >
+                              <Button className="!py-0 !font-[600] !capitalize !flex !items-center !text-[#F57059] !bg-[#f5705904] !min-w-fit !border-none !transition-all !delay-500 !px-3 !text-[14px]">
+                                paste
+                              </Button>
+                            </InputAdornment>
+                          ),
+                        }}
+                        sx={{
+                          "& .Mui-focused.MuiInputLabel-root": {
+                            color: "#f57059",
+                          },
+                          "& .MuiInputLabel-root": {
+                            fontWeight: "600",
+                            color: "#121212",
+                          },
+                          "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
+                            {
+                              borderColor: `#f57059 !important`,
+                            },
+                          "& .MuiFormHelperText-root": {
+                            padding: "6px 3px",
+                            backgroundColor: "#fff",
+                            color: "#565656",
+                            marginTop: "0px",
+                          },
+                          width: "100%",
+                        }}
+                        placeholder="Ethereum Address"
+                        value={addressTo}
+                        onChange={(
+                          e: React.ChangeEvent<
+                            HTMLInputElement | HTMLTextAreaElement
+                          >
+                        ) => {
+                          const val = e.target.value;
+
+                          setAddressTo(val);
+                        }}
+                      />
+
+                      <Alert className="mt-1" severity="warning">
+                        Ensure the address you are sending to supports{" "}
+                        {withdrawToken.name} on the {withdrawToken.network}{" "}
+                        network
+                      </Alert>
+                    </div>
+
+                    <div className="my-3">
+                      <label className="text-[#565656] block mb-2 font-[600]">
+                        Amount
+                      </label>
+
+                      <TextField
+                        fullWidth
+                        id="outlined-basic"
+                        variant="standard"
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <Button
+                                onClick={() => {
+                                  const bal = Boolean(balToken) ? balToken : 0;
+
+                                  setAmount({
+                                    fiat: cryptoRate ? (
+                                      Number(bal) / Number(cryptoRate)
+                                    ).toFixed(2) : '',
+                                    crypto: String(bal),
+                                  });
+                                }}
+                                className="!py-0 !font-[600] !capitalize !flex !items-center !text-[#565656] !bg-[#f5705904] !cursor-pointer !min-w-fit !border-none !transition-all !delay-500 !px-3 !text-[14px]"
+                              >
+                                MAX
+                              </Button>
+
+                              <p className="text-[#565656] cursor-default uppercase text-[14px] font-[500] block">
+                                {withdrawToken.symbol}
+                              </p>
+                            </InputAdornment>
+                          ),
+                        }}
+                        sx={{
+                          "& .Mui-focused.MuiInputLabel-root": {
+                            color: "#f57059",
+                          },
+                          "& .MuiInputLabel-root": {
+                            fontWeight: "600",
+                            color: "#121212",
+                          },
+                          "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
+                            {
+                              borderColor: `#f57059 !important`,
+                            },
+                          "& .MuiFormHelperText-root": {
+                            padding: "6px 3px",
+                            backgroundColor: "#fff",
+                            color: "#565656",
+                            marginTop: "0px",
+                          },
+                          width: "100%",
+                        }}
+                        placeholder="0.00"
+                        value={amount["crypto"]}
+                        onChange={(
+                          e: React.ChangeEvent<
+                            HTMLInputElement | HTMLTextAreaElement
+                          >
+                        ) => {
+                          const crypto = String(e.target.value).replace(
+                            /[^\d.]/g,
+                            ""
+                          );
+
+                          setAmount({
+                            fiat: (cryptoRate && Number(crypto)) ? (
+                              Number(crypto) / Number(cryptoRate)
+                            ).toFixed(2) : '',
+                            crypto,
+                          });
+                        }}
+                      />
+
+                      <TextField
+                        fullWidth
+                        id="outlined-basic"
+                        variant="standard"
+                        className="mt-4"
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment
+                              className="cursor-pointer"
+                              position="end"
+                            >
+                              <p className="text-[#565656] uppercase text-[14px] font-[500] block">
+                                USD
+                              </p>
+                            </InputAdornment>
+                          ),
+                        }}
+                        sx={{
+                          "& .Mui-focused.MuiInputLabel-root": {
+                            color: "#f57059",
+                          },
+                          "& .MuiInputLabel-root": {
+                            fontWeight: "600",
+                            color: "#121212",
+                          },
+                          "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
+                            {
+                              borderColor: `#f57059 !important`,
+                            },
+                          "& .MuiFormHelperText-root": {
+                            padding: "6px 3px",
+                            backgroundColor: "#fff",
+                            color: "#565656",
+                            marginTop: "2px",
+                          },
+                          width: "100%",
+                        }}
+                        placeholder="0.00"
+                        helperText={
+                          Boolean(balToken)
+                            ? ` Available Balance: ${balToken} ${withdrawToken.symbol.toUpperCase()}`
+                            : ""
+                        }
+                        value={amount["fiat"]}
+                        onChange={(
+                          e: React.ChangeEvent<
+                            HTMLInputElement | HTMLTextAreaElement
+                          >
+                        ) => {
+                          const fiat = String(e.target.value).replace(
+                            /[^\d.]/g,
+                            ""
+                          );
+
+                          setAmount({
+                            crypto:
+                              (cryptoRate && Number(fiat))
+                                ? String(Number(fiat) * Number(cryptoRate))
+                                : "",
+                            fiat,
+                          });
+                        }}
+                      />
+                    </div>
+                  </form>
+                </TabPanel>
+
+                <TabPanel index={1} value={cryptoWithdrawStage}>
+                  <form
+                    action="#"
+                    encType="multipart/form-data"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
+
+                    <div className="py-3">
+                    <div className="flex text-[#565656] items-center justify-between">
+                      <label className="text-[#565656] mb-2 font-[600]">
+                        Enter Settlement Pin
+                      </label>
+
+                      <IconButton
+                        onClick={() =>
+                          setPinVisibility({
+                            ...pinsVisibility,
+                            newpin: !pinsVisibility["newpin"],
+                          })
+                        }
+                        size={"medium"}
+                      >
+                        {pinsVisibility["newpin"] ? (
+                          <MdOutlineVisibility size={23} />
+                        ) : (
+                          <MdOutlineVisibilityOff size={23} />
+                        )}
+                      </IconButton>
+                    </div>
+                    <div className="flex justify-center item-center ">
+                      <PinField
+                        type={!pinsVisibility["newpin"] ? "text" : "password"}
+                        length={5}
+                        onComplete={(e) => setPin({ ...pins, newpin: e })}
+                        className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                        validate={/^[0-9]$/}
+                      />
+                    </div>
+                  </div>
+
+                  <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
+                    <b>Please Note: </b> A very small amount would be deducted from your withdrawal amount to cover gas fees.
+                  </span>
+
+                  </form>
+                </TabPanel>
+              </div>
+
+              <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+                <div className="flex items-center">
+                  {Boolean(cryptoWithdrawStage) && !withdrawLoading && (
+                    <Button
+                      onClick={() => setCryptoStage(0)}
+                      className="!w-fit !items-center !flex !rounded-md text-[#5f4f4f] font-[400] !px-0 !capitalize !border-none"
+                    >
+                      Back
+                    </Button>
+                  )}
+
+                  <Button
+                    onClick={withdrawCrypto}
+                    className="!py-2 !font-bold !px-3 !capitalize min-w-[120px] !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                  >
+                    {withdrawLoading && (
+                      <CircularProgress
+                        className="mr-2"
+                        color={"inherit"}
+                        size={20}
+                      />
+                    )}
+
+                    {withdrawLoading
+                      ? "processing..."
+                      : cryptoWithdrawStage
+                      ? "Withdraw"
+                      : "Next"}
+                  </Button>
+                </div>
+              </div>
+            </Box>
+          </Modal>
+        )}
+
+        <Modal
+          open={soon}
+          sx={{
+            "&& .MuiBackdrop-root": {
+              backdropFilter: "blur(5px)",
+              width: "calc(100% - 8px)",
+            },
+          }}
+          onClose={() => setSoon(false)}
+          className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+          aria-labelledby="Change settlement pin, to approve transactions"
+          aria-describedby="Change Pin"
+        >
+          <Box
+            className="sm:w-full h-fit 3mdd:px-[2px]"
+            sx={{
+              minWidth: 300,
+              width: "70%",
+              maxWidth: 800,
+              borderRadius: 6,
+              outline: "none",
+              p: 4,
+              position: "relative",
+              margin: "auto",
+            }}
+          >
+            <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+              <div className="mb-2 flex items-start justify-between">
+                <div>
+                  <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                    Coming Soon
+                  </h2>
+                  <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
+                    This feature is coming soon
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <Image
+                  src={soonImg}
+                  width={200}
+                  height={200}
+                  alt="coming soon"
+                />
+              </div>
+              <span className="text-[#7c7c7c] mt-3 block font-[500] text-[16px]">
+                We are working hard to ensure that this feature is released as
+                soon as possible. You would receive a mail upon release.
+                While you wait, you could check out our other cool features
+              </span>
+            </div>
+
+            <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+              <div className="flex items-center">
+                <Button
+                  onClick={() => setSoon(false)}
+                  className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                >
+                  Thank you
+                </Button>
+              </div>
+            </div>
+          </Box>
+        </Modal>
+
+        {settlePin && (
+          <>
+            <Modal
+              open={settlePin}
+              sx={{
+                "&& .MuiBackdrop-root": {
+                  backdropFilter: "blur(5px)",
+                  width: "calc(100% - 8px)",
+                },
+              }}
+              onClose={() => setSettlePin(true)}
+              className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+              aria-labelledby="Change settlement pin, to approve transactions"
+              aria-describedby="Change Pin"
+            >
+              <Box
+                className="sm:w-full h-fit 3mdd:px-[2px]"
+                sx={{
+                  minWidth: 300,
+                  width: "70%",
+                  maxWidth: 800,
+                  borderRadius: 6,
+                  outline: "none",
+                  p: 4,
+                  position: "relative",
+                  margin: "auto",
+                }}
+              >
+                <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
+                  <div className="mb-2 flex items-start justify-between">
+                    <div>
+                      <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                        Create Settlement Pin
+                      </h2>
+                      <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
+                        Create pin to be able to approve settlement transactions
+                      </span>
+                    </div>
+                  </div>
+
+                  {Boolean(genSetError) && (
+                    <div className="bg-[#ff8f33] text-white rounded-md w-[95%] font-bold mt-2 pinerror mx-auto p-3">
+                      {genSetError}
+                    </div>
+                  )}
+
+                  <div className="py-3">
+                    <div className="flex text-[#565656] items-center justify-between">
+                      <label className="text-[#565656] mb-2 font-[600]">
+                        New Pin
+                      </label>
+
+                      <IconButton
+                        onClick={() =>
+                          setPinVisibility({
+                            ...pinsVisibility,
+                            newpin: !pinsVisibility["newpin"],
+                          })
+                        }
+                        size={"medium"}
+                      >
+                        {pinsVisibility["newpin"] ? (
+                          <MdOutlineVisibility size={23} />
+                        ) : (
+                          <MdOutlineVisibilityOff size={23} />
+                        )}
+                      </IconButton>
+                    </div>
+                    <div className="flex justify-center item-center ">
+                      <PinField
+                        type={!pinsVisibility["newpin"] ? "text" : "password"}
+                        length={5}
+                        onComplete={(e) => setPin({ ...pins, newpin: e })}
+                        className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                        validate={/^[0-9]$/}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="py-3">
+                    <div className="flex text-[#565656] items-center justify-between">
+                      <label className="text-[#565656] mb-2 font-[600]">
+                        Re Enter New Pin
+                      </label>
+
+                      <IconButton
+                        onClick={() =>
+                          setPinVisibility({
+                            ...pinsVisibility,
+                            renewpin: !pinsVisibility["renewpin"],
+                          })
+                        }
+                        size={"medium"}
+                      >
+                        {pinsVisibility["renewpin"] ? (
+                          <MdOutlineVisibility size={23} />
+                        ) : (
+                          <MdOutlineVisibilityOff size={23} />
+                        )}
+                      </IconButton>
+                    </div>
+                    <div className="flex justify-center item-center ">
+                      <PinField
+                        type={!pinsVisibility["renewpin"] ? "text" : "password"}
+                        length={5}
+                        onComplete={(e) => setPin({ ...pins, renewpin: e })}
+                        className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                        validate={/^[0-9]$/}
+                      />
+                    </div>
+                  </div>
+
+                  <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
+                    <b>Please Note: </b> Forgetting your pin or your pin getting
+                    into the wrong hands, could lead to loss of funds, please
+                    keep it safe.
+                  </span>
+                </div>
+
+                <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
+                  <div className="flex items-center">
+                    <Button
+                      onClick={savePin}
+                      className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                    >
+                      {pinLoading ? (
+                        <>
+                          <div className="mr-3 h-[20px] text-[#fff]">
+                            <CircularProgress
+                              color={"inherit"}
+                              className="!w-[20px] !h-[20px]"
+                            />
+                          </div>{" "}
+                          <span>Just a Sec...</span>
+                        </>
+                      ) : (
+                        <>Create Pin</>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </Box>
+            </Modal>
+          </>
+        )}
+
+        {blurTrx ? (
+          <Skeleton
+            className="mb-3 w-[200px] h-[70px]"
+            sx={{ fontSize: "25px" }}
+          />
+        ) : (
+          <h2 className="font-bold text-[25px] mt-[14px] mb-3">Settlements</h2>
+        )}
+
+        <div className="flex items-start relative z-10 3mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3 mt-2 mb-1">
+          <div className="min-w-[100px]">
+            {blur ? (
+              <Skeleton
+                className="mb-2"
+                sx={{ fontSize: "1.04rem", width: "80px" }}
+              />
+            ) : (
+              <Tooltip
+                placement="bottom"
+                arrow
+                title={
+                  "Cash Available for withdrawal. This balance is subject to change, based on change in token price data from Coingecko"
+                }
+              >
+                <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
+                  Account Balance <MdInfo size={16} className="ml-1" />
+                </span>
+              </Tooltip>
+            )}
+
+            <div className="flex mb-1 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
+              {blur ? (
+                <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
+              ) : (
+                <>
+                  <NumberFormat
+                    value={
+                      String(
+                        dashData["balance"].reduce((a: any, b: any) => a + b, 0)
+                      ).split(".")[0]
+                    }
+                    style={{
+                      fontSize: "2.3rem",
+                      color: "#121212",
+                    }}
+                    thousandSeparator={true}
+                    displayType={"text"}
+                    prefix={"$"}
+                  />
+                  <span className="leading-[2.7rem] text-[20px] text-[#898989]">
+                    .
+                    {
+                      dashData["balance"]
+                        .reduce((a: any, b: any) => a + b, 0)
+                        .toFixed(2)
+                        .split(".")[1]
+                    }
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="min-w-[100px]">
+            {blurPending ? (
+              <Skeleton
+                className="mb-2"
+                sx={{ fontSize: "1.04rem", width: "80px" }}
+              />
+            ) : (
+              <Tooltip
+                placement="bottom"
+                arrow
+                title={
+                  "Pending amount which  would be added to account balance within 24hrs. This Balance is subject to change, based on change in token price data from coingecko"
+                }
+              >
+                <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
+                  Pending Amount <MdInfo size={16} className="ml-1" />
+                </span>
+              </Tooltip>
+            )}
+
+            <div className="flex relative z-10 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
+              {blurPending ? (
+                <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
+              ) : (
+                <>
+                  <NumberFormat
+                    value={String(dashData["pending"]).split(".")[0]}
+                    style={{
+                      fontSize: "2.3rem",
+                      color: "#121212",
+                    }}
+                    thousandSeparator={true}
+                    displayType={"text"}
+                    prefix={"$"}
+                  />
+                  <span className="leading-[2.7rem] text-[20px] text-[#898989]">
+                    .{dashData["pending"].toFixed(2).split(".")[1]}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex cusscroller overflow-x-scroll overflow-y-hidden items-center mb-3 w-full pb-1">
+          {blur ? (
+            <Skeleton
+              className="py-2 px-3 w-[120px] h-[60px] rounded-lg mr-1"
+              sx={{ fontSize: "14px" }}
+            />
+          ) : (
+            <Button
+              onClick={() => {
+                setCryptoW(true);
+
+                getBalance(withdrawToken, data.settlement[0].address);
+              }}
+              className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+            >
+              <FaCoins size={16} className="mr-1" /> Withdraw Crypto
+            </Button>
+          )}
+
+          {blur ? (
+            <Skeleton
+              className="py-2 px-3 w-[120px] h-[60px] rounded-lg mr-1"
+              sx={{ fontSize: "14px" }}
+            />
+          ) : (
+            <Button
+              onClick={() => setSoon(true)}
+              className="!py-2 !px-3 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !min-w-fit !transition-all !delay-500 !rounded-lg !text-[14px] mx-[2px]"
+            >
+              <MdPayment size={16} className="mr-1" /> Withdraw Fiat
+            </Button>
+          )}
+
+          {blur ? (
+            <Skeleton
+              className="py-2 px-3 w-[120px] h-[60px] rounded-lg mr-1"
+              sx={{ fontSize: "14px" }}
+            />
+          ) : (
+            <Button
+              onClick={() => setSoon(true)}
+              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] mx-[2px]"
+            >
+              <RiCoinFill size={16} className="mr-1" /> Swap USDT
+            </Button>
+          )}
+
+          {blur ? (
+            <Skeleton
+              className="py-2 px-3 w-[120px] h-[60px] rounded-lg mr-1"
+              sx={{ fontSize: "14px" }}
+            />
+          ) : (
+            <Button
+              onClick={() => setSoon(true)}
+              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] mx-[2px]"
+            >
+              <MdSubscriptions size={16} className="mr-1" /> Auto Withdrawals
+            </Button>
+          )}
+        </div>
+
+        {(Boolean(dashData["breakdown"].length) || blur) && (
+          <div className="py-3">
+            {blur ? (
+              <Skeleton
+                className="mb-2"
+                sx={{ fontSize: "1.04rem", width: "80px" }}
+              />
+            ) : (
+              <span className="block uppercase mb-1 text-[#818181] font-bold text-[.64rem]">
+                Cryptos
+              </span>
+            )}
+
+            <div className="flex items-end cusscroller overflow-x-scroll overflow-y-hidden pb-1">
+              {blur
+                ? ["x", "x", "x"].map((v: any, i: number) => {
+                    return (
+                      <Skeleton
+                        key={i}
+                        variant={"rounded"}
+                        className="w-[350px] h-[74px] text-[#6a6a6ab0] py-4 px-[15px] mr-2 rounded-[8px]"
+                      />
+                    );
+                  })
+                : dashData["breakdown"].map((val: balVal, key: number) => {
+                    return (
+                      <div key={key} className="flex flex-col items-start">
+                        {!Boolean(key) && (
+                          <Tooltip
+                            placement="top"
+                            open={copied[0]}
+                            arrow
+                            title={"Copied"}
+                          >
+                            <div
+                              onClick={() => {
+                                const acct = data.settlement[0];
+
+                                copy(acct.address);
+
+                                switchCopy(true, 0);
+
+                                setTimeout(() => switchCopy(false, 0), 2000);
+                              }}
+                              className="cursor-pointer justify-between flex text-[#979797] items-center mb-2 w-[160px]"
+                            >
+                              <div className="flex items-center">
+                                <FaEthereum size={14} />
+                                <span className="ml-1 text-[14px]">{`${data.settlement[0].address.substring(
+                                  0,
+                                  6
+                                )}...${data.settlement[0].address.substring(
+                                  38,
+                                  42
+                                )}`}</span>
+                              </div>
+
+                              <BiCopy size={16} />
+                            </div>
+                          </Tooltip>
+                        )}
+
+                        <div className="border-solid flex items-center w-[350px] justify-between text-[#6a6a6ab0] p-4 mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border">
+                          <div className="flex items-center">
+                            <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
+                              <CustomImg
+                                alt={val["token"]}
+                                name={val["token"]}
+                                symbol={val["symbol"] as string}
+                              />
+                            </div>
+                            <div className="ml-3 relative top-[2px]">
+                              <p className="font-[600] capitalize truncate leading-[14px] text-[14px]">
+                                {val["token"] + (val.test ? " (Testnet)" : "")}
+                              </p>
+                              <span className="font-[400] uppercase text-[11px]">
+                                {val["symbol"]}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-end flex-col">
+                            <NumberFormat
+                              value={Number(val["amount"].toFixed(6))}
+                              className="truncate text-[#414141b0] mb-[1px] block text-[1.5rem] leading-[24px]"
+                              thousandSeparator={true}
+                              displayType={"text"}
+                            />
+
+                            <NumberFormat
+                              value={val["amtFiat"].toFixed(2)}
+                              className="truncate text-[#6a6a6ab0] leading-[15px] block text-[0.9rem]"
+                              thousandSeparator={true}
+                              displayType={"text"}
+                              prefix={"$"}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+            </div>
+          </div>
+        )}
+
+        <div className="py-2">
+          {blurTrx ? (
+            <Skeleton
+              className="mb-2"
+              sx={{ fontSize: "1.04rem", width: "80px" }}
+            />
+          ) : (
+            <span className="block uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
+              Past Settlements
+            </span>
+          )}
+
+          {blurTrx ? (
+            <Skeleton
+              variant={"rounded"}
+              className="max-w-[650px] h-[400px]  text-[#6a6a6ab0] py-3 mr-2 rounded-lg w-full"
+            />
+          ) : Boolean(dashData["settlements"].data) &&
+            Boolean(dashData["settlements"].data.length) ? (
+            <>
+              <div className="max-w-[650px] border border-solid border-[rgb(218,220,224)] rounded-lg py-3 flex flex-col w-full">
+                {dashData["settlements"].data.map((val: any, key: number) =>
+                  trx(val, key)
+                )}
+
+                {Boolean(altPageData.length) &&
+                  altPageData.map((val: any, key: number) => trx(val, key))}
+              </div>
+
+              {pageCheck.current_page !== undefined &&
+                pageCheck.current_page != pageCheck.last_page && (
+                  <div className="flex items-center justify-center">
+                    <Button
+                      onClick={async () => {
+                        if (pageLoading) return false;
+
+                        setPageLoad(true);
+
+                        const ndata = await get_request(
+                          "/settlements/transactions",
+                          {
+                            params: {
+                              page: pageCheck.current_page + 1,
+                            },
+                          },
+                          undefined,
+                          false
+                        );
+
+                        const { data, current_page, last_page } = ndata?.data;
+
+                        setAltPageData([...altPageData, ...data]);
+
+                        setPageCheck({ current_page, last_page });
+
+                        setPageLoad(false);
+
+                      }}
+                      className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                    >
+                      {pageLoading ? (
+                        <>
+                          <div className="mr-3 h-[20px] text-[#fff]">
+                            <CircularProgress
+                              color={"inherit"}
+                              className="!w-[20px] !h-[20px]"
+                            />
+                          </div>{" "}
+                          <span>Loading...</span>
+                        </>
+                      ) : (
+                        <>Load More</>
+                      )}
+                    </Button>
+                  </div>
+                )}
+            </>
+          ) : (
+            <div
+              className="empty border border-solid border-[rgb(218,220,224)] rounded-lg py-3"
+              style={{
+                display: "flex",
+                width: "100%",
+                maxWidth: "650px",
+                height: "fit-content",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div className="w-[240px]">
+                <Image
+                  src={empty}
+                  className="mb-3 object-scale-down"
+                  layout={"intrinsic"}
+                  alt="Quite empty here"
+                />
+              </div>
+
+              <div className="mt-2 mb-3">
+                <h2 className="text-[20px] text-[#3e3e3e] capitalize text-center font-[400]">
+                  No Settlement Made Yet
+                </h2>
+                <span className="mt-2 text-[17px] text-[#949494] block w-full text-center">
+                  This place would be filled anytime soon😊
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </Page>
+  );
+};
+
+export default Settlements;
