@@ -767,6 +767,8 @@ const Carbon = ({ className }: { className?: string }) => {
                               width: "100%",
                               color: "#fff",
                               borderRadius: "5px",
+                              display: 'flex',
+                              alignItems: 'center',
                               textTransform: "none",
                               cursor: "pointer",
                               "&:hover": {

@@ -143,6 +143,7 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
           router.push("/verify/email");
 
           setGenLoader(false);
+          
         } else {
           setGenLoader(false);
         }

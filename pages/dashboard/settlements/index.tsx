@@ -572,9 +572,11 @@ const Settlements = () => {
 
       "user".get("*", true).then(async (e: any) => {
 
+        
+
         setData(e);
 
-        setSettlePin(!Boolean(e.settlement.length));
+        setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
 
         const userAddresses = JSON.parse(e.accounts || "[]");
 

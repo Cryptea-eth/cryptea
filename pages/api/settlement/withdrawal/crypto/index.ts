@@ -37,7 +37,6 @@ export default function handler(
         });
      }
 
-     console.log('here--')
 
         axios.get("https://ab.cryptea.me/user", {
           headers: {
@@ -45,7 +44,6 @@ export default function handler(
           },
         }).then(async ({ data: user }) => {
 
-          console.log("here--s");
 
         try{
 
@@ -61,7 +59,6 @@ export default function handler(
                 
             }
             
-            console.log('here1')
 
             const sendAmount = ethers.utils.parseEther(String(amountCrypto));
 
@@ -97,7 +94,7 @@ export default function handler(
 
             const trx = await walletConnect.sendTransaction(tx);
 
-            console.log("here2");
+            
 
             const StoredData = {
               type: "crypto",
@@ -115,7 +112,6 @@ export default function handler(
                     Authorization: authorization as string
                 }
             });
-            console.log("here3");
 
             res.status(201).json({
                 error: false,
@@ -126,7 +122,6 @@ export default function handler(
 
         const error = err as any;
 
-        console.log("here13");
 
         if (error.response !== undefined) {
 
