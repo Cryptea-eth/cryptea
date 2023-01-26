@@ -132,6 +132,7 @@ export const PaymentProvider = ({
   const [pemail, setPemail] = useState<string[]>([]);
 
   const [loadingText, setLoadingText] = useState<any>("");
+  const [method, setMethod] = useState<'manual' | 'auto'>('auto');
   const [transferSuccess, setTransferSuccess] = useState<boolean>(false);
   const [transferFail, setTransferFail] = useState<boolean>(false);
   const [failMessage, setFailMessage] = useState<string>("");
@@ -302,6 +303,7 @@ export const PaymentProvider = ({
     type: "sub" | "onetime" = "onetime"
   ) => {
     setAuth(false);
+    setMethod('auto')
     setLoadingText("Initializing payment");
     try {
       if (Number(price)) {
@@ -932,7 +934,7 @@ export const PaymentProvider = ({
 
   const beginManual = async (amount: number, type: "onetime" | "sub") => {
     setLoadingText("Just a sec...");
-
+    setMethod("manual");
     axios
       .get("/api/payments/accounts", {
         params: {
@@ -1043,6 +1045,7 @@ export const PaymentProvider = ({
         loadingText,
         setLoadingText,
         transferSuccess,
+        method,
         setTransferSuccess,
         transferFail,
         setTransferFail,

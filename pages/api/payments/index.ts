@@ -112,8 +112,7 @@ export default function handler(
               }
             )
             .then(async ({ data }) => {
-              console.log(data);
-
+              
               if (Boolean(data.private)) {
 
                 try {

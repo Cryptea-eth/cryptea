@@ -170,6 +170,7 @@ export interface PaymentContext {
   initMain?: (price: number, type?: "sub" | "onetime") => Promise<void>;
   amount?: string | number;
   setAmount?: React.Dispatch<React.SetStateAction<string | number>>;
+  method?: 'manual' | 'auto';
   subCheck?: boolean;
   setSubCheck?: React.Dispatch<React.SetStateAction<boolean>>;
   eSubscription?: string[];
