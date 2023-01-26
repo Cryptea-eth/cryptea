@@ -563,7 +563,7 @@ const Settings = () => {
                 }}
                 className="text-[1.2rem] capitalize text-center text-[rgb(95,99,104)] leading-[1.25rem] tooltiprep block"
               >
-                change everything about this link
+                Change everything about this link
               </p>
 
               {success && (
