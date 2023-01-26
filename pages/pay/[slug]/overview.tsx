@@ -472,7 +472,7 @@ const Overview = () => {
                         </div>
 
                         <div className="w-full relative z-[10] items-center flex text-[rgb(95,99,104)] h-[100px]">
-                          To Integrate This link through our API, Click Below
+                          To Integrate this link with our API, Click Below
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/api`}>

@@ -354,7 +354,8 @@ const Links = () => {
                   </div>
 
                   <span className="text-[#7c7c7c] mt-3 block font-[600] text-[18px] text-center ">
-                    You would not be able to recover this link again, although you can always create a new link but then all link data of deleted link would be lost, Are you sure you want to delete this link?
+                    You would not be able to recover this link again, although you can always create a new link, without your already deleted data.
+                    Are you sure you want to delete this link?
                   </span>
                 </div>
 

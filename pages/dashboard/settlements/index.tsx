@@ -855,7 +855,7 @@ const Settlements = () => {
                               placement="bottom"
                               arrow
                               title={
-                                "Previous Addresses used for Crypto withdrawals"
+                                "Previous Addresses used for Crypto Withdrawals"
                               }
                             >
                               <div className="flex pt-1 mb-2 items-center w-fit cursor-pointer px-1">
@@ -1174,7 +1174,7 @@ const Settlements = () => {
                   </div>
 
                   <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
-                    <b>Please Note: </b> A very small amount would be taken from your withdrawal to cover gas fees.
+                    <b>Please Note: </b> A very small amount would be deducted from your withdrawal amount to cover gas fees.
                   </span>
 
                   </form>
@@ -1262,9 +1262,9 @@ const Settlements = () => {
                 />
               </div>
               <span className="text-[#7c7c7c] mt-3 block font-[500] text-[16px]">
-                We are working hard to ensure that this feature is released and
-                soon as possible, you would receive a mail when it is released,
-                while you wait you could checkout our other cool features
+                We are working hard to ensure that this feature is released as
+                soon as possible. You would receive a mail upon release.
+                While you wait, you could check out our other cool features
               </span>
             </div>
 
@@ -1448,7 +1448,7 @@ const Settlements = () => {
                 placement="bottom"
                 arrow
                 title={
-                  "Cash Available for withdrawal, Balance subject to change, based on price data from coingecko"
+                  "Cash Available for withdrawal. This balance is subject to change, based on change in token price data from Coingecko"
                 }
               >
                 <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
@@ -1501,7 +1501,7 @@ const Settlements = () => {
                 placement="bottom"
                 arrow
                 title={
-                  "Amount that are pending and would be added to account balance in a bit, Amount subject to change, based on price data from coingecko"
+                  "Pending amount which  would be added to account balance within 24hrs. This Balance is subject to change, based on change in token price data from coingecko"
                 }
               >
                 <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
@@ -1563,7 +1563,7 @@ const Settlements = () => {
               onClick={() => setSoon(true)}
               className="!py-2 !px-3 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !min-w-fit !transition-all !delay-500 !rounded-lg !text-[14px] mx-[2px]"
             >
-              <MdPayment size={16} className="mr-1" /> Withdraw
+              <MdPayment size={16} className="mr-1" /> Withdraw Fiat
             </Button>
           )}
 
