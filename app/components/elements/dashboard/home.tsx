@@ -194,6 +194,8 @@ const DashHome = () => {
         }[];
       } = {};
 
+      const fees: { [index: string]: number } = {};
+
       setPayments(payments);
 
       payments.forEach((value: any) => {
@@ -206,6 +208,12 @@ const DashHome = () => {
           amount: value.amount,
           token: value.token || "matic",
         });
+
+        if (value.meta !== null) {
+          const metadata = JSON.parse(value.meta);
+
+          fees[metadata["chainId"]] = Number(metadata["discount"]);
+        }
 
       });
 
@@ -254,6 +262,22 @@ const DashHome = () => {
 
       const tsort = links.sort((a: any, b: any) => b.totalViews - a.totalViews);
 
+      setDashBal(CryptoList.map((token, i) => {
+
+          const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");   
+
+          const valCache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
+
+          const amount = cache[token.value] || 0;
+
+          const total = amount - (fees[token.value] || 0);
+
+          const price = valCache[token.value] || 0;
+
+          return total * price;
+
+      }));
+
       setDashData({
         payments,
         views,
@@ -292,6 +316,7 @@ const DashHome = () => {
     const initBal = async () => {
 
       if (data.settlement[0] !== undefined) {
+
         let finalBalance: { [index: string]: number } = {};
 
         const fees: { [index: string]: number } = {};
@@ -310,14 +335,21 @@ const DashHome = () => {
             try {
               const provider = new ethers.providers.JsonRpcProvider(token.rpc);
 
+              const amount = Number(
+                ethers.utils.formatEther(
+                  await provider.getBalance(account.address)
+                )
+              ); 
+
+              const cache = JSON.parse(localStorage.getItem('cryptos') || "{}");
+
+              cache[token.value] = amount;
+
               balance[token.value] = {
-                amount: Number(
-                  ethers.utils.formatEther(
-                    await provider.getBalance(account.address)
-                  )
-                ),
+                amount,
                 name: token.name.split(" ")[0],
               };
+
             } catch (err) {
               console.log(err);
 
@@ -358,7 +390,14 @@ const DashHome = () => {
 
           const price = res?.data.price;
 
+          const valCache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
+
+          valCache[index] = price;
+
+          localStorage.setItem("tokenVal", JSON.stringify(valCache));
+
           finalBalance[index] = total * price;
+
         }
 
         setDashBal(Object.values(finalBalance));
@@ -675,7 +714,7 @@ const DashHome = () => {
             </div>
 
             <div className="min-w-[100px]">
-              {blurBal ? (
+              {blur ? (
                 <Skeleton
                   className="mb-2"
                   sx={{ fontSize: "1.04rem", width: "80px" }}
@@ -695,14 +734,14 @@ const DashHome = () => {
               )}
 
               <div className="flex relative z-10 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
-                {blurBal ? (
+                {blur ? (
                   <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
                 ) : (
                   <>
                     <NumberFormat
                       value={
                         String(
-                          (dashBal || []).reduce((a: any, b: any) => a + b, 0)
+                          (dashBal || [0]).reduce((a: any, b: any) => a + b, 0)
                         ).split(".")[0]
                       }
                       style={{
@@ -716,7 +755,7 @@ const DashHome = () => {
                     <span className="leading-[2.38rem] text-[20px] text-[#898989]">
                       .
                       {
-                        (dashBal || [])
+                        (dashBal || [0])
                           .reduce((a: any, b: any) => a + b, 0)
                           .toFixed(2)
                           .split(".")[1]

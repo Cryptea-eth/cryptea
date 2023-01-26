@@ -196,7 +196,7 @@ const ShareLink = ({
                 </div>
               </PinterestShareButton>
 
-              <div
+              {navigator.share !== undefined && <div
                 onClick={() => {
                   const shareData = {
                     title: Boolean(data.title) ? data.title : "",
@@ -213,7 +213,7 @@ const ShareLink = ({
                 </div>
 
                 <span className="font-semibold text-[#777]">More</span>
-              </div>
+              </div>}
             </div>
 
 

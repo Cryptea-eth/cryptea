@@ -48,9 +48,7 @@ import { months } from "../../../app/components/elements/dashboard/linkOverview/
 import TabPanel from "../../../app/components/elements/dashboard/link/TabPanel";
 import { token } from "../../../app/contexts/Cryptea/types";
 
-
 const Settlements = () => {
-
   const router = useRouter();
 
   const [blur, setBlur] = useState<boolean>(true);
@@ -60,6 +58,7 @@ const Settlements = () => {
   const [dashData, setDashData] = useState<any>({
     payments: [],
     fees: {},
+    finalBalance: {},
     pending: 0,
     settlement_acct: [],
     breakDownObj: [],
@@ -70,19 +69,21 @@ const Settlements = () => {
 
   const [withdrawToken, setWithdrawToken] = useState<any>();
 
-  const [addressTo, setAddressTo] = useState<string>('');
+  const [addressTo, setAddressTo] = useState<string>("");
 
   const [cryptoRate, setCryptoRate] = useState<string | number>(0);
 
   const [amount, setAmount] = useState<{
-    fiat: string,
-    crypto: string
+    fiat: string;
+    crypto: string;
   }>({
-    fiat: '',
-    crypto: ''
+    fiat: "",
+    crypto: "",
   });
 
   const once = useRef<boolean>(true);
+
+  const onceBal = useRef<boolean>(false);
 
   const [pins, setPin] = useState<{ [index: string]: string }>({
     newpin: "",
@@ -143,7 +144,6 @@ const Settlements = () => {
 
   const [cryptoWithdrawStage, setCryptoStage] = useState<number>(0);
 
-
   const [refresh, setRefresh] = useState<boolean>(false);
 
   const [withdrawLoading, setWithdrawLoading] = useState<boolean>(false);
@@ -160,54 +160,43 @@ const Settlements = () => {
     mainCopy(copx);
   };
 
-  
   const withdrawCrypto = async () => {
-
     if (withdrawLoading) {
       return;
     }
 
-    setWithdrawError('')
+    setWithdrawError("");
 
     setWithdrawLoading(true);
 
     if (!cryptoWithdrawStage) {
+      if (!addressTo.length || !ethers.utils.isAddress(addressTo)) {
+        document.querySelector(".witherror")?.scrollIntoView();
 
-     if (
-       !addressTo.length ||
-       !ethers.utils.isAddress(addressTo)
-     ) {
+        setWithdrawError("A valid ethereum address is required");
 
-       document.querySelector('.witherror')?.scrollIntoView();
+        setWithdrawLoading(false);
 
-       setWithdrawError("A valid ethereum address is required");
+        return;
+      }
 
-       setWithdrawLoading(false);       
-
-       return;
-     }
-
-     if (!Boolean(amount['fiat']) && !Boolean(amount['crypto'])) {
-
+      if (!Boolean(amount["fiat"]) && !Boolean(amount["crypto"])) {
         document.querySelector(".witherror")?.scrollIntoView();
 
         setWithdrawError("Amount is required");
 
         setWithdrawLoading(false);
 
-        return;  
+        return;
+      }
 
-     }
+      setWithdrawError("");
 
-     setWithdrawError("");
+      setWithdrawLoading(false);
 
-     setWithdrawLoading(false);
-
-     setCryptoStage(1);
-
+      setCryptoStage(1);
     } else {
-      try{
-
+      try {
         const data = {
           addressTo,
           amountCrypto: amount["crypto"],
@@ -219,57 +208,54 @@ const Settlements = () => {
           pin: pins["newpin"],
         };
 
-        const token = localStorage.getItem('userToken');
+        const token = localStorage.getItem("userToken");
 
-        await axios.post('/api/settlement/withdrawal/crypto', data, {
-            baseURL: window.origin,
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
+        await axios.post("/api/settlement/withdrawal/crypto", data, {
+          baseURL: window.origin,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        setGenSetError('');
+        setGenSetError("");
 
         setCryptoW(false);
+
+        onceBal.current = false;
 
         setRefresh(!refresh);
 
         setCryptoStage(0);
 
-        setWithdrawLoading(false);  
+        setWithdrawLoading(false);
+      } catch (err) {
+        const error =
+          (err as any).response !== undefined
+            ? (err as any).response.data
+            : (err as any);
 
-      }catch (err) {
+        console.log(error);
 
-        const error = (err as any).response !== undefined ? (err as any).response.data : err as any;
-
-         console.log(error);
-
-         if (error.message == "timeout of 30000ms exceeded") {
-            setWithdrawError('Something went wrong, please try again');
-         } else {
-            setWithdrawError(error.message);
+        if (error.message == "timeout of 30000ms exceeded") {
+          setWithdrawError("Something went wrong, please try again");
+        } else {
+          setWithdrawError(error.message);
         }
 
         document.querySelector(".witherror")?.scrollIntoView();
-       
+
         setWithdrawLoading(false);
 
         if (error.errorType !== undefined) {
-
-          const x = ['address', 'amount'];
+          const x = ["address", "amount"];
 
           if (x.includes(error.errorType)) {
-            setCryptoStage(0);  
+            setCryptoStage(0);
           }
-
         }
-
       }
-        
     }
   };
-
-
 
   const trx = (val: any, key: number) => {
     const date = new Date(val.created_at);
@@ -425,45 +411,33 @@ const Settlements = () => {
 
       const settlement_acct: string[] = [];
 
-
       if (allTrx.length) {
-
         allTrx.forEach((v: any) => {
+          const data = JSON.parse(v.data);
 
-            const data = JSON.parse(v.data)
+          if (v.type == "crypto" || v.type == "swap") {
+            const add = data.receiver;
 
-            if (v.type == 'crypto' || v.type == 'swap') {
-
-                const add = data.receiver;
-
-                if (!settlement_acct.includes(add)) {
-                    settlement_acct.push(add);
-                }
-
+            if (!settlement_acct.includes(add)) {
+              settlement_acct.push(add);
             }
-
+          }
         });
-
       }
 
       const userAddresses = JSON.parse(user.accounts || "[]");
 
-      if(Boolean(userAddresses[0])){
-
-      if (!settlement_acct.includes(userAddresses[0])) {
-
-        settlement_acct.push(userAddresses[0]);
+      if (Boolean(userAddresses[0])) {
+        if (!settlement_acct.includes(userAddresses[0])) {
+          settlement_acct.push(userAddresses[0]);
+        }
       }
-
-    }
-
 
       payments.forEach((value: any) => {
         if (value.meta !== null) {
           const metadata = JSON.parse(value.meta);
 
           fees[metadata["chainId"]] = Number(metadata["discount"]);
-
         }
       });
 
@@ -488,7 +462,6 @@ const Settlements = () => {
         });
       }
 
-
       const { data: settlements } = (await get_request(
         `/settlements/transactions`,
         {},
@@ -502,21 +475,14 @@ const Settlements = () => {
         setPageCheck({ current_page, last_page });
       }
 
-
       for (let i = 0; i < Object.keys(balance).length; i++) {
         const index = Object.keys(balance)[i];
 
-        const total =
-          balance[index].amount - (fees[index] !== undefined ? fees[index] : 0);
+        const total = balance[index].amount - (fees[index] || 0);
 
-        const res = await get_request(
-          `/token/price/${balance[index].name.toLowerCase()}`,
-          {},
-          undefined,
-          false
-        );
+        const cache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
 
-        const price = res?.data.price;
+        const price = cache[balance[index].name.toLowerCase()] || 0;
 
         finalBalance[index] = total * price;
 
@@ -534,22 +500,20 @@ const Settlements = () => {
       );
 
       CryptoList.forEach((a) => {
-        
-        if(a.value == Number(maxAmt[0])){
-            setWithdrawToken(a);          
-
-        }  
-
+        if (a.value == Number(maxAmt[0])) {
+          setWithdrawToken(a);
+        }
       });
 
       setDashData({
         payments,
         fees: fees,
+        finalBalance,
         balance: Object.values(finalBalance),
         breakDownObj: breakdown,
         settlement_acct: settlement_acct.map((e: string) => ({
           label: e,
-          value: e
+          value: e,
         })),
         breakdown: Object.values(breakdown)
           .sort((a, b) => Number(a.test) - Number(b.test))
@@ -559,63 +523,35 @@ const Settlements = () => {
       });
 
       if (blur) setBlur(false);
+
+      setRefresh(!refresh);
     };
 
     if (once.current) {
-      once.current = true;
+      once.current = false;
 
       "user".get("*", true).then(async (e: any) => {
-
         setData(e);
 
         setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
 
         const userAddresses = JSON.parse(e.accounts || "[]");
 
-        if(Boolean(userAddresses[0])) setAddressTo(userAddresses[0]);
+        if (Boolean(userAddresses[0])) setAddressTo(userAddresses[0]);
 
         if (e.settlement[0] !== undefined) {
 
-          const account = e.settlement[0];
-
           for (let i = 0; i < CryptoList.length; i++) {
-
             const token = CryptoList[i];
 
-            if (token.type == "native") {
-              try {
-                const provider = new ethers.providers.JsonRpcProvider(
-                  token.rpc
-                );
-          
+            const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
 
-                
-
-                balance[token.value] = {
-                  amount: Number(
-                    ethers.utils.formatEther(
-                      await provider.getBalance(account.address)
-                    )
-                  ),
-                  name: token.name.split(" ")[0],
-                  test: token.testnet,
-                  symbol: token.symbol,
-                };
-
-              } catch (err) {
-
-                console.log(err, token.value, token.rpc);
-
-                balance[token.value] = {
-                  amount: 0,
-                  name: token.name.split(" ")[0],
-                  test: token.testnet,
-                  symbol: token.symbol,
-                };
-              }
-            } else if (token.type == "non-native") {
-              // do stuff here
-            }
+            balance[token.value] = {
+              amount: cache[token.value] !== undefined ? cache[token.value] : 0,
+              name: token.name.split(" ")[0],
+              test: token.testnet,
+              symbol: token.symbol,
+            };
           }
 
           setBalance({ ...balance });
@@ -624,16 +560,126 @@ const Settlements = () => {
         }
       });
     }
+
+    if (!blur && !onceBal.current) {
+      onceBal.current = true;
+
+      const account = data.settlement ? data.settlement[0] : { address: "" };
+
+      const initBalances = async () => {
+
+        const finalBal = dashData["finalBalance"];
+
+        for (let i = 0; i < CryptoList.length; i++) {
+          const token = CryptoList[i];
+
+          if (token.type == "native") {
+
+            const bdown = dashData["breakDownObj"];
+
+            try {
+              const provider = new ethers.providers.JsonRpcProvider(token.rpc);
+
+              const amount = Number(
+                ethers.utils.formatEther(
+                  await provider.getBalance(account.address)
+                )
+              );
+
+              const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
+
+              cache[token.value] = amount;
+
+              localStorage.setItem("cryptos", JSON.stringify(cache));
+
+              const name = token.name.split(" ")[0];
+
+              const { testnet: test, symbol, value } = token;
+
+              const total =
+                amount -
+                (dashData["fees"][value] !== undefined
+                  ? dashData["fees"][value]
+                  : 0);
+
+              const res = await get_request(
+                `/token/price/${name}`,
+                {},
+                undefined,
+                false
+              );
+
+              const valCache = JSON.parse(
+                localStorage.getItem("tokenVal") || "{}"
+              );
+
+              const price = res?.data.price;
+
+              valCache[name] = price;
+
+              localStorage.setItem("tokenVal", JSON.stringify(valCache));
+
+              finalBal[value] = total * price;
+
+              bdown[value] = {
+                amount: total,
+                amtFiat: total * price,
+                token: name,
+                test,
+                symbol,
+              };
+            } catch (err) {
+              const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
+
+              const valCache = JSON.parse(
+                localStorage.getItem("tokenVal") || "{}"
+              );
+
+              bdown[token.value] = {
+                amount:
+                  cache[token.value] !== undefined ? cache[token.value] : 0,
+                amtFiat:
+                  cache[token.value] !== undefined
+                    ? cache[token.value] *
+                      (valCache[token.value] !== undefined
+                        ? valCache[token.value]
+                        : 0)
+                    : 0,
+                token: token.name.split(" ")[0],
+                test: token.testnet,
+                symbol: token.symbol,
+              };
+            }
+
+            setDashData({
+              ...dashData,
+              breakDownObj: bdown,
+              breakdown: Object.values(bdown)
+                .sort((a: any, b: any) => Number(a.test) - Number(b.test))
+                .sort((a: any, b: any) => b.amount - a.amount),
+            });
+          } else if (token.type == "non-native") {
+            // do stuff here
+          }
+        }
+
+        
+        setDashData({
+          ...dashData,
+          balance: finalBal ? Object.values(finalBal) : dashData["balance"],
+        });
+
+      };
+
+      initBalances();
+    }
   }, [refresh]);
 
   const getBalance = async (e: token, address: string) => {
-
     setBalToken(0);
 
     if (e.type == "native") {
-
       try {
-
         const provider = new ethers.providers.JsonRpcProvider(e.rpc);
 
         const res = await get_request(
@@ -645,24 +691,23 @@ const Settlements = () => {
 
         setCryptoRate(res?.data.price);
 
-
-         setBalToken(
-          Number(ethers.utils.formatEther(await provider.getBalance(address)))
+        setBalToken(
+          Number(ethers.utils.formatEther(await provider.getBalance(address))) -
+            (dashData["fees"][e.value] !== undefined
+              ? dashData["fees"][e.value]
+              : 0)
         );
-
       } catch (err) {
         console.log(err);
 
         setCryptoRate(0);
 
-         setBalToken(0);
+        setBalToken(0);
       }
     } else if (e.type == "non-native") {
       // do stuff here
-    
     }
-
-  }
+  };
 
   return (
     <Page>
@@ -837,7 +882,6 @@ const Settlements = () => {
                             size={"large"}
                             onClick={() => {
                               setOpenPast(!openPast);
-
                             }}
                           >
                             <MdOutlinePermContactCalendar size={20} />
@@ -1004,9 +1048,11 @@ const Settlements = () => {
                                   const bal = Boolean(balToken) ? balToken : 0;
 
                                   setAmount({
-                                    fiat: cryptoRate ? (
-                                      Number(bal) / Number(cryptoRate)
-                                    ).toFixed(2) : '',
+                                    fiat: cryptoRate
+                                      ? (
+                                          Number(bal) / Number(cryptoRate)
+                                        ).toFixed(2)
+                                      : "",
                                     crypto: String(bal),
                                   });
                                 }}
@@ -1054,9 +1100,12 @@ const Settlements = () => {
                           );
 
                           setAmount({
-                            fiat: (cryptoRate && Number(crypto)) ? (
-                              Number(crypto) / Number(cryptoRate)
-                            ).toFixed(2) : '',
+                            fiat:
+                              cryptoRate && Number(crypto)
+                                ? (Number(crypto) / Number(cryptoRate)).toFixed(
+                                    2
+                                  )
+                                : "",
                             crypto,
                           });
                         }}
@@ -1118,7 +1167,7 @@ const Settlements = () => {
 
                           setAmount({
                             crypto:
-                              (cryptoRate && Number(fiat))
+                              cryptoRate && Number(fiat)
                                 ? String(Number(fiat) * Number(cryptoRate))
                                 : "",
                             fiat,
@@ -1137,44 +1186,43 @@ const Settlements = () => {
                       e.preventDefault();
                     }}
                   >
-
                     <div className="py-3">
-                    <div className="flex text-[#565656] items-center justify-between">
-                      <label className="text-[#565656] mb-2 font-[600]">
-                        Enter Settlement Pin
-                      </label>
+                      <div className="flex text-[#565656] items-center justify-between">
+                        <label className="text-[#565656] mb-2 font-[600]">
+                          Enter Settlement Pin
+                        </label>
 
-                      <IconButton
-                        onClick={() =>
-                          setPinVisibility({
-                            ...pinsVisibility,
-                            newpin: !pinsVisibility["newpin"],
-                          })
-                        }
-                        size={"medium"}
-                      >
-                        {pinsVisibility["newpin"] ? (
-                          <MdOutlineVisibility size={23} />
-                        ) : (
-                          <MdOutlineVisibilityOff size={23} />
-                        )}
-                      </IconButton>
+                        <IconButton
+                          onClick={() =>
+                            setPinVisibility({
+                              ...pinsVisibility,
+                              newpin: !pinsVisibility["newpin"],
+                            })
+                          }
+                          size={"medium"}
+                        >
+                          {pinsVisibility["newpin"] ? (
+                            <MdOutlineVisibility size={23} />
+                          ) : (
+                            <MdOutlineVisibilityOff size={23} />
+                          )}
+                        </IconButton>
+                      </div>
+                      <div className="flex justify-center item-center ">
+                        <PinField
+                          type={!pinsVisibility["newpin"] ? "text" : "password"}
+                          length={5}
+                          onComplete={(e) => setPin({ ...pins, newpin: e })}
+                          className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                          validate={/^[0-9]$/}
+                        />
+                      </div>
                     </div>
-                    <div className="flex justify-center item-center ">
-                      <PinField
-                        type={!pinsVisibility["newpin"] ? "text" : "password"}
-                        length={5}
-                        onComplete={(e) => setPin({ ...pins, newpin: e })}
-                        className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
-                        validate={/^[0-9]$/}
-                      />
-                    </div>
-                  </div>
 
-                  <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
-                    <b>Please Note: </b> A very small amount would be deducted from your withdrawal amount to cover gas fees.
-                  </span>
-
+                    <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
+                      <b>Please Note: </b> A very small amount would be deducted
+                      from your withdrawal amount to cover gas fees.
+                    </span>
                   </form>
                 </TabPanel>
               </div>
@@ -1261,8 +1309,8 @@ const Settlements = () => {
               </div>
               <span className="text-[#7c7c7c] mt-3 block font-[500] text-[16px]">
                 We are working hard to ensure that this feature is released as
-                soon as possible. You would receive a mail upon release.
-                While you wait, you could check out our other cool features
+                soon as possible. You would receive a mail upon release. While
+                you wait, you could check out our other cool features
               </span>
             </div>
 
@@ -1755,7 +1803,6 @@ const Settlements = () => {
                         setPageCheck({ current_page, last_page });
 
                         setPageLoad(false);
-
                       }}
                       className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                     >
