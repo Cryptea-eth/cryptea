@@ -55,10 +55,6 @@ const Settlements = () => {
 
   const [blur, setBlur] = useState<boolean>(true);
 
-  const [blurPending, setBlurPending] = useState<boolean>(true);
-
-  const [blurTrx, setBlurTrx] = useState<boolean>(true);
-
   const [addresses, setAddresses] = useState<any>({});
 
   const [dashData, setDashData] = useState<any>({
@@ -492,7 +488,6 @@ const Settlements = () => {
         });
       }
 
-      setBlurPending(false);
 
       const { data: settlements } = (await get_request(
         `/settlements/transactions`,
@@ -507,7 +502,6 @@ const Settlements = () => {
         setPageCheck({ current_page, last_page });
       }
 
-      setBlurTrx(false);
 
       for (let i = 0; i < Object.keys(balance).length; i++) {
         const index = Object.keys(balance)[i];
@@ -572,8 +566,6 @@ const Settlements = () => {
 
       "user".get("*", true).then(async (e: any) => {
 
-        
-
         setData(e);
 
         setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
@@ -587,6 +579,7 @@ const Settlements = () => {
           const account = e.settlement[0];
 
           for (let i = 0; i < CryptoList.length; i++) {
+
             const token = CryptoList[i];
 
             if (token.type == "native") {
@@ -594,6 +587,9 @@ const Settlements = () => {
                 const provider = new ethers.providers.JsonRpcProvider(
                   token.rpc
                 );
+          
+
+                
 
                 balance[token.value] = {
                   amount: Number(
@@ -605,8 +601,10 @@ const Settlements = () => {
                   test: token.testnet,
                   symbol: token.symbol,
                 };
+
               } catch (err) {
-                console.log(err);
+
+                console.log(err, token.value, token.rpc);
 
                 balance[token.value] = {
                   amount: 0,
@@ -1427,7 +1425,7 @@ const Settlements = () => {
           </>
         )}
 
-        {blurTrx ? (
+        {blur ? (
           <Skeleton
             className="mb-3 w-[200px] h-[70px]"
             sx={{ fontSize: "25px" }}
@@ -1491,7 +1489,7 @@ const Settlements = () => {
           </div>
 
           <div className="min-w-[100px]">
-            {blurPending ? (
+            {blur ? (
               <Skeleton
                 className="mb-2"
                 sx={{ fontSize: "1.04rem", width: "80px" }}
@@ -1511,7 +1509,7 @@ const Settlements = () => {
             )}
 
             <div className="flex relative z-10 cusscroller overflow-x-scroll overflow-y-hidden items-end w-full">
-              {blurPending ? (
+              {blur ? (
                 <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
               ) : (
                 <>
@@ -1702,7 +1700,7 @@ const Settlements = () => {
         )}
 
         <div className="py-2">
-          {blurTrx ? (
+          {blur ? (
             <Skeleton
               className="mb-2"
               sx={{ fontSize: "1.04rem", width: "80px" }}
@@ -1713,7 +1711,7 @@ const Settlements = () => {
             </span>
           )}
 
-          {blurTrx ? (
+          {blur ? (
             <Skeleton
               variant={"rounded"}
               className="max-w-[650px] h-[400px]  text-[#6a6a6ab0] py-3 mr-2 rounded-lg w-full"

@@ -794,10 +794,11 @@ export const PaymentProvider = ({
     type: "onetime" | "sub";
     wallet: string;
   }) => {
+
     if (timeCounted <= 720 && timeCounted > 0) {
 
-      console.log('checking again...')
-
+      console.log('here again...')
+    
       const base = {
         initial: 0,
         rpc: token.rpc,
@@ -902,7 +903,7 @@ export const PaymentProvider = ({
 
           setTimeout(reset, 12000);
         } else {
-
+        
           timerTimeout.current = setTimeout(
             () =>
               checkWallet({
