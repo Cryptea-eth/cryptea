@@ -13,9 +13,12 @@ export default function handler(
 ) {
   
     if (req.method == "POST") {
-      const { body } = req;
+
+      const { body, headers } = req;
 
       const pin = body.newpin;
+
+      const { authorization } = headers;
 
       if (pin.length != 5) {
         res.status(400).json({
@@ -41,7 +44,7 @@ export default function handler(
               },
               {
                 headers: {
-                  Authorization: `Bearer ${body.token}`,
+                  Authorization: authorization as string,
                 },
               }
             )
@@ -54,7 +57,7 @@ export default function handler(
             .catch((err) => {
               res.status(400).json({
                 error: true,
-                message: err.response.data.message,
+                message: err.response.data.message || 'Something went wrong, please try again',
               });
             });
         })

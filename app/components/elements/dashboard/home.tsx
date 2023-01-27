@@ -1,21 +1,20 @@
-import { Avatar, Box, Button, CircularProgress, FormControlLabel, FormGroup, IconButton, Modal, Skeleton, Switch, SwitchProps, ToggleButton, ToggleButtonGroup, Tooltip, styled } from "@mui/material";
+import { Avatar, Box, Button, CircularProgress, FormControlLabel, IconButton, Modal, Skeleton, Tooltip } from "@mui/material";
 import Link from "next/link";
 import NumberFormat from "react-number-format";
 import LineChart from "../Extras/Rep/lineChart";
 import sortData from "./linkOverview/generateData";
-import Image from "next/image";
 import Direction from "./direction";
 import * as ethers from 'ethers';
 import { get_request } from "../../../contexts/Cryptea/requests";
 import { useEffect, useRef, useState } from "react";
 import { cryptoDeets } from "../../../functions/crypto";
 import axios, { AxiosError } from "axios";
+import { useRouter } from 'next/router';
 import CustomImg from "../customImg";
 import CrypSwitch from "../CrypSwitch";
 import {
-  MdOutlineRefresh,
   MdInfo,
-  MdClose,
+  MdOutlineRefresh,
   MdOutlineVisibility,
   MdOutlineVisibilityOff,
 } from "react-icons/md";
@@ -23,6 +22,8 @@ import { PinField } from "react-pin-field";
 import { CryptoList } from "../../../contexts/Cryptea/connectors/chains";
 
 const DashHome = () => {
+
+  const router = useRouter();
 
   const [dashBal, setDashBal] = useState<any[]>([]);
 
@@ -136,23 +137,23 @@ const DashHome = () => {
           newpin: pins["newpin"],
         };
 
-        await axios.post(
-          `/api/settlement/new`,
-          {
-            ...newData,
-            token: localStorage.getItem("userToken"),
+        await axios.post(`/api/settlement/new`, newData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-          {
-            baseURL: window.origin,
-          }
-        );
+          baseURL: window.origin,
+        });
 
         setPinLoading(false);
 
         closeSettleModal();
 
         window.scroll(0, 0);
+
+        router.reload();
+
       } catch (err) {
+
         const erro = err as AxiosError;
 
         if (erro.response) {
@@ -174,6 +175,7 @@ const DashHome = () => {
   useEffect(() => {
     setRand(Math.floor(Math.random() * 4));
 
+    let address: string;    
    
     const init = async () => {
 
@@ -262,9 +264,13 @@ const DashHome = () => {
 
       const tsort = links.sort((a: any, b: any) => b.totalViews - a.totalViews);
 
-      setDashBal(CryptoList.map((token, i) => {
 
-          const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");   
+
+      setDashBal(
+        CryptoList.map((token, i) => {
+          const cachebox = JSON.parse(localStorage.getItem("cryptos") || "{}");
+
+          const cache: any = cachebox[address] || {};
 
           const valCache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
 
@@ -275,8 +281,9 @@ const DashHome = () => {
           const price = valCache[token.value] || 0;
 
           return total * price;
+        })
+      );
 
-      }));
 
       setDashData({
         payments,
@@ -300,7 +307,15 @@ const DashHome = () => {
         setData(e);
 
         setChecked(e.live == 'Yes');
-        setSettlePin(!Boolean(e.settlement.length));
+
+        setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
+
+
+        if (!Boolean(e.settlement ? e.settlement.length : 0)) {
+          return;
+        }
+
+        address = e.settlement[0].address;
 
         await init();
 
@@ -332,6 +347,7 @@ const DashHome = () => {
           const token = CryptoList[i];
 
           if (token.type == "native") {
+
             try {
               const provider = new ethers.providers.JsonRpcProvider(token.rpc);
 
@@ -341,9 +357,15 @@ const DashHome = () => {
                 )
               ); 
 
-              const cache = JSON.parse(localStorage.getItem('cryptos') || "{}");
+              const cachebox = JSON.parse(localStorage.getItem('cryptos') || "{}");
+
+              if(cachebox[account.address] === undefined) cachebox[account.address] = {};
+
+              const cache: any = cachebox[account.address];
 
               cache[token.value] = amount;
+
+              localStorage.setItem('cryptos', JSON.stringify(cachebox));
 
               balance[token.value] = {
                 amount,
@@ -373,6 +395,7 @@ const DashHome = () => {
           }
         }
 
+
         for (let i = 0; i < Object.keys(balance).length; i++) {
 
           const index = Object.keys(balance)[i];
@@ -392,7 +415,7 @@ const DashHome = () => {
 
           const valCache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
 
-          valCache[index] = price;
+          valCache[balance[index].name.toLowerCase()] = price;
 
           localStorage.setItem("tokenVal", JSON.stringify(valCache));
 
@@ -401,6 +424,7 @@ const DashHome = () => {
         }
 
         setDashBal(Object.values(finalBalance));
+        
 
         if (blurBal) removeBlurBal(false);
 
@@ -630,7 +654,7 @@ const DashHome = () => {
             </div>
           </div>
 
-          <div className="flex items-start relative z-10 3mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
+          <div className="flex items-start relative z-0 3mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
             <div className="min-w-[100px]">
               {blur ? (
                 <Skeleton
@@ -724,7 +748,7 @@ const DashHome = () => {
                   placement="bottom"
                   arrow
                   title={
-                    "Balance subject to change, based on price data from coingecko"
+                    "Balance subject to change, based on loaded data and price data from coingecko"
                   }
                 >
                   <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
