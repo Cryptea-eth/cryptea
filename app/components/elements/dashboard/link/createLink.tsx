@@ -604,8 +604,8 @@ const NewLink = () => {
       {loadpage && <Loader />}
 
       {!loadpage && (
-        <div className="w-screen min-w-[340px] linkadd 2md:pl-0 sm:px-2 flex justify-center items-center bg-pattern2 h-full min-h-screen">
-          <div className="w-full flex 2md:px-0 px-10 justify-center flex-col h-full backdrop-blur-[35px]">
+        <div className="w-[80%] m-auto min-w-[340px] linkadd 2md:pl-0 sm:px-2 flex justify-center max-w-[800px] items-center h-full min-h-screen">
+          <div className="w-full flex 2md:px-0 px-10 justify-center flex-col h-full">
             <LogoSpace
               className={"2mmd:mx-auto"}
               style={{
@@ -805,13 +805,7 @@ const NewLink = () => {
                   </TabPanel>
 
                   <TabPanel value={value} index={1}>
-                    <form
-                      encType="multipart/form-data"
-                      action="#"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        saveLink();
-                      }}
+                    <div
                       className="mt-3 w-full overflow-hidden"
                     >
                       <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
@@ -824,8 +818,7 @@ const NewLink = () => {
                         </div>
                       </div>
 
-
-                      <div className="w-full sm:px-2 p-10">
+                      <div className="w-full sm:px-2 px-10 py-5">
                         <div className="flex items-center ssm:flex-wrap">
                           <TextField
                             sx={text}
@@ -833,7 +826,7 @@ const NewLink = () => {
                             value={data["amount"]}
                             label="Amount (USD)"
                             variant="standard"
-                            helperText={error["amount"] || 'Can be left blank'}
+                            helperText={error["amount"] || "Can be left blank"}
                             error={Boolean(error["amount"])}
                             onChange={(
                               e: React.ChangeEvent<
@@ -849,8 +842,7 @@ const NewLink = () => {
                                 amount: val.replace(/[^\d.]/g, ""),
                               });
 
-                              setMinMax(false)
-
+                              setMinMax(false);
                             }}
                             name="amount"
                             type="text"
@@ -859,7 +851,7 @@ const NewLink = () => {
                         </div>
                       </div>
 
-                      <div className="sm:px-2 p-10">
+                      <div className="sm:px-2 px-10 py-5">
                         <div
                           onClick={() => {
                             setMinMax(!minMax);
@@ -871,12 +863,11 @@ const NewLink = () => {
 
                             ux.amountType = "range";
 
-                            if(!minMax == false){
-                                ux.amountType = 'variable'
+                            if (!minMax == false) {
+                              ux.amountType = "variable";
                             }
 
-                            udata(ux);  
-
+                            udata(ux);
                           }}
                           className="justify-between w-full flex items-center"
                         >
@@ -925,7 +916,7 @@ const NewLink = () => {
                                   amount: "",
                                 };
 
-                                ux.amountType = 'range';
+                                ux.amountType = "range";
 
                                 if (!minMax == false) {
                                   ux.amountType = "variable";
@@ -938,7 +929,6 @@ const NewLink = () => {
                                     data["range"][1],
                                   ],
                                 });
-
                               }}
                               name="max"
                               type="text"
@@ -970,7 +960,7 @@ const NewLink = () => {
                                   amount: "",
                                 };
 
-                                ux.amountType = 'range';
+                                ux.amountType = "range";
 
                                 if (!minMax == false) {
                                   ux.amountType = "variable";
@@ -983,7 +973,6 @@ const NewLink = () => {
                                     val.replace(/[^\d.]/g, ""),
                                   ],
                                 });
-
                               }}
                               name="max"
                               type="text"
@@ -993,7 +982,7 @@ const NewLink = () => {
                         )}
                       </div>
 
-                      {!Boolean(data['amount']) && (
+                      {!Boolean(data["amount"]) && (
                         <div className="w-full s:px-2 px-10 py-5">
                           <div className="flex items-center ssm:flex-wrap">
                             <div className="w-full">
@@ -1027,6 +1016,7 @@ const NewLink = () => {
                                             size={17}
                                             onClick={() => {
                                               const newD = data.multi;
+
                                               delete newD[i];
 
                                               udata({
@@ -1060,6 +1050,7 @@ const NewLink = () => {
                                   setAmountOpt(sval);
                                 }}
                                 onKeyUp={(e: any) => {
+                                  
                                   const val = e.target.value;
                                   const sval = val.replace(/[^\d.]/g, "");
                                   setAmountOpt(sval);
@@ -1087,8 +1078,7 @@ const NewLink = () => {
                           </div>
                         </div>
                       )}
-
-                    </form>
+                    </div>
                   </TabPanel>
 
                   <TabPanel value={value} index={2}>
