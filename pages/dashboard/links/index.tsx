@@ -861,11 +861,11 @@ const Links = () => {
                         </div>
 
                         <div className="flex items-center mb-[10px] justify-between">
-                          <div className="flex items-center">
-                            <div className="text-white w-[40px] h-[40px] rounded-md mr-[.75rem] flex items-center justify-center bg-[#F57059]">
+                          <div className="flex items-center w-[calc(100%-44px)]">
+                            <div className="text-white w-[40px] h-[40px] min-w-[40px] min-h-[40px] rounded-md mr-[.75rem] flex items-center justify-center bg-[#F57059]">
                               <MdLink size={21} />
                             </div>
-                            <div>
+                            <div className="truncate">
                               <h3 className="truncate text-[17px] leading-[20px] font-[500] text-[#121212]">
                                 {link}
                               </h3>
