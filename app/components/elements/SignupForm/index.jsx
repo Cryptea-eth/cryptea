@@ -244,8 +244,8 @@ useEffect(() => {
           setMLoader(false);
         }else if (Boolean(e.email)) {
          
-          // Router.push('/dashboard');
-          setMLoader(false);
+          Router.push('/dashboard');
+          
         }else{
           setMLoader(false);
         }

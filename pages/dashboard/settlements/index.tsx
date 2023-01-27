@@ -47,6 +47,7 @@ import Loader from "../../../app/components/elements/loader";
 import { months } from "../../../app/components/elements/dashboard/linkOverview/generateData";
 import TabPanel from "../../../app/components/elements/dashboard/link/TabPanel";
 import { token } from "../../../app/contexts/Cryptea/types";
+import { ValueContainer } from "react-select/dist/declarations/src/components/containers";
 
 const Settlements = () => {
   const router = useRouter();
@@ -433,7 +434,7 @@ const Settlements = () => {
         if (value.meta !== null) {
           const metadata = JSON.parse(value.meta);
 
-          fees[metadata["chainId"]] = Number(metadata["discount"]);
+          fees[metadata["chain"]] = Number(metadata["discount"]);
         }
       });
 
@@ -471,6 +472,7 @@ const Settlements = () => {
         setPageCheck({ current_page, last_page });
       }
 
+
       for (let i = 0; i < Object.keys(balance).length; i++) {
         const index = Object.keys(balance)[i];
 
@@ -479,10 +481,10 @@ const Settlements = () => {
         const cache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
 
         const price = cache[balance[index].name.toLowerCase()] || 0;
+       
 
         finalBalance[index] = total * price;
 
-        console.log('updated...')
 
         breakdown[index] = {
           amount: total,
@@ -491,6 +493,7 @@ const Settlements = () => {
           test: balance[index].test,
           symbol: balance[index].symbol,
         };
+
       }
 
       const maxAmt = Object.keys(breakdown).sort(
@@ -502,6 +505,7 @@ const Settlements = () => {
           setWithdrawToken(a);
         }
       });
+
 
       setDashData({
         payments,
@@ -520,18 +524,25 @@ const Settlements = () => {
         pending: totalPending + (totalPending ? (totalPending * 1) / 100 : 0),
       });
 
+
       if (blur) setBlur(false);
 
       setRefresh(!refresh);
+
     };
 
     if (once.current) {
+
       once.current = false;
 
       "user".get("*", true).then(async (e: any) => {
         setData(e);
 
         setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
+
+        if (!Boolean(e.settlement ? e.settlement.length : 0)) {
+          return;
+        }
 
         const userAddresses = JSON.parse(e.accounts || "[]");
 
@@ -542,10 +553,12 @@ const Settlements = () => {
           for (let i = 0; i < CryptoList.length; i++) {
             const token = CryptoList[i];
 
-            const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
+            const cachebox = JSON.parse(localStorage.getItem("cryptos") || "{}");
+
+            const cache: any = cachebox[e.settlement[0]['address']] || {};
 
             balance[token.value] = {
-              amount: cache[token.value] !== undefined ? cache[token.value] : 0,
+              amount: cache[token.value] || 0,
               name: token.name.split(" ")[0],
               test: token.testnet,
               symbol: token.symbol,
@@ -560,22 +573,24 @@ const Settlements = () => {
     }
 
     if (!blur && !onceBal.current) {
-      onceBal.current = true;
 
+      onceBal.current = true;
+      
       const account = data.settlement ? data.settlement[0] : { address: "" };
 
       const initBalances = async () => {
 
         const finalBal = dashData["finalBalance"];
 
+        const bdown = dashData["breakDownObj"];
+        
+
         for (let i = 0; i < CryptoList.length; i++) {
           const token = CryptoList[i];
 
-          console.log('updated...')
 
           if (token.type == "native") {
-
-            const bdown = dashData["breakDownObj"];
+           
 
             try {
 
@@ -589,7 +604,7 @@ const Settlements = () => {
 
               const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
 
-              cache[token.value] = amount;
+              cache[account['address']][token.value] = amount;
 
               localStorage.setItem("cryptos", JSON.stringify(cache));
 
@@ -616,10 +631,11 @@ const Settlements = () => {
 
               const price = res?.data.price;
 
-              valCache[name] = price;
+              valCache[(name).toLowerCase()] = price;
 
               localStorage.setItem("tokenVal", JSON.stringify(valCache));
 
+              
               finalBal[value] = total * price;
 
               bdown[value] = {
@@ -630,12 +646,17 @@ const Settlements = () => {
                 symbol,
               };
             } catch (err) {
-              const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
+              const cachebox = JSON.parse(
+                localStorage.getItem("cryptos") || "{}"
+              );
+
+              const cache: any = cachebox[account.address] || {};
 
               const valCache = JSON.parse(
                 localStorage.getItem("tokenVal") || "{}"
               );
 
+            
               bdown[token.value] = {
                 amount:
                   cache[token.value] !== undefined ? cache[token.value] : 0,
@@ -652,23 +673,28 @@ const Settlements = () => {
               };
             }
 
-            setDashData({
+            const saveData = {
               ...dashData,
               breakDownObj: bdown,
               breakdown: Object.values(bdown)
                 .sort((a: any, b: any) => Number(a.test) - Number(b.test))
                 .sort((a: any, b: any) => b.amount - a.amount),
-            });
+            };
+
+            if (CryptoList.length == i + 1) {
+              saveData["balance"] = finalBal
+                ? Object.values(finalBal)
+                : dashData["balance"];
+            }
+
+            setDashData(saveData);
+
+
           } else if (token.type == "non-native") {
             // do stuff here
           }
         }
 
-
-        setDashData({
-          ...dashData,
-          balance: finalBal ? Object.values(finalBal) : dashData["balance"],
-        });
 
       };
 
@@ -1495,7 +1521,7 @@ const Settlements = () => {
                 placement="bottom"
                 arrow
                 title={
-                  "Cash Available for withdrawal. This balance is subject to change, based on change in token price data from Coingecko"
+                  "Cash Available for withdrawal. This balance is subject to change, based on loaded data and change in token price data from Coingecko"
                 }
               >
                 <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
@@ -1548,7 +1574,7 @@ const Settlements = () => {
                 placement="bottom"
                 arrow
                 title={
-                  "Pending amount which  would be added to account balance within 24hrs. This Balance is subject to change, based on change in token price data from coingecko"
+                  "Pending amount which  would be added to account balance within 24hrs. This Balance is subject to change, based on loaded data and change in token price data from coingecko"
                 }
               >
                 <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
