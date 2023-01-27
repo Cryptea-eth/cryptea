@@ -357,16 +357,12 @@ const Settlements = () => {
           newpin: pins["newpin"],
         };
 
-        await axios.post(
-          `/api/settlement/new`,
-          {
-            ...newData,
-            token: localStorage.getItem("userToken"),
+        await axios.post(`/api/settlement/new`, newData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-          {
-            baseURL: window.origin,
-          }
-        );
+          baseURL: window.origin,
+        });
 
         setPinLoading(false);
 
@@ -486,6 +482,8 @@ const Settlements = () => {
 
         finalBalance[index] = total * price;
 
+        console.log('updated...')
+
         breakdown[index] = {
           amount: total,
           amtFiat: total * price,
@@ -573,11 +571,14 @@ const Settlements = () => {
         for (let i = 0; i < CryptoList.length; i++) {
           const token = CryptoList[i];
 
+          console.log('updated...')
+
           if (token.type == "native") {
 
             const bdown = dashData["breakDownObj"];
 
             try {
+
               const provider = new ethers.providers.JsonRpcProvider(token.rpc);
 
               const amount = Number(
@@ -663,7 +664,7 @@ const Settlements = () => {
           }
         }
 
-        
+
         setDashData({
           ...dashData,
           balance: finalBal ? Object.values(finalBal) : dashData["balance"],

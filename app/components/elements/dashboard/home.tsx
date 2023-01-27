@@ -136,16 +136,12 @@ const DashHome = () => {
           newpin: pins["newpin"],
         };
 
-        await axios.post(
-          `/api/settlement/new`,
-          {
-            ...newData,
-            token: localStorage.getItem("userToken"),
+        await axios.post(`/api/settlement/new`, newData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-          {
-            baseURL: window.origin,
-          }
-        );
+          baseURL: window.origin,
+        });
 
         setPinLoading(false);
 
@@ -630,7 +626,7 @@ const DashHome = () => {
             </div>
           </div>
 
-          <div className="flex items-start relative z-10 3mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
+          <div className="flex items-start relative z-0 3mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
             <div className="min-w-[100px]">
               {blur ? (
                 <Skeleton
