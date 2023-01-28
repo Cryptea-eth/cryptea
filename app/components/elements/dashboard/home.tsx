@@ -478,7 +478,7 @@ const DashHome = () => {
             aria-describedby="Change Pin"
           >
             <Box
-              className="sm:w-full h-fit 3mdd:px-[2px]"
+              className="sm:w-full h-fit 2mdd:px-[2px]"
               sx={{
                 minWidth: 300,
                 width: "70%",
@@ -610,8 +610,8 @@ const DashHome = () => {
 
       <div className="flex items-start justify-between">
         <div className="mainx relative w-[calc(100%-340px)] 2sm:w-full">
-          <div className="w-full flex items-end z-0 justify-end absolute">
-            <div className="mt-1">
+          <div className="w-full flex items-end z-[9] justify-end absolute">
+            <div className="mt-1 2sm:mt-0">
               {blur ? (
                 <div className="flex items-center">
                   <Skeleton
@@ -654,7 +654,7 @@ const DashHome = () => {
             </div>
           </div>
 
-          <div className="flex items-start relative z-0 3mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
+          <div className="flex items-start relative z-0 2mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
             <div className="min-w-[100px]">
               {blur ? (
                 <Skeleton

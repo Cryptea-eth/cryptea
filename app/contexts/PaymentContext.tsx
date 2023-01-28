@@ -46,6 +46,30 @@ import { BiMailSend, BiSync, BiX } from "react-icons/bi";
 
 export const PaymentContext = createContext<PaymentCont>({});
 
+const ModalHeader = ({
+  close,
+  amount,
+}: {
+  close: () => any;
+  amount: string | number;
+}) => (
+  <div className="mb-5 flex items-center relative justify-between">
+    <LogoSpace />
+
+    <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
+      ${amount} ( ${(Number(amount) * 1) / 100} fee )
+    </span>
+
+    <IconButton
+      size={"medium"}
+      className="-top-full -right-[30px] !absolute !bg-[#fff]"
+      onClick={close}
+    >
+      <MdClose size={20} color={"rgb(32,33,36)"} className="cursor-pointer" />
+    </IconButton>
+  </div>
+);
+
 export const PaymentProvider = ({
   children,
   editMode,
@@ -209,15 +233,22 @@ export const PaymentProvider = ({
     }
   };
 
+  const getPriceReq = (params: {
+      ids: string;
+      vs_currencies: string
+  }) => {
+      return axios.get("/simple/price", {
+        params,
+        baseURL: "https://api.coingecko.com/api/v3",
+        withCredentials: false,
+      });
+  }
+
   const matic = async (price: number) => {
-    const response = await axios.get("/simple/price", {
-      params: {
+    const response = await getPriceReq({
         ids: "matic-network",
         vs_currencies: "usd",
-      },
-      baseURL: "https://api.coingecko.com/api/v3",
-      withCredentials: false,
-    });
+      });
 
     const e = response.data as { [index: string]: any };
 
@@ -231,19 +262,17 @@ export const PaymentProvider = ({
     chain: string | number | undefined = 80001
   ) => {
     let final: number = 0;
+
     setLoadingText("Loading price data...");
 
     const prices: { [index: string]: () => Promise<number> } = {
       "80001": async () => await matic(price),
       "137": async () => await matic(price),
       "31415": async () => {
-        const response = await axios.get("/simple/price", {
-          params: {
+        const response = await getPriceReq({
             ids: "filecoin",
             vs_currencies: "usd",
-          },
-          baseURL: "https://api.coingecko.com/api/v3",
-        });
+          });
 
         const e = response.data as { [index: string]: any };
 
@@ -252,13 +281,10 @@ export const PaymentProvider = ({
         return price / priceCurrency;
       },
       "42261": async () => {
-        const response = await axios.get("/simple/price", {
-          params: {
+        const response = await getPriceReq({
             ids: "oasis-network",
             vs_currencies: "usd",
-          },
-          baseURL: "https://api.coingecko.com/api/v3",
-        });
+          });
 
         const e = response.data as { [index: string]: any };
 
@@ -268,13 +294,10 @@ export const PaymentProvider = ({
       },
 
       "1313161555": async () => {
-        const response = await axios.get("/simple/price", {
-          params: {
+        const response = await getPriceReq({
             ids: "auroratoken",
             vs_currencies: "usd",
-          },
-          baseURL: "https://api.coingecko.com/api/v3",
-        });
+          });
 
         const e = response.data as { [index: string]: any };
 
@@ -284,13 +307,10 @@ export const PaymentProvider = ({
       },
 
       "338": async () => {
-        const response = await axios.get("/simple/price", {
-          params: {
+        const response = await getPriceReq({
             ids: "crypto-com-chain",
             vs_currencies: "usd",
-          },
-          baseURL: "https://api.coingecko.com/api/v3",
-        });
+          });
 
         const e = response.data as { [index: string]: any };
 
@@ -299,13 +319,10 @@ export const PaymentProvider = ({
         return price / priceCurrency;
       },
       "420": async () => {
-        const response = await axios.get("/simple/price", {
-          params: {
+        const response = await getPriceReq({
             ids: "optimism",
             vs_currencies: "usd",
-          },
-          baseURL: "https://api.coingecko.com/api/v3",
-        });
+          });
 
         const e = response as { [index: string]: any };
 
@@ -366,6 +383,7 @@ export const PaymentProvider = ({
           renew: renewInfo,
         } = await initD(String(username).toLowerCase(), apiCode, renew);
 
+
         if (lQ["id"] !== undefined) {
           if (lQ.template_data !== undefined) {
             const { name, data: udata } = JSON.parse(lQ.template_data);
@@ -406,35 +424,43 @@ export const PaymentProvider = ({
 
           const cryptoData = JSON.parse(lQ.data || "[]");
 
+          let cOptions = [...options];          
+
           if (cryptoData.length) {
-            const sOptions = [...options].filter(
+
+             cOptions = cOptions.filter(
               (v: token) => cryptoData.indexOf(v.value) != -1
             );
 
-            setOptions(sOptions);
+            setOptions(cOptions);
 
-            if (sOptions[0] !== undefined) {
-              setToken(sOptions[0]);
+            if (cOptions[0] !== undefined) {
+              setToken(cOptions[0]);
             }
           }
 
           if (userl.live == "Yes") {
-            const sOptions = [...options].filter((v: token) => !v.testnet);
+             cOptions = [...cOptions].filter((v: token) => !v.testnet);
 
-            setOptions(sOptions);
-
-            if (sOptions[0] !== undefined) {
-              setToken(sOptions[0]);
+            if (cOptions.length) {
+              setOptions(cOptions);
+            } else {
+              if (userl.owner == undefined) router.push("/404");
             }
+
+            if (cOptions[0] !== undefined) {
+              setToken(cOptions[0]);
+            }
+
           } else {
-            const sOptions = [...options].sort(
+             cOptions = [...cOptions].sort(
               (v, x) => Number(x.testnet) - Number(v.testnet)
             );
 
-            setOptions(sOptions);
+            setOptions(cOptions);
 
-            if (sOptions[0] !== undefined) {
-              setToken(sOptions[0]);
+            if (cOptions[0] !== undefined) {
+              setToken(cOptions[0]);
             }
           }
 
@@ -1196,25 +1222,10 @@ export const PaymentProvider = ({
         <Box className="sm:w-full h-fit 3mdd:px-[2px]" sx={style}>
           <div className="py-4 px-6 bg-white -mb-[1px] rounded-[.9rem]">
             <TabPanel padding={0} value={manValue} index={0}>
-              <div className="mb-5 flex items-center relative justify-between">
-                <LogoSpace />
-
-                <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
-                  ${amount} ( ${(Number(amount) * 1) / 100} fee )
-                </span>
-
-                <IconButton
-                  size={"medium"}
-                  className="-top-full -right-[30px] !absolute !bg-[#fff]"
-                  onClick={() => closeModal()}
-                >
-                  <MdClose
-                    size={20}
-                    color={"rgb(32,33,36)"}
-                    className="cursor-pointer"
-                  />
-                </IconButton>
-              </div>
+              <ModalHeader
+                close={() => closeModal()}
+                amount={amount}
+              />
 
               <div className="py-3 mb-2">
                 <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
@@ -1343,25 +1354,11 @@ export const PaymentProvider = ({
             </TabPanel>
 
             <TabPanel padding={0} value={manValue} index={1}>
-              <div className="mb-5 flex items-center relative justify-between">
-                <LogoSpace />
 
-                <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
-                  ${amount} ( ${(Number(amount) * 1) / 100} fee )
-                </span>
-
-                <IconButton
-                  size={"medium"}
-                  className="-top-full -right-[30px] !absolute !bg-[#fff]"
-                  onClick={() => closeModal('No crypto received')}
-                >
-                  <MdClose
-                    size={20}
-                    color={"rgb(32,33,36)"}
-                    className="cursor-pointer"
-                  />
-                </IconButton>
-              </div>
+              <ModalHeader
+                close={() => closeModal("No crypto received")}
+                amount={amount}
+              />
 
               <h2 className="font-[500] text-[rgb(32,33,36)] text-center text-[1.55rem]">
                 No Crypto Received,
@@ -1410,25 +1407,14 @@ export const PaymentProvider = ({
             </TabPanel>
 
             <TabPanel padding={0} value={manValue} index={2}>
-              <div className="mb-5 flex items-center relative justify-between">
-                <LogoSpace />
-
-                <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
-                  ${amount} ( ${(Number(amount) * 1) / 100} fee )
-                </span>
-
-                <IconButton
-                  size={"medium"}
-                  className="-top-full -right-[30px] !absolute !bg-[#fff]"
-                  onClick={() => closeModal('Transaction possibly successful, please contact us')}
-                >
-                  <MdClose
-                    size={20}
-                    color={"rgb(32,33,36)"}
-                    className="cursor-pointer"
-                  />
-                </IconButton>
-              </div>
+              <ModalHeader
+                close={() =>
+                  closeModal(
+                    "Transaction possibly successful, please contact us"
+                  )
+                }
+                amount={amount}
+              />
 
               <h2 className="font-[500] text-[rgb(32,33,36)] text-center text-[1.55rem]">
                 Something went wrong with transaction
@@ -1444,7 +1430,8 @@ export const PaymentProvider = ({
                       click me to contact us immediately
                     </a>
                   </Link>
-                  , so that we can resolve the issue if there is one. We apologize for any inconvenience this might have caused.
+                  , so that we can resolve the issue if there is one. We
+                  apologize for any inconvenience this might have caused.
                 </span>
               </div>
 
