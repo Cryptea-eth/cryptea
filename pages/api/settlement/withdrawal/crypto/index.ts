@@ -6,6 +6,10 @@ import { tokenTrackers } from "../../../../../app/contexts/Cryptea/connectors/ch
 
 type Data = {
   message: string;
+  ref?: {
+    name: string;
+    link: string
+  };
   errorType?: string;
   error: boolean;
 };
@@ -105,7 +109,7 @@ export default function handler(
             data: JSON.stringify({
               token: token.name,
               receiver: addressTo,
-              explorer: `${tokenTrackers[token.value]}${trx.hash}`,
+              explorer: `${tokenTrackers[token.value].link}${trx.hash}`,
             }),
             desc: `${token.name} Crypto Withdrawal`,
           };
@@ -123,6 +127,10 @@ export default function handler(
           res.status(201).json({
             error: false,
             message: "Transaction Successful",
+            ref: {
+              link: `${tokenTrackers[token.value].link}${trx.hash}`,
+              name: tokenTrackers[token.value].name,
+            },
           });
         } catch (err) {
           const error = err as any;

@@ -70,6 +70,11 @@ const Settlements = () => {
 
   const [withdrawToken, setWithdrawToken] = useState<any>();
 
+  const [ref, setRef] = useState<any>({
+    link: '',
+    name: ''
+  });
+
   const [addressTo, setAddressTo] = useState<string>("");
 
   const [cryptoRate, setCryptoRate] = useState<string | number>(0);
@@ -198,9 +203,30 @@ const Settlements = () => {
       setCryptoStage(1);
     } else {
       try {
+        let amountCrypto: number = Number(amount["crypto"]);
+
+        if (!Boolean(amount["crypto"])) {
+
+          const { fiat } = amount;
+
+          const name = withdrawToken.name.split(" ")[0];
+
+          const res = await get_request(
+            `/token/price/${name.toLowerCase()}`,
+            {},
+            undefined,
+            false
+          );
+
+          const price = res?.data.price;
+
+          amountCrypto = Number(fiat) / Number(price);
+        
+        }
+
         const data = {
           addressTo,
-          amountCrypto: amount["crypto"],
+          amountCrypto,
           token: withdrawToken,
           fee:
             dashData["fees"][withdrawToken.value] !== undefined
@@ -211,25 +237,26 @@ const Settlements = () => {
 
         const token = localStorage.getItem("userToken");
 
-        await axios.post("/api/settlement/withdrawal/crypto", data, {
+        const { data: reqData } = await axios.post("/api/settlement/withdrawal/crypto", data, {
           baseURL: window.origin,
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          timeout: 300_000
+          timeout: 300_000,
         });
 
         setGenSetError("");
 
-        setCryptoW(false);
+        setRef(reqData.ref);
 
         onceBal.current = false;
 
         setRefresh(!refresh);
 
-        setCryptoStage(0);
-
+        setCryptoStage(2);
+        
         setWithdrawLoading(false);
+
       } catch (err) {
         const error =
           (err as any).response !== undefined
@@ -301,7 +328,7 @@ const Settlements = () => {
             {String(date.getMinutes()).length < 2
               ? `0${date.getMinutes()}`
               : date.getMinutes()}{" "}
-            {hrx > 12 ? "pm" : "am"}
+            {hrx > 12 ? "am" : "pm"}
           </span>
         </span>
 
@@ -473,7 +500,6 @@ const Settlements = () => {
         setPageCheck({ current_page, last_page });
       }
 
-
       for (let i = 0; i < Object.keys(balance).length; i++) {
         const index = Object.keys(balance)[i];
 
@@ -482,10 +508,8 @@ const Settlements = () => {
         const cache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
 
         const price = cache[balance[index].name.toLowerCase()] || 0;
-       
 
         finalBalance[index] = total * price;
-
 
         breakdown[index] = {
           amount: total,
@@ -494,7 +518,6 @@ const Settlements = () => {
           test: balance[index].test,
           symbol: balance[index].symbol,
         };
-
       }
 
       const maxAmt = Object.keys(breakdown).sort(
@@ -506,7 +529,6 @@ const Settlements = () => {
           setWithdrawToken(a);
         }
       });
-
 
       setDashData({
         payments,
@@ -525,15 +547,12 @@ const Settlements = () => {
         pending: totalPending + (totalPending ? (totalPending * 1) / 100 : 0),
       });
 
-
       if (blur) setBlur(false);
 
       setRefresh(!refresh);
-
     };
 
     if (once.current) {
-
       once.current = false;
 
       "user".get("*", true).then(async (e: any) => {
@@ -550,13 +569,14 @@ const Settlements = () => {
         if (Boolean(userAddresses[0])) setAddressTo(userAddresses[0]);
 
         if (e.settlement[0] !== undefined) {
-
           for (let i = 0; i < CryptoList.length; i++) {
             const token = CryptoList[i];
 
-            const cachebox = JSON.parse(localStorage.getItem("cryptos") || "{}");
+            const cachebox = JSON.parse(
+              localStorage.getItem("cryptos") || "{}"
+            );
 
-            const cache: any = cachebox[e.settlement[0]['address']] || {};
+            const cache: any = cachebox[e.settlement[0]["address"]] || {};
 
             balance[token.value] = {
               amount: cache[token.value] || 0,
@@ -574,27 +594,20 @@ const Settlements = () => {
     }
 
     if (!blur && !onceBal.current) {
-
       onceBal.current = true;
-      
+
       const account = data.settlement ? data.settlement[0] : { address: "" };
 
       const initBalances = async () => {
-
         const finalBal = dashData["finalBalance"];
 
         const bdown = dashData["breakDownObj"];
-        
 
         for (let i = 0; i < CryptoList.length; i++) {
           const token = CryptoList[i];
 
-
           if (token.type == "native") {
-           
-
             try {
-
               const provider = new ethers.providers.JsonRpcProvider(token.rpc);
 
               const amount = Number(
@@ -605,7 +618,7 @@ const Settlements = () => {
 
               const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
 
-              cache[account['address']][token.value] = amount;
+              cache[account["address"]][token.value] = amount;
 
               localStorage.setItem("cryptos", JSON.stringify(cache));
 
@@ -632,11 +645,10 @@ const Settlements = () => {
 
               const price = res?.data.price;
 
-              valCache[(name).toLowerCase()] = price;
+              valCache[name.toLowerCase()] = price;
 
               localStorage.setItem("tokenVal", JSON.stringify(valCache));
 
-              
               finalBal[value] = total * price;
 
               bdown[value] = {
@@ -657,7 +669,6 @@ const Settlements = () => {
                 localStorage.getItem("tokenVal") || "{}"
               );
 
-            
               bdown[token.value] = {
                 amount:
                   cache[token.value] !== undefined ? cache[token.value] : 0,
@@ -689,14 +700,10 @@ const Settlements = () => {
             }
 
             setDashData(saveData);
-
-
           } else if (token.type == "non-native") {
             // do stuff here
           }
         }
-
-
       };
 
       initBalances();
@@ -1253,37 +1260,131 @@ const Settlements = () => {
                     </span>
                   </form>
                 </TabPanel>
+
+                <TabPanel index={2} value={cryptoWithdrawStage}>
+                  <div className="h-full z-[100] flex flex-col justify-evenly items-center w-full">
+                    <div className="animation-ctn mt-3 mb-6">
+                      <div className="icon icon--order-success svg">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="154px"
+                          height="154px"
+                        >
+                          <g fill="none" stroke={"#F57059"} strokeWidth="2">
+                            <circle
+                              cx="77"
+                              cy="77"
+                              r="72"
+                              style={{
+                                strokeDasharray: "480px, 480px",
+                                strokeDashoffset: "960px",
+                              }}
+                            ></circle>
+                            <circle
+                              id="colored"
+                              fill={"#F57059"}
+                              cx="77"
+                              cy="77"
+                              r="72"
+                              style={{
+                                strokeDasharray: "480px, 480px",
+                                strokeDashoffset: "960px",
+                              }}
+                            ></circle>
+                            <polyline
+                              className="st0"
+                              stroke={"#fff"}
+                              strokeWidth="10"
+                              points="43.5,77.8 63.7,97.9 112.2,49.4 "
+                              style={{
+                                strokeDasharray: "100px, 100px",
+                                strokeDashoffset: "200px",
+                              }}
+                            />
+                          </g>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <h2
+                      style={{
+                        color: "#F57059",
+                      }}
+                      className="mb-3 text-[19px] font-bold"
+                    >
+                      Transaction Successful
+                    </h2>
+
+                    <Link href={ref!.link}>
+                      <a
+                        target={"_blank"}
+                        className="text-[#5a5a5a] cursor-pointer mb-1 font-normal"
+                      >
+                        View transaction on{" "}
+                        <span className="font-[600] text-[#919191]">
+                          {ref.name}
+                        </span>
+                      </a>
+                    </Link>
+                  </div>
+                </TabPanel>
               </div>
 
               <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
                 <div className="flex items-center">
-                  {Boolean(cryptoWithdrawStage) && !withdrawLoading && (
+                  {cryptoWithdrawStage != 2 &&
+                    Boolean(cryptoWithdrawStage) &&
+                    !withdrawLoading && (
+                      <Button
+                        onClick={() => setCryptoStage(0)}
+                        className="!w-fit !items-center !flex !rounded-md text-[#5f4f4f] font-[400] !px-0 !capitalize !border-none"
+                      >
+                        Back
+                      </Button>
+                    )}
+
+                  {cryptoWithdrawStage == 2 && (
                     <Button
-                      onClick={() => setCryptoStage(0)}
-                      className="!w-fit !items-center !flex !rounded-md text-[#5f4f4f] font-[400] !px-0 !capitalize !border-none"
+                      variant="contained"
+                      className="!py-2 !font-bold !px-3 !capitalize min-w-[120px] !flex !items-center !text-white !bg-[#F57059] !border-solid !transition-all !delay-500 !rounded-lg"
+                      style={{
+                        fontFamily: "inherit",
+                      }}
+                      onClick={() => {
+                        setCryptoStage(0);
+
+                        setCryptoW(false);
+
+                        setRef({
+                          link: "",
+                          name: "",
+                        });
+                      }}
                     >
-                      Back
+                      Done
                     </Button>
                   )}
 
-                  <Button
-                    onClick={withdrawCrypto}
-                    className="!py-2 !font-bold !px-3 !capitalize min-w-[120px] !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
-                  >
-                    {withdrawLoading && (
-                      <CircularProgress
-                        className="mr-2"
-                        color={"inherit"}
-                        size={20}
-                      />
-                    )}
+                  {cryptoWithdrawStage != 2 && (
+                    <Button
+                      onClick={withdrawCrypto}
+                      className="!py-2 !font-bold !px-3 !capitalize min-w-[120px] !flex !items-center !text-white !bg-[#F57059] !transition-all !delay-500 !rounded-lg"
+                    >
+                      {withdrawLoading && (
+                        <CircularProgress
+                          className="mr-2"
+                          color={"inherit"}
+                          size={20}
+                        />
+                      )}
 
-                    {withdrawLoading
-                      ? "processing..."
-                      : cryptoWithdrawStage
-                      ? "Withdraw"
-                      : "Next"}
-                  </Button>
+                      {withdrawLoading
+                        ? "processing..."
+                        : cryptoWithdrawStage
+                        ? "Withdraw"
+                        : "Next"}
+                    </Button>
+                  )}
                 </div>
               </div>
             </Box>

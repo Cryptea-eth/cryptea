@@ -42,7 +42,7 @@ import { TbPlugConnected } from "react-icons/tb";
 import { BsCheck, BsCheck2, BsMailbox } from "react-icons/bs";
 
 import TabPanel from "../components/elements/dashboard/link/TabPanel";
-import { BiMailSend, BiSync } from "react-icons/bi";
+import { BiMailSend, BiSync, BiX } from "react-icons/bi";
 
 export const PaymentContext = createContext<PaymentCont>({});
 
@@ -111,7 +111,7 @@ export const PaymentProvider = ({
 
   const timerTimeout = useRef<any>(null);
 
-  const closeModal = () => {
+  const closeModal = (msg?: string) => {
     openModal(false);
     clearInterval(timer.current);
     setTimeCounted(0);
@@ -119,7 +119,7 @@ export const PaymentProvider = ({
     setManValue(0);
     setManLoader(false);
     setTransferFail(true);
-    setFailMessage("Payment Cancelled");
+    setFailMessage(msg || "Payment Cancelled");
   };
 
   const {
@@ -849,7 +849,7 @@ export const PaymentProvider = ({
       }
 
       try {
-        
+
         setManLoader(true);
 
         const queryBalance = await axios.post(
@@ -921,35 +921,34 @@ export const PaymentProvider = ({
       }
       } catch (err) {
 
-        // change something here
-
-        setManLoader(false);
-        openModal(false);
-        console.log(err);
-        setTransferFail(true);
         clearInterval(timer.current);
         clearTimeout(timerTimeout.current);
+        
+        setManLoader(false);
+        // console.log(err);
+        setManValue(2);
+        
         setTimeCounted(0);
-        setFailMessage("Something went wrong, Please try again");
+        setFailMessage("");
+
       }
-    } else {
-      clearTimeout(timerTimeout.current);
-      openModal(false);
-      setTransferFail(true);
-      clearInterval(timer.current);
-      setTimeCounted(0);
-      setFailMessage("No crypto received, please try again");
+    }else{
+      // maybe come back here
     }
   };
 
   useEffect(() => {
     if (timeCounted >= 720) {
       clearInterval(timer.current);
-      setTimeCounted(0);
+      clearTimeout(timerTimeout.current);
+
+    
       setManLoader(false);
       setManValue(1);
-      clearTimeout(timerTimeout.current);
+
+      setTimeCounted(0);
       setLoadingText("");
+
     }
   }, [timeCounted, timer]);
 
@@ -1189,7 +1188,7 @@ export const PaymentProvider = ({
             width: "calc(100% - 8px)",
           },
         }}
-        onClose={() => (manValue == 1 ? closeModal() : false)}
+        onClose={() => (Boolean(manValue) ? closeModal() : false)}
         className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
         aria-labelledby="Begin Manual Payment"
         aria-describedby="Make quick manual payment"
@@ -1207,7 +1206,7 @@ export const PaymentProvider = ({
                 <IconButton
                   size={"medium"}
                   className="-top-full -right-[30px] !absolute !bg-[#fff]"
-                  onClick={closeModal}
+                  onClick={() => closeModal()}
                 >
                   <MdClose
                     size={20}
@@ -1336,7 +1335,7 @@ export const PaymentProvider = ({
               </div>
 
               <Button
-                onClick={closeModal}
+                onClick={() => closeModal()}
                 className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
               >
                 <RiCloseCircleLine size={22} className="mr-2" /> Dismiss
@@ -1354,7 +1353,7 @@ export const PaymentProvider = ({
                 <IconButton
                   size={"medium"}
                   className="-top-full -right-[30px] !absolute !bg-[#fff]"
-                  onClick={closeModal}
+                  onClick={() => closeModal('No crypto received')}
                 >
                   <MdClose
                     size={20}
@@ -1406,6 +1405,59 @@ export const PaymentProvider = ({
                       <BiSync size={20} className="mr-1" /> Retry
                     </>
                   )}
+                </Button>
+              </div>
+            </TabPanel>
+
+            <TabPanel padding={0} value={manValue} index={2}>
+              <div className="mb-5 flex items-center relative justify-between">
+                <LogoSpace />
+
+                <span className="font-[500] text-[rgb(32,33,36)] text-[1.05rem]">
+                  ${amount} ( ${(Number(amount) * 1) / 100} fee )
+                </span>
+
+                <IconButton
+                  size={"medium"}
+                  className="-top-full -right-[30px] !absolute !bg-[#fff]"
+                  onClick={() => closeModal('Transaction possibly successful, please contact us')}
+                >
+                  <MdClose
+                    size={20}
+                    color={"rgb(32,33,36)"}
+                    className="cursor-pointer"
+                  />
+                </IconButton>
+              </div>
+
+              <h2 className="font-[500] text-[rgb(32,33,36)] text-center text-[1.55rem]">
+                Something went wrong with transaction
+              </h2>
+
+              <div className="py-3 mb-2">
+                <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
+                  But no need to worry, Please{" "}
+                  <Link
+                    href={`mailto:hello@cryptea.me?subject=Issue with transfer&body=Hello Cryptea \n I made a transfer to ${genAddr} but I did not get any confirmation that it was successful`}
+                  >
+                    <a className="text-[#F57059]" target="_blank">
+                      click me to contact us immediately
+                    </a>
+                  </Link>
+                  , so that we can resolve the issue if there is one. We apologize for any inconvenience this might have caused.
+                </span>
+              </div>
+
+              <div className="w-full items-center flex justify-center">
+                <Button
+                  onClick={async () => {
+                    if (Boolean(loadingText)) return;
+
+                    beginManual(amountMn, paymentType);
+                  }}
+                  className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                >
+                  Dismiss
                 </Button>
               </div>
             </TabPanel>
