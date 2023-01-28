@@ -739,7 +739,7 @@ const Carbon = ({ className }: { className?: string }) => {
                         )}
 
                         <div className="">
-                          <Button
+                          {token?.payment.manual && <Button
                             sx={{
                               marginTop: "10px",
                               backgroundColor: `${data.colorScheme} !important`,
@@ -775,8 +775,8 @@ const Carbon = ({ className }: { className?: string }) => {
                             ) : (
                               <>Pay Manually</>
                             )}
-                          </Button>
-                          <Button
+                          </Button>}
+                          {token?.payment.auto && <Button
                             sx={{
                               marginTop: "10px",
                               backgroundColor: `${data.colorScheme} !important`,
@@ -814,7 +814,7 @@ const Carbon = ({ className }: { className?: string }) => {
                             ) : (
                               <>Pay</>
                             )}
-                          </Button>
+                          </Button>}
                         </div>
                       </TabPanel>
                       {/* </SwipeableViews> */}
@@ -1053,7 +1053,7 @@ const Carbon = ({ className }: { className?: string }) => {
                           </div>
                         )}
 
-                        <Button
+                        {token?.payment.manual && <Button
                           sx={{
                             marginTop: "10px",
                             backgroundColor: `${data.colorScheme} !important`,
@@ -1089,9 +1089,9 @@ const Carbon = ({ className }: { className?: string }) => {
                           ) : (
                             <>Pay Manually</>
                           )}
-                        </Button>
+                        </Button>}
 
-                        <Button
+                        {token?.payment.auto && <Button
                           sx={{
                             marginTop: "10px",
                             backgroundColor: `${data.colorScheme} !important`,
@@ -1127,7 +1127,7 @@ const Carbon = ({ className }: { className?: string }) => {
                           ) : (
                             <>Pay</>
                           )}
-                        </Button>
+                        </Button>}
                       </TabPanel>
                       {/* </SwipeableViews> */}
                     </TabPanel>

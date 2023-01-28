@@ -861,7 +861,7 @@ const Origin = ({ className }: { className?: string }) => {
 
                                     <div className="2mmd:flex-col usm:flex usm:items-center">
                                       
-                                        <Button
+                                        {token?.payment.manual && <Button
                                           sx={{
                                             backgroundColor: `${data.colorScheme} !important`,
                                           }}
@@ -876,8 +876,9 @@ const Origin = ({ className }: { className?: string }) => {
                                           fullWidth
                                         >
                                           Pay Manually
-                                        </Button>
-                                      <Button
+                                        </Button>}
+
+                                      {token?.payment.auto && <Button
                                         sx={{
                                           backgroundColor: `${data.colorScheme} !important`,
                                         }}
@@ -890,7 +891,7 @@ const Origin = ({ className }: { className?: string }) => {
                                         fullWidth
                                       >
                                         Pay
-                                      </Button>
+                                      </Button>}
                                     </div>
                                   </FormControl>
                                 </TabPanel>
@@ -1158,7 +1159,7 @@ const Origin = ({ className }: { className?: string }) => {
                                     )}
 
                                     <div className="2mmd:flex-col usm:flex usm:items-center">
-                                      <Button
+                                      {token?.payment.manual && <Button
                                         variant="contained"
                                         sx={{
                                           backgroundColor: `${data.colorScheme} !important`,
@@ -1171,9 +1172,9 @@ const Origin = ({ className }: { className?: string }) => {
                                         fullWidth
                                       >
                                         Subscribe Manually
-                                      </Button>
+                                      </Button>}
 
-                                      <Button
+                                      {token?.payment.auto && <Button
                                         variant="contained"
                                         sx={{
                                           backgroundColor: `${data.colorScheme} !important`,
@@ -1186,7 +1187,7 @@ const Origin = ({ className }: { className?: string }) => {
                                         fullWidth
                                       >
                                         Subscribe
-                                      </Button>
+                                      </Button>}
                                     </div>
                                   </FormControl>
                                 </TabPanel>

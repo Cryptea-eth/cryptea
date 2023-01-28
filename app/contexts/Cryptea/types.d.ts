@@ -112,6 +112,10 @@ export type token = {
   testnet: boolean;
   type: 'native' | 'non-native';
   rpc: string;
+  payment: {
+    manual: boolean;
+    auto: boolean;
+  }
   name: string;
   contractAddr: string;
 };

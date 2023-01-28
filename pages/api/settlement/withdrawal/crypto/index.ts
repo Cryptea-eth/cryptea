@@ -6,6 +6,10 @@ import { tokenTrackers } from "../../../../../app/contexts/Cryptea/connectors/ch
 
 type Data = {
   message: string;
+  ref?: {
+    name: string;
+    link: string
+  };
   errorType?: string;
   error: boolean;
 };
@@ -67,13 +71,14 @@ export default function handler(
 
           const sendAmount = ethers.utils.parseEther(String(amountCrypto));
 
+          const gasPrice = await provider.getGasPrice();
+
           const tx = {
             to: addressTo,
             value: sendAmount,
-            gasLimit: 21000,
+            gasLimit: 21_000,
+            gasPrice
           };
-
-          const gasPrice = await provider.getGasPrice();
 
           const estimate = await provider.estimateGas(tx);
 
@@ -81,15 +86,10 @@ export default function handler(
 
           const newBalance = tx.value.sub(trxFee);
 
-          const totalGas = trxFee.add(21000000000000);
-
           if (
-            ethers.utils
-              .parseEther(String(balance))
-              .sub(sendAmount)
-              .lt(totalGas)
+            ethers.utils.parseEther(String(balance)).sub(sendAmount).lt(trxFee)
           ) {
-            tx.value = newBalance.sub(21000000000000);
+            tx.value = newBalance;
           }
 
           const wallet = await ethers.Wallet.fromEncryptedJson(
@@ -109,7 +109,7 @@ export default function handler(
             data: JSON.stringify({
               token: token.name,
               receiver: addressTo,
-              explorer: `${tokenTrackers[token.value]}${trx.hash}`,
+              explorer: `${tokenTrackers[token.value].link}${trx.hash}`,
             }),
             desc: `${token.name} Crypto Withdrawal`,
           };
@@ -127,6 +127,10 @@ export default function handler(
           res.status(201).json({
             error: false,
             message: "Transaction Successful",
+            ref: {
+              link: `${tokenTrackers[token.value].link}${trx.hash}`,
+              name: tokenTrackers[token.value].name,
+            },
           });
         } catch (err) {
           const error = err as any;
