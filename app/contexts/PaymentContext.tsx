@@ -168,6 +168,10 @@ export const PaymentProvider = ({
       rpc: string;
       type: "native" | "non-native";
       tokenAddr: string;
+      payment: {
+        auto: boolean;
+        manual: boolean;
+      }
     }[]
   >(CryptoList);
 
@@ -797,7 +801,6 @@ export const PaymentProvider = ({
 
     if (timeCounted <= 720 && timeCounted > 0) {
 
-      console.log('here again...')
     
       const base = {
         initial: 0,
@@ -846,6 +849,7 @@ export const PaymentProvider = ({
       }
 
       try {
+        
         setManLoader(true);
 
         const queryBalance = await axios.post(
@@ -853,6 +857,7 @@ export const PaymentProvider = ({
           { ...base, ...post, ethAddress, linkId },
           {
             baseURL: window.origin,
+            timeout: 630000,
           }
         );
 
@@ -915,9 +920,12 @@ export const PaymentProvider = ({
           );
       }
       } catch (err) {
+
+        // change something here
+
         setManLoader(false);
         openModal(false);
-        // console.log(err);
+        console.log(err);
         setTransferFail(true);
         clearInterval(timer.current);
         clearTimeout(timerTimeout.current);

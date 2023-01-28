@@ -341,6 +341,10 @@ export const CryptoList: token[] = [
     rpc: process.env.POLYGONMATIC as string,
     testnet: false,
     type: "native",
+    payment: {
+      manual: true,
+      auto: true,
+    },
   },
   {
     value: 80001,
@@ -365,6 +369,10 @@ export const CryptoList: token[] = [
     tokenAddr: "",
     rpc: process.env.MATIC_LINK as string,
     testnet: true,
+    payment: {
+      manual: true,
+      auto: true,
+    },
   },
   {
     value: 31415,
@@ -389,6 +397,10 @@ export const CryptoList: token[] = [
     contractAddr: "0x2d9E5Cd304A84DC15Bb28749Cf0769A0bdc2CD6F",
     rpc: FileCoinWallaby.rpcUrls.default,
     testnet: true,
+    payment: {
+      manual: false,
+      auto: true,
+    },
   },
   {
     value: 338,
@@ -413,6 +425,10 @@ export const CryptoList: token[] = [
     tokenAddr: "",
     rpc: CronosTest.rpcUrls.default,
     testnet: true,
+    payment: {
+      manual: true,
+      auto: true,
+    },
   },
   {
     value: 1313161555,
@@ -436,6 +452,10 @@ export const CryptoList: token[] = [
     network: AuroraTestnet.network as string,
     tokenAddr: "",
     testnet: true,
+    payment: {
+      manual: true,
+      auto: true
+    },
     rpc: AuroraTestnet.rpcUrls.default,
   },
   {
@@ -460,6 +480,10 @@ export const CryptoList: token[] = [
     symbol: "op",
     network: OptimismGoerli.network as string,
     tokenAddr: "",
+    payment: {
+      manual: true,
+      auto: true
+    },
     rpc: OptimismGoerli.rpcUrls.default,
   },
   {
@@ -484,6 +508,10 @@ export const CryptoList: token[] = [
     symbol: "rose",
     network: OasisEmeraldTestnet.network as string,
     tokenAddr: "",
+    payment: {
+      manual: true,
+      auto: true
+    },
     rpc: OasisEmeraldTestnet.rpcUrls.default,
   },
 ];

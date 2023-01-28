@@ -67,13 +67,14 @@ export default function handler(
 
           const sendAmount = ethers.utils.parseEther(String(amountCrypto));
 
+          const gasPrice = await provider.getGasPrice();
+
           const tx = {
             to: addressTo,
             value: sendAmount,
-            gasLimit: 21000,
+            gasLimit: 21_000,
+            gasPrice
           };
-
-          const gasPrice = await provider.getGasPrice();
 
           const estimate = await provider.estimateGas(tx);
 
@@ -81,15 +82,10 @@ export default function handler(
 
           const newBalance = tx.value.sub(trxFee);
 
-          const totalGas = trxFee.add(21000000000000);
-
           if (
-            ethers.utils
-              .parseEther(String(balance))
-              .sub(sendAmount)
-              .lt(totalGas)
+            ethers.utils.parseEther(String(balance)).sub(sendAmount).lt(trxFee)
           ) {
-            tx.value = newBalance.sub(21000000000000);
+            tx.value = newBalance;
           }
 
           const wallet = await ethers.Wallet.fromEncryptedJson(

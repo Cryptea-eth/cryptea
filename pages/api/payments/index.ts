@@ -55,21 +55,20 @@ export default function handler(
             currentBalance.toFixed(6)
         ) {
 
-          const gasLim = ethers.utils.formatEther(21000000000000);
+          const gasPrice = await provider.getGasPrice();
 
           const tx = {
             to: body.ethAddress,
-            value: mbalance.sub(21000000000000),
-            gasLimit: 21000,
-          };
-
-          const gasPrice = await provider.getGasPrice();
+            value: mbalance,
+            gasLimit: 21_000,
+            gasPrice,
+          };  
 
           const estimate = await provider.estimateGas(tx);
 
           const trxFee = gasPrice.mul(estimate);
 
-          const mainTrxFee = Number(ethers.utils.formatEther(trxFee.toString())) + Number(gasLim);
+          const mainTrxFee = ethers.utils.formatEther(trxFee);
           
           const newBalance = tx.value.sub(trxFee);
 
@@ -160,8 +159,9 @@ export default function handler(
                   res.status(400).json({
                     proceed: false,
                     error: true,
-                    message: error.response.data.message,
+                    message: error.response.data.message || error.message,
                   });
+
                 }
               } else {
                 res.status(404).json({ proceed: true });

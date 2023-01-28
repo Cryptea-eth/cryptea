@@ -216,6 +216,7 @@ const Settlements = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          timeout: 300_000
         });
 
         setGenSetError("");
