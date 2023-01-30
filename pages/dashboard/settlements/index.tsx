@@ -263,12 +263,18 @@ const Settlements = () => {
             ? (err as any).response.data
             : (err as any);
 
-        console.log(error);
+        // console.log(error);
 
-        if (error.message == "timeout of 30000ms exceeded") {
+        if (error.message.indexOf("timeout of") != -1) {
           setWithdrawError("Something went wrong, please try again");
+        }else if (error.message == "invalid password") {
+          setWithdrawError("Pin entered is incorrect");
         } else {
-          setWithdrawError(error.message);
+          setWithdrawError(
+            (err as any).response !== undefined
+              ? error.message
+              : "Something went wrong, please try again"
+          );
         }
 
         document.querySelector(".witherror")?.scrollIntoView();

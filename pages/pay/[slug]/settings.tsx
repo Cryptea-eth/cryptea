@@ -350,8 +350,21 @@ const Settings = () => {
 
         const acceptedCrypto = JSON.parse(mDx.data || "[]");
 
-
-        setFormData({ redirect: mDx.required, type: mDx.type, desc: mDx.desc, minAmt: minn, acceptedCrypto, amount, maxAmt: maxx, rdata, title: mDx.title, amountOption: JSON.parse(mDx.amountMulti) });
+        
+        setFormData({
+          redirect: mDx.required,
+          type: mDx.type,
+          desc: mDx.desc,
+          minAmt: minn,
+          acceptedCrypto: CryptoList.filter(
+            (v) => acceptedCrypto.indexOf(v.value) != -1
+          ),
+          amount,
+          maxAmt: maxx,
+          rdata,
+          title: mDx.title,
+          amountOption: JSON.parse(mDx.amountMulti),
+        });
 
         setLoading(false);
         
@@ -813,9 +826,9 @@ const Settings = () => {
                       <Tooltip
                         placement="bottom"
                         arrow
-                        title={
-                          "Crypto accepted by link for payment, leaving this empty makes all supported crypto valid as payment"
-                        }
+                        title=
+                          {"Crypto accepted by link for payment, leaving this empty makes all supported crypto valid as payment.  Please note that if your account is live and only testnet tokens are selected, link would only be assessible by you."}
+                        
                       >
                         <div className="font-semibold w-fit cursor-default mt-4 flex items-center mb-2 text-[#525252]">
                           <p className="block mr-1">Accepted Crypto</p>
@@ -1212,6 +1225,8 @@ const Settings = () => {
                 )}
               </Button>
             </div>
+          
+            
           </div>
         </div>
       )}
