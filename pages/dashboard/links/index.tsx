@@ -866,7 +866,7 @@ const Links = () => {
                               <MdLink size={21} />
                             </div>
                             <div className="truncate">
-                              <h3 className="truncate text-[17px] leading-[20px] font-[500] text-[#121212]">
+                              <h3 className="truncate flex items-center text-[17px] leading-[20px] font-[500] text-[#121212]">
                                 {link}
                               </h3>
                               <span className="block text-[14px] leading-[1.2] truncate w-full text-[#575757]">

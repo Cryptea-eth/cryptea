@@ -698,7 +698,7 @@ const AuthModal = ({
 
               <div
                 style={{
-                  gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(292px, 1fr))",
                 }}
                 className="relative p-6 grid gap-2 grid-flow-dense"
               >
