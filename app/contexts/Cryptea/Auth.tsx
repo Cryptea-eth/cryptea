@@ -1,9 +1,9 @@
-import { Web3ReactProvider } from "@web3-react/core";
 import { createContext, useContext, useEffect, useState } from "react";
-import web3 from "web3";
 import { AxiosError } from 'axios';
-import connectors from "./connectors";
-import { webSocketProvider } from './connectors/chains';
+import { LinkConnector, UDConnector } from "./connectors";
+import mimg from "../../../public/images/mglink.svg";
+import unstop from "../../../public/images/unstoppable.svg";
+import { webSocketProvider, chains, provider } from './connectors/chains';
 import * as ethers from "ethers";
 import {
   AuthAddressType,
@@ -19,11 +19,28 @@ import { post_request } from "./requests";
 import { createClient, useAccount, WagmiConfig } from "wagmi";
 import { useRouter } from "next/router";
 import Loader from "../../components/elements/loader";
-import { crypteaCon } from "./icon";
+import {
+  RainbowKitProvider,
+  connectorsForWallets,
+  getDefaultWallets,
+  getWalletConnectConnector,
+  lightTheme
+} from "@rainbow-me/rainbowkit";
+import {
+  metaMaskWallet,
+  walletConnectWallet,
+  rainbowWallet,
+  injectedWallet,
+  braveWallet,
+  coinbaseWallet,
+  ledgerWallet,
+  trustWallet,
+  argentWallet
+} from "@rainbow-me/rainbowkit/wallets";
 
-const getLibrary = (provider: any) => {
-  return new web3(provider);
-};
+import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
+import { InjectedConnector } from "wagmi/connectors/injected";
+
 
 let user:userData | undefined;
 
@@ -80,7 +97,6 @@ export const AuthAddress = async ({address, signature, message }: AuthAddressTyp
 let config: undefined | configType;
 
 export const AuthUser = async ({
-  type,
   signMessage,
   isConnected,
   address,
@@ -91,11 +107,11 @@ export const AuthUser = async ({
 }: authenticateUserExtended): Promise<userData | undefined> => {
   if (signMessage !== undefined) message = signMessage;
 
-  if (!isConnected) {
-    config = await connectAsync({ connector: type });
-  }
+  // if (!isConnected) {
+  //   config = await connectAsync({ connector: type });
+  // }
 
-  if (!mainx) {
+  if (!mainx && typeof address == 'string') {
 
     const data = await signMessageAsync({ message });
 
@@ -105,15 +121,20 @@ export const AuthUser = async ({
         const main = await AuthAddress({
           signature: data,
           message,
-          address: (address || config?.account) as string,
+          address: address as string,
         });
+
         return main;
+
       } catch (err) {
-        // console.log(err);
+        console.log(err);
         throw "Something went wrong, please try again";
       }
     } else {
       
+        console.log(data)
+
+        throw "Something went wrong, please try again";
     }
   }
 };
@@ -124,6 +145,8 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
   const [isAuthenticated, setAuth] = useState<boolean | undefined>();
 
   const [context, setContext] = useState<userData | undefined>(user);
+
+  const [mobile, setMobile] = useState<boolean>(false);
 
   const [genLoader, setGenLoader] = useState<boolean>(true);
 
@@ -152,31 +175,110 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
       setGenLoader(false);
     }
 
+    setMobile(
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+    );
 
   }, [router])
 
 
   useEffect(() => {
-
     if (localStorage.getItem('userToken') !== null) {
         setAuth(true);
       }else{
        setAuth(false)
     }
-  })
+  }, [])
 
-  const client = createClient({
-    autoConnect: true,
-    connectors,
-    webSocketProvider,
-    provider: ethers.getDefaultProvider(),
+
+
+  const mail = ({ chains }: { chains: any }) => ({
+    id: "mail",
+    name: "Email link",
+    iconUrl: mimg.src,
+    iconBackground: "#f57059",
+    createConnector: () => {
+      const connector = new LinkConnector({ chains, options: {} });
+
+      const ee = new InjectedConnector({
+        chains,
+        options: {
+          name: "Cryptea",
+          shimDisconnect: true,
+        },
+      });
+
+      return {
+        connector,
+      };
+    },
   });
 
+  const UD = ({ chains }: { chains: any }) => ({
+    id: "unstoppable",
+    name: "Login with unstoppable",
+    iconUrl: unstop.src,
+    iconBackground: "#0d67fe",
+    createConnector: () => {
+      const connector = new UDConnector({ chains, options: {} });
+      return {
+        connector,
+      };
+    },
+  });
+  
+  
+
+  const connectors = connectorsForWallets([
+    {
+      groupName: "Recommended",
+      wallets:
+        router.asPath == '/pay/[slug]'
+          ? [
+              metaMaskWallet({ chains }),
+              walletConnectWallet({ chains }),
+              coinbaseWallet({ chains, appName: "Cryptea" }),
+            ]
+          : [
+              metaMaskWallet({ chains }),
+              mail({ chains }),
+              walletConnectWallet({ chains }),
+              UD({ chains }),
+              coinbaseWallet({ chains, appName: "Cryptea" }),
+            ],
+    },
+    {
+      groupName: "Other",
+      wallets: [
+        rainbowWallet({ chains }),
+        trustWallet({ chains }),
+        ledgerWallet({ chains }),
+        injectedWallet({ chains }),
+        argentWallet({ chains }),
+        braveWallet({ chains }),
+      ],
+    },
+  ]);
+
+  const client = createClient({
+    autoConnect: false,
+    connectors,
+    webSocketProvider,
+    provider,
+  });
+
+
   return (
-    <Web3ReactProvider getLibrary={getLibrary}>
       <WagmiConfig client={client}>
+        
+        <RainbowKitProvider coolMode theme={lightTheme({
+            accentColor: "#f57059" 
+        })} chains={chains}>
         <AuthContextMain.Provider
           value={{
+            mobile,
             user: context,
             isAuthenticated,
             update: (e: userData | undefined) => setContext(e),
@@ -184,8 +286,8 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
         >
           {genLoader ? <Loader head={false}/> : children}
         </AuthContextMain.Provider>
+        </RainbowKitProvider>
       </WagmiConfig>
-    </Web3ReactProvider>
   );
 }
 

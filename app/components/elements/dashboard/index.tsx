@@ -36,14 +36,16 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
         ('user').get('*', true).then((e: any) => {
           
           
+
             const acc = JSON.parse(e.accounts || '[]');
 
-            if (!Boolean(e.email) || acc[0] == 'null' || acc[0] == 'undefined') {
-
-                router.push('/signup');
-
-            }else{
-
+            if (
+              !Boolean(e.email) ||
+              (!Boolean(e.settlement ? e.settlement.length : 0) &&
+                (acc[0] == "null" || acc[0] == "undefined"))
+            ) {
+              router.push("/signup");
+            } else {
               setData(typeof e == "object" ? e : {});
               // console.log('here')
               isLoading(false);

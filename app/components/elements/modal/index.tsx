@@ -203,7 +203,7 @@ const AuthModal = ({
         setIsAuth({ ...isAuth, uauth: true });
 
         setSupport(false);
-        try {
+        try { 
 
           const authorization = await uauth_connector.loginWithPopup();
 
@@ -491,8 +491,6 @@ const AuthModal = ({
 
   const [arrange, setArrange] = useState<(JSX.Element | boolean)[]>([]);
 
-
-
   useEffect(() => {
 
       const buttons: {
@@ -667,6 +665,7 @@ const AuthModal = ({
 
   return (
     <>
+
       {(Boolean(modal.show) || openM) && (
         <div
           className={`justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden z-[100000000] overflow-y-auto ${

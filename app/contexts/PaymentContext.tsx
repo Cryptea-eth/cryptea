@@ -6,6 +6,7 @@ import * as ethers from "ethers";
 import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
 import Link from "next/link";
 import { initD } from "../components/elements/dashboard/link/data";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useSwitchNetwork } from "wagmi";
 import analytics from "../../analytics";
 
@@ -14,8 +15,6 @@ import {
   subValueType,
   token,
 } from "./Cryptea/types";
-import AuthModal from "../components/elements/modal";
-import { balanceABI } from "../functions/abi";
 import {
   Modal,
   Box,
@@ -85,6 +84,9 @@ export const PaymentProvider = ({
 
   const renew = router.query["renew"] as string | undefined;
 
+  const { openConnectModal } = useConnectModal();
+  
+
   const [is500, setIs500] = useState<boolean>(false);
 
   const [interval, setTinterval] = useState<string>("daily");
@@ -115,7 +117,7 @@ export const PaymentProvider = ({
   const validSwitch = () => {
     setNullSwitch(false);
 
-    authenticate(true);
+    openConnectModal?.()
   };
 
   const [copied, mainCopy] = useState<boolean>(false);
@@ -445,7 +447,7 @@ export const PaymentProvider = ({
             if (cOptions.length) {
               setOptions(cOptions);
             } else {
-              if (userl.owner == undefined) router.push("/404");
+              if (userl.owner == undefined) router.replace("/404");
             }
 
             if (cOptions[0] !== undefined) {
@@ -516,7 +518,7 @@ export const PaymentProvider = ({
 
           if (setIsLoading !== undefined) setIsLoading(false);
         } else {
-          router.push("/404");
+          router.replace("/404");
         }
       } catch (err) {
         const error = err as Error;
@@ -545,7 +547,7 @@ export const PaymentProvider = ({
   } = userD;
 
   if (!userD) {
-    router.push("/404");
+    router.replace("/404");
   }
 
   const [subCheck, setSubCheck] = useState<boolean>(true);
@@ -643,14 +645,14 @@ export const PaymentProvider = ({
         if (switchNet === undefined) {
           setNullSwitch(true);
         } else {
-          authenticate(true);
+          openConnectModal?.()
         }
       } else if (!connected || !signer) {
         if (!signer) {
           disconnect();
         }
 
-        authenticate(true);
+        openConnectModal?.()
       }
 
       setPaymentData({ price, type });
@@ -1125,7 +1127,6 @@ export const PaymentProvider = ({
         setSigner,
       }}
     >
-      <AuthModal userAuth={false} />
 
       {nullSwitch && (
         <>

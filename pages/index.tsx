@@ -2,15 +2,18 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import Loader from '../app/components/elements/loader';
-import AuthModal, { methods } from "../app/components/elements/modal";
+import AuthModal from "../app/components/elements/modal/modal";
 import { useCryptea } from '../app/contexts/Cryptea';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
+import { useAccount, useDisconnect } from 'wagmi';
+import { useAccountModal } from '@rainbow-me/rainbowkit';
 
 const Home: NextPage = () => {
 
   const { isAuthenticated } = useCryptea();
 
   const [isLoading, setLoading] = useState(true);
+
 
   useEffect(() => {
 
@@ -48,10 +51,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-        <div className="h-screen w-screen flex bg-pattern2 items-center">
           <AuthModal blur={false} openM={true} message={"Welcome to Cryptea"} />
-        </div>
-    </div>
+       
+      </div>
+
   );
 }
 

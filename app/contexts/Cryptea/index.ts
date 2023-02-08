@@ -67,7 +67,6 @@ export function useCryptea(): mainAppManager {
         address,
         isConnected,
         signMessageAsync,
-        type,
         signMessage,
         isSuccess,
         mainx: Boolean(cache.current),
@@ -104,6 +103,7 @@ export function useCryptea(): mainAppManager {
         "payments",
         "userToken"
       ];
+
       for (let i: number = 0; i < remove.length; i++) {
         localStorage.removeItem(remove[i]);
       }

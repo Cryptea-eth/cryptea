@@ -1,4 +1,9 @@
 import { configureChains, defaultChains, chain, Chain } from "wagmi";
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+} from "@rainbow-me/rainbowkit";
+
 import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import CustomImg from "../../../components/elements/customImg";

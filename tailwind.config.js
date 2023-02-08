@@ -23,6 +23,7 @@ module.exports = {
       usm: { max: "940px" },
       dsm: { max: "900px" },
       sm: { max: "770px" },
+      sxm: {max: "767px"},
       ssm: { max: "718px" },
       md: { max: "699px" },
       mmd: { max: "659px" },
