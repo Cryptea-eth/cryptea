@@ -1,13 +1,9 @@
 import { useCryptea } from "../../../contexts/Cryptea";
 import { useState, useContext, useEffect } from "react";
 import { Button } from '@mui/material';
-import { HomeContext } from "../../../contexts/HomeContext";
 import Image from "next/image";
 import LogoSpace from "../logo";
 import meta from "../../../../public/images/metamask.png";
-import wallcon from "../../../../public/images/walletconnect.png";
-import unstop from "../../../../public/images/unstoppable.svg";
-import coinbse from "../../../../public/images/coinbase.png"; 
 import { CircularProgress, Box } from "@mui/material";
 import Router, { useRouter } from "next/router";
 import {
@@ -16,16 +12,14 @@ import {
 } from "../../../contexts/Cryptea/connectors";
 import { DashContext } from "../../../contexts/GenContext";
 import { post_request } from "../../../contexts/Cryptea/requests";
-import { FaRegEnvelopeOpen } from "react-icons/fa";
 import analytics from "../../../../analytics";
+import { useAccount } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
-export const methods = [
-  "metaauth",
-  "walletconnectauth",
-  "coinbaseauth",
-  "uauth",
-  "magicauth",
-];
+import { AuthContextMain } from "../../../contexts/Cryptea/Auth";
+import logo from "../../../../public/images/cryptea-logo.svg";
+import logo1 from "../../../../public/images/cryptea.png";
+
 
 const AuthModal = ({
   message,
@@ -38,9 +32,43 @@ const AuthModal = ({
   blur?: boolean;
   openM?: boolean;
 }) => {
+
   const router = useRouter();
 
-  const modal = useContext(HomeContext);
+  const auth = useContext(AuthContextMain);
+
+  const { isConnected } = useAccount();
+
+  const { openConnectModal } = useConnectModal();
+  
+  const [ isLoading, setLoading ] = useState<boolean>(true);
+
+  
+  let timer: any;
+
+  const updateHead = () => {
+    const elem = document.querySelector("#rk_connect_title");
+
+    if (elem !== null) {
+      elem.innerHTML = `<a class="flex flex-row max-w-[116px] min-w-[116px] items-center justify-between" href="/" style="transform: scale(0.7);left: -8px;margin-bottom: 2px;position: relative;"><span style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span style="box-sizing: border-box; display: block; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; max-width: 100%;"><img alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2730%27%20height=%2730%27/%3e" style="display: block; max-width: 100%; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px;"></span><img alt="cryptea" src="${logo.src}" decoding="async" data-nimg="intrinsic" class="min-w-[30px]" srcset="${logo.src} 1x, ${logo.src} 2x" style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"></span><span style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span style="box-sizing: border-box; display: block; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; max-width: 100%;"><img alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2782%27%20height=%2715%27/%3e" style="display: block; max-width: 100%; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px;"></span><img alt="cryptea" src="${logo1.src}" decoding="async" data-nimg="intrinsic" class="min-w-[30px]" srcset="${logo1.src} 1x, ${logo1.src} 2x" style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"></span></a> Launch App `;
+
+      (
+        document.querySelector("._1vwt0cg2") || {
+          classList: { add: (xx: string) => {} },
+        }
+      )?.classList.add("cusscroller");
+
+      
+      clearTimeout(timer);
+    } else {
+      timer = setTimeout(updateHead, 50);
+    }
+  };
+
+  const [mobile, setMobile] = useState<boolean>(false);
+
+
+
 
   const {
     logout: { update: updateLogin },
@@ -70,52 +98,6 @@ const AuthModal = ({
     uauth: true,
     coinbase: false,
     walletconnect: false
-  };
-
-  const [isAuth, setIsAuth] = useState<{
-    [ix: string]: boolean;
-  }>({
-    metamask: false,
-    uauth: false,
-    magic:false, 
-    coinbase: false,
-    walletconnect: false,
-  });
-
-  const useclose = () => {
-    if (modal.close !== undefined) modal?.close();
-
-    updAuthError("");
-  };
-
-  const isMainAuth = () => {
-    let b: boolean = true;
-    for (let a in isAuth) {
-      if (isAuth[a]) {
-        b = false;
-      }
-    }
-
-    return b;
-  };
-
-  const blurAuth = (index: string) => {
-    if (!isMainAuth()) {
-      if (isAuth[index]) {
-        return {
-          cursor: "default",
-        };
-      } else {
-        return {
-          cursor: "default",
-          opacity: 0.5,
-          color: "#575757 !important",
-          borderColor: "#575757 !important",
-        };
-      }
-    } else {
-      return {};
-    }
   };
 
   const actionAuth = (email?: string) => {
@@ -148,577 +130,145 @@ const AuthModal = ({
       } else {
         router.push("/signup");
       }
-    } else {
-      setIsAuth(defaultIsAuth);
-      useclose();
     }
   };
 
 
-  const storeAuth = (authMethod: string) => {
-    const cache = localStorage.getItem('auths');
+    const login = async () => {
 
-    let list: string[] = [];
-
-    if (cache !== null) {
-
-      cache.split(",").forEach((e: string) => {
-        if (methods.indexOf(e) != -1 && e !== authMethod) list.push(e);
-      });
-
-      list = [
-        ...cache.split(","),
-        ...methods.filter((e) => (cache.split(",").indexOf(e) == -1 && e != authMethod)),
-      ];
-
-    } else {
-      
-      methods.forEach((e: string) => {
-        if (e !== authMethod) list.push(e);
-      });
-
-    }
-
-    list.unshift(authMethod);
-
-    localStorage.setItem("auths", list.join(","));
-
-  };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      if (isNotSupported) {
-        logout();
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, connected, isNotSupported, user, router.isReady]);
-
-  const Ulogin = async () => {
-    if (isMainAuth()) {
       updAuthError("");
-  
+
+      setLoading(true);
+
       if (!isAuthenticated) {
+        try {
+          let isAuthing: any;
 
-        setIsAuth({ ...isAuth, uauth: true });
+          isAuthing = await authenticateUser({
+            signMessage: message ?? "Welcome to Cryptea",
+            type: connectors[2],
+          });
 
-        setSupport(false);
-        try { 
+          if (isAuthing !== undefined) {
+            if (userAuth) {
+              // drop here - metamask
+              analytics.track("Auth");
 
-          const authorization = await uauth_connector.loginWithPopup();
-
-          if (Boolean(authorization)) {
-            const { signature, message } =
-              authorization.idToken.verified_addresses[1].proof;
-
-            const main = await AuthAddress({
-              signature,
-              message,
-              address: authorization.idToken.wallet_address as string,
-            });
-
-            if (Boolean(main)) {
-
-              // drop here - unstoppable
-              analytics.track("UD Auth");
+              const email = await "user".get("email");
 
 
-              if (userAuth) {
-                storeAuth("uauth");
+              actionAuth(email as string);
 
-                const email = await "user".get("email");
-
-                setIsAuth({ ...isAuth, uauth: false });
-
-                update?.(main);
-              
-                actionAuth(email as string);
-              }
             }
           } else {
+            setLoading(false);
             updAuthError("Something went wrong please try again");
-            setIsAuth({ ...isAuth, uauth: false });
-          }
-        } catch (error) {
-          // console.log(error);
-          updAuthError("Something went wrong please try again");
-          setIsAuth({ ...isAuth, uauth: false });
-        }
-      }else{
-        // console.log('here authenticated', isAuthenticated, localStorage.getItem('userToken'))
-      }
-    }
-  };
-
-  const login = async () => {
-    if (isMainAuth()) {
-      updAuthError("");
-      setIsAuth({ ...isAuth, metamask: true });
-
-      if (!isAuthenticated || !userAuth) {
-        setSupport(false);
-        try {
-          let isAuthing: any;
-
-          if (userAuth) {
-            isAuthing = await authenticateUser({
-              signMessage: message ?? "Welcome to Cryptea",
-              type: connectors[2],
-            });
-          } else {
-            isAuthing = await connectWall(connectors[2]);
-            analytics.track("Metamask Pay");
-
-          }
-
-          storeAuth("metaauth");
-
-          if (supported.includes(chainId ? Number(chainId) : 137)) {
-            // console.log(chainId);
-
-            if (isAuthing !== undefined) {
-              if (userAuth) {
-
-                // drop here - metamask
-                analytics.track("Metamask Auth");
-
-
-                const email = await "user".get("email");
-
-                setIsAuth({ ...isAuth, metamask: false });
-                if (update) {
-                  update(isAuthing);
-                }
-
-                actionAuth(email as string);
-              } else {
-                
-                setIsAuth({ ...isAuth, metamask: false });
-
-                useclose();
-              }
-            } else {
-              updAuthError("Something went wrong please try again");
-              setIsAuth({ ...isAuth, metamask: false });
-            }
-          } else {
-            setSupport(true);
-            setIsAuth({ ...isAuth, metamask: false });
-            throw "Network not supported";
           }
         } catch (err) {
           const error = err as Error;
-          // console.log(error);
+          console.log(error);
+          setLoading(false);
           updAuthError("Something went wrong please try again");
-          setIsAuth({ ...isAuth, metamask: false });
         }
       } else {
-        if (userAuth) {
-          router.push("/dashboard");
-        } else {
-          updAuthError("Please refresh the page");
-        }
-        setIsAuth({ ...isAuth, metamask: false });
-      }
-    }
-  };
-
-  const clogin = async () => {
-    if (isMainAuth()) {
-      updAuthError("");
-      setIsAuth({ ...isAuth, coinbase: true });
-
-      if (!isAuthenticated || !userAuth) {
-        setSupport(false);
-        try {
-          let isAuthing: any;
-
-          if (userAuth) {
-            // drop here - coinbase
-            analytics.track("Coinbase Auth");
-
-            isAuthing = await authenticateUser({
-              signMessage: message ?? "Welcome to Cryptea",
-              type: connectors[0],
-            });
-          } else {
-            isAuthing = await connectWall(connectors[0]);
-            analytics.track("Coinbase Payment");
-
-          }
-
-          storeAuth("coinbaseauth");
-
-          if (supported.includes(chainId ? Number(chainId) : 137)) {
-            // console.log(chainId);
-
-            if (isAuthing !== undefined) {
-              if (userAuth) {
-                const email = await "user".get("email");
-
-                setIsAuth({ ...isAuth, coinbase: false });
-                if (update) {
-                  update(isAuthing);
-                }
-
-                actionAuth(email as string);
-              } else {
-                
-                setIsAuth({ ...isAuth, coinbase: false });
-
-                useclose();
-              }
-            } else {
-              updAuthError("Something went wrong please try again");
-              setIsAuth({ ...isAuth, coinbase: false });
-            }
-          } else {
-            setSupport(true);
-            setIsAuth({ ...isAuth, coinbase: false });
-            throw "Network not supported";
-          }
-        } catch (err) {
-          const error = err as Error;
-          // console.log(error);
-          updAuthError("Something went wrong please try again");
-          setIsAuth({ ...isAuth, coinbase: false });
-        }
-      } else {
-        
-      if (userAuth) {
         router.push("/dashboard");
-      }else{
-        updAuthError("Please refresh the page"); 
       }
+    };
+
+
+
+    useEffect(() => {
+      setMobile(Boolean(auth.mobile));
+
+      if (isConnected && localStorage.getItem("userToken") !== null) {
         
-        setIsAuth({ ...isAuth, coinbase: false });
-      }
-    }
-  };
+        router.push("/dashboard");
 
-  const magic = async () => {
-    if (isMainAuth()) {
-      updAuthError("");
-      setIsAuth({ ...isAuth, magic: true });
-
-      if (!isAuthenticated) {
-
-        setSupport(false);
- 
-        storeAuth("magicauth");
-
-        if (userAuth) {
-
-            router.push('/magic');
-
-        }
-
-      }else{
-        if(userAuth){
-          router.push('/dashboard')
-        } 
-      }
-
-    }
-  }
-
-  const walletconnect = async () => {
-    if (isMainAuth()) {
-      updAuthError("");
-      setIsAuth({ ...isAuth, walletconnect: true });
-
-      if (!isAuthenticated || !userAuth) {
-        setSupport(false);
-        try {
-          let isAuthing: any;
-          if (userAuth) {
-
-            // drop here - walletconnect
-            analytics.track("WalletConnect Auth");
-
-            isAuthing = await authenticateUser({
-              signMessage: message ?? "Welcome to Cryptea",
-              type: connectors[1],
-            });
-          } else {
-            isAuthing = await connectWall(connectors[1]);
-            analytics.track("WalletConnect Payment");
-
-          }
-
-          storeAuth("walletconnectauth");
-          if (supported.includes(chainId ? Number(chainId) : 137)) {
-            if (isAuthing !== undefined) {
-              if (userAuth) {
-                const email = await "user".get("email");
-
-                setIsAuth({ ...isAuth, walletconnect: false });
-
-                if (update) {
-                  update(isAuthing);
-                }
-
-                actionAuth(email as string);
-              } else {
-                setIsAuth({...defaultIsAuth});
-                useclose();
-              }
-            } else {
-              updAuthError("Something went wrong please try again");
-              setIsAuth({ ...isAuth, walletconnect: false });
-            }
-          } else {
-            setIsAuth({ ...isAuth, walletconnect: false });
-            setSupport(true);
-            throw "Network not supported";
-          }
-        } catch (err) {
-          const error = err as Error;
-          // console.log(error);
-          updAuthError("Something went wrong please try again");
-          setIsAuth({ ...isAuth, walletconnect: false });
-        }
       } else {
-        if (userAuth) {
-          router.push("/dashboard");
-        } else {
-          updAuthError("Please refresh the page");
+        if (!isConnected) {
+          if (openConnectModal) {
+            setLoading(false);
+            openConnectModal();
+            updateHead();
+          }else{
+            setLoading(true)
+          }
+        } else if (localStorage.getItem("userToken") === null && !isLoading) {
+           login();
         }
-        setIsAuth({ ...isAuth, walletconnect: false });
       }
-    }
-  };
-
-  const [arrange, setArrange] = useState<(JSX.Element | boolean)[]>([]);
-
-  useEffect(() => {
-
-      const buttons: {
-        [index: string]: JSX.Element | boolean;
-      } = {
-        metaauth: (
-          <button
-            onClick={login}
-            key={0}
-            style={{
-              fontFamily: "inherit",
-              borderColor: isAuth["metamask"] ? "#f57059" : undefined,
-              color: isAuth["metamask"] ? "#f57059" : undefined,
-              ...blurAuth("metamask"),
-            }}
-            className="transition-all rounded-md delay-500 hover:border-[#F57059] hover:text-[#F57059] items-center text-[16px] flex justify-between border-[1px] text-[#575757] w-full py-4 px-4"
-          >
-            <div className="flex items-center">
-              {isAuth["metamask"] && (
-                <Box className="mr-2 h-[22px] text-[#F57059]">
-                  <CircularProgress
-                    className="!w-[22px] !h-[22px]"
-                    color="inherit"
-                  />
-                </Box>
-              )}
-              Metamask
-            </div>
-            <Image src={meta} alt="Metamask" width={40} height={40} />
-          </button>
-        ),
-        magicauth: userAuth && (
-          <button
-            onClick={magic}
-            key={1}
-            style={{
-              fontFamily: "inherit",
-              borderColor: isAuth["magic"] ? "#f57059" : undefined,
-              color: isAuth["magic"] ? "#f57059" : undefined,
-              ...blurAuth("magic"),
-            }}
-            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] flex justify-between text-[#575757] w-full py-4 px-4"
-          >
-            <div className="flex items-center">
-              {isAuth["magic"] && (
-                <Box className="mr-2 h-[22px] text-[#F57059]">
-                  <CircularProgress
-                    className="!w-[22px] !h-[22px]"
-                    color="inherit"
-                  />
-                </Box>
-              )}
-              Email link
-            </div>
-
-            <FaRegEnvelopeOpen size={34} color={'#f57059'}/>
-          </button>
-        ),
-        walletconnectauth: (
-          <button
-            onClick={walletconnect}
-            key={2}
-            style={{
-              fontFamily: "inherit",
-              borderColor: isAuth["walletconnect"] ? "#f57059" : undefined,
-              color: isAuth["walletconnect"] ? "#f57059" : undefined,
-              ...blurAuth("walletconnect"),
-            }}
-            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px]  flex justify-between text-[#575757] w-full py-4 px-4"
-          >
-            <div className="flex items-center">
-              {isAuth["walletconnect"] && (
-                <Box className="mr-2 h-[22px] text-[#F57059]">
-                  <CircularProgress
-                    className="!w-[22px] !h-[22px]"
-                    color="inherit"
-                  />
-                </Box>
-              )}
-              Walletconnect
-            </div>
-
-            <Image src={wallcon} alt="Wallet Connect" width={40} height={40} />
-          </button>
-        ),
-        coinbaseauth: (
-          <button
-            onClick={clogin}
-            key={3}
-            style={{
-              fontFamily: "inherit",
-              borderColor: isAuth["coinbase"] ? "#f57059" : undefined,
-              color: isAuth["coinbase"] ? "#f57059" : undefined,
-              ...blurAuth("coinbase"),
-            }}
-            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] flex justify-between text-[#575757] w-full py-4 px-4"
-          >
-            <div className="flex items-center">
-              {isAuth["coinbase"] && (
-                <Box className="mr-2 h-[22px] text-[#F57059]">
-                  <CircularProgress
-                    className="!w-[22px] !h-[22px]"
-                    color="inherit"
-                  />
-                </Box>
-              )}
-              Coinbase
-            </div>
-
-            <Image src={coinbse} alt="Coinbase auth" width={40} height={40} />
-          </button>
-        ),
-        uauth: userAuth && (
-          <button
-            onClick={Ulogin}
-            key={4}
-            style={{
-              fontFamily: "inherit",
-              borderColor: isAuth["uauth"] ? "#f57059" : undefined,
-              color: isAuth["uauth"] ? "#f57059" : undefined,
-              ...blurAuth("uauth"),
-            }}
-            className="transition-all rounded-md items-center delay-500 text-[16px] hover:border-[#F57059] hover:text-[#F57059] border-[1px] flex justify-between text-[#575757] w-full py-4 px-4"
-          >
-            <div className="flex items-center">
-              {isAuth["uauth"] && (
-                <Box className="mr-2 h-[22px] text-[#F57059]">
-                  <CircularProgress
-                    className="!w-[22px] !h-[22px]"
-                    color="inherit"
-                  />
-                </Box>
-              )}
-              Login With Unstoppable
-            </div>
-
-            <Image
-              src={unstop}
-              alt="Unstoppable Wallet Connect"
-              width={40}
-              height={40}
-            />
-          </button>
-        ),
-      };
-
-    const auths = Object.keys(buttons);
-
-    const cache = localStorage.getItem('auths');
-
-    const list: (JSX.Element | boolean)[] = []
-
-    const used: string[] = [];
-
-    if (cache !== null) {
-        (cache).toLowerCase().split(',').forEach((ix: string) => {
-            if (auths.indexOf(ix) != -1 && used.indexOf(ix) == -1) {
-                list.push(buttons[ix])
-                used.push(ix);
-            }
-        });
-
-        setArrange(list)
-
-    }else{
-
-      setArrange(Object.values(buttons));
-
-    }
+    }, [isConnected, router, openConnectModal, auth.mobile]);
     
-  }, [isAuth, userAuth, isAuthenticated]);
+
 
   return (
     <>
-
-      {(Boolean(modal.show) || openM) && (
+      <div
+        className={` justify-center bg-[#e5e5e5] ${
+          !mobile ? "items-center" : "items-end"
+        } flex overflow-x-hidden z-[100000000] overflow-y-auto ${
+          !blur ? "backdrop-blur" : "backdrop-blur-[2px]"
+        } fixed inset-0  outline-none focus:outline-none`}
+      >
         <div
-          className={`justify-center bg-[rgba(255,255,255,.4)] items-center flex overflow-x-hidden z-[100000000] overflow-y-auto ${
-            !blur ? "backdrop-blur" : "backdrop-blur-[2px]"
-          } fixed inset-0 z-50 outline-none focus:outline-none`}
+          className={`relative flex rounded-[25px] ${
+            mobile
+              ? "max-w-[480px] sxm:max-w-full sxm:rounded-t-[2rem] sxm:rounded-b-none w-full min-h-[440px]"
+              : "sm:w-[336px] max-w-[720px] min-w-[350px] min-h-[468px]"
+          }  flex-col items-center justify-center shadow-lg bg-white`}
         >
-          <div className="relative max-w-[1500px] w-[80%] 4sm:w-[60%] min-w-[340px]">
-            {/*content*/}
-            <div className="border-0 rounded-[12px] shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-              {/*header*/}
-              <div className="flex items-center justify-center py-5 border-solid rounded-t">
-                <LogoSpace />
-              </div>
+          {Boolean(authError?.length) && (
+            <div className="transition-all rounded-md delay-500 border-[#F57059] text-[rgb(245,112,89)] items-center font-bold text-[16px] border-[1px] mx-6 mb-4 w-[calc(100%-48px)] p-3">
+              {authError}
+            </div>
+          )}
 
-              <div className="flex items-center justify-center pb-2 pt-3 border-solid rounded-t">
-                <h2
-                  style={{ fontFamily: "inherit" }}
-                  className="text-[18px] font-bold"
-                >
-                  Launch App
-                </h2>
-              </div>
-              {/*body*/}
-              {Boolean(authError?.length) && (
-                <div className="transition-all rounded-md delay-500 border-[#F57059] text-[rgb(245,112,89)] items-center font-bold text-[16px] border-[1px] mx-6 my-2 w-[calc(100%-48px)] p-3">
-                  {authError}
-                </div>
-              )}
+          <div className="flex-col flex items-center justify-between h-[140px]">
+            <LogoSpace className="scale-75" />
 
-              <div
-                style={{
-                  gridTemplateColumns: "repeat(auto-fill, minmax(292px, 1fr))",
-                }}
-                className="relative p-6 grid gap-2 grid-flow-dense"
+            <div className="flex flex-col justify-between h-[85px] items-center">
+              <h2
+                style={{ fontFamily: "inherit" }}
+                className="text-[18px] text-[#121212] leading-[24px] font-bold"
               >
-                {arrange}
-              </div>
-              {/*footer*/}
+                Launching App...
+              </h2>
 
-              {pathname != "/auth" && pathname != "/" && (
-                <div className="bg-[#f7f7f7] flex justify-center items-center rounded-b-[.9rem] p-3">
-                  <Button
-                    onClick={useclose}
-                    className="!py-2 !font-bold !px-3 !min-w-[120px] !capitalize !flex !items-center !text-white !fill-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+              {!isLoading ? (
+                <>
+                  <div className="text-[14px] leading-[18px] font-[500] text-[rgba(60,66,66,0.6)] text-center">
+                    Click the button below to retry
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      if (!isConnected) {
+                        openConnectModal?.();
+                        updateHead();
+                      } else {
+                        login();
+                      }
+                    }}
+                    className="uppercase text-white bg-[#f57059] transition-all py-1 leading-normal hover:bg-[#f05338] px-3 text-center h-auto rounded-[3rem] font-bold block cursor-pointer mx-auto"
                   >
-                    Close
-                  </Button>
-                </div>
+                    Retry
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="text-[14px] leading-[18px] font-[500] text-[rgba(60,66,66,0.6)] text-center">
+                    Please just a sec...
+                  </div>
+
+                  <div className="mx-auto block mt-1 text-center">
+                    <CircularProgress size={20} className="text-[rgba(60,66,66,0.6)]" />
+                  </div>
+                </>
               )}
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 };

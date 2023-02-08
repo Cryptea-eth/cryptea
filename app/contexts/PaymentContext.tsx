@@ -150,7 +150,6 @@ export const PaymentProvider = ({
 
   const {
     connected,
-    authenticate,
     chainId,
     signer: nullSigner,
     account,
@@ -794,6 +793,15 @@ export const PaymentProvider = ({
   };
 
   useEffect(() => {
+
+    const elem = document.querySelector(
+      "button.ju367vf9.ju367va.ju367v26"
+    ) as any; 
+
+    if (elem != null) {
+        elem.click();
+    }
+
     if (connected && paymentData !== undefined) {
       if (chainId == token.value) {
         // console.log("ee");

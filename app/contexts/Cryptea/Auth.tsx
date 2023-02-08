@@ -235,7 +235,7 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
     {
       groupName: "Recommended",
       wallets:
-        router.asPath == '/pay/[slug]'
+        router.pathname == "/pay/[slug]"
           ? [
               metaMaskWallet({ chains }),
               walletConnectWallet({ chains }),

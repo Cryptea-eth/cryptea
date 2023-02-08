@@ -178,26 +178,6 @@ export const Cronos: Chain = {
   testnet: false,
 };
 
-export const FileCoinWallaby: Chain = {
-  id: 31415,
-  name: "Filecoin Wallaby",
-  network: "Wallaby",
-  nativeCurrency: {
-    name: "Filecoin",
-    decimals: 18,
-    symbol: "tFIL",
-  },
-  rpcUrls: {
-    default: "https://wallaby.node.glif.io/rpc/v0",
-  },
-  blockExplorers: {
-    default: {
-      name: "wallaby",
-      url: "https://explorer.glif.io/wallaby",
-    },
-  },
-  testnet: true,
-};
 
 export const CronosTest: Chain = {
   id: 338,
@@ -221,6 +201,27 @@ export const CronosTest: Chain = {
   testnet: true,
 };
 
+export const FileCoinHyperspace: Chain = {
+  id: 3141,
+  name: "Filecoin Hyperspace",
+  network: "Hyperspace",
+  nativeCurrency: {
+    name: "Filecoin",
+    decimals: 18,
+    symbol: "tFIL",
+  },
+  rpcUrls: {
+    default: "https://api.hyperspace.node.glif.io/rpc/v1"
+  },
+  blockExplorers: {
+    default: {
+      name: "hyperspace",
+      url: "https://hyperspace.filfox.info/en",
+    },
+  },
+  testnet: true,
+};
+
 export const { chains, provider, webSocketProvider } = configureChains(
   [
     chain.polygon,
@@ -235,7 +236,7 @@ export const { chains, provider, webSocketProvider } = configureChains(
     OptimismGoerli,
     OasisEmerald,
     OasisEmeraldTestnet,
-    FileCoinWallaby,
+    FileCoinHyperspace,
   ],
   [
     publicProvider(),
@@ -252,7 +253,7 @@ export const { chains, provider, webSocketProvider } = configureChains(
           chain.id !== OptimismGoerli.id ||
           chain.id !== OasisEmerald.id ||
           chain.id !== OasisEmeraldTestnet.id ||
-          chain.id !== FileCoinWallaby.id
+          chain.id !== FileCoinHyperspace.id
         )
           return null;
 
@@ -267,7 +268,7 @@ export const tokenTrackers: {
 } = {
   137: {
     name: "polygonscan",
-    link: "https://polygonscan.com/tx/"
+    link: "https://polygonscan.com/tx/",
   },
   80001: {
     name: "polygonscan",
@@ -289,9 +290,9 @@ export const tokenTrackers: {
     name: "Oasis Explorer",
     link: "https://testnet.explorer.emerald.oasis.dev/tx/",
   },
-  31415: {
-    name: "Wallaby Explorer",
-    link: "https://explorer.glif.io/wallaby",
+  3141: {
+    name: "Hyperspace Explorer",
+    link: "https://hyperspace.filfox.info/en/tx/",
   },
 };
 
@@ -392,18 +393,18 @@ export const CryptoList: token[] = [
             alt={"Filecoin (Testnet)"}
           />
         </div>
-        <span className="text-[#121212]">Filecoin (Testnet)</span>
+        <span className="text-[#121212]">Filecoin Hyperspace (Testnet)</span>
       </div>
     ),
-    name: "Filecoin (Testnet)",
+    name: "Filecoin Hyperspace (Testnet)",
     symbol: "TFIL",
-    network: FileCoinWallaby.network as string,
+    network: FileCoinHyperspace.network as string,
     tokenAddr: "",
-    contractAddr: "0x2d9E5Cd304A84DC15Bb28749Cf0769A0bdc2CD6F",
-    rpc: FileCoinWallaby.rpcUrls.default,
+    contractAddr: "0x5038557875a36b60371123bD8E725272e1905843",
+    rpc: FileCoinHyperspace.rpcUrls.default,
     testnet: true,
     payment: {
-      manual: false,
+      manual: true,
       auto: true,
     },
   },
@@ -459,7 +460,7 @@ export const CryptoList: token[] = [
     testnet: true,
     payment: {
       manual: true,
-      auto: true
+      auto: true,
     },
     rpc: AuroraTestnet.rpcUrls.default,
   },
@@ -487,7 +488,7 @@ export const CryptoList: token[] = [
     tokenAddr: "",
     payment: {
       manual: true,
-      auto: true
+      auto: true,
     },
     rpc: OptimismGoerli.rpcUrls.default,
   },
@@ -515,7 +516,7 @@ export const CryptoList: token[] = [
     tokenAddr: "",
     payment: {
       manual: true,
-      auto: true
+      auto: true,
     },
     rpc: OasisEmeraldTestnet.rpcUrls.default,
   },

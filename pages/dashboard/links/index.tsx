@@ -321,10 +321,10 @@ const Links = () => {
                   backdropFilter: "blur(5px)",
                 },
               }}
-              className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+              className={`overflow-y-scroll overflow-x-hidden cusscroller flex justify-center sxm:items-end`}
             >
               <Box
-                className="sm:w-full h-fit 3mdd:px-[2px]"
+                className="sm:w-full  h-fit 3mdd:px-[2px]"
                 sx={{
                   minWidth: 300,
                   width: "70%",

@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import Loader from '../app/components/elements/loader';
-import AuthModal from "../app/components/elements/modal/modal";
+import AuthModal from "../app/components/elements/modal";
 import { useCryptea } from '../app/contexts/Cryptea';
 import Router, { useRouter } from 'next/router';
 import { useAccount, useDisconnect } from 'wagmi';
