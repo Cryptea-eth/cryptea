@@ -40,7 +40,7 @@ const connectors = [
 
 export const uauth_connector = new UAuth({
   clientID: process.env.UDCLIENT || '',
-  redirectUri: "http://localhost:3000",
+  redirectUri: process.env.UDREDIRECT || "http://localhost:3000",
   scope: "openid wallet",
 })
 
