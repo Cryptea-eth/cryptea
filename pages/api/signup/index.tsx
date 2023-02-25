@@ -5,6 +5,8 @@ import url from 'url';
 
 type Data = {
   message: string;
+  user?: any;
+  token?: string;
   error: boolean;
 };
 
@@ -14,37 +16,56 @@ export default function handler(
 ) {
 
 
-    if (req.body != 'POST') {
+    if (req.method == 'POST') {
 
         const { authorization } = req.headers;
 
         const { user, link, pins, host } = req.body;
 
-        axios.patch('https://ab.cryptea.me/user', user, {
+        ( authorization == 'null' ?
+          axios.post("https://ab.cryptea.me/user", user) :
+          axios.patch("https://ab.cryptea.me/user", user, {
             headers: {
-                Authorization: authorization as string
+              Authorization: `Bearer ${authorization as string}`,
+            },
+          })
+        )
+          .then(({data: results}) => {
+
+            const rel: any = {
+              error: false,
+              message: "Process Successful",
+            };
+
+
+            if (results.user !== undefined) {
+              
+              rel["user"] = results.user;
+
+              rel["token"] = results.token;
+
             }
-        }).then(() => {
+            
 
-            axios.post('https://ab.cryptea.me/link', link, {
+            axios
+              .post("https://ab.cryptea.me/link", link, {
                 headers: {
-                    Authorization: authorization as string
-                }
-            }).then(() => {
-
+                  Authorization: `Bearer ${
+                    authorization == 'null' ? rel["token"] : authorization
+                  }`,
+                },
+              })
+              .then(() => {
                 axios
                   .post(`${host}/api/settlement/new`, pins, {
                     headers: {
-                      Authorization: authorization as string,
+                      Authorization: `Bearer ${
+                        authorization == 'null' ? rel["token"] : authorization
+                      }`,
                     },
                   })
                   .then(() => {
-
-                        res.status(201).json({
-                            error: false,
-                            message: "Process Successful"
-                        });
-
+                    res.status(201).json(rel);
                   })
                   .catch((err) => {
                     const error = err as any;
@@ -63,9 +84,9 @@ export default function handler(
                             : error.response.data.message) ||
                           "Something went wrong, please try again",
                       });
-                  });                
-
-            }).catch((err) => {
+                  });
+              })
+              .catch((err) => {
                 const error = err as any;
 
                 res
@@ -80,23 +101,22 @@ export default function handler(
                         : error.response.data.message) ||
                       "Something went wrong please try again",
                   });
-
-            });
-
-        }).catch((err) => {
-
+              });
+          })
+          .catch((err) => {
             const error = err as any;
 
-            res.status(Number(error.response.status || error.status || "400")).json({
-              error: true,
-              message:
-                (error.response === undefined
-                  ? error.message
-                  : error.response.data.message) || 'Something went wrong please try again',
-            });
-
-
-        });
+            res
+              .status(Number(error.response.status || error.status || "400"))
+              .json({
+                error: true,
+                message:
+                  (error.response === undefined
+                    ? error.message
+                    : error.response.data.message) ||
+                  "Something went wrong please try again",
+              });
+          });
 
     }else{
          res.status(422).json({

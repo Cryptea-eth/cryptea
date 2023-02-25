@@ -4,6 +4,7 @@ import axios from "axios";
 import {
   AuroraTestnet,
   CronosTest,
+  FileCoinHyperspace,
   OasisEmeraldTestnet,
   OptimismGoerli,
 } from "../../../app/contexts/Cryptea/connectors/chains";
@@ -28,6 +29,7 @@ const providers: { [index: string]: string } = {
   42261: OasisEmeraldTestnet.rpcUrls.default,
   1313161555: AuroraTestnet.rpcUrls.default,
   420: OptimismGoerli.rpcUrls.default,
+  3141: FileCoinHyperspace.rpcUrls.default,
 };
 
 export default function handler(

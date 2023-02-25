@@ -321,10 +321,10 @@ const Links = () => {
                   backdropFilter: "blur(5px)",
                 },
               }}
-              className="overflow-y-scroll overflow-x-hidden cusscroller flex justify-center"
+              className={`overflow-y-scroll overflow-x-hidden cusscroller flex justify-center sxm:items-end`}
             >
               <Box
-                className="sm:w-full h-fit 3mdd:px-[2px]"
+                className="sm:w-full  h-fit 3mdd:px-[2px]"
                 sx={{
                   minWidth: 300,
                   width: "70%",
@@ -866,7 +866,7 @@ const Links = () => {
                               <MdLink size={21} />
                             </div>
                             <div className="truncate">
-                              <h3 className="truncate text-[17px] leading-[20px] font-[500] text-[#121212]">
+                              <h3 className="truncate flex items-center text-[17px] leading-[20px] font-[500] text-[#121212]">
                                 {link}
                               </h3>
                               <span className="block text-[14px] leading-[1.2] truncate w-full text-[#575757]">

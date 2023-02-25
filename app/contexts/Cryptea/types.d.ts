@@ -45,7 +45,7 @@ export interface authData {
 }
 
 export interface authenticateUserDefault {
-  type: import("@wagmi/core").Connector<any, any, any> | undefined;
+  type?: import("@wagmi/core").Connector<any, any, any> | undefined;
   signMessage?: string;
 }
 
@@ -67,6 +67,7 @@ export interface authenticateUserExtended extends authenticateUserDefault {
 }
 
 export interface AuthContext {
+  mobile?: boolean; 
   user?: userData | undefined;
   isAuthenticated?: boolean;
   update?: (e: userData | undefined) => any;

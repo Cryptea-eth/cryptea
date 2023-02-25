@@ -46,7 +46,7 @@ const DashboardIndex = () => {
             
             const acc = JSON.parse(e.accounts || '[]');
 
-            if (!Boolean(e.email) || acc[0] == 'null' || acc[0] == 'undefined') {
+            if (!Boolean(e.email) || (!Boolean(e.settlement ? e.settlement.length : 0) && (acc[0] == "null" || acc[0] == "undefined"))) {
   
               if (!Boolean(e.error)) {
                 router.push("/signup");

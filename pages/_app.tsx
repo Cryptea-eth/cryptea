@@ -3,6 +3,7 @@ import "../styles/Home.css";
 import "../styles/Dash.css";
 import "../styles/Auth.css";
 import "../styles/Sett.css";
+import "@rainbow-me/rainbowkit/styles.css";
 
 import type { AppProps } from "next/app";
 import React from "react";
@@ -15,6 +16,7 @@ import analytics from "../analytics";
 import Script from "next/script";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  
   const once = React.useRef<boolean>(true);
 
   React.useEffect(() => {

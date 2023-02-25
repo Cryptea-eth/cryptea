@@ -56,11 +56,7 @@ const SignupForm = () => {
 
   const submitForm = async () => {
 
-    if (!isAuthenticated) {
-      authenticate(true);
 
-      setLoading(false);
-    } else {
       setLoading(true);
       let more = true;
 
@@ -88,8 +84,8 @@ const SignupForm = () => {
           more = false;
         }
 
-        if (!validator.isEthereumAddress(userAddress) && !eoa) {
-          setError("A valid Ethereum address is required");
+        if (!validator.isEthereumAddress(userAddress) && userAddress.length && !eoa) {
+          setError("A valid Ethereum address was not given");
           setLoading(false);
           window.scrollTo(0, 0);
           more = false;
@@ -111,11 +107,15 @@ const SignupForm = () => {
 
         try {
 
-          const e = await "user".get("*", true);
+          const Authorization = localStorage.getItem("userToken");
+
+          const e =  Authorization === null ? { accounts: '[]', settlements: [], emails: false } : await "user".get("*", true);
           
+
           const acc = JSON.parse(e.accounts || '[]');
 
-          if (!Boolean(e.email) || acc[0] == "null" || acc[0] == "undefined") {
+          if (!Boolean(e.email) || (!Boolean(e.settlement ? e.settlement.length : 0) && (acc[0] == "null" || acc[0] == "undefined"))) {
+
             try {
 
               if (pins.newpin != pins.renewpin) {
@@ -153,7 +153,7 @@ const SignupForm = () => {
 
               if (!eoa) {
                 userObj = {
-                  address: userAddress,
+                  address: userAddress || '',
                   eoa
                 };
               }
@@ -168,7 +168,7 @@ const SignupForm = () => {
                   desc: userDescription,
                   onetime: "[]",
                   subscribers: "[]",
-                  address: eoa ? account : userAddress,
+                  address: (eoa ? account : userAddress) || '',
                   views: "[]",
                   type: "both",
                   amountMulti: JSON.stringify([0.1, 10, 50, 100]),
@@ -178,12 +178,26 @@ const SignupForm = () => {
                 },
               };
 
-              await axios.post('/api/signup', signData, {
+              
+
+              const { data: mdata } = await axios.post('/api/signup', signData, {
                 baseURL: window.origin,
                 headers: {
-                  Authorization: `Bearer ${localStorage.getItem('userToken')}`
+                  Authorization
                 }
               });
+
+
+              if (mdata.user !== undefined) {
+
+                  const { token: mtoken, user } = mdata;
+
+                  localStorage.setItem('userToken', mtoken);
+
+                  localStorage.setItem("user", JSON.stringify(user));
+
+              }
+              
 
             } catch (err) {
               console.log(err);
@@ -218,27 +232,18 @@ const SignupForm = () => {
           setLoading(false);
         }
       }
-    }
 };
 
 useEffect(() => {
   if(isAuthenticated !== undefined){
 
-    if(!isAuthenticated){
-
-      authenticate(true);
-
-      setMLoader(false);
-
-    }else{
-      
-      authenticate(false);
-
+    if(isAuthenticated){
+        console.log('erre')
       ('user').get('*', true).then(e => {
 
         const addresses = JSON.parse(e.accounts || '[]');
 
-        if (addresses[0] == "null" || addresses[0] == "undefined") {
+        if (!Boolean(e.settlement ? e.settlement.length : 0) && (addresses[0] == "null" || addresses[0] == "undefined")) {
           setAoa(false);
 
           setMLoader(false);
@@ -254,11 +259,15 @@ useEffect(() => {
         Router.push('/timeout');
       })
       
+    }else{
+
+      setMLoader(false);
+
     }
 
   }
     
-  }, [isAuthenticated, authenticate])
+  }, [isAuthenticated])
 
 
   return (
@@ -406,6 +415,7 @@ useEffect(() => {
                                   </InputAdornment>
                                 ),
                               }}
+                              helperText={"Not required"}
                               sx={{
                                 "& .Mui-focused.MuiFormLabel-root": {
                                   color: "#f57059",

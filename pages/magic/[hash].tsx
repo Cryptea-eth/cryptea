@@ -38,12 +38,14 @@ const VerifyHash = () => {
               username,
               id,
               email_verified_at,
+              settlement
             }: {
               username: string;
               img: string;
               email: string;
               accounts: string[];
               id: number | string;
+              settlement: any[];
               email_verified_at: any;
             } = userx.data.data;
 
@@ -52,6 +54,7 @@ const VerifyHash = () => {
               email,
               username,
               accounts,
+              settlement,
               img,
               email_verified_at,
             };
@@ -60,7 +63,8 @@ const VerifyHash = () => {
 
             localStorage.setItem("userToken", userx.data.token);
 
-            if (accounts[0] == 'null') {
+            
+            if (accounts[0] == 'null' && !Boolean(settlement ? settlement.length : 0)) {
               router.push('/signup');
             }else {
               router.push("/dashboard");
