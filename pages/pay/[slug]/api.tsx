@@ -77,12 +77,12 @@ const Api = () => {
 
   const cxHash = () => {
 
-      copy(hash);
+    copy(hash);
 
-      setHash('');
-  
+    setHash('');
+
   }
-  
+
   const [rdialog, revokeDialog] = useState<boolean>(false);
 
   const [error, setError] = useState<string>("");
@@ -367,9 +367,8 @@ const Api = () => {
             />
 
             <div
-              className={`body pb-6 transition-all delay-500 ${
-                sidebar?.openPage ? "pl-[257px]" : "pl-[75px]"
-              } w-full h-full 2sm:!pl-[75px]`}
+              className={`body pb-6 transition-all delay-500 ${sidebar?.openPage ? "pl-[257px]" : "pl-[75px]"
+                } w-full h-full 2sm:!pl-[75px]`}
             >
               <div className="pl-5 pr-2 flex items-center justify-between min-h-[75px] py-3 border-b sticky top-0 bg-white z-10 w-full">
                 <div className="text-truncate capitalize text-[rgb(32,33,36)] text-[19px] mr-1">
@@ -423,7 +422,7 @@ const Api = () => {
                       interval,
                       false
                     )
-                      ["data"].reduce((a: any, b: any) => a + b, 0)
+                    ["data"].reduce((a: any, b: any) => a + b, 0)
                       .toFixed(2)}
                     thousandSeparator={true}
                     displayType={"text"}
@@ -439,7 +438,7 @@ const Api = () => {
                       interval,
                       false
                     )
-                      ["data"].reduce((a: any, b: any) => a + b, 0)
+                    ["data"].reduce((a: any, b: any) => a + b, 0)
                       .toFixed(2)}
                     className="font-[600]"
                     thousandSeparator={true}
@@ -564,7 +563,7 @@ const Api = () => {
                       }}
                       labels={
                         sortData([{ amount: 0, date: 0 }], interval, false)[
-                          "label"
+                        "label"
                         ]
                       }
                     />
@@ -590,8 +589,8 @@ const Api = () => {
                             {error.length
                               ? error
                               : data.activeKey
-                              ? "Secured"
-                              : ""}
+                                ? "Secured"
+                                : ""}
                           </div>
                         </div>
 
@@ -601,8 +600,7 @@ const Api = () => {
                         </div>
 
                         <div className="w-full z-10 relative items-center flex text-[rgb(95,99,104)] h-[100px]">
-                          Get API documentation, to integrate in your site /
-                          application
+                          Generate new API key, to authorize your integrations
                         </div>
                       </>
                     }

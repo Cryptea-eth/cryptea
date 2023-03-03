@@ -238,7 +238,7 @@ useEffect(() => {
   if(isAuthenticated !== undefined){
 
     if(isAuthenticated){
-        console.log('erre')
+        // console.log('erre')
       ('user').get('*', true).then(e => {
 
         const addresses = JSON.parse(e.accounts || '[]');
