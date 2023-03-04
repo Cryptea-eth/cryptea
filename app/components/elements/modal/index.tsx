@@ -142,7 +142,10 @@ const AuthModal = ({
 
       if (!isAuthenticated) {
         try {
+
           let isAuthing: any;
+
+        
 
           isAuthing = await authenticateUser({
             signMessage: message ?? "Welcome to Cryptea",
@@ -161,6 +164,9 @@ const AuthModal = ({
 
             }
           } else {
+
+            console.log('ee')
+
             setLoading(false);
             updAuthError("Something went wrong please try again");
           }

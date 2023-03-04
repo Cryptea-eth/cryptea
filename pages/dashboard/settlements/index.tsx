@@ -1792,7 +1792,7 @@ const Settlements = () => {
 
             <div className="flex items-end cusscroller overflow-x-scroll overflow-y-hidden pb-1">
               {blur
-                ? ["x", "x", "x"].map((v: any, i: number) => {
+                ? Array(1,2,3).map((v: any, i: number) => {
                     return (
                       <Skeleton
                         key={i}

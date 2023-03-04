@@ -807,7 +807,7 @@ const DashHome = () => {
 
             <div className="flex items-center cusscroller overflow-x-scroll overflow-y-hidden pb-1">
               {blur
-                ? ["x", "x", "x"].map((v: any, i: number) => {
+                ? Array(1,2,3).map((v: any, i: number) => {
                     return (
                       <Skeleton
                         key={i}
@@ -935,7 +935,7 @@ const DashHome = () => {
             )}
 
             {blur
-              ? ["x", "x", "x"].map((x: any, i: number) => (
+              ? Array(1,2,3).map((x: any, i: number) => (
                   <Skeleton
                     className={"rounded-[.9rem] py-3 h-[70px] mb-2"}
                     variant={"rounded"}
@@ -1004,7 +1004,7 @@ const DashHome = () => {
                           </Avatar>
 
                           <div className="pl-2 flex w-full items-center justify-between">
-                            <div className="block truncate capitalize text-[#a1a1a1] font-[500] text-[1.2rem]">
+                            <div className="block truncate capitalize text-[#a1a1a1] font-[500] mr-[10px] text-[1.2rem]">
                               {l.link}
                             </div>
 

@@ -4525,6 +4525,11 @@ cosmiconfig@^7.0.0:
     path-type "^4.0.0"
     yaml "^1.10.0"
 
+country-flags-svg@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/country-flags-svg/-/country-flags-svg-1.1.8.tgz#06e0e93c20577c1511577c0e8f19f27f8fcf9021"
+  integrity sha512-ck/KoglQ1tU1d4nDN/8PEuGPeXmbCuWYu97MaHr5+p9VVYJZHgG/DYWAaOAnrYWkPn1GsAER/YlJvQGAnenJdg==
+
 crc-32@^1.2.0:
   version "1.2.2"
   resolved "https://repo.huaweicloud.com/repository/npm/crc-32/-/crc-32-1.2.2.tgz#3cad35a934b8bf71f25ca524b6da51fb7eace2ff"

@@ -155,7 +155,7 @@ export const PaymentProvider = ({
     account,
     disconnect,
     validator,
-  } = useCryptea();
+  } = useCryptea()
 
   const [signer, setSigner] = useState(nullSigner);
 
@@ -258,6 +258,21 @@ export const PaymentProvider = ({
     return price / priceCurrency;
   };
 
+  const fantom = async (price: number) => {
+
+     const response = await getPriceReq({
+        ids: "fantom",
+        vs_currencies: "usd",
+      });
+
+    const e = response.data as { [index: string]: any };
+
+    const priceCurrency = Number(e["fantom"]["usd"]);
+
+    return price / priceCurrency;
+    
+  };
+
   const getPrice = async (
     price: number,
     chain: string | number | undefined = 80001
@@ -267,6 +282,8 @@ export const PaymentProvider = ({
     setLoadingText("Loading price data...");
 
     const prices: { [index: string]: () => Promise<number> } = {
+      "250": async () => await fantom(price),
+      "4002": async () => await fantom(price),
       "80001": async () => await matic(price),
       "137": async () => await matic(price),
       "31415": async () => {
@@ -631,6 +648,8 @@ export const PaymentProvider = ({
 
     if (!connected || chainId != token.value || !signer) {
       setLoadingText("");
+
+      console.log(chainId, token.value, pendingChainId, chains);
 
       if (chainId != token.value) {
         const switchNet = await switchNetworkAsync?.(token.value);

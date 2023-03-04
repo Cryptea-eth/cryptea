@@ -4,6 +4,9 @@ const web3 = require('web3');
 // require("./tasks")
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
+
+const accounts = [process.env.PRIVATE_KEY];
+
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();
 
@@ -60,15 +63,23 @@ module.exports = {
     },
     polygonMain:{
       url: process.env.POLYGONMATIC,
-      accounts: [process.env.PRIVATE_KEY]
+      accounts
+    },
+    fantomTest: {
+      url: 'https://rpc.ankr.com/fantom_testnet',
+      accounts
+    },
+    fantomMain: {
+      url: 'https://endpoints.omniatech.io/v1/fantom/mainnet/public',
+      accounts
     },
     polygon: {
       url: process.env.MATIC_LINK,
-      accounts: [process.env.PRIVATE_KEY]
+      accounts
     }, 
     filwallaby: {
       url: "https://wallaby.node.glif.io/rpc/v0",
-      accounts: [process.env.PRIVATE_KEY]
+      accounts
     },  
     rinkeby: {
         url: process.env.RINK_LINK,
@@ -76,19 +87,20 @@ module.exports = {
     },
     optimism_test: {
       url: "https://goerli.optimism.io",
-      accounts: [process.env.PRIVATE_KEY]
+      accounts
     },
     cronos_test: {
       url: "https://evm-t3.cronos.org",
-      accounts: [process.env.PRIVATE_KEY]
+      accounts
     },
     aurora_test: {
       url: process.env.AURORA_LINK,
-      accounts: [process.env.PRIVATE_KEY]
+      accounts
     },
+
     oasis_test: {
       url: "https://testnet.emerald.oasis.dev",
-      accounts: [process.env.PRIVATE_KEY]
+      accounts
     }
   }
 };
