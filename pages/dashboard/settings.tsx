@@ -608,7 +608,7 @@ const Settings = () => {
                       <div className="flex items-center">
                         <Button
                           onClick={savePin}
-                          className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                          className="!py-2 !font-bold !min-w-[220px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#F57059] !normal-case !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                         >
                           {pinLoading ? (
                             <>
@@ -621,7 +621,7 @@ const Settings = () => {
                               <span>Just a Sec...</span>
                             </>
                           ) : (
-                            <>Change Pin</>
+                            <>Change pin</>
                           )}
                         </Button>
                       </div>
