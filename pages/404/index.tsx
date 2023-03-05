@@ -1,8 +1,10 @@
 import Nav from "../../app/components/elements/Nav";
 import Link from "next/link";
+import Router from 'next/router'
 import Head from "next/head";
 import { Button } from "@mui/material";
 const Notfound = () => {
+
   return (
     <div className="h-screen">
       <Head>

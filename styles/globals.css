@@ -38,7 +38,6 @@ body *:not(i, svg){
 }
 
 body{
-  overflow-x:hidden;
   color:rgb(32, 33, 36);
 }
 
