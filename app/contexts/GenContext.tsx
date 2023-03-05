@@ -75,9 +75,10 @@ export const DashContext = createContext<dash>({
 });
 
 export const GenProvider = ({ children }: { children: JSX.Element }) => {
-  const [isOpen, close] = useState(false);
-  const [isOpen2, close2] = useState(false);
-  const [isOpen3, close3] = useState(false);
+
+  const [isOpen, close] = useState(true);
+  const [isOpen2, close2] = useState(true);
+  const [isOpen3, close3] = useState(true);
 
   const [tLoading, setTloading] = useState<boolean>(true);
 
