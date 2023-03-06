@@ -492,7 +492,7 @@ const DashHome = () => {
               <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
                 <div className="mb-2 flex items-start justify-between">
                   <div>
-                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                    <h2 className="font-[500] 3mdd:text-[1.25rem] text-[rgb(32,33,36)] text-[1.55rem]">
                       Create Settlement Pin
                     </h2>
                     <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
@@ -534,7 +534,7 @@ const DashHome = () => {
                       type={!pinsVisibility["newpin"] ? "text" : "password"}
                       length={5}
                       onComplete={(e) => setPin({ ...pins, newpin: e })}
-                      className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                      className="font-[inherit] 2usmm:w-[3rem] 2usmm:h-[3rem] 2usmm:text-[1.5rem] 2usmm:!justify-start outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
                       validate={/^[0-9]$/}
                     />
                   </div>
@@ -567,7 +567,7 @@ const DashHome = () => {
                       type={!pinsVisibility["renewpin"] ? "text" : "password"}
                       length={5}
                       onComplete={(e) => setPin({ ...pins, renewpin: e })}
-                      className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                      className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] 2usmm:w-[3rem] 2usmm:h-[3rem] 2usmm:text-[1.5rem] 2usmm:!justify-start text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
                       validate={/^[0-9]$/}
                     />
                   </div>
@@ -806,7 +806,7 @@ const DashHome = () => {
 
             <div className="flex items-center cusscroller overflow-x-scroll overflow-y-hidden pb-1">
               {blur
-                ? Array(1,2,3).map((v: any, i: number) => {
+                ? Array(1, 2, 3).map((v: any, i: number) => {
                     return (
                       <Skeleton
                         key={i}
@@ -934,7 +934,7 @@ const DashHome = () => {
             )}
 
             {blur
-              ? Array(1,2,3).map((x: any, i: number) => (
+              ? Array(1, 2, 3).map((x: any, i: number) => (
                   <Skeleton
                     className={"rounded-[.9rem] py-3 h-[70px] mb-2"}
                     variant={"rounded"}
