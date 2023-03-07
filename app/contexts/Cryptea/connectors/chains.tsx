@@ -442,7 +442,7 @@ export const CryptoList: token[] = [
     ),
     name: "Fantom (Mainnet)",
     symbol: "FTM",
-    contractAddr: "",
+    contractAddr: "0xf1BC5925641159a0d1388B17e3AB32D9416B3f09",
     network: "fantom",
     tokenAddr: "",
     rpc: fantom.rpcUrls.default,
