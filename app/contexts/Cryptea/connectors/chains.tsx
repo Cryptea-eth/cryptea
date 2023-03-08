@@ -449,7 +449,7 @@ export const CryptoList: token[] = [
     testnet: false,
     payment: {
       manual: true,
-      auto: false,
+      auto: true,
     },
   },
   {
