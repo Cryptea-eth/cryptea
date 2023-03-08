@@ -15,11 +15,12 @@ import { useCryptea } from "../../../contexts/Cryptea";
 import Loader from "../loader";
 import LogoSpace from "../logo";
 import { BiEnvelope, BiUserCircle, BiWallet } from "react-icons/bi";
-import { MdOutlineDescription, MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
+import { MdArrowBack, MdArrowBackIos, MdOutlineDescription, MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
 import SwipeableViews from "react-swipeable-views";
 import TabPanel from "../dashboard/link/TabPanel";
 import { PinField } from "react-pin-field";
 import axios from 'axios';
+import Link from "next/link";
 
 
 const SignupForm = () => {
@@ -238,7 +239,7 @@ useEffect(() => {
   if(isAuthenticated !== undefined){
 
     if(isAuthenticated){
-        console.log('erre')
+        // console.log('erre')
       ('user').get('*', true).then(e => {
 
         const addresses = JSON.parse(e.accounts || '[]');
@@ -279,28 +280,50 @@ useEffect(() => {
             e.preventDefault();
             submitForm();
           }}
+          className="flex flex-col items-center justify-center h-screen "
           method="POST"
           action="#"
           encType="multipart/form-data"
         >
-          <div className="3md:w-[296px] 2mdd:w-[370px] w-[340px] mx-auto flex flex-col justify-center h-screen">
-            <LogoSpace
-              className="mx-auto"
-              style={{
-                marginBottom: "60px",
-              }}
-            />
+          <div className="w-full relative 3mdd:justify-between mb-[60px] flex items-center px-3">
+            <LogoSpace className="ml-3" />
 
+            <Link href="/dashboard/logout">
+              <Button className="!text-sm !rounded-lg 3mdd:!relative !absolute !right-0 !text-[#F57059] !font-semibold 3mdd:!mx-0 !py-3 !px-3 !mx-2 !capitalize">
+                <MdArrowBack className="mr-1" size={14} /> Log out
+              </Button>
+            </Link>
+          </div>
+
+          <div className="3md:w-[296px] 2mdd:w-[370px] w-[340px] mx-auto flex flex-col justify-center h-[calc(100vh-170px)]">
             <div className="flex flex-col items-center justify-center">
               <div className="flex flex-row justify-start w-full">
-                <div className="text-[rgb(32, 33, 36)] justify-center flex font-bold py-4 w-full">
-                  <span className="text-[1.95rem] leading-[1.5rem]">
+                <div className="text-[rgb(32, 33, 36)] justify-center flex font-bold py-4 items-center relative w-full">
+                  {Boolean(signState) && (
+                    <IconButton
+                      size="large"
+                      className="cursor-pointer !p-[10px] absolute left-0 flex items-center justify-center"
+                      onClick={() => setSignState(0)}
+                    >
+                      <MdArrowBackIos
+                        color={"rgb(32,33,36)"}
+                        className="relative left-1"
+                        size={20}
+                      />
+                    </IconButton>
+                  )}
+
+                  <span className="text-[1.95rem] block leading-[2.5rem]">
                     Signup
                   </span>
                 </div>
               </div>
 
-              {error.length > 0 && <Alert className="w-full mt-[10px]" severity="error">{error}</Alert>}
+              {error.length > 0 && (
+                <Alert className="w-full mt-[10px]" severity="error">
+                  {error}
+                </Alert>
+              )}
 
               <SwipeableViews className="w-full" index={signState}>
                 <TabPanel value={signState} index={0}>

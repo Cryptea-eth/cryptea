@@ -67,10 +67,9 @@ function Nav() {
           </Link>
         </div>
 
-        <AuthModal />
+        {/* <AuthModal /> */}
 
         <div className="right mmd:hidden">
-          <div>
             {isAuthenticated! ? (
               <Link href={"/dashboard"}>
                 <a
@@ -90,7 +89,6 @@ function Nav() {
                 </button>
               </div>
             )}
-          </div>
         </div>
       </div>
     </div>

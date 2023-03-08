@@ -31,6 +31,7 @@ module.exports = {
       "2mdd": {max: "525px"},
       "2mmd": {max: "550px"},
       "2usm": { max: "505px" },
+      "2usmm": { max: "450px" },
       "3mdd": { max: "420px" },
       "3md": { max: "403px" },
       "33md": {max: "385px" },

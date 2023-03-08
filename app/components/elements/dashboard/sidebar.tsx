@@ -15,6 +15,7 @@ import logo2 from "../../../../public/images/cryptea.png";
 import { useContext } from "react";
 
 const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
+
   const { sidebar }: dash = useContext(DashContext);
 
   const active = "!border-l-[#F57059] !text-[#F57059]";
@@ -29,7 +30,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
     <div
       className={`sidebar fixed transition-all min-h-full z-[100] delay-500 ${
         sidebar?.open
-          ? "min-w-[250px] dsm:absolute w-[250px]"
+          ? "min-w-[210px] w-[210px]"
           : `w-[75px] min-w-[75px]`
       } bg-white border-solid border-r-[1px] border-r-[#E3E3E3] h-[inherit]`}
     >

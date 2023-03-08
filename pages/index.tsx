@@ -5,8 +5,6 @@ import Loader from '../app/components/elements/loader';
 import AuthModal from "../app/components/elements/modal";
 import { useCryptea } from '../app/contexts/Cryptea';
 import Router, { useRouter } from 'next/router';
-import { useAccount, useDisconnect } from 'wagmi';
-import { useAccountModal } from '@rainbow-me/rainbowkit';
 
 const Home: NextPage = () => {
 

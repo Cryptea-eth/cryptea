@@ -44,12 +44,6 @@ export const uauth_connector = new UAuth({
   scope: "openid wallet",
 })
 
-const delay = async (time: number) => (await new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve("go on");
-        }, time)
-  }))
-
 
 export class UDConnector extends Connector<any, any, any> {
   readonly id = "UD";

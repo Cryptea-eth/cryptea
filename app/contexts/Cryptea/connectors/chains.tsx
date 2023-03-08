@@ -1,9 +1,4 @@
-import { configureChains, defaultChains, chain, Chain } from "wagmi";
-import {
-  getDefaultWallets,
-  RainbowKitProvider,
-} from "@rainbow-me/rainbowkit";
-
+import { configureChains, chain, Chain } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import CustomImg from "../../../components/elements/customImg";
@@ -81,6 +76,42 @@ export const OptimismGoerli: Chain = {
       name: "Optimism",
       url: "https://goerli-optimistic.etherscan.io",
     },
+  },
+  testnet: true,
+};
+
+export const fantom: Chain = {
+  id: 250,
+  name: "Fantom",
+  network: "fantom",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Fantom",
+    symbol: "FTM",
+  },
+  rpcUrls: {
+    default: "https://endpoints.omniatech.io/v1/fantom/mainnet/public",
+  },
+  blockExplorers: {
+    default: { name: "Fantom", url: "https://ftmscan.com" },
+  },
+  testnet: false,
+};
+
+export const fantomTestnet: Chain = {
+  id: 4002,
+  name: "Fantom Testnet",
+  network: "fantom",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Fantom",
+    symbol: "FTM",
+  },
+  rpcUrls: {
+    default: "https://rpc.ankr.com/fantom_testnet",
+  },
+  blockExplorers: {
+    default: { name: "Fantom", url: "https://testnet.ftmscan.com" },
   },
   testnet: true,
 };
@@ -237,25 +268,30 @@ export const { chains, provider, webSocketProvider } = configureChains(
     OasisEmerald,
     OasisEmeraldTestnet,
     FileCoinHyperspace,
+    fantom,
+    fantomTestnet,
   ],
   [
     publicProvider(),
     jsonRpcProvider({
       rpc: (chain: Chain) => {
-        if (
-          chain.id !== avalancheChain.id ||
-          chain.id !== CronosTest.id ||
-          chain.id !== Cronos.id ||
-          chain.id !== avalancheTestnet.id ||
-          chain.id !== Aurora.id ||
-          chain.id !== AuroraTestnet.id ||
-          chain.id !== Optimism.id ||
-          chain.id !== OptimismGoerli.id ||
-          chain.id !== OasisEmerald.id ||
-          chain.id !== OasisEmeraldTestnet.id ||
-          chain.id !== FileCoinHyperspace.id
-        )
-          return null;
+
+        const chainIds: number[] = [
+          avalancheChain.id,
+          CronosTest.id,
+          avalancheTestnet.id,
+          Aurora.id,
+          AuroraTestnet.id,
+          Optimism.id,
+          fantom.id,
+          fantomTestnet.id,
+          OptimismGoerli.id,
+          OasisEmerald.id,
+          OasisEmeraldTestnet.id,
+          FileCoinHyperspace.id,
+        ];
+
+        if (!chainIds.includes(chain.id)) return null;
 
         return { http: chain.rpcUrls.default };
       },
@@ -294,6 +330,14 @@ export const tokenTrackers: {
     name: "Hyperspace Explorer",
     link: "https://hyperspace.filfox.info/en/tx/",
   },
+  250: {
+    name: "Fantom Explorer",
+    link: "https://explorer.testnet.fantom.network/tx/",
+  },
+  4002: {
+    name: "Fantom Explorer",
+    link: "https://explorer.testnet.fantom.network/tx/",
+  }
 };
 
 export const inputsList = [
@@ -374,6 +418,62 @@ export const CryptoList: token[] = [
     network: "polygon maticmum",
     tokenAddr: "",
     rpc: process.env.MATIC_LINK as string,
+    testnet: true,
+    payment: {
+      manual: true,
+      auto: true,
+    },
+  },
+  {
+    value: 250,
+    type: "native",
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-2 relative w-[20px]">
+          <CustomImg
+            name="fantom"
+            symbol="FTM"
+            size={20}
+            alt={"Fantom (mainnet)"}
+          />
+        </div>
+        <span className="text-[#121212]">Fantom (Mainnet)</span>
+      </div>
+    ),
+    name: "Fantom (Mainnet)",
+    symbol: "FTM",
+    contractAddr: "0xf1BC5925641159a0d1388B17e3AB32D9416B3f09",
+    network: "fantom",
+    tokenAddr: "",
+    rpc: fantom.rpcUrls.default,
+    testnet: false,
+    payment: {
+      manual: true,
+      auto: false,
+    },
+  },
+  {
+    value: 4002,
+    type: "native",
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-2 relative w-[20px]">
+          <CustomImg
+            name="fantom"
+            symbol="FTM"
+            size={20}
+            alt={"Fantom (Testnet)"}
+          />
+        </div>
+        <span className="text-[#121212]">Fantom (Testnet)</span>
+      </div>
+    ),
+    name: "Fantom (Testnet)",
+    symbol: "FTM",
+    contractAddr: "0xf1BC5925641159a0d1388B17e3AB32D9416B3f09",
+    network: "fantom",
+    tokenAddr: "",
+    rpc: fantomTestnet.rpcUrls.default,
     testnet: true,
     payment: {
       manual: true,

@@ -463,7 +463,7 @@ const Settings = () => {
                     <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
                       <div className="mb-2 flex items-start justify-between">
                         <div>
-                          <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                          <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem] 3mdd:text-[1.25rem]">
                             {Boolean(data.settlement.length)
                               ? "Update Settlement Pin"
                               : "Create Settlement Pin"}
@@ -520,7 +520,7 @@ const Settings = () => {
                                 !pinsVisibility["oldpin"] ? "text" : "password"
                               }
                               onComplete={(e) => setPin({ ...pins, oldpin: e })}
-                              className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                              className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] 2usmm:w-[3rem] 2usmm:h-[3rem] 2usmm:text-[1.5rem] rounded-[.5rem] 2usmm:!justify-start my-3 mx-auto"
                               validate={/^[0-9]$/}
                             />
                           </div>
@@ -556,7 +556,7 @@ const Settings = () => {
                               !pinsVisibility["newpin"] ? "text" : "password"
                             }
                             onComplete={(e) => setPin({ ...pins, newpin: e })}
-                            className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                            className="font-[inherit] 2usmm:!justify-start outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] 2usmm:w-[3rem] 2usmm:h-[3rem] 2usmm:text-[1.5rem] rounded-[.5rem]  my-3 mx-auto"
                             validate={/^[0-9]$/}
                           />
                         </div>
@@ -591,7 +591,7 @@ const Settings = () => {
                               !pinsVisibility["renewpin"] ? "text" : "password"
                             }
                             onComplete={(e) => setPin({ ...pins, renewpin: e })}
-                            className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                            className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] 2usmm:!justify-start text-center transition-all 2usmm:w-[3rem] 2usmm:h-[3rem] 2usmm:text-[1.5rem] text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
                             validate={/^[0-9]$/}
                           />
                         </div>
@@ -608,7 +608,7 @@ const Settings = () => {
                       <div className="flex items-center">
                         <Button
                           onClick={savePin}
-                          className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                          className="!py-2 !font-bold !min-w-[220px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#F57059] !normal-case !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                         >
                           {pinLoading ? (
                             <>
@@ -621,7 +621,7 @@ const Settings = () => {
                               <span>Just a Sec...</span>
                             </>
                           ) : (
-                            <>Change Pin</>
+                            <>Change pin</>
                           )}
                         </Button>
                       </div>

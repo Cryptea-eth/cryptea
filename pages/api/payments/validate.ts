@@ -7,6 +7,8 @@ import {
   FileCoinHyperspace,
   OasisEmeraldTestnet,
   OptimismGoerli,
+  fantom,
+  fantomTestnet,
 } from "../../../app/contexts/Cryptea/connectors/chains";
 
 type Data = {
@@ -30,6 +32,8 @@ const providers: { [index: string]: string } = {
   1313161555: AuroraTestnet.rpcUrls.default,
   420: OptimismGoerli.rpcUrls.default,
   3141: FileCoinHyperspace.rpcUrls.default,
+  250: fantom.rpcUrls.default,
+  4002: fantomTestnet.rpcUrls.default,
 };
 
 export default function handler(

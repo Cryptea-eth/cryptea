@@ -312,7 +312,7 @@ const DashHeader = ({
 
       <div
         style={{
-          width: sidebar?.openPage ? "calc(100% - 247px)" : "calc(100% - 77px)",
+          width: sidebar?.openPage ? "calc(100% - 207px)" : "calc(100% - 77px)",
           right: 0,
         }}
         className={`2sm:!w-[calc(100%-77px)] ${

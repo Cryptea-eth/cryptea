@@ -55,6 +55,11 @@ const DashboardIndex = () => {
            if (e !== null) {
              setData(typeof e == "object" ? e : { username: "", img: "" });
            }
+
+           if (document.body.clientWidth < 976 && sidebar?.open) {
+              sidebar?.toggle?.();
+            }
+
             isLoading(false);
           }
          });
@@ -88,7 +93,7 @@ const DashboardIndex = () => {
           <Sidebar page={"home"} />
           <div
             className={`body 2sm:!pl-[77px] transition-all delay-500 ${
-              sidebar?.openPage ? "pl-[247px]" : "pl-[77px]"
+              sidebar?.openPage ? "pl-[207px]" : "pl-[77px]"
             } w-full h-full`}
           >
             <DashHeader

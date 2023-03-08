@@ -88,7 +88,7 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
 
             <div
               className={`body transition-all delay-500 ${
-                sidebar?.openPage ? "pl-[247px]" : "pl-[77px]"
+                sidebar?.openPage ? "pl-[207px]" : "pl-[77px]"
               } w-full h-full 2sm:!pl-[77px]`}
             >
               <>

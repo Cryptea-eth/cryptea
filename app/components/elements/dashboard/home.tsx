@@ -310,7 +310,6 @@ const DashHome = () => {
 
         setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
 
-
         if (!Boolean(e.settlement ? e.settlement.length : 0)) {
           return;
         }
@@ -493,7 +492,7 @@ const DashHome = () => {
               <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
                 <div className="mb-2 flex items-start justify-between">
                   <div>
-                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                    <h2 className="font-[500] 3mdd:text-[1.25rem] text-[rgb(32,33,36)] text-[1.55rem]">
                       Create Settlement Pin
                     </h2>
                     <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">
@@ -535,7 +534,7 @@ const DashHome = () => {
                       type={!pinsVisibility["newpin"] ? "text" : "password"}
                       length={5}
                       onComplete={(e) => setPin({ ...pins, newpin: e })}
-                      className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                      className="font-[inherit] 2usmm:w-[3rem] 2usmm:h-[3rem] 2usmm:text-[1.5rem] 2usmm:!justify-start outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
                       validate={/^[0-9]$/}
                     />
                   </div>
@@ -568,7 +567,7 @@ const DashHome = () => {
                       type={!pinsVisibility["renewpin"] ? "text" : "password"}
                       length={5}
                       onComplete={(e) => setPin({ ...pins, renewpin: e })}
-                      className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
+                      className="font-[inherit] outline-none border border-[#d3d3d3] h-[4rem] 2usmm:w-[3rem] 2usmm:h-[3rem] 2usmm:text-[1.5rem] 2usmm:!justify-start text-center transition-all text-[2rem] focus:border-[#121212] w-[4rem] rounded-[.5rem]  my-3 mx-auto"
                       validate={/^[0-9]$/}
                     />
                   </div>
@@ -585,7 +584,7 @@ const DashHome = () => {
                 <div className="flex items-center">
                   <Button
                     onClick={savePin}
-                    className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                    className="!py-2 !font-bold !min-w-[250px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#F57059] !border !normal-case !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                   >
                     {pinLoading ? (
                       <>
@@ -598,7 +597,7 @@ const DashHome = () => {
                         <span>Just a Sec...</span>
                       </>
                     ) : (
-                      <>Create Pin</>
+                      <>Create pin</>
                     )}
                   </Button>
                 </div>
@@ -807,7 +806,7 @@ const DashHome = () => {
 
             <div className="flex items-center cusscroller overflow-x-scroll overflow-y-hidden pb-1">
               {blur
-                ? ["x", "x", "x"].map((v: any, i: number) => {
+                ? Array(1, 2, 3).map((v: any, i: number) => {
                     return (
                       <Skeleton
                         key={i}
@@ -935,7 +934,7 @@ const DashHome = () => {
             )}
 
             {blur
-              ? ["x", "x", "x"].map((x: any, i: number) => (
+              ? Array(1, 2, 3).map((x: any, i: number) => (
                   <Skeleton
                     className={"rounded-[.9rem] py-3 h-[70px] mb-2"}
                     variant={"rounded"}
@@ -1004,7 +1003,7 @@ const DashHome = () => {
                           </Avatar>
 
                           <div className="pl-2 flex w-full items-center justify-between">
-                            <div className="block truncate capitalize text-[#a1a1a1] font-[500] text-[1.2rem]">
+                            <div className="block truncate capitalize text-[#a1a1a1] font-[500] mr-[10px] text-[1.2rem]">
                               {l.link}
                             </div>
 
