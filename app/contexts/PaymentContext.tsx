@@ -85,7 +85,7 @@ export const PaymentProvider = ({
   const renew = router.query["renew"] as string | undefined;
 
   const { openConnectModal } = useConnectModal();
-  
+
 
   const [is500, setIs500] = useState<boolean>(false);
 
@@ -93,7 +93,7 @@ export const PaymentProvider = ({
 
   const [paymentType, setPaymentType] = useState<"onetime" | "sub">("onetime");
 
-  useEffect(() => {}, [username, router.isReady]);
+  useEffect(() => { }, [username, router.isReady]);
 
   const [rnData, setRData] = useState<any>({
     renew: false,
@@ -235,21 +235,21 @@ export const PaymentProvider = ({
   };
 
   const getPriceReq = (params: {
-      ids: string;
-      vs_currencies: string
+    ids: string;
+    vs_currencies: string
   }) => {
-      return axios.get("/simple/price", {
-        params,
-        baseURL: "https://api.coingecko.com/api/v3",
-        withCredentials: false,
-      });
+    return axios.get("/simple/price", {
+      params,
+      baseURL: "https://api.coingecko.com/api/v3",
+      withCredentials: false,
+    });
   }
 
   const matic = async (price: number) => {
     const response = await getPriceReq({
-        ids: "matic-network",
-        vs_currencies: "usd",
-      });
+      ids: "matic-network",
+      vs_currencies: "usd",
+    });
 
     const e = response.data as { [index: string]: any };
 
@@ -260,17 +260,17 @@ export const PaymentProvider = ({
 
   const fantom = async (price: number) => {
 
-     const response = await getPriceReq({
-        ids: "fantom",
-        vs_currencies: "usd",
-      });
+    const response = await getPriceReq({
+      ids: "fantom",
+      vs_currencies: "usd",
+    });
 
     const e = response.data as { [index: string]: any };
 
     const priceCurrency = Number(e["fantom"]["usd"]);
 
     return price / priceCurrency;
-    
+
   };
 
   const getPrice = async (
@@ -288,9 +288,9 @@ export const PaymentProvider = ({
       "137": async () => await matic(price),
       "31415": async () => {
         const response = await getPriceReq({
-            ids: "filecoin",
-            vs_currencies: "usd",
-          });
+          ids: "filecoin",
+          vs_currencies: "usd",
+        });
 
         const e = response.data as { [index: string]: any };
 
@@ -300,9 +300,9 @@ export const PaymentProvider = ({
       },
       "42261": async () => {
         const response = await getPriceReq({
-            ids: "oasis-network",
-            vs_currencies: "usd",
-          });
+          ids: "oasis-network",
+          vs_currencies: "usd",
+        });
 
         const e = response.data as { [index: string]: any };
 
@@ -313,9 +313,9 @@ export const PaymentProvider = ({
 
       "1313161555": async () => {
         const response = await getPriceReq({
-            ids: "auroratoken",
-            vs_currencies: "usd",
-          });
+          ids: "auroratoken",
+          vs_currencies: "usd",
+        });
 
         const e = response.data as { [index: string]: any };
 
@@ -326,9 +326,9 @@ export const PaymentProvider = ({
 
       "338": async () => {
         const response = await getPriceReq({
-            ids: "crypto-com-chain",
-            vs_currencies: "usd",
-          });
+          ids: "crypto-com-chain",
+          vs_currencies: "usd",
+        });
 
         const e = response.data as { [index: string]: any };
 
@@ -338,9 +338,9 @@ export const PaymentProvider = ({
       },
       "420": async () => {
         const response = await getPriceReq({
-            ids: "optimism",
-            vs_currencies: "usd",
-          });
+          ids: "optimism",
+          vs_currencies: "usd",
+        });
 
         const e = response as { [index: string]: any };
 
@@ -442,11 +442,11 @@ export const PaymentProvider = ({
 
           const cryptoData = JSON.parse(lQ.data || "[]");
 
-          let cOptions = [...options];          
+          let cOptions = [...options];
 
           if (cryptoData.length) {
 
-             cOptions = cOptions.filter(
+            cOptions = cOptions.filter(
               (v: token) => cryptoData.indexOf(v.value) != -1
             );
 
@@ -458,7 +458,7 @@ export const PaymentProvider = ({
           }
 
           if (userl.live == "Yes") {
-             cOptions = [...cOptions].filter((v: token) => !v.testnet);
+            cOptions = [...cOptions].filter((v: token) => !v.testnet);
 
             if (cOptions.length) {
               setOptions(cOptions);
@@ -471,7 +471,7 @@ export const PaymentProvider = ({
             }
 
           } else {
-             cOptions = [...cOptions].sort(
+            cOptions = [...cOptions].sort(
               (v, x) => Number(x.testnet) - Number(v.testnet)
             );
 
@@ -815,10 +815,10 @@ export const PaymentProvider = ({
 
     const elem = document.querySelector(
       "button.ju367vf9.ju367va.ju367v26"
-    ) as any; 
+    ) as any;
 
     if (elem != null) {
-        elem.click();
+      elem.click();
     }
 
     if (connected && paymentData !== undefined) {
@@ -856,7 +856,7 @@ export const PaymentProvider = ({
 
     if (timeCounted <= 720 && timeCounted > 0) {
 
-    
+
       const base = {
         initial: 0,
         rpc: token.rpc,
@@ -963,7 +963,7 @@ export const PaymentProvider = ({
 
           setTimeout(reset, 12000);
         } else {
-        
+
           timerTimeout.current = setTimeout(
             () =>
               checkWallet({
@@ -973,21 +973,21 @@ export const PaymentProvider = ({
               }),
             3000
           );
-      }
+        }
       } catch (err) {
 
         clearInterval(timer.current);
         clearTimeout(timerTimeout.current);
-        
+
         setManLoader(false);
         // console.log(err);
         setManValue(2);
-        
+
         setTimeCounted(0);
         setFailMessage("");
 
       }
-    }else{
+    } else {
       // maybe come back here
     }
   };
@@ -997,7 +997,7 @@ export const PaymentProvider = ({
       clearInterval(timer.current);
       clearTimeout(timerTimeout.current);
 
-    
+
       setManLoader(false);
       setManValue(1);
 
@@ -1297,8 +1297,7 @@ export const PaymentProvider = ({
                   <span className="text-[17px]">
                     {String((720 - timeCounted) / 60).split(".")[0] +
                       ":" +
-                      `${(720 - timeCounted) % 60 <= 9 ? 0 : ""}${
-                        (720 - timeCounted) % 60
+                      `${(720 - timeCounted) % 60 <= 9 ? 0 : ""}${(720 - timeCounted) % 60
                       }`}
                   </span>
                 </span>
@@ -1396,7 +1395,7 @@ export const PaymentProvider = ({
                 <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
                   Although if you have sent the crypto to {genAddr}, Please{" "}
                   <Link
-                    href={`mailto:hello@cryptea.me?subject=Issue with transfer&body=Hello Cryptea \n I made a transfer to ${genAddr} but I did not get any confirmation that it was successful`}
+                    href={`mailto:hello@cryptea.me?subject=Issue with transfer&body=Hello Cryptea, \n I made a payment to this address: ${genAddr}. However, I did not get a confirmation of successful payment.`}
                   >
                     <a className="text-[#F57059]" target="_blank">
                       click me to contact us immediately
@@ -1452,7 +1451,7 @@ export const PaymentProvider = ({
                 <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
                   But no need to worry, Please{" "}
                   <Link
-                    href={`mailto:hello@cryptea.me?subject=Issue with transfer&body=Hello Cryptea \n I made a transfer to ${genAddr} but I did not get any confirmation that it was successful`}
+                    href={`mailto:hello@cryptea.me?subject=Issue with transfer&body=Hello Cryptea, \n I made a payment to this address: ${genAddr}. However, I did not get a confirmation of successful payment.`}
                   >
                     <a className="text-[#F57059]" target="_blank">
                       click me to contact us immediately

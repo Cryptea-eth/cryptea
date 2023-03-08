@@ -332,11 +332,11 @@ export const tokenTrackers: {
   },
   250: {
     name: "Fantom Explorer",
-    link: "https://explorer.testnet.fantom.network/tx/",
+    link: "https://ftmscan.com/tx/",
   },
   4002: {
     name: "Fantom Explorer",
-    link: "https://explorer.testnet.fantom.network/tx/",
+    link: "https://testnet.fantom.com/tx/",
   }
 };
 
