@@ -70,12 +70,15 @@ export interface AuthContext {
   mobile?: boolean; 
   user?: userData | undefined;
   isAuthenticated?: boolean;
+  solana?: () => void;
+  evm?: () => void;
   update?: (e: userData | undefined) => any;
 }
 
 export interface AuthAddressType {
   address: string;
   signature: string;
+  blocktype?: 'evm' | 'sol';
   message: string | number;
 }
 
@@ -108,6 +111,7 @@ export type token = {
   value: number;
   label: string | JSX.Element;
   symbol: string;
+  blocktype: 'evm' | 'sol';
   network: string;
   tokenAddr: string;
   testnet: boolean;
@@ -156,7 +160,7 @@ export interface PaymentContext {
   transferSuccess?: boolean;
   setTransferSuccess?: React.Dispatch<React.SetStateAction<boolean>>;
   transferFail?: boolean;
-  explorer?: { name: string; link: string };
+  explorer?: { name: string; link: (hash: string) => string };
   setTransferFail?: React.Dispatch<React.SetStateAction<boolean>>;
   failMessage?: string;
   setFailMessage?: React.Dispatch<React.SetStateAction<string>>;

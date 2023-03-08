@@ -10,7 +10,9 @@ const nextConfig = {
     APP_KEY: process.env.APP_KEY,
     UDCLIENT: process.env.UDCLIENT,
     KEY: process.env.KEY,
-    UDREDIRECT: process.env.UDREDIRECT
+    UDREDIRECT: process.env.UDREDIRECT,
+    SOLANA_MAINNET: process.env.SOLANA_MAINNET,
+    SOLANA_DEVNET: process.env.SOLANA_DEVNET
   },
   images: {
     domains: ['assets.coingecko.com', 'coingecko.com']
