@@ -90,7 +90,7 @@ export const fantom: Chain = {
     symbol: "FTM",
   },
   rpcUrls: {
-    default: "https://endpoints.omniatech.io/v1/fantom/mainnet/public",
+    default: "https://rpc3.fantom.network",
   },
   blockExplorers: {
     default: { name: "Fantom", url: "https://ftmscan.com" },
