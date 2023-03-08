@@ -337,7 +337,7 @@ export const tokenTrackers: {
   },
   4002: {
     name: "Fantom Explorer",
-    link: (hash: string) => "https://explorer.testnet.fantom.network/tx/"+hash,
+    link: (hash: string) => "https://testnet.fantom.com/tx/"+hash,
   },
   ...solanatokenTrackers
 };
