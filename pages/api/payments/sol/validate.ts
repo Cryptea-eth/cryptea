@@ -1,5 +1,5 @@
-module.exports = {
-    
+export {
+
 }
 
 // import type { NextApiRequest, NextApiResponse } from "next";
