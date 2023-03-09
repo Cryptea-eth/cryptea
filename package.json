@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "buildx": "npx next build",
     "start": "NODE_ENV=production node app.js",
     "lint": "next lint"
   },
