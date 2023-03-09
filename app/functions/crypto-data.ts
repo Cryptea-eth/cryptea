@@ -1,9 +1,29 @@
 
 import * as crypto from 'crypto';
 
+const fillSecret = (secret: string) => {
+
+        if (secret.length < 16) {
+
+            let add = '';
+
+            for (let i = 0; i < 16 - secret.length; i++) {
+
+                add += '1';      
+
+            }
+            
+            return secret + add;
+
+        }else{
+            return secret.substring(0, 32);
+        }
+
+    };
+
 const encryptData = (text: string, secret: string) => {
 
-        const secretKey = secret.substring(0, 32);
+        const secretKey = fillSecret(secret);
 
         const iv = crypto.randomBytes(16);
 
@@ -19,7 +39,7 @@ const encryptData = (text: string, secret: string) => {
 
     function decryptData(hash: { iv: string, content: string }, secret: string) {
 
-         const secretKey = secret.substring(0, 32);
+         const secretKey = fillSecret(secret);
 
         const decipher = crypto.createDecipheriv('aes-256-ctr', secretKey, Buffer.from(hash.iv, 'hex'));
 
@@ -29,8 +49,9 @@ const encryptData = (text: string, secret: string) => {
 
     }
 
+    
 
-module.exports = {
+export {
     encryptData,
     decryptData
 }

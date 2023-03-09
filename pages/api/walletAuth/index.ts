@@ -23,8 +23,10 @@ export default function handler(
 
   const key: string = process.env.APP_KEY || '';
 
-  const getToken = (address: string, tz?: any) => {
-    axios
+  const getToken = async (address: string, tz?: any) => {
+    try {
+
+    const rs = await axios
       .post(
         "/login/walletAuth",
         {
@@ -38,25 +40,27 @@ export default function handler(
           baseURL: 'https://ab.cryptea.me'
         }
       )
-      .then((rs) => {
-        const { data, token } = rs.data;
 
-        res.status(200).json({
-          data,
-          token,
-          message: "Successfully authenticated",
-          error: false,
-        });
-      })
-      .catch((err) => {
+      const { data, token } = rs.data;
+
+      res.status(200).json({
+        data,
+        token,
+        message: "Successfully authenticated",
+        error: false,
+      });
+    
+      
+    } catch(err) {
+
         const errx = err as any;
 
         res.status(400).json({
-          message: errx.response.data.message,
+          message: errx.response?.data?.message,
           error: true,
-        });
       }); 
-  }
+   }
+}
 
     if (req.method == 'POST') {
 
