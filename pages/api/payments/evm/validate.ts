@@ -9,7 +9,7 @@ import {
   OptimismGoerli,
   fantom,
   fantomTestnet,
-} from "../../../app/contexts/Cryptea/connectors/chains";
+} from "../../../../app/contexts/Cryptea/connectors/chains";
 
 type Data = {
   error: boolean;
@@ -86,6 +86,9 @@ export default function handler(
             );
 
             res.status(resMain.status).json(resMain.data);
+
+            console.log(resMain.data)
+
           } else {
             res.status(400).json({ error: true, message: "data incorrect" });
           }

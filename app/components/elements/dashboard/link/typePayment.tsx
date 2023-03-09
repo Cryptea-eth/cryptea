@@ -56,7 +56,7 @@ const TypePayment = ({
          // console.log(error, "oer");
 
          if (error.response) {
-           setGenError(error.response.data.message);
+           setGenError(error.response?.data.message);
          } else {
            setGenError("Something went wrong please try again");
          }

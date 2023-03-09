@@ -109,7 +109,7 @@ export default function handler(
             data: JSON.stringify({
               token: token.name,
               receiver: addressTo,
-              explorer: `${tokenTrackers[token.value].link}${trx.hash}`,
+              explorer: tokenTrackers[token.value].link(trx.hash),
             }),
             desc: `${token.name} Crypto Withdrawal`,
           };
@@ -128,7 +128,7 @@ export default function handler(
             error: false,
             message: "Transaction Successful",
             ref: {
-              link: `${tokenTrackers[token.value].link}${trx.hash}`,
+              link: tokenTrackers[token.value].link(trx.hash),
               name: tokenTrackers[token.value].name,
             },
           });
@@ -137,11 +137,11 @@ export default function handler(
 
           if (error.response !== undefined) {
             res
-              .status(Number(error.response.status || error.status || "400"))
+              .status(Number(error.response?.status || error.status || "400"))
               .json({
                 error: true,
                 message:
-                  error.response.data.message ||
+                  error.response?.data?.message ||
                   "Something went wrong, please try again",
               });
           } else {
@@ -154,13 +154,13 @@ export default function handler(
         const error = err as any;
 
         res
-          .status(Number(error.response.status || error.status || "400"))
+          .status(Number(error.response?.status || error.status || "400"))
           .json({
             error: true,
             message:
               (error.response === undefined
                 ? error.message
-                : error.response.data.message) ||
+                : error?.response?.data?.message) ||
               "Something went wrong, please try again",
           });
       });

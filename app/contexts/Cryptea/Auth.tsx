@@ -1,9 +1,15 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { AxiosError } from 'axios';
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import axios, { AxiosError } from "axios";
 import { LinkConnector, UDConnector } from "./connectors";
 import mimg from "../../../public/images/mglink.svg";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { clusterApiUrl } from "@solana/web3.js";
+import {
+  ConnectionProvider,
+  WalletProvider,
+} from "@solana/wallet-adapter-react";
 import unstop from "../../../public/images/unstoppable.svg";
-import { webSocketProvider, chains, provider } from './connectors/chains';
+import { webSocketProvider, chains, provider } from "./connectors/chains";
 import * as ethers from "ethers";
 import {
   AuthAddressType,
@@ -14,7 +20,7 @@ import {
   configType,
   userData,
 } from "./types";
-import './DB';
+import "./DB";
 import { post_request } from "./requests";
 import { createClient, useAccount, WagmiConfig } from "wagmi";
 import { useRouter } from "next/router";
@@ -24,7 +30,7 @@ import {
   connectorsForWallets,
   getDefaultWallets,
   getWalletConnectConnector,
-  lightTheme
+  lightTheme,
 } from "@rainbow-me/rainbowkit";
 import {
   metaMaskWallet,
@@ -35,62 +41,86 @@ import {
   coinbaseWallet,
   ledgerWallet,
   trustWallet,
-  argentWallet
+  argentWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import { InjectedConnector } from "wagmi/connectors/injected";
+import { PhantomWallet } from "./connectors/solana";
 
+let user: userData | undefined;
 
-let user:userData | undefined;
-
-let message = 'Welcome to Cryptea';
+export let message = "Welcome to Cryptea";
 
 let isAuth = false;
 
-
-export const AuthAddress = async ({address, signature, message }: AuthAddressType) => {
-
+export const AuthAddress = async ({
+  address,
+  signature,
+  message,
+  blocktype = 'evm'
+}: AuthAddressType) => {
   try {
-    
-      const userx = await post_request(`/login/walletAuth`, {
+    // const userx = await post_request(`/login/walletAuth`, {
+    //   address,
+    //   signature,
+    //   message,
+    //   tz: window.jstz.determine().name(),
+    // });
+
+    const userx = await axios.post(
+      "/api/walletAuth",
+      {
+        blocktype,
         address,
         signature,
         message,
         tz: window.jstz.determine().name(),
-      });
+      },
+      { baseURL: window.origin }
+    );
 
-      
-      if(!userx.data.error){
+    if (!userx.data.error) {
+      const {
+        email,
+        img,
+        accounts,
+        username,
+        id,
+        email_verified_at,
+      }: {
+        username: string;
+        img: string;
+        email: string;
+        accounts: string[];
+        id: number | string;
+        email_verified_at: any;
+      } = userx.data.data;
 
-        const { email, img, accounts, username, id, email_verified_at }: { username: string, img: string,email : string, accounts: string[], id: number|string, email_verified_at: any } = userx.data.data;
+      user = {
+        id,
+        email,
+        username,
+        accounts,
+        img,
+        email_verified_at,
+      };
 
-         user = {
-           id,
-           email,
-           username,
-           accounts,
-           img,
-           email_verified_at,
-         };
+      localStorage.setItem("user", JSON.stringify(user));
 
-         localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("userToken", userx.data.token);
 
-         localStorage.setItem("userToken", userx.data.token);
-
-         isAuth = true;
-
-      }else{
-          throw "Invalid Login Details";
-      }
-      
-  }catch (err) {
-      const error = err as AxiosError;
-      // console.log(err);
-      if (error.response) {
-        throw "Invalid Login Details";
-      }
+      isAuth = true;
+    } else {
+      throw "Invalid Login Details";
     }
+  } catch (err) {
+    const error = err as AxiosError;
+    // console.log(err);
+    if (error.response) {
+      throw "Invalid Login Details";
+    }
+  }
   return user;
 };
 
@@ -111,12 +141,10 @@ export const AuthUser = async ({
   //   config = await connectAsync({ connector: type });
   // }
 
-  if (!mainx && typeof address == 'string') {
-
+  if (!mainx && typeof address == "string") {
     const data = await signMessageAsync({ message });
 
     if (data.length) {
-
       try {
         const main = await AuthAddress({
           signature: data,
@@ -125,23 +153,21 @@ export const AuthUser = async ({
         });
 
         return main;
-
       } catch (err) {
         console.log(err);
         throw "Something went wrong, please try again";
       }
     } else {
-      
-        console.log(data)
+      console.log(data);
 
-        throw "Something went wrong, please try again";
+      throw "Something went wrong, please try again";
     }
   }
 };
 
 export const AuthContextMain = createContext<AuthContext>({});
 
-export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
+export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
   const [isAuthenticated, setAuth] = useState<boolean | undefined>();
 
   const [context, setContext] = useState<userData | undefined>(user);
@@ -166,7 +192,6 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
           router.push("/verify/email");
 
           setGenLoader(false);
-          
         } else {
           setGenLoader(false);
         }
@@ -180,19 +205,15 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
         navigator.userAgent
       )
     );
-
-  }, [router])
-
+  }, [router]);
 
   useEffect(() => {
-    if (localStorage.getItem('userToken') !== null) {
-        setAuth(true);
-      }else{
-       setAuth(false)
+    if (localStorage.getItem("userToken") !== null) {
+      setAuth(true);
+    } else {
+      setAuth(false);
     }
-  }, [])
-
-
+  }, []);
 
   const mail = ({ chains }: { chains: any }) => ({
     id: "mail",
@@ -201,14 +222,6 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
     iconBackground: "#f57059",
     createConnector: () => {
       const connector = new LinkConnector({ chains, options: {} });
-
-      const ee = new InjectedConnector({
-        chains,
-        options: {
-          name: "Cryptea",
-          shimDisconnect: true,
-        },
-      });
 
       return {
         connector,
@@ -228,8 +241,7 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
       };
     },
   });
-  
-  
+
 
   const connectors = connectorsForWallets([
     {
@@ -240,11 +252,13 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
               metaMaskWallet({ chains }),
               walletConnectWallet({ chains }),
               coinbaseWallet({ chains, appName: "Cryptea" }),
+              PhantomWallet({ chains }),
             ]
           : [
               metaMaskWallet({ chains }),
               mail({ chains }),
               walletConnectWallet({ chains }),
+              PhantomWallet({ chains }),
               UD({ chains }),
               coinbaseWallet({ chains, appName: "Cryptea" }),
             ],
@@ -253,11 +267,9 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
       groupName: "Other",
       wallets: [
         rainbowWallet({ chains }),
-        trustWallet({ chains }),
         ledgerWallet({ chains }),
         injectedWallet({ chains }),
         argentWallet({ chains }),
-        braveWallet({ chains }),
       ],
     },
   ]);
@@ -269,25 +281,76 @@ export const CrypteaProvider = ({children}: {children: JSX.Element}) => {
     provider,
   });
 
+  const length = 7;
 
+  const solana =  () => {
+
+        const supported = ["phantom"];
+
+        const store: any[] = [];
+
+        for (let i = 0; i < length; i++) {
+          const conn = client.connectors.pop();
+
+          if (conn !== undefined) {
+            if (supported.indexOf(conn.id) !== -1) {
+              store.push(conn);
+            }
+          }
+        }
+
+        store.forEach((v) => {
+          client.connectors.push(v);
+        });
+    };
+
+    const evm = () => {
+      const unsupported = ["phantom"];
+
+      const store: any[] = [];
+
+      for (let i = 0; i < length; i++) {
+        const conn = client.connectors.pop();
+
+        if (conn !== undefined) {
+          if (unsupported.indexOf(conn.id) === -1) {
+            store.push(conn);
+          }
+        }
+      }
+
+      store.forEach((v) => {
+        client.connectors.push(v);
+      });
+    };
+
+
+    
   return (
-      <WagmiConfig client={client}>
-        
-        <RainbowKitProvider coolMode theme={lightTheme({
-            accentColor: "#f57059" 
-        })} chains={chains}>
+    <WagmiConfig client={client}>
+      <RainbowKitProvider
+        coolMode
+        theme={lightTheme({
+          accentColor: "#f57059",
+        })}
+        chains={chains}
+      >
         <AuthContextMain.Provider
           value={{
             mobile,
             user: context,
             isAuthenticated,
+            solana,
+            evm,
             update: (e: userData | undefined) => setContext(e),
           }}
         >
-          {genLoader ? <Loader head={false}/> : children}
-        </AuthContextMain.Provider>
-        </RainbowKitProvider>
-      </WagmiConfig>
-  );
-}
 
+          {/* <button style={{ position: 'fixed', zIndex: 100000000000 }} onClick={solana}> Click me</button> */}
+
+          {genLoader ? <Loader head={false} /> : children}
+        </AuthContextMain.Provider>
+      </RainbowKitProvider>
+    </WagmiConfig>
+  );
+};

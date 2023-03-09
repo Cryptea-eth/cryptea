@@ -419,7 +419,7 @@ const Carbon = ({ className }: { className?: string }) => {
                         Payment was successful
                       </h2>
 
-                      <Link href={`${explorer!.link}${hash}`}>
+                      <Link href={`${explorer!.link(hash || '')}`}>
                         <a
                           target={"_blank"}
                           className="text-[#5a5a5a] cursor-pointer mb-1 font-normal"

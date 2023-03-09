@@ -471,7 +471,7 @@ const Settings = () => {
       saveData(false);
 
       if (error.response) {
-        setGenError(error.response.data.message);
+        setGenError(error.response?.data?.message);
       } else if (error.message !== undefined) {
           setGenError(error.message)
       }else {

@@ -1,7 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from 'axios';
-import url from 'url';
 
 type Data = {
   message: string;
@@ -74,14 +73,14 @@ export default function handler(
 
                     res
                       .status(
-                        Number(error.response.status || error.status || "400")
+                        Number(error.response?.status || error.status || "400")
                       )
                       .json({
                         error: true,
                         message:
                           (error.response === undefined
                             ? error.message
-                            : error.response.data.message) ||
+                            : error.response?.data?.message) ||
                           "Something went wrong, please try again",
                       });
                   });
@@ -91,14 +90,14 @@ export default function handler(
 
                 res
                   .status(
-                    Number(error.response.status || error.status || "400")
+                    Number(error.response?.status || error.status || "400")
                   )
                   .json({
                     error: true,
                     message:
                       (error.response === undefined
                         ? error.message
-                        : error.response.data.message) ||
+                        : error.response?.data?.message) ||
                       "Something went wrong please try again",
                   });
               });
@@ -107,13 +106,13 @@ export default function handler(
             const error = err as any;
 
             res
-              .status(Number(error.response.status || error.status || "400"))
+              .status(Number(error?.response?.status || error.status || "400"))
               .json({
                 error: true,
                 message:
                   (error.response === undefined
                     ? error.message
-                    : error.response.data.message) ||
+                    : error.response?.data?.message) ||
                   "Something went wrong please try again",
               });
           });

@@ -6,37 +6,35 @@ import UAuth from "@uauth/js";
 import { Connector, Chain, UserRejectedRequestError, ProviderRpcError } from "wagmi";
 import * as ethers from "ethers";
 import Router from 'next/router';
-
-import { UAuthConnector } from "@uauth/web3-react";
 import analytics from "../../../../analytics";
-import { AuthAddress } from "../Auth";
+import { AuthAddress, message } from "../Auth";
 
 
 export const supported = [
   80001, 137, 43114, 43113, 10, 31415, 69, 1313161554, 1313161555, 42262, 42261, 25, 338
 ];
 
-const connectors = [
-  new CoinbaseWalletConnector({
-    chains,
-    options: {
-      appName: "Cryptea",
-    },
-  }),
-  new WalletConnectConnector({
-    chains,
-    options: {
-      qrcode: true,
-    },
-  }),
-  new InjectedConnector({
-    chains,
-    options: {
-      name: "Cryptea",
-      shimDisconnect: true,
-    },
-  }),
-];
+// const connectors = [
+//   new CoinbaseWalletConnector({
+//     chains,
+//     options: {
+//       appName: "Cryptea",
+//     },
+//   }),
+//   new WalletConnectConnector({
+//     chains,
+//     options: {
+//       qrcode: true,
+//     },
+//   }),
+//   new InjectedConnector({
+//     chains,
+//     options: {
+//       name: "Cryptea",
+//       shimDisconnect: true,
+//     },
+//   }),
+// ];
 
 export const uauth_connector = new UAuth({
   clientID: process.env.UDCLIENT || '',
@@ -91,10 +89,10 @@ export class UDConnector extends Connector<any, any, any> {
 
               } else {
                 if (String(email).length) {
-                  Router.push("/dashboard");
+
+                  location.href = "/dashboard";
 
                 } else {
-                  Router.push("/signup");
 
                   location.href = "/signup";
 
@@ -217,4 +215,6 @@ export class LinkConnector extends Connector<any, any, any> {
   async disconnect() {}
 
 }
+
+
 

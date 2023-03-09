@@ -144,7 +144,6 @@ const AuthModal = ({
         try {
 
           let isAuthing: any;
-
         
 
           isAuthing = await authenticateUser({
@@ -191,6 +190,7 @@ const AuthModal = ({
         router.push("/dashboard");
 
       } else {
+
         if (!isConnected) {
           if (openConnectModal) {
             setLoading(false);

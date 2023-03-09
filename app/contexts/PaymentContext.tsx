@@ -182,22 +182,7 @@ export const PaymentProvider = ({
   const [hash, setHash] = useState<string>("");
 
   const [options, setOptions] = useState<
-    {
-      value: number;
-      label: string | JSX.Element;
-      symbol: string;
-      network: string;
-      testnet: boolean;
-      contractAddr: string;
-      name: string;
-      rpc: string;
-      type: "native" | "non-native";
-      tokenAddr: string;
-      payment: {
-        auto: boolean;
-        manual: boolean;
-      }
-    }[]
+   token[]
   >(CryptoList);
 
   const [token, setToken] = useState<any>(options[0]);
@@ -258,6 +243,19 @@ export const PaymentProvider = ({
     return price / priceCurrency;
   };
 
+  const solana = async (price: number) => {
+    const response = await getPriceReq({
+        ids: "solana",
+        vs_currencies: "usd",
+      });
+
+    const e = response.data as { [index: string]: any };
+
+    const priceCurrency = Number(e["solana"]["usd"]);
+
+    return price / priceCurrency;
+  }
+  
   const fantom = async (price: number) => {
 
     const response = await getPriceReq({
@@ -282,6 +280,8 @@ export const PaymentProvider = ({
     setLoadingText("Loading price data...");
 
     const prices: { [index: string]: () => Promise<number> } = {
+      "112211_2211224": async () => solana(price),
+      "112211_2211223": async () => solana(price),
       "250": async () => await fantom(price),
       "4002": async () => await fantom(price),
       "80001": async () => await matic(price),
@@ -516,11 +516,13 @@ export const PaymentProvider = ({
             }
           }
 
+          console.log(userl.address, 'ee')
+
           setUserD({
             description: lQ.desc,
             username: lQ.title !== undefined ? lQ.title : userl.username,
             email: userl.email,
-            ethAddress: userl.address === null ? lQ.address : userl.address,
+            addresses: userl.address === null ? {'evm' : lQ.address } : userl.address,
             img: userl.img !== undefined ? userl.img : undefined,
             id: lQ.id,
             linktype: lQ.type,
@@ -552,13 +554,13 @@ export const PaymentProvider = ({
     username: usern,
     description,
     img,
-    ethAddress,
+    addresses,
     id: linkId,
   }: {
     username?: string;
     description?: string;
     img?: string | null;
-    ethAddress?: string;
+    addresses?: { [index: string]: any };
     id?: string;
   } = userD;
 
@@ -675,7 +677,10 @@ export const PaymentProvider = ({
 
       setPaymentData({ price, type });
     } else {
+
       from = account || "";
+
+
 
       setLoadingText("Pending...");
 
@@ -694,7 +699,7 @@ export const PaymentProvider = ({
       setLoadingText("Processing payment");
 
       initContract
-        .transferNative(ethAddress || "", {
+        .transferNative(addresses?.[token.blocktype] || "", {
           value: ethers.utils.parseEther(ether),
         }) //receiver
         .then(async (init: any) => {
@@ -727,7 +732,7 @@ export const PaymentProvider = ({
             type,
             amount: price,
             hash: init.hash,
-            explorer: tokenTrackers[token.value].link,
+            explorer: tokenTrackers[token.value].link(init.hash),
             amountCrypto: ether,
             token: token.name,
             contractAddr: token.contractAddr,
@@ -748,7 +753,7 @@ export const PaymentProvider = ({
             };
           }
 
-          await axios.post(`/api/payments/validate`, post, {
+          await axios.post(`/api/payments/${token.blocktype}/validate`, post, {
             baseURL: window.origin,
           });
 
@@ -782,6 +787,8 @@ export const PaymentProvider = ({
         })
         .catch((err: any) => {
           const error = err as Error;
+
+          console.log(error)
 
           if (error.message.length) {
             setTransferFail(true);
@@ -889,7 +896,6 @@ export const PaymentProvider = ({
         amount,
         api: apiCode,
         pay_type: token.testnet ? "test" : "main",
-        explorer: tokenTrackers[token.value].link,
         amountCrypto: price,
         label: token.name,
       };
@@ -908,8 +914,13 @@ export const PaymentProvider = ({
         setManLoader(true);
 
         const queryBalance = await axios.post(
-          "/api/payments",
-          { ...base, ...post, ethAddress, linkId },
+          `/api/payments/${token.blocktype}`,
+          {
+            ...base,
+            ...post,
+            uAddress: addresses?.[token.blocktype],
+            linkId,
+          },
           {
             baseURL: window.origin,
             timeout: 630000,
@@ -1015,7 +1026,7 @@ export const PaymentProvider = ({
     axios
       .get("/api/payments/accounts", {
         params: {
-          type: "evm",
+          type: token.blocktype,
         },
         baseURL: window.origin,
       })
@@ -1046,13 +1057,16 @@ export const PaymentProvider = ({
         }, 1000);
 
         // await checkWallet({ type, price, wallet });
+
       })
       .catch((err) => {
+
         const error = err as any;
 
         console.log(error);
 
         beginManual(amount, type);
+
       });
   };
 
@@ -1465,9 +1479,14 @@ export const PaymentProvider = ({
               <div className="w-full items-center flex justify-center">
                 <Button
                   onClick={async () => {
-                    if (Boolean(loadingText)) return;
+                    // if (Boolean(loadingText)) return;
 
-                    beginManual(amountMn, paymentType);
+                    // beginManual(amountMn, paymentType);
+
+                    closeModal(
+                      "Transaction possibly successful, please contact us"
+                    );
+
                   }}
                   className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                 >

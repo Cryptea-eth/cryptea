@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as ethers from 'ethers';
 import axios from 'axios';
+import { Keypair } from "@solana/web3.js";
+import { encryptData } from "../../../app/functions/crypto-data";
 
+const bs58 = require("bs58");
 type Data = {
   message: string;
   error: boolean;
@@ -13,6 +16,7 @@ export default function handler(
 ) {
   
     if (req.method == "POST") {
+
 
       const { body, headers } = req;
 
@@ -31,15 +35,19 @@ export default function handler(
 
       const address = wallet.address;
 
-      wallet
-        .encrypt(pin)
-        .then((account) => {
-          axios
+      (async () => {
+
+        try {
+
+        const account = await wallet.encrypt(pin);
+
+        await axios
             .post(
               "https://ab.cryptea.me/update/settlement/pin",
               {
                 pin,
                 address,
+                type: 'evm',
                 account,
               },
               {
@@ -47,26 +55,49 @@ export default function handler(
                   Authorization: authorization as string,
                 },
               }
-            )
-            .then(() => {
-              res.status(200).json({
-                error: false,
-                message: "Pin updated successfully",
-              });
-            })
-            .catch((err) => {
-              res.status(400).json({
-                error: true,
-                message: err.response.data.message || 'Something went wrong, please try again',
-              });
+            );
+
+              const solWallet = Keypair.generate();
+
+              const solAddress = solWallet.publicKey.toBase58();
+
+              const solAccount = encryptData(bs58.encode(solWallet.secretKey), pin);
+
+              await axios.post(
+                "https://ab.cryptea.me/update/settlement/pin",
+                {
+                  pin,
+                  address: solAddress,
+                  type: "sol",
+                  account: JSON.stringify(solAccount),
+                },
+                {
+                  headers: {
+                    Authorization: authorization as string,
+                  },
+                }
+              )
+            
+            
+            res.status(200).json({
+              error: false,
+              message: "Pin updated successfully",
+            });            
+            
+          } catch (err) {
+
+            const error = err as any;
+
+            res.status(400).json({
+              error: true,
+              message:
+                error?.response?.data?.message || "Something went wrong, please try again",
             });
-        })
-        .catch((err) => {
-          res.status(200).json({
-            error: false,
-            message: "Something went wrong, please try again later",
-          });
-        });
+            
+          }
+
+      })()
+
     } else {
       res.status(422).json({
         message: "Method not supported",
