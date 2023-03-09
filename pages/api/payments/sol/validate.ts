@@ -1,3 +1,7 @@
+module.exports = {
+    
+}
+
 // import type { NextApiRequest, NextApiResponse } from "next";
 // import * as ethers from "ethers";
 // import axios from "axios";

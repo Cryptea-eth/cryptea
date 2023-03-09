@@ -11,19 +11,24 @@ export default function handler(
 
     const crypto = String(req.query["symbol"]).toLowerCase();    
 
-      axios.get(`https://ab.cryptea.me/crypto/img/${crypto}`, { headers: {
+      (async () => {
+        
+        try {
+
+          const rs = await axios.get(`https://ab.cryptea.me/crypto/img/${crypto}`, { headers: {
           Authorization: process.env.APP_KEY || "",
-      } }).then((rs) => {
+          }});
 
-        const mainRs = rs.data.link;
+          const mainRs = rs.data.link;
 
-         res.status(200).json(mainRs);        
+         res.status(200).json(mainRs);
 
-      }).catch((err) => {
+        }catch (err) {
+            res.status(200).json(generic['GENERIC'].icon)
+        }
 
-         res.status(200).json(generic['GENERIC'].icon)
+      })()
 
-      });
   }else{
       res.status(422).json({ 
         message: 'Method not supported',

@@ -324,7 +324,7 @@ const Origin = ({ className }: { className?: string }) => {
                     </div>
                   </div>
 
-                  <div className="w-2/5 2usm:w-full relative mmd:w-[85%] usm:w-[70%] usm:m-auto min-w-[340px] px-6 my-8 justify-items-center">
+                  <div className="w-2/5 2usm:w-full relative mmd:w-[85%] usm:w-[70%] usm:m-auto min-w-[340px] px-6 !my-8 justify-items-center">
                     {Boolean(loadingText) && !transferFail && !transferSuccess && (
                       <Loader
                         head={false}
