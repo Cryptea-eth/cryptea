@@ -265,6 +265,8 @@ export const PaymentProvider = ({
 
     const e = response.data as { [index: string]: any };
 
+    console.log(e, 'Here');    
+
     const priceCurrency = Number(e["fantom"]["usd"]);
 
     return price / priceCurrency;
@@ -276,6 +278,8 @@ export const PaymentProvider = ({
     chain: string | number | undefined = 80001
   ) => {
     let final: number = 0;
+
+    console.log(chain)
 
     setLoadingText("Loading price data...");
 
@@ -1037,9 +1041,10 @@ export const PaymentProvider = ({
 
         setGenAddr(wallet);
 
+        
         const price = await getPrice(
           amount + (Number(amount) * 1) / 100,
-          token.chain
+          token.value
         );
 
         setAmountMn(Number(price));

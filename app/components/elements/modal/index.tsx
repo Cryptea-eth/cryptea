@@ -11,7 +11,6 @@ import {
   uauth_connector,
 } from "../../../contexts/Cryptea/connectors";
 import { DashContext } from "../../../contexts/GenContext";
-import { post_request } from "../../../contexts/Cryptea/requests";
 import analytics from "../../../../analytics";
 import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
@@ -129,7 +128,7 @@ const AuthModal = ({
           router.back();
         } else {
           // router.push("/dashboard");
-          
+
           location.href = '/dashboard';
         }
       } else {
@@ -277,7 +276,7 @@ const AuthModal = ({
                   </div>
 
                   <div className="mx-auto block mt-1 text-center">
-                    <CircularProgress size={20} className="text-[rgba(60,66,66,0.6)]" />
+                    <CircularProgress size={20} className="!text-[rgba(60,66,66,0.6)]" />
                   </div>
                 </>
               )}
