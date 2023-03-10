@@ -106,12 +106,15 @@ const AuthModal = ({
     if (pathname == "/") {
         // console.log(router.isReady)
       if (!Boolean(email)) {
-        Router.push("/signup");
+        // Router.push("/signup");
+        location.href = '/signup'
       } else {
         if (String(email).length) {
-          router.push("/dashboard");
+          // router.push("/dashboard");
+          location.href = "/dashboard"
         } else {
-          router.push("/signup");
+          // router.push("/signup");
+          location.href = '/signup'
         }
       }
     } else if (pathname == "/auth") {
@@ -125,10 +128,13 @@ const AuthModal = ({
         if (paths.length > 2) {
           router.back();
         } else {
-          router.push("/dashboard");
+          // router.push("/dashboard");
+          
+          location.href = '/dashboard';
         }
       } else {
-        router.push("/signup");
+        // router.push("/signup");
+        location.href = '/signup'
       }
     }
   };
@@ -140,7 +146,9 @@ const AuthModal = ({
 
       setLoading(true);
 
-      if (!isAuthenticated) {
+      const authenticated = localStorage.getItem("userToken");
+
+      if (!Boolean(authenticated)) {
         try {
 
           let isAuthing: any;
@@ -176,7 +184,8 @@ const AuthModal = ({
           updAuthError("Something went wrong please try again");
         }
       } else {
-        router.push("/dashboard");
+        // router.push("/dashboard");
+        location.href = '/dashboard'
       }
     };
 
@@ -185,9 +194,10 @@ const AuthModal = ({
     useEffect(() => {
       setMobile(Boolean(auth.mobile));
 
-      if (isConnected && localStorage.getItem("userToken") !== null) {
-        
-        router.push("/dashboard");
+      if (isConnected && Boolean(localStorage.getItem("userToken"))) {
+       
+        // router.push("/dashboard");
+        location.href = '/dashboard';
 
       } else {
 

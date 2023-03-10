@@ -24,6 +24,7 @@ export default function handler(
   const key: string = process.env.APP_KEY || '';
 
   const getToken = async (address: string, tz?: any) => {
+
     try {
 
     const rs = await axios
