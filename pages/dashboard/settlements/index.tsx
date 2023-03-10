@@ -507,6 +507,7 @@ const Settlements = () => {
       }
 
       for (let i = 0; i < Object.keys(balance).length; i++) {
+
         const index = Object.keys(balance)[i];
 
         const total = balance[index].amount - (fees[index] || 0);
@@ -570,13 +571,19 @@ const Settlements = () => {
           return;
         }
 
+        
+
         const userAddresses = JSON.parse(e.accounts || "[]");
 
         if (Boolean(userAddresses[0])) setAddressTo(userAddresses[0]);
 
         if (e.settlement[0] !== undefined) {
+
           for (let i = 0; i < CryptoList.length; i++) {
+
             const token = CryptoList[i];
+
+            if (token.blocktype == e.settlement[0].type) {
 
             const cachebox = JSON.parse(
               localStorage.getItem("cryptos") || "{}"
@@ -590,6 +597,7 @@ const Settlements = () => {
               test: token.testnet,
               symbol: token.symbol,
             };
+          }
           }
 
           setBalance({ ...balance });
@@ -1728,7 +1736,7 @@ const Settlements = () => {
 
                 getBalance(withdrawToken, data.settlement[0].address);
               }}
-              className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+              className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] !mr-[2px]"
             >
               <FaCoins size={16} className="mr-1" /> Withdraw Crypto
             </Button>
@@ -1742,7 +1750,7 @@ const Settlements = () => {
           ) : (
             <Button
               onClick={() => setSoon(true)}
-              className="!py-2 !px-3 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !min-w-fit !transition-all !delay-500 !rounded-lg !text-[14px] mx-[2px]"
+              className="!py-2 !px-3 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !min-w-fit !transition-all !delay-500 !rounded-lg !text-[14px] !mx-[2px]"
             >
               <MdPayment size={16} className="mr-1" /> Withdraw Fiat
             </Button>
@@ -1756,7 +1764,7 @@ const Settlements = () => {
           ) : (
             <Button
               onClick={() => setSoon(true)}
-              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] mx-[2px]"
+              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] !mx-[2px]"
             >
               <RiCoinFill size={16} className="mr-1" /> Swap USDT
             </Button>
@@ -1770,7 +1778,7 @@ const Settlements = () => {
           ) : (
             <Button
               onClick={() => setSoon(true)}
-              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] mx-[2px]"
+              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] !mx-[2px]"
             >
               <MdSubscriptions size={16} className="mr-1" /> Auto Withdrawals
             </Button>
