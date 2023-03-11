@@ -265,7 +265,7 @@ export const PaymentProvider = ({
 
     const e = response.data as { [index: string]: any };
 
-    console.log(e, 'Here');    
+    // console.log(e, 'Here');    
 
     const priceCurrency = Number(e["fantom"]["usd"]);
 
@@ -520,7 +520,7 @@ export const PaymentProvider = ({
             }
           }
 
-          console.log(userl.address, 'ee')
+          // console.log(userl.address, 'ee')
 
           setUserD({
             description: lQ.desc,
@@ -1173,7 +1173,6 @@ export const PaymentProvider = ({
         setSigner,
       }}
     >
-
       {nullSwitch && (
         <>
           <Modal
@@ -1269,10 +1268,7 @@ export const PaymentProvider = ({
         <Box className="sm:w-full h-fit 3mdd:px-[2px]" sx={style}>
           <div className="py-4 px-6 bg-white -mb-[1px] rounded-[.9rem]">
             <TabPanel padding={0} value={manValue} index={0}>
-              <ModalHeader
-                close={() => closeModal()}
-                amount={amount}
-              />
+              <ModalHeader close={() => closeModal()} amount={amount} />
 
               <div className="py-3 mb-2">
                 <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
@@ -1316,7 +1312,8 @@ export const PaymentProvider = ({
                   <span className="text-[17px]">
                     {String((720 - timeCounted) / 60).split(".")[0] +
                       ":" +
-                      `${(720 - timeCounted) % 60 <= 9 ? 0 : ""}${(720 - timeCounted) % 60
+                      `${(720 - timeCounted) % 60 <= 9 ? 0 : ""}${
+                        (720 - timeCounted) % 60
                       }`}
                   </span>
                 </span>
@@ -1337,7 +1334,7 @@ export const PaymentProvider = ({
                 </Button>
               </div>
               <div className="w-full items-center my-3 rounded-md flex justify-between bg-[#2e2e2e0e] py-1 px-3">
-                <div className="mr-2">
+                <div className="mr-2 w-[calc(100%-45px)]">
                   <span className="font-bold text-[#919191] text-[13px]">
                     Address
                   </span>
@@ -1400,7 +1397,6 @@ export const PaymentProvider = ({
             </TabPanel>
 
             <TabPanel padding={0} value={manValue} index={1}>
-
               <ModalHeader
                 close={() => closeModal("No crypto received")}
                 amount={amount}
@@ -1491,7 +1487,6 @@ export const PaymentProvider = ({
                     closeModal(
                       "Transaction possibly successful, please contact us"
                     );
-
                   }}
                   className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                 >

@@ -2,6 +2,7 @@ import soonImg from "../../../public/images/coming-soon.svg";
 import * as ethers from "ethers";
 import NumberFormat from "react-number-format";
 import Page from "../../../app/components/elements/dashboard";
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import Head from "next/head";
 import empty from "../../../public/images/empty2.png";
 import Select, { createFilter } from "react-select";
@@ -29,7 +30,7 @@ import {
 } from "react-icons/md";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { FaCoins, FaCopy, FaEthereum, FaWallet } from "react-icons/fa";
+import { FaCoins, FaCopy } from "react-icons/fa";
 import CustomImg from "../../../app/components/elements/customImg";
 import { BiCopy } from "react-icons/bi";
 import copy from "copy-to-clipboard";
@@ -48,13 +49,15 @@ import { months } from "../../../app/components/elements/dashboard/linkOverview/
 import TabPanel from "../../../app/components/elements/dashboard/link/TabPanel";
 import { token } from "../../../app/contexts/Cryptea/types";
 import { ValueContainer } from "react-select/dist/declarations/src/components/containers";
+import { blockchains } from "../../../app/contexts/Cryptea/blockchains";
+import { TbPoint } from "react-icons/tb";
 
 const Settlements = () => {
   const router = useRouter();
 
   const [blur, setBlur] = useState<boolean>(true);
 
-  const [addresses, setAddresses] = useState<any>({});
+  const [sAddresses, setSAddresses] = useState<any>({});
 
   const [dashData, setDashData] = useState<any>({
     payments: [],
@@ -101,6 +104,7 @@ const Settlements = () => {
       amount: number;
       name: string;
       test: boolean;
+      blocktype: "evm" | "sol";
       symbol: string;
     };
   };
@@ -110,6 +114,7 @@ const Settlements = () => {
     amtFiat: number;
     token: string;
     test: boolean;
+    blocktype: 'evm' | 'sol';
     symbol: string;
   };
 
@@ -122,6 +127,8 @@ const Settlements = () => {
   const [balance, setBalance] = useState<bal>({});
 
   const [balToken, setBalToken] = useState<string | number>();
+
+  const [addresses, setAddresses] = useState<any>({});
 
   const [pinsVisibility, setPinVisibility] = useState<{
     [index: string]: boolean;
@@ -423,6 +430,7 @@ const Settlements = () => {
     }
   };
 
+
   useEffect(() => {
     const init = async () => {
       const dashmain = await get_request(
@@ -512,20 +520,28 @@ const Settlements = () => {
 
         const total = balance[index].amount - (fees[index] || 0);
 
+        const type = balance[index].blocktype;
+
         const cache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
 
         const price = cache[balance[index].name.toLowerCase()] || 0;
 
         finalBalance[index] = total * price;
+      
 
         breakdown[index] = {
           amount: total,
           amtFiat: total * price,
           token: balance[index].name,
           test: balance[index].test,
+          blocktype: type,
           symbol: balance[index].symbol,
         };
+  
+
       }
+
+ 
 
       const maxAmt = Object.keys(breakdown).sort(
         (a, b) => breakdown[b].amount - breakdown[a].amount
@@ -571,7 +587,11 @@ const Settlements = () => {
           return;
         }
 
-        
+        e.settlement.forEach((vv: any) => {
+
+            setSAddresses({ ...sAddresses, [vv.type]: vv.address});
+
+        })
 
         const userAddresses = JSON.parse(e.accounts || "[]");
 
@@ -579,26 +599,27 @@ const Settlements = () => {
 
         if (e.settlement[0] !== undefined) {
 
+       
           for (let i = 0; i < CryptoList.length; i++) {
 
             const token = CryptoList[i];
-
-            if (token.blocktype == e.settlement[0].type) {
 
             const cachebox = JSON.parse(
               localStorage.getItem("cryptos") || "{}"
             );
 
-            const cache: any = cachebox[e.settlement[0]["address"]] || {};
+            const cache: any = cachebox[e.settlement[0].address] || {};
 
             balance[token.value] = {
               amount: cache[token.value] || 0,
               name: token.name.split(" ")[0],
               test: token.testnet,
+              blocktype: token.blocktype,
               symbol: token.symbol,
             };
-          }
-          }
+          
+        }
+
 
           setBalance({ ...balance });
 
@@ -610,9 +631,10 @@ const Settlements = () => {
     if (!blur && !onceBal.current) {
       onceBal.current = true;
 
-      const account = data.settlement ? data.settlement[0] : { address: "" };
+      // const account = data.settlement ? data.settlement[0] : { address: "" };
 
       const initBalances = async () => {
+
         const finalBal = dashData["finalBalance"];
 
         const bdown = dashData["breakDownObj"];
@@ -620,19 +642,18 @@ const Settlements = () => {
         for (let i = 0; i < CryptoList.length; i++) {
           const token = CryptoList[i];
 
+          const account = sAddresses[token.blocktype];
+
           if (token.type == "native") {
             try {
-              const provider = new ethers.providers.JsonRpcProvider(token.rpc);
+            
+        
+            const amount = await blockchains[token.blocktype].balance(account, token.rpc);
 
-              const amount = Number(
-                ethers.utils.formatEther(
-                  await provider.getBalance(account.address)
-                )
-              );
 
               const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
 
-              cache[account["address"]][token.value] = amount;
+              cache[account][token.value] = amount;
 
               localStorage.setItem("cryptos", JSON.stringify(cache));
 
@@ -677,7 +698,7 @@ const Settlements = () => {
                 localStorage.getItem("cryptos") || "{}"
               );
 
-              const cache: any = cachebox[account.address] || {};
+              const cache: any = cachebox[account] || {};
 
               const valCache = JSON.parse(
                 localStorage.getItem("tokenVal") || "{}"
@@ -1810,9 +1831,11 @@ const Settlements = () => {
                     );
                   })
                 : dashData["breakdown"].map((val: balVal, key: number) => {
+
                     return (
                       <div key={key} className="flex flex-col items-start">
-                        {!Boolean(key) && (
+                        
+                        {Boolean(data.settlement[key]) && (
                           <Tooltip
                             placement="top"
                             open={copied[0]}
@@ -1821,7 +1844,7 @@ const Settlements = () => {
                           >
                             <div
                               onClick={() => {
-                                const acct = data.settlement[0];
+                                const acct = data.settlement[key];
 
                                 copy(acct.address);
 
@@ -1832,11 +1855,11 @@ const Settlements = () => {
                               className="cursor-pointer justify-between flex text-[#979797] items-center mb-2 w-[160px]"
                             >
                               <div className="flex items-center">
-                                <FaEthereum size={14} />
-                                <span className="ml-1 text-[14px]">{`${data.settlement[0].address.substring(
+                                <TbPoint size={14} />
+                                <span className="ml-1 text-[14px]">{`${data.settlement[key].address.substring(
                                   0,
                                   6
-                                )}...${data.settlement[0].address.substring(
+                                )}...${data.settlement[key].address.substring(
                                   38,
                                   42
                                 )}`}</span>
@@ -1846,6 +1869,7 @@ const Settlements = () => {
                             </div>
                           </Tooltip>
                         )}
+
 
                         <div className="border-solid flex items-center w-[350px] justify-between text-[#6a6a6ab0] p-4 mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border">
                           <div className="flex items-center">
