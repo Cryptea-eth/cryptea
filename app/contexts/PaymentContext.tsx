@@ -9,6 +9,7 @@ import { initD } from "../components/elements/dashboard/link/data";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useSwitchNetwork } from "wagmi";
 import analytics from "../../analytics";
+import mainIx from "../functions/interval"
 
 import {
   PaymentContext as PaymentCont,
@@ -78,7 +79,7 @@ export const PaymentProvider = ({
 }) => {
   const router = useRouter();
 
-  let username = router.query["slug"];
+  let slug = router.query["slug"];
 
   const apiCode = router.query["trx"] as string | undefined;
 
@@ -93,7 +94,7 @@ export const PaymentProvider = ({
 
   const [paymentType, setPaymentType] = useState<"onetime" | "sub">("onetime");
 
-  useEffect(() => { }, [username, router.isReady]);
+  useEffect(() => { }, [slug, router.isReady]);
 
   const [rnData, setRData] = useState<any>({
     renew: false,
@@ -403,7 +404,7 @@ export const PaymentProvider = ({
           user: userl,
           api,
           renew: renewInfo,
-        } = await initD(String(username).toLowerCase(), apiCode, renew);
+        } = await initD(String(slug).toLowerCase(), apiCode, renew);
 
 
         if (lQ["id"] !== undefined) {
@@ -524,7 +525,8 @@ export const PaymentProvider = ({
 
           setUserD({
             description: lQ.desc,
-            username: lQ.title !== undefined ? lQ.title : userl.username,
+            title: lQ.title !== undefined ? lQ.title : userl.username,
+            username: userl.username,
             email: userl.email,
             addresses: userl.address === null ? {'evm' : lQ.address } : userl.address,
             img: userl.img !== undefined ? userl.img : undefined,
@@ -552,15 +554,17 @@ export const PaymentProvider = ({
     if (router.isReady) {
       init();
     }
-  }, [router, username, router.isReady, editMode]);
+  }, [router, slug, router.isReady, editMode]);
 
   const {
-    username: usern,
+    title,
+    username,
     description,
     img,
     addresses,
     id: linkId,
   }: {
+    title?: string;
     username?: string;
     description?: string;
     img?: string | null;
@@ -576,29 +580,6 @@ export const PaymentProvider = ({
 
   const [eSubscription, setESubscription] = useState<string[]>([]);
 
-  const mainIx = (inter: string) => {
-    const date = new Date();
-
-    if (inter == "monthly") {
-      const datex: number = new Date(
-        date.getFullYear(),
-        date.getMonth() + 1,
-        0
-      ).getDate();
-
-      return datex * 86400;
-    } else if (inter == "yearly") {
-      const year = date.getFullYear();
-
-      return year % 4 ? 31536000 : 31622400;
-    } else if (inter == "daily") {
-      return 86400;
-    } else if (inter == "weekly") {
-      return 604800;
-    }
-
-    return 0;
-  };
 
   const reset = () => {
     setTransferSuccess(false);
@@ -701,6 +682,8 @@ export const PaymentProvider = ({
       );
 
       setLoadingText("Processing payment");
+
+      
 
       initContract
         .transferNative(addresses?.[token.blocktype] || "", {
@@ -895,6 +878,7 @@ export const PaymentProvider = ({
       }
 
       let post: any = {
+        username,
         rx,
         type,
         amount,

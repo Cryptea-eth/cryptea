@@ -100,13 +100,13 @@ const Carbon = ({ className }: { className?: string }) => {
   });
 
   const {
-    username: usern,
+    title: usern,
     img,
   }: {
-    username?: string;
+    title?: string;
     description?: string;
     img?: string | null;
-  } = userD ?? { username: "", description: "", img: "" };
+  } = userD ?? { title: "", description: "", img: "" };
 
   const text = {
     "& .Mui-focused.MuiFormLabel-root": {

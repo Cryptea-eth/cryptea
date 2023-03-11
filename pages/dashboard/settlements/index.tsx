@@ -32,7 +32,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { FaCoins, FaCopy } from "react-icons/fa";
 import CustomImg from "../../../app/components/elements/customImg";
-import { BiCopy } from "react-icons/bi";
+import { BiChevronRight, BiCopy } from "react-icons/bi";
 import copy from "copy-to-clipboard";
 import { BsCoin } from "react-icons/bs";
 import { HiCurrencyDollar } from "react-icons/hi";
@@ -50,7 +50,7 @@ import TabPanel from "../../../app/components/elements/dashboard/link/TabPanel";
 import { token } from "../../../app/contexts/Cryptea/types";
 import { ValueContainer } from "react-select/dist/declarations/src/components/containers";
 import { blockchains } from "../../../app/contexts/Cryptea/blockchains";
-import { TbPoint } from "react-icons/tb";
+import { TbPoint, TbPointOff } from "react-icons/tb";
 
 const Settlements = () => {
   const router = useRouter();
@@ -231,10 +231,14 @@ const Settlements = () => {
         
         }
 
-        const data = {
+        const [ settlement ]: [ any ] = data.settlement.filter((v: token) => v.type == withdrawToken.blocktype)        
+
+        const payload = {
           addressTo,
+          username: data.username,
           amountCrypto,
           token: withdrawToken,
+          settlement,
           fee:
             dashData["fees"][withdrawToken.value] !== undefined
               ? dashData["fees"][withdrawToken.value]
@@ -244,13 +248,17 @@ const Settlements = () => {
 
         const token = localStorage.getItem("userToken");
 
-        const { data: reqData } = await axios.post("/api/settlement/withdrawal/crypto", data, {
-          baseURL: window.origin,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          timeout: 300_000,
-        });
+        const { data: reqData } = await axios.post(
+          `/api/settlement/withdrawal/crypto/${withdrawToken.blocktype}`,
+          payload,
+          {
+            baseURL: window.origin,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            timeout: 300_000,
+          }
+        );
 
         setGenSetError("");
 
@@ -583,6 +591,8 @@ const Settlements = () => {
 
         setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
 
+        console.log(e.settlement, 'dd');
+
         if (!Boolean(e.settlement ? e.settlement.length : 0)) {
           return;
         }
@@ -645,8 +655,7 @@ const Settlements = () => {
           const account = sAddresses[token.blocktype];
 
           if (token.type == "native") {
-            try {
-            
+            try {    
         
             const amount = await blockchains[token.blocktype].balance(account, token.rpc);
 
@@ -750,7 +759,6 @@ const Settlements = () => {
 
     if (e.type == "native") {
       try {
-        const provider = new ethers.providers.JsonRpcProvider(e.rpc);
 
         const res = await get_request(
           `/token/price/${e.name.split(" ")[0].toLowerCase()}`,
@@ -762,7 +770,7 @@ const Settlements = () => {
         setCryptoRate(res?.data.price);
 
         setBalToken(
-          Number(ethers.utils.formatEther(await provider.getBalance(address))) -
+          Number(await blockchains[e.blocktype].balance(address, e.rpc)) -
             (dashData["fees"][e.value] !== undefined
               ? dashData["fees"][e.value]
               : 0)
@@ -855,18 +863,17 @@ const Settlements = () => {
                     <div className="flex mb-5 bg-white items-center">
                       <div className="bg-[#ebebeb] px-2 font-[600] truncate mr-3 rounded py-2 w-full text-[#7a7a7a]">
                         {Boolean(data.username) ? data.username : ""}{" "}
-                        {"Cryptea Wallet"}
+                        {"Cryptea Wallets"}
                       </div>
 
                       <div className="bg-[#ebebeb] px-2 rounded py-2 min-w-fit font-[600] text-[#7a7a7a]">
-                        {data.settlement !== undefined
-                          ? `${data.settlement[0].address.substring(
-                              0,
-                              6
-                            )}...${data.settlement[0].address.substring(
-                              38,
-                              42
-                            )}`
+                        {addresses[withdrawToken?.blocktype || "evm"] !==
+                        undefined
+                          ? `${addresses[
+                              withdrawToken?.blocktype || "evm"
+                            ].substring(0, 6)}...${addresses[
+                              withdrawToken?.blocktype || "evm"
+                            ].substring(38, 42)}`
                           : ""}
                       </div>
                     </div>
@@ -934,7 +941,7 @@ const Settlements = () => {
                         onChange={async (e) => {
                           setWithdrawToken(e);
 
-                          getBalance(e, data.settlement[0].address);
+                          getBalance(e, addresses[e.blocktype]);
                         }}
                         classNamePrefix="select"
                       />
@@ -1831,10 +1838,8 @@ const Settlements = () => {
                     );
                   })
                 : dashData["breakdown"].map((val: balVal, key: number) => {
-
                     return (
                       <div key={key} className="flex flex-col items-start">
-                        
                         {Boolean(data.settlement[key]) && (
                           <Tooltip
                             placement="top"
@@ -1855,21 +1860,21 @@ const Settlements = () => {
                               className="cursor-pointer justify-between flex text-[#979797] items-center mb-2 w-[160px]"
                             >
                               <div className="flex items-center">
-                                <TbPoint size={14} />
-                                <span className="ml-1 text-[14px]">{`${data.settlement[key].address.substring(
-                                  0,
-                                  6
-                                )}...${data.settlement[key].address.substring(
-                                  38,
-                                  42
-                                )}`}</span>
+                                <BiChevronRight
+                                  className="relative"
+                                  size={14}
+                                />
+                                <span className="ml-1 text-[14px]">{`${data.settlement[
+                                  key
+                                ].address.substring(0, 6)}...${data.settlement[
+                                  key
+                                ].address.substring(38, 42)}`}</span>
                               </div>
 
                               <BiCopy size={16} />
                             </div>
                           </Tooltip>
                         )}
-
 
                         <div className="border-solid flex items-center w-[350px] justify-between text-[#6a6a6ab0] p-4 mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border">
                           <div className="flex items-center">

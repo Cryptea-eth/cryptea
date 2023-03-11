@@ -10,8 +10,11 @@ import {
   SystemProgram,
   Keypair
 } from "@solana/web3.js";
-const { decryptData } = require("../../../../app/functions/crypto-data");
+import mainIx  from "../../../../app/functions/interval";
+const { decryptData, encryptData } = require("../../../../app/functions/crypto-data");
 const bs58 = require('bs58');
+
+
 type Data = {
   proceed: boolean;
   error?: boolean;
@@ -19,29 +22,6 @@ type Data = {
   hash?: string;
 };
 
-const mainIx = (inter: string) => {
-  const date = new Date();
-
-  if (inter == "monthly") {
-    const datex: number = new Date(
-      date.getFullYear(),
-      date.getMonth() + 1,
-      0
-    ).getDate();
-
-    return datex * 86400;
-  } else if (inter == "yearly") {
-    const year = date.getFullYear();
-
-    return year % 4 ? 31536000 : 31622400;
-  } else if (inter == "daily") {
-    return 86400;
-  } else if (inter == "weekly") {
-    return 604800;
-  }
-
-  return 0;
-};
 
 export default function handler(
   req: NextApiRequest,
@@ -55,136 +35,168 @@ export default function handler(
     
     const from = new PublicKey(body.account);
 
-    provider.getBalance(from).then(async (mbalance) => {
+    (async () => {
+    
+      try {
 
+      const mbalance = await provider.getBalance(from);
+ 
+       const currentBalance = mbalance / LAMPORTS_PER_SOL;
 
-      const currentBalance = mbalance / LAMPORTS_PER_SOL;
+       if (
+         body.initial != currentBalance &&
+         (body.initial + Number(body.price)).toFixed(6) ==
+           currentBalance.toFixed(6)
+       ) {
 
-      if (
-        body.initial != currentBalance &&
-        (body.initial + Number(body.price)).toFixed(6) ==
-          currentBalance.toFixed(6)
-      ) {        
+        let address = body.uAddress;
 
+        if (!Boolean(address)) {
 
-        const receiver = new PublicKey(body.uAddress);
+          const newWal = Keypair.generate();
 
-       
-        const transaction = new Transaction().add(
-          SystemProgram.transfer({
-            fromPubkey: from,
-            toPubkey: receiver,
-            lamports: mbalance - 1000000,
-          })
-        );
-        
-        const mainTrxFee = 1000000 / LAMPORTS_PER_SOL;
+          address = newWal.publicKey.toBase58();
 
+          const solAccount = encryptData(
+            bs58.encode(newWal.secretKey),
+            body.username
+          );
 
-        let trxData = {
-          ...body.rx,
-          type: body.type,
-          gas: mainTrxFee,
-          amount: body.amount,
-          pay_type: body.pay_type,
-          explorer: body.explorer,
-          amountCrypto: body.price,
-          token: body.label,
-          chainId: body.chain,
-        };
-
-        if (body.type == "sub") {
-          trxData = {
-            ...trxData,
-            remind: new Date().getTime() + mainIx(body.interval) * 1000,
-            renewal: body.interval,
-            interval: body.interval,
-          };
-        }
-
-        axios
-          .post(
-            `https://ab.cryptea.me/link/pay/accounts/${body.account}`,
+          await axios.post(
+            "https://ab.cryptea.me/update/settlement/init/no-pin",
             {
-              data: JSON.stringify(trxData),
-              amount: ethers.utils.formatEther(mbalance),
-              receiver: body.uAddress,
-              linkId: body.linkId,
+              username: body.username,
+              address,
+              type: "sol",
+              account: JSON.stringify(solAccount),
             },
             {
               headers: {
                 Authorization: process.env.APP_KEY || "",
               },
             }
-          )
-          .then(async ({ data }) => {
-            if (Boolean(data.private)) {
+          );
 
-              try {
+        }
 
-                const secretKey = await decryptData(
-                  data.private,
-                  process.env.KEY || ""
-                );
+         const receiver = new PublicKey(address);
 
-                const wallet =  Keypair.fromSecretKey(bs58.decode(secretKey))
+         const transaction = new Transaction().add(
+           SystemProgram.transfer({
+             fromPubkey: from,
+             toPubkey: receiver,
+             lamports: mbalance - 1000000,
+           })
+         );
 
+         const mainTrxFee = 1000000 / LAMPORTS_PER_SOL;
+
+         let trxData = {
+           ...body.rx,
+           type: body.type,
+           gas: mainTrxFee,
+           amount: body.amount,
+           pay_type: body.pay_type,
+           explorer: body.explorer,
+           amountCrypto: body.price,
+           token: body.label,
+           chainId: body.chain,
+         };
+
+         if (body.type == "sub") {
+           trxData = {
+             ...trxData,
+             remind: new Date().getTime() + mainIx(body.interval) * 1000,
+             renewal: body.interval,
+             interval: body.interval,
+           };
+         }
+
+         const { data } = await axios.post(
+             `https://ab.cryptea.me/link/pay/accounts/${body.account}`,
+             {
+               data: JSON.stringify(trxData),
+               amount: ethers.utils.formatEther(mbalance),
+               receiver: body.uAddress,
+               linkId: body.linkId,
+             },
+             {
+               headers: {
+                 Authorization: process.env.APP_KEY || "",
+               },
+             }
+           ); 
            
-                const hash = await sendAndConfirmTransaction(
-                  provider,
-                  transaction,
-                  [
-                   wallet
-                  ]
-                );
+          
+             if (Boolean(data.private)) {
 
+              
+                 const secretKey = await decryptData(
+                   data.private,
+                   process.env.KEY || ""
+                 );
 
-                let post: any = {
-                  ...trxData,
-                  date: new Date().getTime(),
-                  address: body.uAddress,
-                  hash,
-                };
+                 const wallet = Keypair.fromSecretKey(bs58.decode(secretKey));
 
-                await axios.post(
-                  `https://ab.cryptea.me/link/payments/${body.linkId}`,
-                  {
-                    ...post,
-                    paymentAddress: body.uAddress,
-                  },
-                  {
-                    headers: {
-                      Authorization: process.env.APP_KEY || "",
-                    },
-                    timeout: 600000,
-                  }
-                );
+                 const hash = await sendAndConfirmTransaction(
+                   provider,
+                   transaction,
+                   [wallet]
+                 );
 
-                res.status(200).json({
-                  proceed: true,
-                  message: "successful",
-                  error: false,
-                  hash,
-                });
+                 let post: any = {
+                   ...trxData,
+                   date: new Date().getTime(),
+                   address: body.uAddress,
+                   hash,
+                 };
 
-              } catch (err) {
-                const error = err as any;
+                 await axios.post(
+                   `https://ab.cryptea.me/link/payments/${body.linkId}`,
+                   {
+                     ...post,
+                     paymentAddress: body.uAddress,
+                   },
+                   {
+                     headers: {
+                       Authorization: process.env.APP_KEY || "",
+                     },
+                     timeout: 600000,
+                   }
+                 );
 
-                res.status(400).json({
-                  proceed: false,
-                  error: true,
-                  message: error?.response?.data.message || error.message,
-                });
+                 res.status(200).json({
+                   proceed: true,
+                   message: "successful",
+                   error: false,
+                   hash,
+                 });
 
-              }
-            } else {
-              res.status(404).json({ proceed: true });
-            }
-          });
-      } else {
-        res.status(200).json({ proceed: false });
-      }
-    });
+               
+             } else {
+               res.status(404).json({ proceed: true });
+             }
+
+       } else {
+         res.status(200).json({ proceed: false });
+       }
+
+      //  main
+
+       } catch (err) {
+
+        const error = err as any;
+
+        res.status(400).json({
+          proceed: false,
+          error: true,
+          message: error?.response?.data?.message || error.message,
+        });
+
+       }
+
+    })()
+ 
   } else {
     res.status(200).json({
       proceed: false,

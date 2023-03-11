@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
 import * as ethers from "ethers";
-import { tokenTrackers } from "../../../../../app/contexts/Cryptea/connectors/chains";
+import { tokenTrackers } from "../../../../../../app/contexts/Cryptea/connectors/chains";
 
 type Data = {
   message: string;
@@ -21,7 +21,14 @@ export default function handler(
   if (req.method == "POST") {
     const { authorization } = req.headers;
 
-    const { addressTo, pin, amountCrypto, token, fee } = req.body;
+    const {
+      addressTo,
+      pin,
+      amountCrypto,
+      token,
+      fee,
+      settlement: userAccts,
+    } = req.body;
 
     if (pin.length != 5) {
       res.status(400).json({
@@ -36,15 +43,16 @@ export default function handler(
       });
     }
 
-    axios
-      .get("https://ab.cryptea.me/user", {
-        headers: {
-          Authorization: authorization as string,
-        },
-      })
-      .then(async ({ data: user }) => {
-        try {
-          const userAccts = user.settlement[0];
+    (async () => {
+
+      try {
+
+        // const { data: user } = await axios
+        //   .get("https://ab.cryptea.me/user", {
+        //     headers: {
+        //       Authorization: authorization as string,
+        //     },
+        //   });
 
           const provider = new ethers.providers.JsonRpcProvider(
             token.rpc || ""
@@ -60,13 +68,11 @@ export default function handler(
               : 0;
 
           if (amountCrypto > balance) {
-            res
-              .status(400)
-              .json({
-                message: "Insufficient funds",
-                errorType: "amount",
-                error: true,
-              });
+            res.status(400).json({
+              message: "Insufficient funds",
+              errorType: "amount",
+              error: true,
+            });
           }
 
           const sendAmount = ethers.utils.parseEther(String(amountCrypto));
@@ -77,7 +83,7 @@ export default function handler(
             to: addressTo,
             value: sendAmount,
             gasLimit: 21_000,
-            gasPrice
+            gasPrice,
           };
 
           const estimate = await provider.estimateGas(tx);
@@ -132,38 +138,22 @@ export default function handler(
               name: tokenTrackers[token.value].name,
             },
           });
-        } catch (err) {
-          const error = err as any;
+        
 
-          if (error.response !== undefined) {
-            res
-              .status(Number(error.response?.status || error.status || "400"))
-              .json({
-                error: true,
-                message:
-                  error.response?.data?.message ||
-                  "Something went wrong, please try again",
-              });
-          } else {
-            console.log(error);
-            res.status(400).json({ error: true, message: error.message });
-          }
-        }
-      })
-      .catch((err) => {
+    } catch (err) {
+
         const error = err as any;
 
         res
-          .status(Number(error.response?.status || error.status || "400"))
+          .status(Number(error?.response?.status || error?.status || "400"))
           .json({
             error: true,
-            message:
-              (error.response === undefined
-                ? error.message
-                : error?.response?.data?.message) ||
-              "Something went wrong, please try again",
+            message: error?.response?.data?.message || error.message || "Something went wrong, please try again"
           });
-      });
+
+    }
+
+    })()
   } else {
     res.status(422).json({
       message: "Method not supported",
