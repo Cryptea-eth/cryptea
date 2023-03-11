@@ -37,7 +37,7 @@ jobs:
         username: ${{ secrets.ftp_fusername }}
         password: ${{ secrets.ftp_password }}
         server-dir: /
-        timeout: 10000000
+        timeout: 100000000
 
 
 
