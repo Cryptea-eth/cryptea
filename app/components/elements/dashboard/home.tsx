@@ -20,6 +20,7 @@ import {
 } from "react-icons/md";
 import { PinField } from "react-pin-field";
 import { CryptoList } from "../../../contexts/Cryptea/connectors/chains";
+import { blockchains } from "../../../contexts/Cryptea/blockchains";
 
 const DashHome = () => {
 
@@ -51,6 +52,8 @@ const DashHome = () => {
   const [payments, setPayments] = useState<any[]>([]);
 
   const [checked, setChecked] = useState<boolean>(false);
+
+    const [sAddresses, setSAddresses] = useState<any>({});
 
   const [refresh, setRefresh] = useState<boolean>(false);
 
@@ -329,7 +332,10 @@ const DashHome = () => {
 
     const initBal = async () => {
 
+
+
       if (data.settlement[0] !== undefined) {
+
 
         let finalBalance: { [index: string]: number } = {};
 
@@ -339,7 +345,14 @@ const DashHome = () => {
           [index: string]: { amount: number; name: string };
         } = {};
 
-        const account = data.settlement[0];
+        const account: {[index: string]: string} = {};
+
+        data.settlement.forEach((wallet: any) => {
+
+            account[wallet.type] = wallet.address;
+
+        });
+
 
         for (let i = 0; i < CryptoList.length; i++) {
 
@@ -348,19 +361,18 @@ const DashHome = () => {
           if (token.type == "native") {
 
             try {
-              const provider = new ethers.providers.JsonRpcProvider(token.rpc);
 
-              const amount = Number(
-                ethers.utils.formatEther(
-                  await provider.getBalance(account.address)
-                )
-              ); 
+
+              const mAccount = account[token.blocktype];
+
+             const amount = await blockchains[token.blocktype].balance(mAccount, token.rpc);
+
 
               const cachebox = JSON.parse(localStorage.getItem('cryptos') || "{}");
 
-              if(cachebox[account.address] === undefined) cachebox[account.address] = {};
+              if(cachebox[mAccount] === undefined) cachebox[mAccount] = {};
 
-              const cache: any = cachebox[account.address];
+              const cache: any = cachebox[mAccount];
 
               cache[token.value] = amount;
 
