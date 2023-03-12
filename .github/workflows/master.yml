@@ -16,15 +16,15 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js 16.x
+    - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: 18.x
         cache: 'npm'
 
     - run: yarn install
@@ -33,10 +33,10 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
-        server: ftp.cryptea.me
+        server: ${{ secrets.ftp_host }}
         username: ${{ secrets.ftp_fusername }}
         password: ${{ secrets.ftp_password }}
-        server-dir: /
+        server-dir: /frontend
         timeout: 100000000
 
 
