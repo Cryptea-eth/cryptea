@@ -31,13 +31,23 @@ jobs:
     - run: npm run build
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.3
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.1
       with:
-        server: ${{ secrets.ftp_host }}
-        username: ${{ secrets.ftp_fusername }}
-        password: ${{ secrets.ftp_password }}
-        server-dir: /frontend
-        timeout: 100000000
+
+          username: ${{ secrets.ftp_fusername }}
+          server: ${{ secrets.ftp_host }}
+          port: 22 # default is 22
+          ssh_private_key: ${{ secrets.ftp_secret }}
+
+          # will put all file under this path
+          local_path: ./* # default is ./*
+          # files will copy to under remote_path
+          remote_path: /home/files/frontend/
+
+          # sftp args
+          args: '-o ConnectTimeout=500'
+          
+
 
 
 
