@@ -16,7 +16,7 @@ jobs:
       uses: wlixcc/SFTP-Deploy-Action@v1.2.1
       with:
 
-          username: ${{ secrets.ftp_username }}
+          username: ${{ secrets.ftp_fusername }}
           server: ${{ secrets.ftp_host }}
           port: 22 # default is 22
           ssh_private_key: ${{ secrets.ftp_secret }}
@@ -28,4 +28,4 @@ jobs:
           remote_path: /home/files/frontend/
 
           # sftp args
-          args: '-o ConnectTimeout=5'
+          args: '-o ConnectTimeout=50'
