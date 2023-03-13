@@ -40,7 +40,7 @@ jobs:
           ssh_private_key: ${{ secrets.ftp_secret }}
 
           # will put all file under this path
-          local_path: ./* # default is ./*
+          local_path: ./!**/node_modules/** 
           # files will copy to under remote_path
           remote_path: /home/files/frontend/
 
