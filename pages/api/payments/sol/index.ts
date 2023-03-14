@@ -14,6 +14,8 @@ import mainIx  from "../../../../app/functions/interval";
 const { decryptData, encryptData } = require("../../../../app/functions/crypto-data");
 const bs58 = require('bs58');
 
+import { tokenTrackers } from "../../../../app/contexts/Cryptea/connectors/chains";
+
 
 type Data = {
   proceed: boolean;
@@ -42,6 +44,7 @@ export default function handler(
       const mbalance = await provider.getBalance(from);
  
        const currentBalance = mbalance / LAMPORTS_PER_SOL;
+
 
        if (
          body.initial != currentBalance &&
@@ -116,8 +119,8 @@ export default function handler(
              `https://ab.cryptea.me/link/pay/accounts/${body.account}`,
              {
                data: JSON.stringify(trxData),
-               amount: ethers.utils.formatEther(mbalance),
-               receiver: body.uAddress,
+               amount: body.price,
+               receiver,
                linkId: body.linkId,
              },
              {
@@ -132,7 +135,7 @@ export default function handler(
 
               
                  const secretKey = await decryptData(
-                   data.private,
+                   JSON.parse(data.private),
                    process.env.KEY || ""
                  );
 
@@ -147,15 +150,16 @@ export default function handler(
                  let post: any = {
                    ...trxData,
                    date: new Date().getTime(),
-                   address: body.uAddress,
+                   address: receiver,
                    hash,
+                   explorer: tokenTrackers[body.chain].link(hash),
                  };
 
                  await axios.post(
                    `https://ab.cryptea.me/link/payments/${body.linkId}`,
                    {
                      ...post,
-                     paymentAddress: body.uAddress,
+                     paymentAddress: receiver,
                    },
                    {
                      headers: {
@@ -186,6 +190,8 @@ export default function handler(
        } catch (err) {
 
         const error = err as any;
+
+        console.log(error)
 
         res.status(400).json({
           proceed: false,

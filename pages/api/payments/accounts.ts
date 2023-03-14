@@ -71,7 +71,8 @@ export default function handler(
 
         let wallet = Keypair.generate();
 
-        const encrypted = encryptData(bs58.encode(wallet.secretKey), process.env.KEY || '')
+        const encrypted = encryptData(bs58.encode(wallet.secretKey), process.env.KEY || '');
+        
 
         (async () => {
 
@@ -96,6 +97,8 @@ export default function handler(
           }catch (err) {
   
             const errx = err as any;
+
+            console.log(errx);
   
             res.status(400).json({
               message: errx.response.data.message,

@@ -207,4 +207,8 @@ declare global {
   }
 }
 
+export type explorer = {
+  [index: string]: { name: string; link: (hash: string) => string };
+};
+
 export {};

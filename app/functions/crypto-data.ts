@@ -40,6 +40,7 @@ const encryptData = (text: string, secret: string) => {
 
     function decryptData(hash: { iv: string, content: string }, secret: string) {
 
+
          const secretKey = fillSecret(secret);
 
         const decipher = crypto.createDecipheriv('aes-256-ctr', secretKey, Buffer.from(hash.iv, 'hex'));

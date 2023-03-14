@@ -285,8 +285,8 @@ export const PaymentProvider = ({
     setLoadingText("Loading price data...");
 
     const prices: { [index: string]: () => Promise<number> } = {
-      "112211_2211224": async () => solana(price),
-      "112211_2211223": async () => solana(price),
+      "1122112211224": async () => solana(price),
+      "1122112211223": async () => solana(price),
       "250": async () => await fantom(price),
       "4002": async () => await fantom(price),
       "80001": async () => await matic(price),
@@ -683,7 +683,7 @@ export const PaymentProvider = ({
 
       setLoadingText("Processing payment");
 
-      
+
 
       initContract
         .transferNative(addresses?.[token.blocktype] || "", {
