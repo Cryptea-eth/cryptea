@@ -77,7 +77,7 @@ export const SolanaCryptoList: token[] = [
     contractAddr: "",
     network: "polygon",
     tokenAddr: "",
-    rpc: WalletAdapterNetwork.Devnet,
+    rpc: process.env.SOLANA_DEVNET as string,
     testnet: true,
     blocktype: "sol",
     type: "native",

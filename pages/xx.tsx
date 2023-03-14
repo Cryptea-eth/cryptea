@@ -13,15 +13,9 @@ const Xx = () => {
 
   (async () => {
 
-     const ee = bs58.decode(
-       decryptData(
-         { iv: "69f0008d6f8ce20abc7228beaf6b964b", content: "3c76a7a5" },
-         "Joell"
-       )
-     );
-     
-     console.log(ee);
+    console.log(process.env.KEY)
 
+     
   })()
 
  }, []);

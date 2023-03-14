@@ -665,7 +665,7 @@ const DashHome = () => {
             </div>
           </div>
 
-          <div className="flex items-start relative z-0 2mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
+          <div className="flex items-start relative z-[10] 2mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
             <div className="min-w-[100px]">
               {blur ? (
                 <Skeleton

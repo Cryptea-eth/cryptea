@@ -630,6 +630,7 @@ const Settlements = () => {
           
         }
 
+        
 
           setBalance({ ...balance });
 
@@ -639,6 +640,7 @@ const Settlements = () => {
     }
 
     if (!blur && !onceBal.current) {
+
       onceBal.current = true;
 
       // const account = data.settlement ? data.settlement[0] : { address: "" };
@@ -650,6 +652,7 @@ const Settlements = () => {
         const bdown = dashData["breakDownObj"];
 
         for (let i = 0; i < CryptoList.length; i++) {
+
           const token = CryptoList[i];
 
           const account = sAddresses[token.blocktype];
@@ -662,9 +665,14 @@ const Settlements = () => {
 
               const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
 
-              cache[account][token.value] = amount;
+              cache[account] = {
+                ...(cache[account] || {}),
+                [token.value]: amount,
+              };
 
               localStorage.setItem("cryptos", JSON.stringify(cache));
+
+              console.log('came here 1')
 
               const name = token.name.split(" ")[0];
 
@@ -682,6 +690,8 @@ const Settlements = () => {
                 undefined,
                 false
               );
+
+              console.log(res, 'here')
 
               const valCache = JSON.parse(
                 localStorage.getItem("tokenVal") || "{}"
@@ -702,7 +712,13 @@ const Settlements = () => {
                 test,
                 symbol,
               };
+
+              console.log('came here')
+
             } catch (err) {
+
+              console.log(err, 'ww')
+
               const cachebox = JSON.parse(
                 localStorage.getItem("cryptos") || "{}"
               );
@@ -768,6 +784,8 @@ const Settlements = () => {
         );
 
         setCryptoRate(res?.data.price);
+
+        console.log(await blockchains[e.blocktype].balance(address, e.rpc))
 
         setBalToken(
           Number(await blockchains[e.blocktype].balance(address, e.rpc)) -
