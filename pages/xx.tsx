@@ -7,16 +7,9 @@ const bs58 = require('bs58');
 
 const Xx = () => {
 
- const router = useRouter();
-
  useEffect(() => {
 
-  (async () => {
-
-    console.log(process.env.KEY)
-
-     
-  })()
+    console.log('come here')  
 
  }, []);
 
