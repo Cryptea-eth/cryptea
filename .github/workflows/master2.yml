@@ -41,9 +41,9 @@ jobs:
 
 
           # will put all file under this path
-          local_path: ./.next/
+          local_path: ./.next/*
           # files will copy to under remote_path
-          remote_path: /home/files/frontend/
+          remote_path: /home/files/frontend/.next/
 
           # sftp args
           args: '-o ConnectTimeout=50'
