@@ -7,7 +7,7 @@ const fillSecret = (secret: string) => {
 
             let add = '';
 
-            for (let i = 0; i < 16 - secret.length; i++) {
+            for (let i = 0; i < 32 - secret.length; i++) {
 
                 add += '1';      
 
@@ -20,6 +20,7 @@ const fillSecret = (secret: string) => {
         }
 
     };
+
 
 const encryptData = (text: string, secret: string) => {
 
@@ -38,6 +39,7 @@ const encryptData = (text: string, secret: string) => {
     };
 
     function decryptData(hash: { iv: string, content: string }, secret: string) {
+
 
          const secretKey = fillSecret(secret);
 

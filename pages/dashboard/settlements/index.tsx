@@ -32,7 +32,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { FaCoins, FaCopy } from "react-icons/fa";
 import CustomImg from "../../../app/components/elements/customImg";
-import { BiCopy } from "react-icons/bi";
+import { BiChevronRight, BiCopy } from "react-icons/bi";
 import copy from "copy-to-clipboard";
 import { BsCoin } from "react-icons/bs";
 import { HiCurrencyDollar } from "react-icons/hi";
@@ -50,9 +50,10 @@ import TabPanel from "../../../app/components/elements/dashboard/link/TabPanel";
 import { token } from "../../../app/contexts/Cryptea/types";
 import { ValueContainer } from "react-select/dist/declarations/src/components/containers";
 import { blockchains } from "../../../app/contexts/Cryptea/blockchains";
-import { TbPoint } from "react-icons/tb";
+import { TbPoint, TbPointOff } from "react-icons/tb";
 
 const Settlements = () => {
+
   const router = useRouter();
 
   const [blur, setBlur] = useState<boolean>(true);
@@ -183,10 +184,11 @@ const Settlements = () => {
     setWithdrawLoading(true);
 
     if (!cryptoWithdrawStage) {
-      if (!addressTo.length || !ethers.utils.isAddress(addressTo)) {
+      
+      if (!addressTo.length || !blockchains[withdrawToken?.blocktype || 'evm'].validateAddr(addressTo)) {
         document.querySelector(".witherror")?.scrollIntoView();
 
-        setWithdrawError("A valid ethereum address is required");
+        setWithdrawError("A valid address is required");
 
         setWithdrawLoading(false);
 
@@ -231,10 +233,14 @@ const Settlements = () => {
         
         }
 
-        const data = {
+        const [ settlement ]: [ any ] = data.settlement.filter((v: token) => v.type == withdrawToken.blocktype)        
+
+        const payload = {
           addressTo,
+          username: data.username,
           amountCrypto,
           token: withdrawToken,
+          settlement,
           fee:
             dashData["fees"][withdrawToken.value] !== undefined
               ? dashData["fees"][withdrawToken.value]
@@ -244,13 +250,17 @@ const Settlements = () => {
 
         const token = localStorage.getItem("userToken");
 
-        const { data: reqData } = await axios.post("/api/settlement/withdrawal/crypto", data, {
-          baseURL: window.origin,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          timeout: 300_000,
-        });
+        const { data: reqData } = await axios.post(
+          `/api/settlement/withdrawal/crypto/${withdrawToken.blocktype}`,
+          payload,
+          {
+            baseURL: window.origin,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            timeout: 300_000,
+          }
+        );
 
         setGenSetError("");
 
@@ -466,11 +476,12 @@ const Settlements = () => {
 
       const userAddresses = JSON.parse(user.accounts || "[]");
 
-      if (Boolean(userAddresses[0])) {
+      if (Boolean(userAddresses[0]) && userAddresses[0] != 'null') {
         if (!settlement_acct.includes(userAddresses[0])) {
           settlement_acct.push(userAddresses[0]);
         }
       }
+
 
       payments.forEach((value: any) => {
         if (value.meta !== null) {
@@ -518,7 +529,7 @@ const Settlements = () => {
 
         const index = Object.keys(balance)[i];
 
-        const total = balance[index].amount - (fees[index] || 0);
+        const total = balance[index].amount - (balance[index].amount > fees[index] ? fees[index] : 0);
 
         const type = balance[index].blocktype;
 
@@ -527,7 +538,7 @@ const Settlements = () => {
         const price = cache[balance[index].name.toLowerCase()] || 0;
 
         finalBalance[index] = total * price;
-      
+
 
         breakdown[index] = {
           amount: total,
@@ -576,12 +587,15 @@ const Settlements = () => {
     };
 
     if (once.current) {
+
       once.current = false;
 
       "user".get("*", true).then(async (e: any) => {
         setData(e);
 
         setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
+
+        // console.log(e.settlement, 'dd');
 
         if (!Boolean(e.settlement ? e.settlement.length : 0)) {
           return;
@@ -592,10 +606,11 @@ const Settlements = () => {
             setSAddresses({ ...sAddresses, [vv.type]: vv.address});
 
         })
+        
 
         const userAddresses = JSON.parse(e.accounts || "[]");
 
-        if (Boolean(userAddresses[0])) setAddressTo(userAddresses[0]);
+        
 
         if (e.settlement[0] !== undefined) {
 
@@ -620,6 +635,7 @@ const Settlements = () => {
           
         }
 
+        
 
           setBalance({ ...balance });
 
@@ -629,6 +645,7 @@ const Settlements = () => {
     }
 
     if (!blur && !onceBal.current) {
+
       onceBal.current = true;
 
       // const account = data.settlement ? data.settlement[0] : { address: "" };
@@ -640,22 +657,27 @@ const Settlements = () => {
         const bdown = dashData["breakDownObj"];
 
         for (let i = 0; i < CryptoList.length; i++) {
+
           const token = CryptoList[i];
 
           const account = sAddresses[token.blocktype];
 
           if (token.type == "native") {
-            try {
-            
+            try {    
         
             const amount = await blockchains[token.blocktype].balance(account, token.rpc);
 
 
               const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
 
-              cache[account][token.value] = amount;
+              cache[account] = {
+                ...(cache[account] || {}),
+                [token.value]: amount,
+              };
 
               localStorage.setItem("cryptos", JSON.stringify(cache));
+
+              
 
               const name = token.name.split(" ")[0];
 
@@ -663,7 +685,7 @@ const Settlements = () => {
 
               const total =
                 amount -
-                (dashData["fees"][value] !== undefined
+                (dashData["fees"][value] !== undefined && dashData["fees"][value] > amount
                   ? dashData["fees"][value]
                   : 0);
 
@@ -673,6 +695,8 @@ const Settlements = () => {
                 undefined,
                 false
               );
+
+              // console.log(res, 'here')
 
               const valCache = JSON.parse(
                 localStorage.getItem("tokenVal") || "{}"
@@ -693,7 +717,10 @@ const Settlements = () => {
                 test,
                 symbol,
               };
+
+
             } catch (err) {
+
               const cachebox = JSON.parse(
                 localStorage.getItem("cryptos") || "{}"
               );
@@ -750,7 +777,6 @@ const Settlements = () => {
 
     if (e.type == "native") {
       try {
-        const provider = new ethers.providers.JsonRpcProvider(e.rpc);
 
         const res = await get_request(
           `/token/price/${e.name.split(" ")[0].toLowerCase()}`,
@@ -761,14 +787,15 @@ const Settlements = () => {
 
         setCryptoRate(res?.data.price);
 
+        const reqBal = Number(await blockchains[e.blocktype].balance(address, e.rpc));
+
         setBalToken(
-          Number(ethers.utils.formatEther(await provider.getBalance(address))) -
-            (dashData["fees"][e.value] !== undefined
+          reqBal -
+            (dashData["fees"][e.value] !== undefined && dashData["fees"][e.value] > reqBal
               ? dashData["fees"][e.value]
               : 0)
         );
       } catch (err) {
-        console.log(err);
 
         setCryptoRate(0);
 
@@ -839,7 +866,7 @@ const Settlements = () => {
                 </div>
 
                 {Boolean(withdrawError) && (
-                  <div className="bg-[#ff8f33] text-white rounded-md w-[95%] font-bold mt-2 witherror mx-auto p-3">
+                  <div className="bg-[#ff8f33] text-white rounded-md w-full font-bold mt-2 witherror mx-auto p-3">
                     {withdrawError}
                   </div>
                 )}
@@ -855,18 +882,17 @@ const Settlements = () => {
                     <div className="flex mb-5 bg-white items-center">
                       <div className="bg-[#ebebeb] px-2 font-[600] truncate mr-3 rounded py-2 w-full text-[#7a7a7a]">
                         {Boolean(data.username) ? data.username : ""}{" "}
-                        {"Cryptea Wallet"}
+                        {"Cryptea Wallets"}
                       </div>
 
                       <div className="bg-[#ebebeb] px-2 rounded py-2 min-w-fit font-[600] text-[#7a7a7a]">
-                        {data.settlement !== undefined
-                          ? `${data.settlement[0].address.substring(
-                              0,
-                              6
-                            )}...${data.settlement[0].address.substring(
-                              38,
-                              42
-                            )}`
+                        {sAddresses[withdrawToken?.blocktype || "evm"] !==
+                        undefined
+                          ? `${sAddresses[
+                              withdrawToken?.blocktype || "evm"
+                            ].substring(0, 6)}...${sAddresses[
+                              withdrawToken?.blocktype || "evm"
+                            ].substring(38, 42)}`
                           : ""}
                       </div>
                     </div>
@@ -934,7 +960,7 @@ const Settlements = () => {
                         onChange={async (e) => {
                           setWithdrawToken(e);
 
-                          getBalance(e, data.settlement[0].address);
+                          getBalance(e, sAddresses[e.blocktype]);
                         }}
                         classNamePrefix="select"
                       />
@@ -1045,7 +1071,7 @@ const Settlements = () => {
                                 const text =
                                   await navigator.clipboard.readText();
 
-                                setAddressTo(text);
+                                  setAddressTo(text);
                               }}
                               className="cursor-pointer"
                               sx={{
@@ -1081,7 +1107,7 @@ const Settlements = () => {
                           },
                           width: "100%",
                         }}
-                        placeholder="Ethereum Address"
+                        placeholder="Address"
                         value={addressTo}
                         onChange={(
                           e: React.ChangeEvent<
@@ -1675,7 +1701,7 @@ const Settlements = () => {
                   <NumberFormat
                     value={
                       String(
-                        dashData["balance"].reduce((a: any, b: any) => a + b, 0)
+                        dashData["balance"].reduce((a: any, b: any) => a + b, 0) < 0 ? 0 : dashData["balance"].reduce((a: any, b: any) => a + b, 0)
                       ).split(".")[0]
                     }
                     style={{
@@ -1689,8 +1715,8 @@ const Settlements = () => {
                   <span className="leading-[2.7rem] text-[20px] text-[#898989]">
                     .
                     {
-                      dashData["balance"]
-                        .reduce((a: any, b: any) => a + b, 0)
+                      (dashData["balance"]
+                        .reduce((a: any, b: any) => a + b, 0) < 0 ?  0 : dashData["balance"].reduce((a: any, b: any) => a + b, 0))
                         .toFixed(2)
                         .split(".")[1]
                     }
@@ -1711,7 +1737,7 @@ const Settlements = () => {
                 placement="bottom"
                 arrow
                 title={
-                  "Pending amount which  would be added to account balance within 24hrs. This Balance is subject to change, based on loaded data and change in token price data from coingecko"
+                  "Pending amount which  would be added to account balance within 24hrs. This Balance is subject to change, based on the way it is calculated"
                 }
               >
                 <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
@@ -1755,7 +1781,8 @@ const Settlements = () => {
               onClick={() => {
                 setCryptoW(true);
 
-                getBalance(withdrawToken, data.settlement[0].address);
+                getBalance(withdrawToken, sAddresses[withdrawToken.blocktype]);
+
               }}
               className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] !mr-[2px]"
             >
@@ -1763,7 +1790,7 @@ const Settlements = () => {
             </Button>
           )}
 
-          {blur ? (
+          {/* {blur ? (
             <Skeleton
               className="py-2 px-3 w-[120px] h-[60px] rounded-lg mr-1"
               sx={{ fontSize: "14px" }}
@@ -1775,7 +1802,7 @@ const Settlements = () => {
             >
               <MdPayment size={16} className="mr-1" /> Withdraw Fiat
             </Button>
-          )}
+          )} */}
 
           {blur ? (
             <Skeleton
@@ -1831,10 +1858,8 @@ const Settlements = () => {
                     );
                   })
                 : dashData["breakdown"].map((val: balVal, key: number) => {
-
                     return (
                       <div key={key} className="flex flex-col items-start">
-                        
                         {Boolean(data.settlement[key]) && (
                           <Tooltip
                             placement="top"
@@ -1855,21 +1880,21 @@ const Settlements = () => {
                               className="cursor-pointer justify-between flex text-[#979797] items-center mb-2 w-[160px]"
                             >
                               <div className="flex items-center">
-                                <TbPoint size={14} />
-                                <span className="ml-1 text-[14px]">{`${data.settlement[key].address.substring(
-                                  0,
-                                  6
-                                )}...${data.settlement[key].address.substring(
-                                  38,
-                                  42
-                                )}`}</span>
+                                <BiChevronRight
+                                  className="relative"
+                                  size={14}
+                                />
+                                <span className="ml-1 text-[14px]">{`${data.settlement[
+                                  key
+                                ].address.substring(0, 6)}...${data.settlement[
+                                  key
+                                ].address.substring(38, 42)}`}</span>
                               </div>
 
                               <BiCopy size={16} />
                             </div>
                           </Tooltip>
                         )}
-
 
                         <div className="border-solid flex items-center w-[350px] justify-between text-[#6a6a6ab0] p-4 mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border">
                           <div className="flex items-center">

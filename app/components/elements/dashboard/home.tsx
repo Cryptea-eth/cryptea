@@ -665,7 +665,7 @@ const DashHome = () => {
             </div>
           </div>
 
-          <div className="flex items-start relative z-0 2mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
+          <div className="flex items-start relative z-[10] 2mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
             <div className="min-w-[100px]">
               {blur ? (
                 <Skeleton
@@ -776,7 +776,15 @@ const DashHome = () => {
                     <NumberFormat
                       value={
                         String(
-                          (dashBal || [0]).reduce((a: any, b: any) => a + b, 0)
+                          (dashBal || [0]).reduce(
+                            (a: any, b: any) => a + b,
+                            0
+                          ) < 0
+                            ? 0
+                            : (dashBal || [0]).reduce(
+                                (a: any, b: any) => a + b,
+                                0
+                              )
                         ).split(".")[0]
                       }
                       style={{
@@ -790,8 +798,14 @@ const DashHome = () => {
                     <span className="leading-[2.38rem] text-[20px] text-[#898989]">
                       .
                       {
-                        (dashBal || [0])
-                          .reduce((a: any, b: any) => a + b, 0)
+                        ((dashBal || [0]).reduce((a: any, b: any) => a + b, 0) <
+                        0
+                          ? 0
+                          : (dashBal || [0]).reduce(
+                              (a: any, b: any) => a + b,
+                              0
+                            )
+                        )
                           .toFixed(2)
                           .split(".")[1]
                       }

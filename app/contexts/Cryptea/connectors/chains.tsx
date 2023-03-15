@@ -3,7 +3,7 @@ import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import CustomImg from "../../../components/elements/customImg";
 import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi";
-import { token } from "../types";
+import { explorer, token } from "../types";
 import { SolanaCryptoList, solanatokenTrackers } from "./solana";
 
 export const avalancheChain: Chain = {
@@ -300,9 +300,7 @@ export const { chains, provider, webSocketProvider } = configureChains(
   ]
 );
 
-export const tokenTrackers: {
-  [index: string]: { name: string; link: (hash: string) => string };
-} = {
+export const tokenTrackers: explorer = {
   137: {
     name: "polygonscan",
     link: (hash: string) => "https://polygonscan.com/tx/"+hash,

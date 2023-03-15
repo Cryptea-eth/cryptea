@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "serve": "next start",
     "build": "next build",
     "buildx": "npx next build",
     "start": "NODE_ENV=production node app.js",
@@ -35,6 +36,7 @@
     "@web3auth/web3auth": "^1.1.0",
     "analytics": "^0.8.1",
     "axios": "^0.27.2",
+    "bcrypt": "^5.1.0",
     "chart.js": "^3.9.1",
     "cookiejar": "^2.1.4",
     "copy-to-clipboard": "^3.3.2",

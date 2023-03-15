@@ -1,5 +1,5 @@
 import { chains } from "../chains";
-import { token } from '../../types';
+import { explorer, token } from '../../types';
 import CustomImg from '../../../../components/elements/customImg';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import {
@@ -29,7 +29,7 @@ export const PhantomWallet = ({ chains }: { chains: any }) => ({
 
 export const SolanaCryptoList: token[] = [
   {
-    value: 112211_2211223,
+    value: 1122112211223,
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
@@ -58,7 +58,7 @@ export const SolanaCryptoList: token[] = [
     },
   },
   {
-    value: 112211_2211224,
+    value: 1122112211224,
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
@@ -73,11 +73,11 @@ export const SolanaCryptoList: token[] = [
       </div>
     ),
     name: "Solana (Devnet)",
-    symbol: "Solana (Devnet)",
+    symbol: "SOL",
     contractAddr: "",
-    network: "polygon",
+    network: "Solana Devnet",
     tokenAddr: "",
-    rpc: WalletAdapterNetwork.Devnet,
+    rpc: process.env.SOLANA_DEVNET as string,
     testnet: true,
     blocktype: "sol",
     type: "native",
@@ -88,13 +88,13 @@ export const SolanaCryptoList: token[] = [
   },
 ];
 
-export const solanatokenTrackers = {
-  112211_2211223: {
+export const solanatokenTrackers: explorer = {
+  1122112211223: {
     name: "Solana Explorer",
     link: (hash: string) => "https://solscan.io/tx/"+hash,
   },
 
-  112211_2211224: {
+  1122112211224: {
     name: "Solana Devnet Explorer",
     link: (hash: string) => `https://solscan.io/tx/${hash}?cluster=devnet`,
   },
