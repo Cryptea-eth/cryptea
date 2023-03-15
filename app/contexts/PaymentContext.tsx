@@ -468,6 +468,7 @@ export const PaymentProvider = ({
             if (cOptions.length) {
               setOptions(cOptions);
             } else {
+              
               if (userl.owner == undefined) router.replace("/404");
             }
 

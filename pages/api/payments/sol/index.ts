@@ -15,6 +15,7 @@ const { decryptData, encryptData } = require("../../../../app/functions/crypto-d
 const bs58 = require('bs58');
 
 import { tokenTrackers } from "../../../../app/contexts/Cryptea/connectors/chains";
+import { logger } from "../../../../app/functions/logger";
 
 
 type Data = {
@@ -195,7 +196,7 @@ export default function handler(
 
         const error = err as any;
 
-        // console.log(error)
+        logger.error(error);
 
         res.status(400).json({
           proceed: false,

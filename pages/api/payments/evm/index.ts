@@ -3,6 +3,7 @@ import * as ethers from "ethers";
 import axios from "axios";
 import { tokenTrackers } from "../../../../app/contexts/Cryptea/connectors/chains";
 import mainIx from "../../../../app/functions/interval";
+import { logger } from "../../../../app/functions/logger";
 
 type Data = {
   proceed: boolean;
@@ -144,6 +145,8 @@ export default function handler(
     } catch (err) {
 
       const error = err as any;
+
+      logger.error(error);
 
       res.status(400).json({
         proceed: false,
