@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import axios, { AxiosError } from 'axios';
 import * as ethers from 'ethers'; 
 import { Keypair } from '@solana/web3.js';
+import { logger } from '../../../app/functions/logger';
 
 const bs58 = require('bs58');
 const { encryptData } = require('../../../app/functions/crypto-data');
@@ -98,7 +99,7 @@ export default function handler(
   
             const errx = err as any;
 
-            console.log(errx);
+            logger.error(errx.response.data.message);
   
             res.status(400).json({
               message: errx.response.data.message,

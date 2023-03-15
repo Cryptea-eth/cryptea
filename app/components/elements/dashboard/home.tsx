@@ -621,7 +621,7 @@ const DashHome = () => {
 
       <div className="flex items-start justify-between">
         <div className="mainx relative w-[calc(100%-340px)] 2sm:w-full">
-          <div className="w-full flex items-end z-[9] justify-end absolute">
+          <div className="w-fit right-0 flex items-end z-[9] justify-end absolute">
             <div className="mt-1 2sm:mt-0">
               {blur ? (
                 <div className="flex items-center">
@@ -665,7 +665,7 @@ const DashHome = () => {
             </div>
           </div>
 
-          <div className="flex items-start relative z-[10] 2mdd:mt-7 py-3 flex-wrap gap-x-10 gap-y-3">
+          <div className="flex items-start relative 2mdd:mt-9 py-3 flex-wrap gap-x-10 gap-y-3">
             <div className="min-w-[100px]">
               {blur ? (
                 <Skeleton

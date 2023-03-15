@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
 import * as ethers from "ethers";
 import { tokenTrackers } from "../../../../../../app/contexts/Cryptea/connectors/chains";
+import { logger } from "../../../../../../app/functions/logger";
 
 type Data = {
   message: string;
@@ -143,6 +144,8 @@ export default function handler(
     } catch (err) {
 
         const error = err as any;
+
+        logger.error(error);
 
         res
           .status(Number(error?.response?.status || error?.status || "400"))

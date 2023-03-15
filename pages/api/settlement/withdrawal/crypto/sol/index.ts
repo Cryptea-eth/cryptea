@@ -1,7 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
-import * as ethers from "ethers";
 import { tokenTrackers } from "../../../../../../app/contexts/Cryptea/connectors/chains";
 import {
   Connection,
@@ -17,7 +16,9 @@ import {
   encryptData,
 } from "../../../../../../app/functions/crypto-data";
 import { validateSol } from "../../../../../../app/contexts/Cryptea/blockchains";
+import { logger } from "../../../../../../app/functions/logger";
 const bs58 = require("bs58");
+
 
 type Data = {
   message: string;
@@ -87,7 +88,6 @@ export default function handler(
         }
 
         const sendAmount = amountCrypto * LAMPORTS_PER_SOL;
-
          
 
         const tx = {
@@ -142,6 +142,7 @@ export default function handler(
               }
             }
           );
+
         } else {
           secretKey = decryptData(JSON.parse(secretKeyString),
             pin
@@ -197,6 +198,8 @@ export default function handler(
         const error = err as any;
 
         // console.log(error)
+
+        logger.error(error);
 
         res
           .status(Number(error?.response?.status || error?.status || "400"))

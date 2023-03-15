@@ -57,3 +57,5 @@ typechain-types
 #Hardhat files
 cache
 
+# log
+app.log

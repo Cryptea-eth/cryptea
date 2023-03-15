@@ -3,6 +3,7 @@ import * as ethers from 'ethers';
 import axios from 'axios';
 import { Keypair } from "@solana/web3.js";
 import { encryptData } from "../../../app/functions/crypto-data";
+import { logger } from "../../../app/functions/logger";
 
 const bs58 = require("bs58");
 type Data = {
@@ -87,6 +88,8 @@ export default function handler(
           } catch (err) {
 
             const error = err as any;
+
+            logger.error(error);
 
             res.status(400).json({
               error: true,

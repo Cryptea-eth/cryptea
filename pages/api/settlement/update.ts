@@ -18,6 +18,7 @@ export default function handler(
 
 
     if (Boolean(data.newpin) && data.newpin.length == 5) {
+
       axios
         .get("https://ab.cryptea.me/user", {
           headers: {
@@ -25,6 +26,7 @@ export default function handler(
           },
         })
         .then((rx) => {
+          
           const { settlement } = rx?.data;
 
           if (settlement.length) {
@@ -135,6 +137,9 @@ export default function handler(
         })
         .catch((err) => {
           console.log(err);
+
+          
+
           res.status(400).json({
             error: true,
             message: "Something went wrong, please try again later",
