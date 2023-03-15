@@ -16,6 +16,7 @@ import {
   decryptData,
   encryptData,
 } from "../../../../../../app/functions/crypto-data";
+import { validateSol } from "../../../../../../app/contexts/Cryptea/blockchains";
 const bs58 = require("bs58");
 
 type Data = {
@@ -50,7 +51,7 @@ export default function handler(
         error: true,
         message: "Your pin is incorrect",
       });
-    } else if (!ethers.utils.isAddress(addressTo)) {
+    } else if (!validateSol(addressTo)) {
       res.status(400).json({
         error: true,
         message: "A valid address is required",
@@ -68,7 +69,9 @@ export default function handler(
 
         const provider = new Connection(token.rpc || "");
 
-        const mbalance = await provider.getBalance(userAccts.address);
+        const userAddr = new PublicKey(userAccts.address);
+
+        const mbalance = await provider.getBalance(userAddr);
 
         const balance =
           token.type == "native"
@@ -85,11 +88,14 @@ export default function handler(
 
         const sendAmount = amountCrypto * LAMPORTS_PER_SOL;
 
+         
+
         const tx = {
-          fromPubkey: new PublicKey(userAccts.address),
+          fromPubkey: userAddr,
           toPubkey: new PublicKey(addressTo),
           lamports: sendAmount,
         };
+
 
         const trxFee = 1000000 / LAMPORTS_PER_SOL;
 
@@ -101,9 +107,9 @@ export default function handler(
 
 
         const secretKeyString =
-          typeof userAccts.secret == "string"
-            ? JSON.parse(userAccts.secret)
-            : userAccts.secret;
+          typeof userAccts.account == "string"
+            ? JSON.parse(userAccts.account)
+            : userAccts.account;
 
         let secretKey;
 
@@ -128,11 +134,18 @@ export default function handler(
           await axios.patch(
             `https://ab.cryptea.me/settlements/update/${userAccts.address}`,
             {
-              secret: JSON.stringify(encryptData(secretKey, pin)),
+              account: JSON.stringify(encryptData(secretKey, pin)),
+            },
+            {
+              headers: {
+                Authorization: authorization as string,
+              }
             }
           );
         } else {
-          secretKey = decryptData(secretKeyString, pin);
+          secretKey = decryptData(JSON.parse(secretKeyString),
+            pin
+          );
         }
 
         let mainSecret;
@@ -182,6 +195,8 @@ export default function handler(
         });
       } catch (err) {
         const error = err as any;
+
+        // console.log(error)
 
         res
           .status(Number(error?.response?.status || error?.status || "400"))

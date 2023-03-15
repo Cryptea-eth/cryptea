@@ -53,6 +53,7 @@ import { blockchains } from "../../../app/contexts/Cryptea/blockchains";
 import { TbPoint, TbPointOff } from "react-icons/tb";
 
 const Settlements = () => {
+
   const router = useRouter();
 
   const [blur, setBlur] = useState<boolean>(true);
@@ -183,10 +184,11 @@ const Settlements = () => {
     setWithdrawLoading(true);
 
     if (!cryptoWithdrawStage) {
-      if (!addressTo.length || !ethers.utils.isAddress(addressTo)) {
+      
+      if (!addressTo.length || !blockchains[withdrawToken?.blocktype || 'evm'].validateAddr(addressTo)) {
         document.querySelector(".witherror")?.scrollIntoView();
 
-        setWithdrawError("A valid ethereum address is required");
+        setWithdrawError("A valid address is required");
 
         setWithdrawLoading(false);
 
@@ -474,11 +476,12 @@ const Settlements = () => {
 
       const userAddresses = JSON.parse(user.accounts || "[]");
 
-      if (Boolean(userAddresses[0])) {
+      if (Boolean(userAddresses[0]) && userAddresses[0] != 'null') {
         if (!settlement_acct.includes(userAddresses[0])) {
           settlement_acct.push(userAddresses[0]);
         }
       }
+
 
       payments.forEach((value: any) => {
         if (value.meta !== null) {
@@ -526,7 +529,7 @@ const Settlements = () => {
 
         const index = Object.keys(balance)[i];
 
-        const total = balance[index].amount - (fees[index] || 0);
+        const total = balance[index].amount - (balance[index].amount > fees[index] ? fees[index] : 0);
 
         const type = balance[index].blocktype;
 
@@ -535,7 +538,7 @@ const Settlements = () => {
         const price = cache[balance[index].name.toLowerCase()] || 0;
 
         finalBalance[index] = total * price;
-      
+
 
         breakdown[index] = {
           amount: total,
@@ -584,6 +587,7 @@ const Settlements = () => {
     };
 
     if (once.current) {
+
       once.current = false;
 
       "user".get("*", true).then(async (e: any) => {
@@ -591,7 +595,7 @@ const Settlements = () => {
 
         setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
 
-        console.log(e.settlement, 'dd');
+        // console.log(e.settlement, 'dd');
 
         if (!Boolean(e.settlement ? e.settlement.length : 0)) {
           return;
@@ -602,10 +606,11 @@ const Settlements = () => {
             setSAddresses({ ...sAddresses, [vv.type]: vv.address});
 
         })
+        
 
         const userAddresses = JSON.parse(e.accounts || "[]");
 
-        if (Boolean(userAddresses[0])) setAddressTo(userAddresses[0]);
+        
 
         if (e.settlement[0] !== undefined) {
 
@@ -672,7 +677,7 @@ const Settlements = () => {
 
               localStorage.setItem("cryptos", JSON.stringify(cache));
 
-              console.log('came here 1')
+              
 
               const name = token.name.split(" ")[0];
 
@@ -680,7 +685,7 @@ const Settlements = () => {
 
               const total =
                 amount -
-                (dashData["fees"][value] !== undefined
+                (dashData["fees"][value] !== undefined && dashData["fees"][value] > amount
                   ? dashData["fees"][value]
                   : 0);
 
@@ -691,7 +696,7 @@ const Settlements = () => {
                 false
               );
 
-              console.log(res, 'here')
+              // console.log(res, 'here')
 
               const valCache = JSON.parse(
                 localStorage.getItem("tokenVal") || "{}"
@@ -713,11 +718,8 @@ const Settlements = () => {
                 symbol,
               };
 
-              console.log('came here')
 
             } catch (err) {
-
-              console.log(err, 'ww')
 
               const cachebox = JSON.parse(
                 localStorage.getItem("cryptos") || "{}"
@@ -785,16 +787,15 @@ const Settlements = () => {
 
         setCryptoRate(res?.data.price);
 
-        console.log(await blockchains[e.blocktype].balance(address, e.rpc))
+        const reqBal = Number(await blockchains[e.blocktype].balance(address, e.rpc));
 
         setBalToken(
-          Number(await blockchains[e.blocktype].balance(address, e.rpc)) -
-            (dashData["fees"][e.value] !== undefined
+          reqBal -
+            (dashData["fees"][e.value] !== undefined && dashData["fees"][e.value] > reqBal
               ? dashData["fees"][e.value]
               : 0)
         );
       } catch (err) {
-        console.log(err);
 
         setCryptoRate(0);
 
@@ -865,7 +866,7 @@ const Settlements = () => {
                 </div>
 
                 {Boolean(withdrawError) && (
-                  <div className="bg-[#ff8f33] text-white rounded-md w-[95%] font-bold mt-2 witherror mx-auto p-3">
+                  <div className="bg-[#ff8f33] text-white rounded-md w-full font-bold mt-2 witherror mx-auto p-3">
                     {withdrawError}
                   </div>
                 )}
@@ -885,11 +886,11 @@ const Settlements = () => {
                       </div>
 
                       <div className="bg-[#ebebeb] px-2 rounded py-2 min-w-fit font-[600] text-[#7a7a7a]">
-                        {addresses[withdrawToken?.blocktype || "evm"] !==
+                        {sAddresses[withdrawToken?.blocktype || "evm"] !==
                         undefined
-                          ? `${addresses[
+                          ? `${sAddresses[
                               withdrawToken?.blocktype || "evm"
-                            ].substring(0, 6)}...${addresses[
+                            ].substring(0, 6)}...${sAddresses[
                               withdrawToken?.blocktype || "evm"
                             ].substring(38, 42)}`
                           : ""}
@@ -959,7 +960,7 @@ const Settlements = () => {
                         onChange={async (e) => {
                           setWithdrawToken(e);
 
-                          getBalance(e, addresses[e.blocktype]);
+                          getBalance(e, sAddresses[e.blocktype]);
                         }}
                         classNamePrefix="select"
                       />
@@ -1070,7 +1071,7 @@ const Settlements = () => {
                                 const text =
                                   await navigator.clipboard.readText();
 
-                                setAddressTo(text);
+                                  setAddressTo(text);
                               }}
                               className="cursor-pointer"
                               sx={{
@@ -1106,7 +1107,7 @@ const Settlements = () => {
                           },
                           width: "100%",
                         }}
-                        placeholder="Ethereum Address"
+                        placeholder="Address"
                         value={addressTo}
                         onChange={(
                           e: React.ChangeEvent<
@@ -1700,7 +1701,7 @@ const Settlements = () => {
                   <NumberFormat
                     value={
                       String(
-                        dashData["balance"].reduce((a: any, b: any) => a + b, 0)
+                        dashData["balance"].reduce((a: any, b: any) => a + b, 0) < 0 ? 0 : dashData["balance"].reduce((a: any, b: any) => a + b, 0)
                       ).split(".")[0]
                     }
                     style={{
@@ -1714,8 +1715,8 @@ const Settlements = () => {
                   <span className="leading-[2.7rem] text-[20px] text-[#898989]">
                     .
                     {
-                      dashData["balance"]
-                        .reduce((a: any, b: any) => a + b, 0)
+                      (dashData["balance"]
+                        .reduce((a: any, b: any) => a + b, 0) < 0 ?  0 : dashData["balance"].reduce((a: any, b: any) => a + b, 0))
                         .toFixed(2)
                         .split(".")[1]
                     }
@@ -1736,7 +1737,7 @@ const Settlements = () => {
                 placement="bottom"
                 arrow
                 title={
-                  "Pending amount which  would be added to account balance within 24hrs. This Balance is subject to change, based on loaded data and change in token price data from coingecko"
+                  "Pending amount which  would be added to account balance within 24hrs. This Balance is subject to change, based on the way it is calculated"
                 }
               >
                 <span className="uppercase cursor-pointer text-[#818181] flex items-center font-bold text-[.64rem]">
@@ -1780,7 +1781,8 @@ const Settlements = () => {
               onClick={() => {
                 setCryptoW(true);
 
-                getBalance(withdrawToken, data.settlement[0].address);
+                getBalance(withdrawToken, sAddresses[withdrawToken.blocktype]);
+
               }}
               className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] !mr-[2px]"
             >
@@ -1788,7 +1790,7 @@ const Settlements = () => {
             </Button>
           )}
 
-          {blur ? (
+          {/* {blur ? (
             <Skeleton
               className="py-2 px-3 w-[120px] h-[60px] rounded-lg mr-1"
               sx={{ fontSize: "14px" }}
@@ -1800,7 +1802,7 @@ const Settlements = () => {
             >
               <MdPayment size={16} className="mr-1" /> Withdraw Fiat
             </Button>
-          )}
+          )} */}
 
           {blur ? (
             <Skeleton

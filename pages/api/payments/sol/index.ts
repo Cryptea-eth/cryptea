@@ -65,7 +65,7 @@ export default function handler(
             body.username
           );
 
-          await axios.post(
+          const { data: walRes } = await axios.post(
             "https://ab.cryptea.me/update/settlement/init/no-pin",
             {
               username: body.username,
@@ -79,6 +79,10 @@ export default function handler(
               },
             }
           );
+
+          if (walRes.address !== undefined) {
+            address = walRes.address;
+          }
 
         }
 
@@ -191,7 +195,7 @@ export default function handler(
 
         const error = err as any;
 
-        console.log(error)
+        // console.log(error)
 
         res.status(400).json({
           proceed: false,

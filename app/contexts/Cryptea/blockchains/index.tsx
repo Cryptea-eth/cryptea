@@ -13,11 +13,10 @@ export const validateSol = (addr: string) => {
       }
 }
 
-export const blockchains = {
+export const blockchains: { [index: string]: any } = {
   sol: {
-  
+    validateAddr: (addr: string) => validateSol(addr),
     balance: async (addr: string, rpc: string) => {
-
       if (!validateSol(addr)) {
         return 0;
       }
@@ -30,9 +29,8 @@ export const blockchains = {
     },
   },
   evm: {
-   
+    validateAddr: (addr: string) => ethers.utils.isAddress(addr),
     balance: async (addr: string, rpc: string) => {
-
       if (!ethers.utils.isAddress(addr)) {
         return 0;
       }
