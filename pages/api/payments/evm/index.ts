@@ -3,7 +3,7 @@ import * as ethers from "ethers";
 import axios from "axios";
 import { tokenTrackers } from "../../../../app/contexts/Cryptea/connectors/chains";
 import mainIx from "../../../../app/functions/interval";
-import { logger } from "../../../../app/functions/logger";
+import logger from "../../../../app/functions/logger";
 
 type Data = {
   proceed: boolean;

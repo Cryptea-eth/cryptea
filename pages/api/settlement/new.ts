@@ -3,7 +3,7 @@ import * as ethers from 'ethers';
 import axios from 'axios';
 import { Keypair } from "@solana/web3.js";
 import { encryptData } from "../../../app/functions/crypto-data";
-import { logger } from "../../../app/functions/logger";
+import logger from "../../../app/functions/logger";
 
 const bs58 = require("bs58");
 type Data = {
