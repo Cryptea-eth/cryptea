@@ -450,7 +450,7 @@ const Settlements = () => {
         false
       );
 
-      let { payments, allTrx, user, account, pending } = dashmain?.data;
+      let { payments, allTrx, user, pending } = dashmain?.data;
 
       const breakdown: bal2 = {};
 
@@ -488,13 +488,16 @@ const Settlements = () => {
           const metadata = JSON.parse(value.meta);
 
           fees[metadata["chain"]] = Number(metadata["discount"]);
+
         }
       });
 
       let totalPending = 0;
 
       if (pending.length) {
+
         pending.forEach(async (dax: any) => {
+
           const amt = dax.amountCrypto;
 
           const token = dax.token.split(" ")[0];
@@ -509,6 +512,7 @@ const Settlements = () => {
           const price = res?.data.price;
 
           totalPending += amt * price;
+
         });
       }
 
@@ -524,6 +528,7 @@ const Settlements = () => {
 
         setPageCheck({ current_page, last_page });
       }
+
 
       for (let i = 0; i < Object.keys(balance).length; i++) {
 
@@ -1873,9 +1878,9 @@ const Settlements = () => {
 
                                 copy(acct.address);
 
-                                switchCopy(true, 0);
+                                switchCopy(true, key);
 
-                                setTimeout(() => switchCopy(false, 0), 2000);
+                                setTimeout(() => switchCopy(false, key), 2000);
                               }}
                               className="cursor-pointer justify-between flex text-[#979797] items-center mb-2 w-[160px]"
                             >
