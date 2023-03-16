@@ -1,6 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as ethers from "ethers";
 import axios from "axios";
+import { decryptData, encryptData } from "../../../app/functions/crypto-data";
+import { Keypair } from "@solana/web3.js";
+import logger from "../../../app/functions/logger";
+
+const bs58 = require("bs58");
 
 type Data = {
   error: boolean;
@@ -19,132 +24,169 @@ export default function handler(
 
     if (Boolean(data.newpin) && data.newpin.length == 5) {
 
-      axios
-        .get("https://ab.cryptea.me/user", {
-          headers: {
-            Authorization: `Bearer ${data.token}`,
-          },
-        })
-        .then((rx) => {
-          
-          const { settlement } = rx?.data;
+      (async () => {
 
-          if (settlement.length) {
+        try{
 
-            if (data.oldpin !== undefined) {
-              const main = settlement[0];
+         const rx = await axios
+            .get("https://ab.cryptea.me/user", {
+              headers: {
+                Authorization: `Bearer ${data.token}`,
+              },
+            })
 
-              ethers.Wallet.fromEncryptedJson(
-                main["account"],
-                data.oldpin as string
-              )
-                .then((wallet) => {
+            const { settlement, username } = rx?.data;
 
-                  wallet
-                    .encrypt(data.newpin)
-                    .then((account) => {
-                        
-                      axios
-                        .post(
-                          "https://ab.cryptea.me/user/update",
-                          {
-                            pin: data.newpin,
-                            oldpin: data.oldpin,
-                            account,
-                          },
-                          {
-                            headers: {
-                              Authorization: `Bearer ${data.token}`,
-                            },
-                          }
-                        )
-                        .then((success) => {
-                          res.status(200).json({
-                            error: false,
-                            message: "verification mail sent successfully",
-                          });
-                        })
-                        .catch((err) => {
-                          res.status(400).json({
-                            error: true,
-                            message: err.response.data.message,
-                          });
+              if (settlement.length) {
+
+                 const accounts = [];
+
+                if (data.oldpin !== undefined) {
+
+
+                  for (let i = 0; i < settlement.length; i++) {
+
+                    const main = settlement[i];
+
+                    try {
+
+                      if (main.type == "evm") {
+                        const wallet = await ethers.Wallet.fromEncryptedJson(
+                          main["account"],
+                          data.oldpin as string
+                        );
+
+                        const account = wallet.encrypt(data.newpin);
+
+                        accounts.push({
+                          address: main.address,
+                          account,
+                          type: 'evm',
                         });
-                    })
-                    .catch(() => {
+
+                      } else if (main.type == "sol") {
+
+                        let secret = decryptData(main.account, data.oldpin);
+
+                        if (!Number(main.init)) {
+                          // not initialized
+
+                          secret = decryptData(main.account, username);
+
+                          // display false pin error
+                          bs58.decode(secret);
+
+                        } else {
+
+                          // display false pin error
+                          bs58.decode(secret);
+
+                        }
+
+                        const account = JSON.stringify(encryptData(secret, data.newpin));
+
+
+                        accounts.push({
+                          address: main.address,
+                          account,
+                          type: 'sol',
+                        });
+
+                      }
+
+                    } catch (error) {
+
+
                       res.status(400).json({
                         error: true,
-                        message: "Something went wrong, please try again later",
+                        message:
+                          "Your current pin is incorrect, please try again",
                       });
-                    });
-                })
-                .catch((error) => {
-                    console.log(error.message)
-                  res.status(400).json({
-                    error: true,
-                    message:
-                      "Your current pin is incorrect, please check and try again",
-                  });
-                });
-            } else {
-              res.status(400).json({
-                error: true,
-                message: "The current pin entered is incorrect",
-              });
-            }
-          } else {
-            const wallet = ethers.Wallet.createRandom();
+                    }    
 
-            const address = wallet.address;
+                  }
+                                  
 
-            wallet
-              .encrypt(data.newpin)
-              .then((account) => {
-                axios
-                  .post(
-                    "https://ab.cryptea.me/user/update",
+                  await axios.post(
+                    `https://ab.cryptea.me/user/update`,
                     {
                       pin: data.newpin,
-                      address,
-                      account,
+                      oldpin: data.oldpin,
+                      accounts,
                     },
                     {
                       headers: {
                         Authorization: `Bearer ${data.token}`,
                       },
                     }
-                  )
-                  .then(() => {
-                    res.status(200).json({
+                  );
+
+                  res.status(200).json({
+                    error: false,
+                    message: "verification mail sent successfully",
+                  });
+
+              }else{
+                res.status(400).json({
+                  error: true,
+                  message: "Your current pin is required",
+                });
+              }
+              } else {
+
+                const wallet = ethers.Wallet.createRandom();
+
+                const address = wallet.address;
+
+                const account = await wallet.encrypt(data.newpin)
+
+
+                const solWallet = Keypair.generate();
+
+                const solAddress = solWallet.publicKey.toBase58();
+
+                const solAccount = JSON.stringify(encryptData(bs58.encode(solWallet.secretKey), data.newpin));
+
+                const accounts = [{ address, account, type: 'evm' }, { address: solAddress, account: solAccount, type: 'sol' }];
+
+                
+                    await axios.post(
+                      "https://ab.cryptea.me/user/update",
+                      {
+                        pin: data.newpin,
+                        address,
+                        accounts,
+                      },
+                      {
+                        headers: {
+                          Authorization: `Bearer ${data.token}`,
+                        },
+                      }
+                    )
+
+                  res.status(200).json({
                       error: false,
                       message: "verification mail sent successfully",
                     });
-                  })
-                  .catch((err) => {
-                    res.status(400).json({
-                      error: true,
-                      message: err.response.data.message,
-                    });
-                  });
-              })
-              .catch(() => {
-                res.status(400).json({
-                  error: true,
-                  message: "Something went wrong, please try again later",
-                });
-              });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
 
-          
+              }
+
+        }catch (err) {
+
+          const error = err as any;
+
+          logger.error(error);
 
           res.status(400).json({
             error: true,
-            message: "Something went wrong, please try again later",
+            message:
+              error?.response?.data?.message ||
+              "Something went wrong, please try again",
           });
-        });
+
+        }
+
+        })()
     } else {
       res.status(400).json({ error: true, message: "new pin is required" });
     }

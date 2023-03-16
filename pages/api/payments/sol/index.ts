@@ -15,7 +15,7 @@ const { decryptData, encryptData } = require("../../../../app/functions/crypto-d
 const bs58 = require('bs58');
 
 import { tokenTrackers } from "../../../../app/contexts/Cryptea/connectors/chains";
-import { logger } from "../../../../app/functions/logger";
+import logger from "../../../../app/functions/logger";
 
 
 type Data = {

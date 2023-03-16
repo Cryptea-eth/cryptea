@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
 import * as ethers from "ethers";
 import { tokenTrackers } from "../../../../../../app/contexts/Cryptea/connectors/chains";
-import { logger } from "../../../../../../app/functions/logger";
+import logger from "../../../../../../app/functions/logger";
 
 type Data = {
   message: string;
@@ -48,12 +48,12 @@ export default function handler(
 
       try {
 
-        // const { data: user } = await axios
-        //   .get("https://ab.cryptea.me/user", {
-        //     headers: {
-        //       Authorization: authorization as string,
-        //     },
-        //   });
+        await axios
+          .get("https://ab.cryptea.me/user", {
+            headers: {
+              Authorization: authorization as string,
+            },
+          });
 
           const provider = new ethers.providers.JsonRpcProvider(
             token.rpc || ""

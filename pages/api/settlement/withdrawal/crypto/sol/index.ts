@@ -16,7 +16,7 @@ import {
   encryptData,
 } from "../../../../../../app/functions/crypto-data";
 import { validateSol } from "../../../../../../app/contexts/Cryptea/blockchains";
-import { logger } from "../../../../../../app/functions/logger";
+import logger from "../../../../../../app/functions/logger";
 const bs58 = require("bs58");
 
 
@@ -61,12 +61,14 @@ export default function handler(
     }
 
     (async () => {
+     
       try {
-        // const { data: user } = await axios.get("https://ab.cryptea.me/user", {
-        //   headers: {
-        //     Authorization: authorization as string,
-        //   },
-        // });
+        
+        await axios.get("https://ab.cryptea.me/user", {
+          headers: {
+            Authorization: authorization as string,
+          },
+        });
 
         const provider = new Connection(token.rpc || "");
 

@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import axios, { AxiosError } from 'axios';
 import * as ethers from 'ethers'; 
 import { Keypair } from '@solana/web3.js';
-import { logger } from '../../../app/functions/logger';
+import logger from '../../../app/functions/logger';
 
 const bs58 = require('bs58');
 const { encryptData } = require('../../../app/functions/crypto-data');
