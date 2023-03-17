@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import logger from '../../../app/functions/logger';
 import axios from 'axios';
@@ -12,6 +11,7 @@ type Data = {
   message: string;
   breakdown?: base;
   total?: number;
+  pending?: number;
   prices?: base;
 }
 
@@ -42,7 +42,7 @@ export default function handler(
 
                 accounts.map((v: any) => {
 
-                    sAddresses[v.blocktype] = v.address;
+                    sAddresses[v.type] = v.address;
 
                 })
 
@@ -54,13 +54,47 @@ export default function handler(
                   }
                 });
 
+                const prices: base = {};
+
+                // pending balances
+
+                 let totalPending = 0;
+
+                 if (pending.length) {
+                   pending.forEach(async (dax: any) => {
+
+                     const data = JSON.parse(dax.data);
+
+                     const amt = dax.amountCrypto;
+
+                     const token = dax.token.split(" ")[0];
+ 
+                     let price = prices?.[data.chainId];
+                     
+                     if(!price){
+
+                     const res = await axios.get(
+                       `/token/price/${token.toLowerCase()}`,
+                       {
+                         baseURL: 'https://ab.cryptea.me'
+                       }
+                     );
+
+                     prices[data.chainId] = price = res?.data.price;
+                
+                    }
+
+
+                     totalPending += amt * price;
+
+
+                   });
+                 }
                 
                 let finalBal = 0;
 
 
                 const bdown: base = {};
-
-                const prices: base = {}
 
                 for (let i = 0; i < CryptoList.length; i++) {
 
@@ -79,6 +113,8 @@ export default function handler(
                         token.rpc
                       );
 
+                      console.log(account, amount, token.value)
+
                       const name = token.name.split(" ")[0];
 
                       const { testnet: test, symbol, value } = token;
@@ -86,9 +122,13 @@ export default function handler(
                       const total =
                         amount -
                         (fees[value] !== undefined &&
-                        fees[value] > amount
+                        fees[value] < amount
                           ? fees[value]
                           : 0);
+
+                     let price = prices?.[value];
+
+                     if (!price) {
 
                       const res = await axios.get(
                         `/token/price/${name}`,
@@ -96,11 +136,10 @@ export default function handler(
                             baseURL: 'https://ab.cryptea.me'
                         }
                       );
-
                    
-                      const price = res?.data.price;
+                      prices[value] = price = res?.data.price;
 
-                      prices[value] = price;
+                    }
 
                       finalBal += total * price;
 
@@ -112,9 +151,9 @@ export default function handler(
                         symbol,
                       };
 
-                    } catch (err) {
-                      
-                        
+                    } catch (err) {                      
+
+                      console.log(err, 'ss')
 
                       bdown[token.value] = {
                         amount: 0,
@@ -138,7 +177,8 @@ export default function handler(
                     message: 'Success',
                     total: finalBal,
                     breakdown: bdown,
-                    prices
+                    prices,
+                    pending: totalPending
                 });
 
             }catch(err){
