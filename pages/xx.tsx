@@ -5,7 +5,7 @@ const Xx = () => {
 
  useEffect(() => {
 
-    console.log('Welcome')  
+    console.log(process.env.JSON)  
 
  }, []);
 

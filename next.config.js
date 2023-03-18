@@ -10,6 +10,7 @@ const nextConfig = {
     OPTIMISM_MAINNET: process.env.OPTIMISM_MAINNET,
     UDCLIENT: process.env.UDCLIENT,
     KEY: process.env.KEY,
+    JSON: process.env.JSON,
     UDREDIRECT: process.env.UDREDIRECT,
     SOLANA_MAINNET: process.env.SOLANA_MAINNET,
     SOLANA_DEVNET: process.env.SOLANA_DEVNET
