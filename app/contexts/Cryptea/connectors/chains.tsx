@@ -52,10 +52,31 @@ export const Optimism: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    default: "https://mainnet.optimism.io",
+    default: process.env.OPTIMISM_MAINNET || "https://mainnet.optimism.io",
   },
   blockExplorers: {
     default: { name: "Optimism", url: "https://optimistic.etherscan.io" },
+  },
+  testnet: false,
+};
+
+export const GnosisChain: Chain = {
+  id: 100,
+  name: "Gnosis",
+  network: "Gnosis Chain",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Gnosis Chain",
+    symbol: "xDAI",
+  },
+  rpcUrls: {
+    default: "https://rpc.gnosischain.com",
+  },
+  blockExplorers: {
+    default: {
+      name: "Gnosis Chain",
+      url: "https://gnosisscan.io",
+    },
   },
   testnet: false,
 };
@@ -145,7 +166,7 @@ export const AuroraTestnet: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    default: process.env.AURORA_LINK || "https://testnet.aurora.dev",
+    default: "https://testnet.aurora.dev",
   },
   blockExplorers: {
     default: { name: "Aurora", url: "https://explorer.testnet.aurora.dev" },
@@ -187,6 +208,29 @@ export const OasisEmeraldTestnet: Chain = {
     default: {
       name: "Oasis",
       url: "https://testnet.explorer.emerald.oasis.dev",
+    },
+  },
+  testnet: true,
+};
+
+
+
+export const PolygonZkEvm: Chain = {
+  id: 1442,
+  name: "PolygonZkEVM",
+  network: "Polygon zkEVM Testnet",
+  nativeCurrency: {
+    name: "Ethereum",
+    decimals: 18,
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: "https://rpc.public.zkevm-test.net",
+  },
+  blockExplorers: {
+    default: {
+      name: "polygon zkevm",
+      url: "https://explorer.public.zkevm-test.net",
     },
   },
   testnet: true,
@@ -264,6 +308,7 @@ export const { chains, provider, webSocketProvider } = configureChains(
     Cronos,
     Aurora,
     AuroraTestnet,
+    GnosisChain,
     Optimism,
     OptimismGoerli,
     OasisEmerald,
@@ -271,12 +316,12 @@ export const { chains, provider, webSocketProvider } = configureChains(
     FileCoinHyperspace,
     fantom,
     fantomTestnet,
+    PolygonZkEvm,
   ],
   [
     publicProvider(),
     jsonRpcProvider({
       rpc: (chain: Chain) => {
-
         const chainIds: number[] = [
           avalancheChain.id,
           CronosTest.id,
@@ -284,6 +329,8 @@ export const { chains, provider, webSocketProvider } = configureChains(
           Aurora.id,
           AuroraTestnet.id,
           Optimism.id,
+          PolygonZkEvm.id,
+          GnosisChain.id,
           fantom.id,
           fantomTestnet.id,
           OptimismGoerli.id,
@@ -303,41 +350,51 @@ export const { chains, provider, webSocketProvider } = configureChains(
 export const tokenTrackers: explorer = {
   137: {
     name: "polygonscan",
-    link: (hash: string) => "https://polygonscan.com/tx/"+hash,
+    link: (hash: string) => "https://polygonscan.com/tx/" + hash,
   },
   80001: {
     name: "polygonscan",
-    link: (hash: string) => "https://mumbai.polygonscan.com/tx/"+hash,
+    link: (hash: string) => "https://mumbai.polygonscan.com/tx/" + hash,
   },
   338: {
     name: "Cronos Explorer",
-    link: (hash: string) => "https://cronos.org/explorer/testnet3/tx/"+hash,
+    link: (hash: string) => "https://cronos.org/explorer/testnet3/tx/" + hash,
   },
   1313161555: {
     name: "Aurora Explorer",
-    link: (hash: string) => "https://explorer.testnet.aurora.dev/tx/"+hash,
+    link: (hash: string) => "https://explorer.testnet.aurora.dev/tx/" + hash,
   },
   420: {
     name: "Optimism Explorer",
-    link: (hash: string) => "https://goerli-optimistic.etherscan.io/tx/"+hash,
+    link: (hash: string) => "https://goerli-optimistic.etherscan.io/tx/" + hash,
+  },
+  100: {
+    name: "Gnosis Chain Explorer",
+    link: (hash: string) => "https://gnosisscan.io/tx/" + hash,
   },
   42261: {
     name: "Oasis Explorer",
-    link: (hash: string) => "https://testnet.explorer.emerald.oasis.dev/tx/"+hash,
+    link: (hash: string) =>
+      "https://testnet.explorer.emerald.oasis.dev/tx/" + hash,
   },
   3141: {
     name: "Hyperspace Explorer",
-    link: (hash: string) => "https://hyperspace.filfox.info/en/tx/"+hash,
+    link: (hash: string) => "https://hyperspace.filfox.info/en/tx/" + hash,
   },
   250: {
     name: "Fantom Explorer",
-    link: (hash: string) => "https://explorer.testnet.fantom.network/tx/"+hash,
+    link: (hash: string) =>
+      "https://explorer.testnet.fantom.network/tx/" + hash,
+  },
+  1442: {
+    name: "Polygon zkEVM Explorer",
+    link: (hash: string) => "https://explorer.public.zkevm-test.net/tx/" + hash,
   },
   4002: {
     name: "Fantom Explorer",
-    link: (hash: string) => "https://testnet.fantom.com/tx/"+hash,
+    link: (hash: string) => "https://testnet.fantom.com/tx/" + hash,
   },
-  ...solanatokenTrackers
+  ...solanatokenTrackers,
 };
 
 export const inputsList = [
@@ -369,6 +426,30 @@ export const inputsList = [
 
 export const CryptoList: token[] = [
   {
+    value: 100,
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-2 relative w-[20px]">
+          <CustomImg symbol={"xdai"} name="xdai" size={20} alt={"Gnosis"} />
+        </div>
+        <span className="text-[#121212]">Gnosis Chain (xDAI)</span>
+      </div>
+    ),
+    name: "XDAI (Mainnet)",
+    symbol: "xDAI",
+    blocktype: "evm",
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
+    network: "Gnosis Chain",
+    tokenAddr: "",
+    rpc: GnosisChain.rpcUrls.default,
+    testnet: false,
+    type: "native",
+    payment: {
+      manual: true,
+      auto: true,
+    },
+  },
+  {
     value: 137,
     label: (
       <div className="items-center flex">
@@ -386,7 +467,7 @@ export const CryptoList: token[] = [
     name: "Polygon (Mainnet)",
     symbol: "matic",
     blocktype: "evm",
-    contractAddr: "0xf1BC5925641159a0d1388B17e3AB32D9416B3f09",
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     network: "polygon",
     tokenAddr: "",
     rpc: process.env.POLYGONMATIC as string,
@@ -415,7 +496,7 @@ export const CryptoList: token[] = [
     ),
     name: "Polygon (Testnet)",
     symbol: "matic",
-    contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     network: "polygon maticmum",
     tokenAddr: "",
     blocktype: "evm",
@@ -426,6 +507,37 @@ export const CryptoList: token[] = [
       auto: true,
     },
   },
+
+  {
+    value: 1442,
+    type: "native",
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-2 relative w-[20px]">
+          <CustomImg
+            name="Polygon"
+            symbol="FIL"
+            size={20}
+            alt={"Polygon zkEvm"}
+          />
+        </div>
+        <span className="text-[#121212]">Polygon ZkEvm</span>
+      </div>
+    ),
+    name: "Polygon zkEVM (Testnet)",
+    symbol: "ETH",
+    network: PolygonZkEvm.network as string,
+    tokenAddr: "",
+    blocktype: "evm",
+    contractAddr: "0xf766074626299B335A8C9694faED139Dc51BbaD3",
+    rpc: PolygonZkEvm.rpcUrls.default,
+    testnet: true,
+    payment: {
+      manual: true,
+      auto: true,
+    },
+  },
+
   {
     value: 250,
     type: "native",
@@ -444,7 +556,7 @@ export const CryptoList: token[] = [
     ),
     name: "Fantom (Mainnet)",
     symbol: "FTM",
-    contractAddr: "0xf1BC5925641159a0d1388B17e3AB32D9416B3f09",
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     network: "fantom",
     tokenAddr: "",
     blocktype: "evm",
@@ -473,7 +585,7 @@ export const CryptoList: token[] = [
     ),
     name: "Fantom (Testnet)",
     symbol: "FTM",
-    contractAddr: "0xf1BC5925641159a0d1388B17e3AB32D9416B3f09",
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     network: "fantom",
     tokenAddr: "",
     blocktype: "evm",
@@ -505,7 +617,7 @@ export const CryptoList: token[] = [
     network: FileCoinHyperspace.network as string,
     tokenAddr: "",
     blocktype: "evm",
-    contractAddr: "0x5038557875a36b60371123bD8E725272e1905843",
+    contractAddr: "0xcC23191FA4C294ca9E32702fB8eab6191d4E85f9",
     rpc: FileCoinHyperspace.rpcUrls.default,
     testnet: true,
     payment: {
@@ -530,7 +642,7 @@ export const CryptoList: token[] = [
       </div>
     ),
     name: "Cronos (Testnet)",
-    contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     symbol: "tcro",
     blocktype: "evm",
     network: CronosTest.network as string,
@@ -560,7 +672,7 @@ export const CryptoList: token[] = [
       </div>
     ),
     name: "Aurora (Testnet)",
-    contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     symbol: "aurora",
     network: AuroraTestnet.network as string,
     tokenAddr: "",
@@ -574,7 +686,7 @@ export const CryptoList: token[] = [
   },
   {
     value: 420,
-    contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     testnet: true,
     blocktype: "evm",
     type: "native",
@@ -604,7 +716,7 @@ export const CryptoList: token[] = [
   {
     value: 42261,
     type: "native",
-    contractAddr: "0x60da5f4B583F6fa7c36511e59fdB49E016eCCc43",
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     testnet: true,
     label: (
       <div className="items-center flex">

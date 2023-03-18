@@ -9,6 +9,8 @@ import {
   OptimismGoerli,
   fantom,
   fantomTestnet,
+  PolygonZkEvm,
+  GnosisChain,
 } from "../../../../app/contexts/Cryptea/connectors/chains";
 
 type Data = {
@@ -34,6 +36,8 @@ const providers: { [index: string]: string } = {
   3141: FileCoinHyperspace.rpcUrls.default,
   250: fantom.rpcUrls.default,
   4002: fantomTestnet.rpcUrls.default,
+  1442: PolygonZkEvm.rpcUrls.default,
+  100: GnosisChain.rpcUrls.default,
 };
 
 export default function handler(

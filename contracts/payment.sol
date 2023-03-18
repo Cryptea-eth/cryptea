@@ -11,7 +11,7 @@ contract Payment {
 
         event TransferSent(address indexed _from, address indexed _desAddr , uint indexed _amount);
 
-        Main parentContract = Main(0xB5450b0A11F5cb94B4bFc0aed63f8b75AF96891f);
+        Main parentContract = Main(0x61001c7998EA1FE24EbfD6497216FE6aBD210022);
 
         address public owner = parentContract.owner();
         address public contractAddress = address(this);
