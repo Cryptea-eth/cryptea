@@ -177,7 +177,7 @@ export default function handler(
 
           logger.error(error);
 
-          res.status(400).json({
+          res.status(error?.status || 400).json({
             error: true,
             message:
               error?.response?.data?.message ||

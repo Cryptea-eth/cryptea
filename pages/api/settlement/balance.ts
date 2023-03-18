@@ -13,7 +13,7 @@ type Data = {
   total?: number;
   pending?: number;
   prices?: base;
-}
+};
 
 export default function handler(
   req: NextApiRequest,
@@ -61,6 +61,7 @@ export default function handler(
                  let totalPending = 0;
 
                  if (pending.length) {
+
                    pending.forEach(async (dax: any) => {
 
                      const data = JSON.parse(dax.data);
@@ -106,6 +107,8 @@ export default function handler(
 
                   if (token.type == "native") {
 
+                    const nSplit = token.name.split(" ");
+
                     try {
 
                       const amount = await blockchains[token.blocktype].balance(
@@ -113,9 +116,10 @@ export default function handler(
                         token.rpc
                       );
 
-                      console.log(account, amount, token.value)
+                    //   console.log(account, amount, token.value)
 
-                      const name = token.name.split(" ")[0];
+                      
+                      const name = nSplit[0];
 
                       const { testnet: test, symbol, value } = token;
 
@@ -143,22 +147,24 @@ export default function handler(
 
                       finalBal += total * price;
 
+                    
+
                       bdown[value] = {
                         amount: total,
                         amtFiat: total * price,
-                        token: name,
+                        token: name + (nSplit[1].indexOf('(') == -1 ? ' '+nSplit[1] : ''),
                         test,
+                        blocktype: token.blocktype,
                         symbol,
                       };
 
                     } catch (err) {                      
-
-                      console.log(err, 'ss')
+                     
 
                       bdown[token.value] = {
                         amount: 0,
                         amtFiat: 0,
-                        token: token.name.split(" ")[0],
+                        token: nSplit[0] + (nSplit[1].indexOf('(') == -1 ? ' '+nSplit[1] : ''),
                         test: token.testnet,
                         symbol: token.symbol,
                       };
@@ -187,7 +193,7 @@ export default function handler(
 
                logger.error(error);
 
-               res.status(400).json({
+               res.status(error?.status || 400).json({
                  error: true,
                  message:
                    error?.response?.data?.message ||

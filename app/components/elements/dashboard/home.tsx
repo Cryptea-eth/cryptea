@@ -26,7 +26,7 @@ const DashHome = () => {
 
   const router = useRouter();
 
-  const [dashBal, setDashBal] = useState<any[]>([]);
+  const [dashBal, setDashBal] = useState<any>(0);
 
   const [dashData, setDashData] = useState<any>({
     payments: [],
@@ -53,7 +53,6 @@ const DashHome = () => {
 
   const [checked, setChecked] = useState<boolean>(false);
 
-    const [sAddresses, setSAddresses] = useState<any>({});
 
   const [refresh, setRefresh] = useState<boolean>(false);
 
@@ -182,6 +181,7 @@ const DashHome = () => {
    
     const init = async () => {
 
+
       const dashmain = await get_request(
         "/dashboard/home",
         {},
@@ -268,26 +268,6 @@ const DashHome = () => {
       const tsort = links.sort((a: any, b: any) => b.totalViews - a.totalViews);
 
 
-
-      setDashBal(
-        CryptoList.map((token, i) => {
-          const cachebox = JSON.parse(localStorage.getItem("cryptos") || "{}");
-
-          const cache: any = cachebox[address] || {};
-
-          const valCache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
-
-          const amount = cache[token.value] || 0;
-
-          const total = amount - (fees[token.value] || 0);
-
-          const price = valCache[token.value] || 0;
-
-          return total * price;
-        })
-      );
-
-
       setDashData({
         payments,
         views,
@@ -298,14 +278,14 @@ const DashHome = () => {
 
       if (blur) removeBlur(false);
 
-      setTimeout(init, 5000);
+      setTimeout(init, 6000);
     };
 
     if(once.current){
 
       once.current = false;
 
-   'user'.get('*', true).then(async (e: any) => {
+      'user'.get('*', true).then(async (e: any) => {
     
         setData(e);
 
@@ -316,8 +296,7 @@ const DashHome = () => {
         if (!Boolean(e.settlement ? e.settlement.length : 0)) {
           return;
         }
-
-        address = e.settlement[0].address;
+               
 
         await init();
 
@@ -331,116 +310,78 @@ const DashHome = () => {
   useEffect(() => {
 
     const initBal = async () => {
+     
 
 
+     const sAddresses: any = {};
 
-      if (data.settlement[0] !== undefined) {
+     data.settlement.forEach((v: any) => {
+       sAddresses[v.type] = v.address;
+     });
 
 
-        let finalBalance: { [index: string]: number } = {};
+      setDashBal(() => {
+        const cache = JSON.parse(localStorage.getItem("cryptoCache") || "{}");
 
-        const fees: { [index: string]: number } = {};
+        let totlCache = 0;
 
-        const balance: {
-          [index: string]: { amount: number; name: string };
-        } = {};
+        if (cache && Object.keys(cache).length > 0) {
 
-        const account: {[index: string]: string} = {};
-
-        data.settlement.forEach((wallet: any) => {
-
-            account[wallet.type] = wallet.address;
-
+        Object.values(sAddresses).forEach((e: any) => {
+          Object.values(cache[e]).forEach((value: any) => {
+            totlCache += Number(value.amtFiat);
+          });
         });
+      }
 
+        return totlCache;
+      });
 
-        for (let i = 0; i < CryptoList.length; i++) {
+      const authToken = localStorage.getItem("userToken");
 
-          const token = CryptoList[i];
+      const { data: balances } = await axios.get(`/api/settlement/balance`, {
+        baseURL: window.origin,
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        timeout: 300_000,
+      });
 
-          if (token.type == "native") {
+      const { breakdown, total, prices } = balances;
 
-            try {
+      const valCache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
 
+      const cacheNew: any = {};
 
-              const mAccount = account[token.blocktype];
+      Object.keys(breakdown).forEach((index: any) => {
 
-             const amount = await blockchains[token.blocktype].balance(mAccount, token.rpc);
+        const dax = breakdown[index];
 
+        const { blocktype, amount, token } = dax;
 
-              const cachebox = JSON.parse(localStorage.getItem('cryptos') || "{}");
+        const account = sAddresses[blocktype];
 
-              if(cachebox[mAccount] === undefined) cachebox[mAccount] = {};
+        cacheNew[account] = {
+          ...(cacheNew[account] || {}),
+          [index]: dax,
+        };
 
-              const cache: any = cachebox[mAccount];
+        const price = prices[index] || 0;
 
-              cache[token.value] = amount;
+        valCache[token.toLowerCase()] = price;
+      });
 
-              localStorage.setItem('cryptos', JSON.stringify(cachebox));
+      localStorage.setItem("cryptoCache", JSON.stringify(cacheNew));
 
-              balance[token.value] = {
-                amount,
-                name: token.name.split(" ")[0],
-              };
+      localStorage.setItem("tokenVal", JSON.stringify(valCache));
 
-            } catch (err) {
-              console.log(err);
-
-              balance[token.value] = {
-                amount: 0,
-                name: token.name.split(" ")[0],
-              };
-            }
-          } else if (token.type == "non-native") {
-            // do stuff here
-          }
-        }
-
-        for (let m = 0; m < payments.length; m++) {
-          const value = payments[m];
-
-          if (value.meta !== null) {
-            const metadata = JSON.parse(value.meta);
-
-            fees[metadata["chainId"]] = Number(metadata["discount"]);
-          }
-        }
-
-
-        for (let i = 0; i < Object.keys(balance).length; i++) {
-
-          const index = Object.keys(balance)[i];
-
-          const total =
-            balance[index].amount -
-            (fees[index] !== undefined ? fees[index] : 0);
-
-          const res = await get_request(
-            `/token/price/${balance[index].name.toLowerCase()}`,
-            {},
-            undefined,
-            false
-          );
-
-          const price = res?.data.price;
-
-          const valCache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
-
-          valCache[balance[index].name.toLowerCase()] = price;
-
-          localStorage.setItem("tokenVal", JSON.stringify(valCache));
-
-          finalBalance[index] = total * price;
-
-        }
-
-        setDashBal(Object.values(finalBalance));
+      setDashBal(total);
         
 
-        if (blurBal) removeBlurBal(false);
+      if (blurBal) removeBlurBal(false);
 
-      }
-    };
+    }
+    
 
     if (payments.length && onceBal.current) {
 
@@ -776,15 +717,7 @@ const DashHome = () => {
                     <NumberFormat
                       value={
                         String(
-                          (dashBal || [0]).reduce(
-                            (a: any, b: any) => a + b,
-                            0
-                          ) < 0
-                            ? 0
-                            : (dashBal || [0]).reduce(
-                                (a: any, b: any) => a + b,
-                                0
-                              )
+                          dashBal
                         ).split(".")[0]
                       }
                       style={{
@@ -798,14 +731,7 @@ const DashHome = () => {
                     <span className="leading-[2.38rem] text-[20px] text-[#898989]">
                       .
                       {
-                        ((dashBal || [0]).reduce((a: any, b: any) => a + b, 0) <
-                        0
-                          ? 0
-                          : (dashBal || [0]).reduce(
-                              (a: any, b: any) => a + b,
-                              0
-                            )
-                        )
+                        (dashBal)
                           .toFixed(2)
                           .split(".")[1]
                       }
