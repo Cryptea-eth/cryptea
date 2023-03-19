@@ -21,6 +21,7 @@ const CustomImg = ({
 
   useEffect(() => {
     if (cache[symbol] === undefined) {
+
       axios
         .get(`/api/cryptoimg/${name}`, {
           baseURL: window.origin,
@@ -30,6 +31,7 @@ const CustomImg = ({
             cache[symbol] = main.data;
 
             setLoading(false);
+            
           }
         });
     }

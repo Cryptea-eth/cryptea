@@ -3,6 +3,7 @@ import logger from '../../../app/functions/logger';
 import axios from 'axios';
 import { CryptoList } from '../../../app/contexts/Cryptea/connectors/chains';
 import { blockchains } from '../../../app/contexts/Cryptea/blockchains';
+import { token } from '../../../app/contexts/Cryptea/types';
 
 type base = { [index: string]: any }; 
 
@@ -54,52 +55,21 @@ export default function handler(
                   }
                 });
 
-                const prices: base = {};
+                 const prices: base = {};
 
-                // pending balances
-
-                 let totalPending = 0;
-
-                 if (pending.length) {
-
-                   pending.forEach(async (dax: any) => {
-
-                     const data = JSON.parse(dax.data);
-
-                     const amt = dax.amountCrypto;
-
-                     const token = dax.token.split(" ")[0];
- 
-                     let price = prices?.[data.chainId];
-                     
-                     if(!price){
-
-                     const res = await axios.get(
-                       `/token/price/${token.toLowerCase()}`,
-                       {
-                         baseURL: 'https://ab.cryptea.me'
-                       }
-                     );
-
-                     prices[data.chainId] = price = res?.data.price;
-                
-                    }
-
-
-                     totalPending += amt * price;
-
-
-                   });
-                 }
+                 
                 
                 let finalBal = 0;
 
+                const cryptoListObj: { [index: string]: any} = {};
 
                 const bdown: base = {};
 
                 for (let i = 0; i < CryptoList.length; i++) {
 
                   const token = CryptoList[i];
+
+                  cryptoListObj[token.value] = token;
 
                   const account = sAddresses[token.blocktype];
 
@@ -116,12 +86,10 @@ export default function handler(
                         token.rpc
                       );
 
-                    //   console.log(account, amount, token.value)
-
                       
                       const name = nSplit[0];
 
-                      const { testnet: test, symbol, value } = token;
+                      const { testnet: test, symbol, value, useSymbol = null } = token;
 
                       const total =
                         amount -
@@ -135,7 +103,7 @@ export default function handler(
                      if (!price) {
 
                       const res = await axios.get(
-                        `/token/price/${name}`,
+                        `/token/price/${useSymbol ? symbol : name}`,
                         {
                             baseURL: 'https://ab.cryptea.me'
                         }
@@ -176,6 +144,37 @@ export default function handler(
                     // do stuff here
                   }
 
+                }
+
+                let totalPending = 0;
+
+                if (pending.length) {
+
+                  pending.forEach(async (dax: any) => {
+
+                    const data = JSON.parse(dax.data);
+
+                    const amt = dax.amountCrypto;
+
+                    const tObj = cryptoListObj[data.chainId];
+
+                    const token = dax.token.split(" ")[0];
+
+                    let price = prices?.[data.chainId];
+
+                    if (!price) {
+                      const res = await axios.get(
+                        `/token/price/${tObj?.useSymbol ? tObj.symbol : token.toLowerCase()}`,
+                        {
+                          baseURL: "https://ab.cryptea.me",
+                        }
+                      );
+
+                      prices[data.chainId] = price = res?.data.price;
+                    }
+
+                    totalPending += amt * price;
+                  });
                 }
 
                 res.status(200).json({
