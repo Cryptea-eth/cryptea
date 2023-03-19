@@ -825,7 +825,7 @@ const DashHome = () => {
             ) : (
               Boolean(dashData["sortBreakdown"].length) && (
                 <span className="block uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
-                  Cryptos Received
+                  Tokens Received
                 </span>
               )
             )}
