@@ -111,16 +111,17 @@ export type token = {
   value: number;
   label: string | JSX.Element;
   symbol: string;
-  blocktype: 'evm' | 'sol';
+  useSymbol?: boolean;
+  blocktype: "evm" | "sol";
   network: string;
   tokenAddr: string;
   testnet: boolean;
-  type: 'native' | 'non-native';
+  type: "native" | "non-native";
   rpc: string;
   payment: {
     manual: boolean;
     auto: boolean;
-  }
+  };
   name: string;
   contractAddr: string;
 };

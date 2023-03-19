@@ -28,7 +28,7 @@ task("account", "returns nonce and balance for specified address on multiple net
   .setAction(async address => {
     const web3cronos = new web3('https://evm-t3.cronos.org');
     const web3poly = new web3(process.env.MATIC_LINK);
-    const web3aurora = new web3(process.env.AURORA_LINK);
+    const web3aurora = new web3('https://testnet.aurora.dev');
     const web3oasis = new web3('https://testnet.emerald.oasis.dev');
     const web3Opt = new web3('https://goerli.optimism.io');
 
@@ -77,16 +77,32 @@ module.exports = {
       url: process.env.MATIC_LINK,
       accounts
     }, 
+    scrollTest: {
+      url: 'https://alpha-rpc.scroll.io/l2',
+      accounts
+    },
     filwallaby: {
       url: "https://wallaby.node.glif.io/rpc/v0",
       accounts
     },  
-    rinkeby: {
-        url: process.env.RINK_LINK,
-        accounts: [process.env.RINKEBY_KEY]
+    zkpolygon: {
+      url: "https://rpc.public.zkevm-test.net",
+      accounts
     },
+    gnosis_chain: {
+      url: 'https://rpc.gnosischain.com',
+      accounts
+    },
+    // rinkeby: {
+    //     url: process.env.RINK_LINK,
+    //     accounts: [process.env.RINKEBY_KEY]
+    // },
     optimism_test: {
       url: "https://goerli.optimism.io",
+      accounts
+    },
+    optimism_main: {
+      url: process.env.OPTIMISM_MAINNET || "https://mainnet.optimism.io",
       accounts
     },
     cronos_test: {
@@ -94,10 +110,9 @@ module.exports = {
       accounts
     },
     aurora_test: {
-      url: process.env.AURORA_LINK,
+      url: 'https://testnet.aurora.dev',
       accounts
     },
-
     oasis_test: {
       url: "https://testnet.emerald.oasis.dev",
       accounts

@@ -58,7 +58,9 @@ const Settlements = () => {
 
   const [blur, setBlur] = useState<boolean>(true);
 
-  const [sAddresses, setSAddresses] = useState<any>({});
+  const [blurModal, setBlurModal] = useState<boolean>(true);
+
+  const sAddresses = useRef<any>({});
 
   const [dashData, setDashData] = useState<any>({
     payments: [],
@@ -67,10 +69,11 @@ const Settlements = () => {
     pending: 0,
     settlement_acct: [],
     breakDownObj: [],
-    settlements: [],
-    balance: [],
+    balance: 0,
     breakdown: [],
   });
+
+  const [settlementsTrx, setSettlementsTrx] = useState<any>({});
 
   const [withdrawToken, setWithdrawToken] = useState<any>();
 
@@ -125,11 +128,11 @@ const Settlements = () => {
 
   const [openPast, setOpenPast] = useState(false);
 
-  const [balance, setBalance] = useState<bal>({});
-
   const [balToken, setBalToken] = useState<string | number>();
 
   const [addresses, setAddresses] = useState<any>({});
+
+  const effectAddress = useRef<any>({});
 
   const [pinsVisibility, setPinVisibility] = useState<{
     [index: string]: boolean;
@@ -421,7 +424,9 @@ const Settlements = () => {
         closeSettleModal();
 
         window.scroll(0, 0);
+
       } catch (err) {
+
         const erro = err as AxiosError;
 
         if (erro.response) {
@@ -441,123 +446,40 @@ const Settlements = () => {
   };
 
 
+   const saveData = ({ breakdown, total, pending }: any) => ({
+     ...dashData,
+     pending: pending || dashData?.pending || 0,
+     balance: total,
+     breakDownObj: breakdown,
+     breakdown: Object.values(breakdown)
+       .sort((a: any, b: any) => Number(a.test) - Number(b.test))
+       .sort((a: any, b: any) => b.amount - a.amount),
+   });
+
+
   useEffect(() => {
-    const init = async () => {
-      const dashmain = await get_request(
-        "/dashboard/settlement",
-        {},
-        undefined,
-        false
-      );
 
-      let { payments, allTrx, user, pending } = dashmain?.data;
+  const init = async () => {
+    // cache
+    const cache = JSON.parse(localStorage.getItem("cryptoCache") || "{}");
 
-      const breakdown: bal2 = {};
+    let totlCache = 0;
 
-      let finalBalance: { [index: string]: number } = {};
+    let breakdown: any = {};
 
-      const fees: { [index: string]: number } = {};
+    if (cache && Object.keys(cache).length) {
+      
 
-      const settlement_acct: string[] = [];
+      Object.values(sAddresses.current).forEach((e: any) => {
+        breakdown = { ...breakdown, ...cache[e] };
 
-      if (allTrx.length) {
-        allTrx.forEach((v: any) => {
-          const data = JSON.parse(v.data);
+        if (cache[e]) {
 
-          if (v.type == "crypto" || v.type == "swap") {
-            const add = data.receiver;
-
-            if (!settlement_acct.includes(add)) {
-              settlement_acct.push(add);
-            }
-          }
+        Object.values(cache[e]).forEach((value: any) => {
+          totlCache += value.amtFiat;
         });
       }
-
-      const userAddresses = JSON.parse(user.accounts || "[]");
-
-      if (Boolean(userAddresses[0]) && userAddresses[0] != 'null') {
-        if (!settlement_acct.includes(userAddresses[0])) {
-          settlement_acct.push(userAddresses[0]);
-        }
-      }
-
-
-      payments.forEach((value: any) => {
-        if (value.meta !== null) {
-          const metadata = JSON.parse(value.meta);
-
-          fees[metadata["chain"]] = Number(metadata["discount"]);
-
-        }
-      });
-
-      let totalPending = 0;
-
-      if (pending.length) {
-
-        pending.forEach(async (dax: any) => {
-
-          const amt = dax.amountCrypto;
-
-          const token = dax.token.split(" ")[0];
-
-          const res = await get_request(
-            `/token/price/${token.toLowerCase()}`,
-            {},
-            undefined,
-            false
-          );
-
-          const price = res?.data.price;
-
-          totalPending += amt * price;
-
-        });
-      }
-
-      const { data: settlements } = (await get_request(
-        `/settlements/transactions`,
-        {},
-        undefined,
-        false
-      )) || { data: { trx: {} } };
-
-      if (settlements.trx.current_page !== undefined) {
-        const { current_page, last_page } = settlements.trx.current_page;
-
-        setPageCheck({ current_page, last_page });
-      }
-
-
-      for (let i = 0; i < Object.keys(balance).length; i++) {
-
-        const index = Object.keys(balance)[i];
-
-        const total = balance[index].amount - (balance[index].amount > fees[index] ? fees[index] : 0);
-
-        const type = balance[index].blocktype;
-
-        const cache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
-
-        const price = cache[balance[index].name.toLowerCase()] || 0;
-
-        finalBalance[index] = total * price;
-
-
-        breakdown[index] = {
-          amount: total,
-          amtFiat: total * price,
-          token: balance[index].name,
-          test: balance[index].test,
-          blocktype: type,
-          symbol: balance[index].symbol,
-        };
-  
-
-      }
-
- 
+    });
 
       const maxAmt = Object.keys(breakdown).sort(
         (a, b) => breakdown[b].amount - breakdown[a].amount
@@ -569,38 +491,181 @@ const Settlements = () => {
         }
       });
 
-      setDashData({
-        payments,
-        fees: fees,
-        finalBalance,
-        balance: Object.values(finalBalance),
-        breakDownObj: breakdown,
-        settlement_acct: settlement_acct.map((e: string) => ({
-          label: e,
-          value: e,
-        })),
-        breakdown: Object.values(breakdown)
-          .sort((a, b) => Number(a.test) - Number(b.test))
-          .sort((a, b) => b.amount - a.amount),
-        settlements: settlements.trx,
-        pending: totalPending + (totalPending ? (totalPending * 1) / 100 : 0),
+      setBlurModal(false);
+
+     
+    }
+
+    const dashmain = await get_request(
+      "/dashboard/settlement",
+      {},
+      undefined,
+      false
+    );
+
+    let { payments, allTrx, user, pending } = dashmain?.data;
+
+
+    let finalBalance: { [index: string]: number } = {};
+
+    const fees: { [index: string]: number } = {};
+
+    const settlement_acct: string[] = [];
+
+    if (allTrx.length) {
+      allTrx.forEach((v: any) => {
+        const data = JSON.parse(v.data);
+
+        if (v.type == "crypto" || v.type == "swap") {
+          const add = data.receiver;
+
+          if (!settlement_acct.includes(add)) {
+            settlement_acct.push(add);
+          }
+        }
       });
+    }
 
-      if (blur) setBlur(false);
+    const userAddresses = JSON.parse(user.accounts || "[]");
 
-      setRefresh(!refresh);
-    };
+    if (Boolean(userAddresses[0]) && userAddresses[0] != "null") {
+      if (!settlement_acct.includes(userAddresses[0])) {
+        settlement_acct.push(userAddresses[0]);
+      }
+    }
+
+    payments.forEach((value: any) => {
+      if (value.meta !== null) {
+        const metadata = JSON.parse(value.meta);
+
+        fees[metadata["chain"]] = Number(metadata["discount"]);
+      }
+    });
+
+    const { data: settlements } = (await get_request(
+      `/settlements/transactions`,
+      {},
+      undefined,
+      false
+    )) || { data: { trx: {} } };
+
+    if (settlements.trx.current_page !== undefined) {
+      const { current_page, last_page } = settlements.trx.current_page;
+
+      setPageCheck({ current_page, last_page });
+    }
+
+    console.log(settlements.trx, 'ss');
+
+    setSettlementsTrx(settlements.trx);
+
+    setDashData({
+      payments,
+      fees: fees,
+      settlement_acct: settlement_acct.map((e: string) => ({
+        label: e,
+        value: e,
+      })),
+      pending: 0,
+      balance: totlCache || dashData?.balance || 0,
+      breakDownObj: breakdown,
+      breakdown: Object.values(breakdown)
+       .sort((a: any, b: any) => Number(a.test) - Number(b.test))
+       .sort((a: any, b: any) => b.amount - a.amount),
+
+    });
+
+    if (blur) setBlur(false);
+
+    setRefresh(!refresh);
+  };
+
+
+     const initBalances = async () => {
+
+       if (onceBal.current) {
+         return;
+       }
+
+       onceBal.current = true;
+
+       const authToken = localStorage.getItem("userToken");
+
+       const { data: balances } = await axios.get(`/api/settlement/balance`, {
+         baseURL: window.origin,
+         headers: {
+           Authorization: `Bearer ${authToken}`,
+         },
+         timeout: 300_000,
+       });
+
+       const { breakdown, total, prices, pending, addresses } = balances;
+
+       const valCache = JSON.parse(localStorage.getItem("tokenVal") || "{}");
+
+       const cacheNew: any = {};
+
+       Object.keys(breakdown).forEach((index: any) => {
+         const dax = breakdown[index];
+
+         const { blocktype, token } = dax;
+
+         const account = sAddresses.current[blocktype];
+
+         cacheNew[account] = {
+           ...(cacheNew[account] || {}),
+           [index]: dax,
+         };
+
+         const price = prices[index] || 0;
+
+         valCache[token.toLowerCase()] = price;
+       });
+
+       localStorage.setItem("cryptoCache", JSON.stringify(cacheNew));
+
+       localStorage.setItem("tokenVal", JSON.stringify(valCache));
+
+       const maxAmt = Object.keys(breakdown).sort(
+         (a, b) => breakdown[b].amount - breakdown[a].amount
+       );
+
+       CryptoList.forEach((a) => {
+         if (a.value == Number(maxAmt[0])) {
+           setWithdrawToken(a);
+         }
+       });
+
+
+      //  
+      
+
+       setDashData({
+         ...dashData,
+         pending: pending || 0,
+         balance: total,
+         breakDownObj: breakdown,
+         breakdown: Object.values(breakdown)
+           .sort((a: any, b: any) => Number(a.test) - Number(b.test))
+           .sort((a: any, b: any) => b.amount - a.amount),
+       });
+
+       setBlurModal(false);
+
+       // setTimeout(initBalances, 12000);
+     };
+
+
 
     if (once.current) {
 
       once.current = false;
 
-      "user".get("*", true).then(async (e: any) => {
+      "user".get("*", true).then((e: any) => {
+
         setData(e);
 
         setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
-
-        // console.log(e.settlement, 'dd');
 
         if (!Boolean(e.settlement ? e.settlement.length : 0)) {
           return;
@@ -608,173 +673,25 @@ const Settlements = () => {
 
         e.settlement.forEach((vv: any) => {
 
-            setSAddresses({ ...sAddresses, [vv.type]: vv.address});
+            sAddresses.current = {
+              ...sAddresses.current,
+              [vv.type]: vv.address,
+            };
 
-        })
-        
+        });       
+
 
         const userAddresses = JSON.parse(e.accounts || "[]");
-
         
 
-        if (e.settlement[0] !== undefined) {
+        init();
 
-       
-          for (let i = 0; i < CryptoList.length; i++) {
+        initBalances();
 
-            const token = CryptoList[i];
-
-            const cachebox = JSON.parse(
-              localStorage.getItem("cryptos") || "{}"
-            );
-
-            const cache: any = cachebox[e.settlement[0].address] || {};
-
-            balance[token.value] = {
-              amount: cache[token.value] || 0,
-              name: token.name.split(" ")[0],
-              test: token.testnet,
-              blocktype: token.blocktype,
-              symbol: token.symbol,
-            };
-          
-        }
-
-        
-
-          setBalance({ ...balance });
-
-          await init();
-        }
       });
     }
 
-    if (!blur && !onceBal.current) {
 
-      onceBal.current = true;
-
-      // const account = data.settlement ? data.settlement[0] : { address: "" };
-
-      const initBalances = async () => {
-
-        const finalBal = dashData["finalBalance"];
-
-        const bdown = dashData["breakDownObj"];
-
-        for (let i = 0; i < CryptoList.length; i++) {
-
-          const token = CryptoList[i];
-
-          const account = sAddresses[token.blocktype];
-
-          if (token.type == "native") {
-            try {    
-        
-            const amount = await blockchains[token.blocktype].balance(account, token.rpc);
-
-
-              const cache = JSON.parse(localStorage.getItem("cryptos") || "{}");
-
-              cache[account] = {
-                ...(cache[account] || {}),
-                [token.value]: amount,
-              };
-
-              localStorage.setItem("cryptos", JSON.stringify(cache));
-
-              
-
-              const name = token.name.split(" ")[0];
-
-              const { testnet: test, symbol, value } = token;
-
-              const total =
-                amount -
-                (dashData["fees"][value] !== undefined && dashData["fees"][value] > amount
-                  ? dashData["fees"][value]
-                  : 0);
-
-              const res = await get_request(
-                `/token/price/${name}`,
-                {},
-                undefined,
-                false
-              );
-
-              // console.log(res, 'here')
-
-              const valCache = JSON.parse(
-                localStorage.getItem("tokenVal") || "{}"
-              );
-
-              const price = res?.data.price;
-
-              valCache[name.toLowerCase()] = price;
-
-              localStorage.setItem("tokenVal", JSON.stringify(valCache));
-
-              finalBal[value] = total * price;
-
-              bdown[value] = {
-                amount: total,
-                amtFiat: total * price,
-                token: name,
-                test,
-                symbol,
-              };
-
-
-            } catch (err) {
-
-              const cachebox = JSON.parse(
-                localStorage.getItem("cryptos") || "{}"
-              );
-
-              const cache: any = cachebox[account] || {};
-
-              const valCache = JSON.parse(
-                localStorage.getItem("tokenVal") || "{}"
-              );
-
-              bdown[token.value] = {
-                amount:
-                  cache[token.value] !== undefined ? cache[token.value] : 0,
-                amtFiat:
-                  cache[token.value] !== undefined
-                    ? cache[token.value] *
-                      (valCache[token.value] !== undefined
-                        ? valCache[token.value]
-                        : 0)
-                    : 0,
-                token: token.name.split(" ")[0],
-                test: token.testnet,
-                symbol: token.symbol,
-              };
-            }
-
-            const saveData = {
-              ...dashData,
-              breakDownObj: bdown,
-              breakdown: Object.values(bdown)
-                .sort((a: any, b: any) => Number(a.test) - Number(b.test))
-                .sort((a: any, b: any) => b.amount - a.amount),
-            };
-
-            if (CryptoList.length == i + 1) {
-              saveData["balance"] = finalBal
-                ? Object.values(finalBal)
-                : dashData["balance"];
-            }
-
-            setDashData(saveData);
-          } else if (token.type == "non-native") {
-            // do stuff here
-          }
-        }
-      };
-
-      initBalances();
-    }
   }, [refresh]);
 
   const getBalance = async (e: token, address: string) => {
@@ -823,7 +740,7 @@ const Settlements = () => {
       </Head>
 
       <div className="pt-[75px] px-5 relative z-[1]">
-        {!blur && (
+        {!blur && !blurModal && (
           <Modal
             open={openCryptoW}
             sx={{
@@ -891,11 +808,12 @@ const Settlements = () => {
                       </div>
 
                       <div className="bg-[#ebebeb] px-2 rounded py-2 min-w-fit font-[600] text-[#7a7a7a]">
-                        {sAddresses[withdrawToken?.blocktype || "evm"] !==
-                        undefined
-                          ? `${sAddresses[
+                        {sAddresses.current[
+                          withdrawToken?.blocktype || "evm"
+                        ] !== undefined
+                          ? `${sAddresses.current[
                               withdrawToken?.blocktype || "evm"
-                            ].substring(0, 6)}...${sAddresses[
+                            ].substring(0, 6)}...${sAddresses.current[
                               withdrawToken?.blocktype || "evm"
                             ].substring(38, 42)}`
                           : ""}
@@ -915,9 +833,9 @@ const Settlements = () => {
                             `${option.value} ${option.data.name}`,
                         })}
                         placeholder={"Tokens..."}
-                        options={CryptoList.filter(
-                          (a) => dashData["breakDownObj"][a.value].amtFiat > 0
-                        )}
+                        options={Object.values(dashData["breakDownObj"]).filter(
+                            (a: any) => a.amtFiat > 0
+                          )}
                         styles={{
                           option: (provided, state) => {
                             return {
@@ -965,7 +883,7 @@ const Settlements = () => {
                         onChange={async (e) => {
                           setWithdrawToken(e);
 
-                          getBalance(e, sAddresses[e.blocktype]);
+                          getBalance(e, sAddresses.current[e.blocktype]);
                         }}
                         classNamePrefix="select"
                       />
@@ -1076,7 +994,7 @@ const Settlements = () => {
                                 const text =
                                   await navigator.clipboard.readText();
 
-                                  setAddressTo(text);
+                                setAddressTo(text);
                               }}
                               className="cursor-pointer"
                               sx={{
@@ -1703,12 +1621,9 @@ const Settlements = () => {
                 <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
               ) : (
                 <>
+                  
                   <NumberFormat
-                    value={
-                      String(
-                        dashData["balance"].reduce((a: any, b: any) => a + b, 0) < 0 ? 0 : dashData["balance"].reduce((a: any, b: any) => a + b, 0)
-                      ).split(".")[0]
-                    }
+                    value={String(dashData["balance"]).split(".")[0]}
                     style={{
                       fontSize: "2.3rem",
                       color: "#121212",
@@ -1718,13 +1633,7 @@ const Settlements = () => {
                     prefix={"$"}
                   />
                   <span className="leading-[2.7rem] text-[20px] text-[#898989]">
-                    .
-                    {
-                      (dashData["balance"]
-                        .reduce((a: any, b: any) => a + b, 0) < 0 ?  0 : dashData["balance"].reduce((a: any, b: any) => a + b, 0))
-                        .toFixed(2)
-                        .split(".")[1]
-                    }
+                    .{dashData["balance"]?.toFixed(2).split(".")[1]}
                   </span>
                 </>
               )}
@@ -1767,7 +1676,7 @@ const Settlements = () => {
                     prefix={"$"}
                   />
                   <span className="leading-[2.7rem] text-[20px] text-[#898989]">
-                    .{dashData["pending"].toFixed(2).split(".")[1]}
+                    .{dashData["pending"]?.toFixed(2).split(".")[1]}
                   </span>
                 </>
               )}
@@ -1786,8 +1695,10 @@ const Settlements = () => {
               onClick={() => {
                 setCryptoW(true);
 
-                getBalance(withdrawToken, sAddresses[withdrawToken.blocktype]);
-
+                getBalance(
+                  withdrawToken,
+                  sAddresses.current[withdrawToken.blocktype]
+                );
               }}
               className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] !mr-[2px]"
             >
@@ -1838,7 +1749,7 @@ const Settlements = () => {
           )}
         </div>
 
-        {(Boolean(dashData["breakdown"].length) || blur) && (
+        {(Boolean(dashData["breakdown"]?.length) || blur) && (
           <div className="py-3">
             {blur ? (
               <Skeleton
@@ -1868,7 +1779,7 @@ const Settlements = () => {
                         {Boolean(data.settlement[key]) && (
                           <Tooltip
                             placement="top"
-                            open={copied[0]}
+                            open={copied[key]}
                             arrow
                             title={"Copied"}
                           >
@@ -1961,11 +1872,11 @@ const Settlements = () => {
               variant={"rounded"}
               className="max-w-[650px] h-[400px]  text-[#6a6a6ab0] py-3 mr-2 rounded-lg w-full"
             />
-          ) : Boolean(dashData["settlements"].data) &&
-            Boolean(dashData["settlements"].data.length) ? (
+          ) : Boolean(settlementsTrx.data) &&
+            Boolean(settlementsTrx.data.length) ? (
             <>
               <div className="max-w-[650px] border border-solid border-[rgb(218,220,224)] rounded-lg py-3 flex flex-col w-full">
-                {dashData["settlements"].data.map((val: any, key: number) =>
+                {settlementsTrx.data.map((val: any, key: number) =>
                   trx(val, key)
                 )}
 

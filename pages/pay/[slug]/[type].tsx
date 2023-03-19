@@ -221,7 +221,7 @@ const Onetime = () => {
                     const msupply = { ...supply, ...vmain };
 
 
-                    const date = (msupply.created_at);
+                    const date = new Date(msupply.created_at);
 
                     const hrx = date.getHours() % 12 || 12;
 
