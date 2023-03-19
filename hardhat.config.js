@@ -77,6 +77,10 @@ module.exports = {
       url: process.env.MATIC_LINK,
       accounts
     }, 
+    scrollTest: {
+      url: 'https://alpha-rpc.scroll.io/l2',
+      accounts
+    },
     filwallaby: {
       url: "https://wallaby.node.glif.io/rpc/v0",
       accounts

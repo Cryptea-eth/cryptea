@@ -13,7 +13,11 @@ export default function handler(
 
       (async () => {
         
-        try {
+        try {        
+
+          if (crypto == "scroll") {
+             res.status(200).json(generic['scroll'].icon);
+          }
 
           const rs = await axios.get(`https://ab.cryptea.me/crypto/img/${crypto}`, { headers: {
           Authorization: process.env.APP_KEY || "",
@@ -21,9 +25,10 @@ export default function handler(
 
           const mainRs = rs.data.link;
 
-         res.status(200).json(mainRs);
+          res.status(200).json(mainRs);
 
         }catch (err) {
+
             res.status(200).json(generic['GENERIC'].icon)
         }
 

@@ -48,7 +48,7 @@ export const Optimism: Chain = {
   network: "optimism",
   nativeCurrency: {
     decimals: 18,
-    name: "Optimism",
+    name: "Optimism ETH",
     symbol: "ETH",
   },
   rpcUrls: {
@@ -87,7 +87,7 @@ export const OptimismGoerli: Chain = {
   network: "optimism",
   nativeCurrency: {
     decimals: 18,
-    name: "Optimism",
+    name: "Optimism ETH",
     symbol: "ETH",
   },
   rpcUrls: {
@@ -144,7 +144,7 @@ export const Aurora: Chain = {
   network: "aurora",
   nativeCurrency: {
     decimals: 18,
-    name: "Aurora",
+    name: "Aurora ETH",
     symbol: "ETH",
   },
   rpcUrls: {
@@ -162,7 +162,7 @@ export const AuroraTestnet: Chain = {
   network: "aurora",
   nativeCurrency: {
     decimals: 18,
-    name: "Aurora",
+    name: "Aurora ETH",
     symbol: "ETH",
   },
   rpcUrls: {
@@ -170,6 +170,24 @@ export const AuroraTestnet: Chain = {
   },
   blockExplorers: {
     default: { name: "Aurora", url: "https://explorer.testnet.aurora.dev" },
+  },
+  testnet: true,
+};
+
+export const ScrollAlpha: Chain = {
+  id: 534353,
+  name: "Scroll",
+  network: "Scroll Alpha",
+  nativeCurrency: {
+    name: "Scroll ETH",
+    decimals: 18,
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: "https://alpha-rpc.scroll.io/l2",
+  },
+  blockExplorers: {
+    default: { name: "Scroll Explorer", url: "https://blockscout.scroll.io" },
   },
   testnet: true,
 };
@@ -220,7 +238,7 @@ export const PolygonZkEvm: Chain = {
   name: "PolygonZkEVM",
   network: "Polygon zkEVM Testnet",
   nativeCurrency: {
-    name: "Ethereum",
+    name: "Polygon ETH",
     decimals: 18,
     symbol: "ETH",
   },
@@ -368,6 +386,10 @@ export const tokenTrackers: explorer = {
     name: "Optimism Explorer",
     link: (hash: string) => "https://goerli-optimistic.etherscan.io/tx/" + hash,
   },
+  534353: {
+    name: "Scroll Alpha Explorer",
+    link: (hash: string) => "https://blockscout.scroll.io/tx/" + hash,
+  },
   100: {
     name: "Gnosis Chain Explorer",
     link: (hash: string) => "https://gnosisscan.io/tx/" + hash,
@@ -430,7 +452,7 @@ export const CryptoList: token[] = [
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
-          <CustomImg symbol={"xdai"} name="xdai" size={20} alt={"Gnosis"} />
+          <CustomImg symbol={"xDAI"} name="xdai" size={20} alt={"Gnosis"} />
         </div>
         <span className="text-[#121212]">Gnosis Chain (xDAI)</span>
       </div>
@@ -516,7 +538,7 @@ export const CryptoList: token[] = [
         <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
             name="Polygon"
-            symbol="FIL"
+            symbol="ETH"
             size={20}
             alt={"Polygon zkEvm"}
           />
@@ -526,11 +548,42 @@ export const CryptoList: token[] = [
     ),
     name: "Polygon zkEVM (Testnet)",
     symbol: "ETH",
+    useSymbol: true,
     network: PolygonZkEvm.network as string,
     tokenAddr: "",
     blocktype: "evm",
     contractAddr: "0xf766074626299B335A8C9694faED139Dc51BbaD3",
     rpc: PolygonZkEvm.rpcUrls.default,
+    testnet: true,
+    payment: {
+      manual: true,
+      auto: true,
+    },
+  },
+  {
+    value: 534353,
+    type: "native",
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-2 relative w-[20px]">
+          <CustomImg
+            name="scroll"
+            symbol="ETH"
+            size={20}
+            alt={"Scroll Alpha"}
+          />
+        </div>
+        <span className="text-[#121212]">Scroll Alpha</span>
+      </div>
+    ),
+    name: "Scroll Alpha (Testnet)",
+    symbol: "ETH",
+    network: ScrollAlpha.network as string,
+    tokenAddr: "",
+    useSymbol: true,
+    blocktype: "evm",
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
+    rpc: ScrollAlpha.rpcUrls.default,
     testnet: true,
     payment: {
       manual: true,

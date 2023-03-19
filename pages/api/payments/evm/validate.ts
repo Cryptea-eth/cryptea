@@ -11,6 +11,7 @@ import {
   fantomTestnet,
   PolygonZkEvm,
   GnosisChain,
+  ScrollAlpha
 } from "../../../../app/contexts/Cryptea/connectors/chains";
 
 type Data = {
@@ -38,6 +39,7 @@ const providers: { [index: string]: string } = {
   4002: fantomTestnet.rpcUrls.default,
   1442: PolygonZkEvm.rpcUrls.default,
   100: GnosisChain.rpcUrls.default,
+  534353: ScrollAlpha.rpcUrls.default,
 };
 
 export default function handler(

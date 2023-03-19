@@ -257,6 +257,21 @@ export const PaymentProvider = ({
     return price / priceCurrency;
   }
   
+  const ethereum = async (price: number) => {
+
+    const response = await getPriceReq({
+      ids: "ethereum",
+      vs_currencies: "usd",
+    });
+
+    const e = response.data as { [index: string]: any };
+
+    const priceCurrency = Number(e["ethereum"]["usd"]);
+
+    return price / priceCurrency;
+
+  }
+
   const fantom = async (price: number) => {
 
     const response = await getPriceReq({
@@ -280,11 +295,27 @@ export const PaymentProvider = ({
   ) => {
     let final: number = 0;
 
-    console.log(chain)
 
     setLoadingText("Loading price data...");
 
     const prices: { [index: string]: () => Promise<number> } = {
+      "1442": async () => await ethereum(price),
+      "1": async () => await ethereum(price),
+      "56": async () => await ethereum(price),
+      "128": async () => await ethereum(price),
+      "534353": async () => await ethereum(price),
+      "100": async () => {
+        const response = await getPriceReq({
+          ids: "xdai",
+          vs_currencies: "usd",
+        });
+
+        const e = response.data as { [index: string]: any };
+
+        const priceCurrency = Number(e["xdai"]["usd"]);
+
+        return price / priceCurrency;
+      },
       "1122112211224": async () => solana(price),
       "1122112211223": async () => solana(price),
       "250": async () => await fantom(price),
