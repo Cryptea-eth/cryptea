@@ -111,7 +111,7 @@ export class UDConnector extends Connector<any, any, any> {
     // await delay(4000);
 
     return {
-      account: "",
+      account: "" as `0x${string}`,
       chain: { id: 0, unsupported: false },
       provider: undefined,
     };
@@ -140,7 +140,7 @@ export class UDConnector extends Connector<any, any, any> {
   }
 
   async getAccount() {
-    return "";
+    return "" as `0x${string}`;
   }
 
   async getChainId() {
@@ -175,7 +175,7 @@ export class LinkConnector extends Connector<any, any, any> {
     location.href = '/magic';        
 
     return {
-      account: "",
+      account: "" as `0x${string}`,
       chain: { id: 0, unsupported: false },
       provider: undefined,
     };
@@ -205,7 +205,7 @@ export class LinkConnector extends Connector<any, any, any> {
   }
 
   async getAccount() {
-    return "";
+    return "" as `0x${string}`;
   }
 
   async getChainId() {

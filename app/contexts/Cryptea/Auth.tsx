@@ -1,3 +1,4 @@
+import { Chain } from 'wagmi';
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { LinkConnector, UDConnector } from "./connectors";
@@ -243,6 +244,8 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
   });
 
 
+  const walletChains = chains as Chain[];
+
   const connectors = connectorsForWallets([
     {
       groupName: "Recommended",
@@ -250,8 +253,11 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
         router.pathname == "/pay/[slug]"
           ? [
               metaMaskWallet({ chains }),
+
               walletConnectWallet({ chains }),
+
               coinbaseWallet({ chains, appName: "Cryptea" }),
+
               PhantomWallet({ chains }),
             ]
           : [
