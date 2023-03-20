@@ -182,7 +182,7 @@ export const CronosTest: Chain = {
 
 
 
-export const { chains, provider, webSocketProvider } = configureChains(
+export const { chains , provider, webSocketProvider } = configureChains(
   [
     polygon,
     polygonZkEvmTestnet,

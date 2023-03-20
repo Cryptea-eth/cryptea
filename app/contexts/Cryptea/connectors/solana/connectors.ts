@@ -14,6 +14,7 @@ const bs58 = require("bs58");
 const phantom = new PhantomWalletAdapter();
 
 export class PhantomConnector extends Connector<any, any, any> {
+  
   readonly id = "phantom";
   readonly name = phantom.name;
 
@@ -66,7 +67,7 @@ export class PhantomConnector extends Connector<any, any, any> {
     }
 
     return {
-      account,
+      account: `${account}` as `0x${string}`,
       chain: { id: 0, unsupported: false },
       provider: undefined,
     };
@@ -97,7 +98,7 @@ export class PhantomConnector extends Connector<any, any, any> {
   async getAccount() {
     const account = phantom.publicKey?.toBase58() || "";
 
-    return account;
+    return `${account}` as `0x${string}`;
   }
 
   async getChainId() {
