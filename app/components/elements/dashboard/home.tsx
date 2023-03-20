@@ -4,7 +4,6 @@ import NumberFormat from "react-number-format";
 import LineChart from "../Extras/Rep/lineChart";
 import sortData from "./linkOverview/generateData";
 import Direction from "./direction";
-import * as ethers from 'ethers';
 import { get_request } from "../../../contexts/Cryptea/requests";
 import { useEffect, useRef, useState } from "react";
 import { cryptoDeets } from "../../../functions/crypto";
@@ -180,7 +179,6 @@ const DashHome = () => {
     let address: string;    
    
     const init = async () => {
-
 
       const dashmain = await get_request(
         "/dashboard/home",
@@ -751,7 +749,7 @@ const DashHome = () => {
             ) : (
               Boolean(dashData["sortBreakdown"].length) && (
                 <span className="block uppercase mb-2 text-[#818181] font-bold text-[.64rem]">
-                  Cryptos Received
+                  Tokens Received
                 </span>
               )
             )}

@@ -85,7 +85,6 @@ export default function handler(
                         account,
                         token.rpc
                       );
-
                       
                       const name = nSplit[0];
 
@@ -120,7 +119,7 @@ export default function handler(
                       bdown[value] = {
                         amount: total,
                         amtFiat: total * price,
-                        token: name + (nSplit[1].indexOf('(') == -1 ? ' '+nSplit[1] : ''),
+                        token: name + (nSplit[1] ? (nSplit[1].indexOf('(') == -1 ? ' '+nSplit[1] : '') : ''),
                         test,
                         blocktype: token.blocktype,
                         symbol,
@@ -132,7 +131,7 @@ export default function handler(
                       bdown[token.value] = {
                         amount: 0,
                         amtFiat: 0,
-                        token: nSplit[0] + (nSplit[1].indexOf('(') == -1 ? ' '+nSplit[1] : ''),
+                        token: nSplit[0] + (nSplit[1] ? (nSplit[1].indexOf('(') == -1 ? ' '+nSplit[1] : '') : ''),
                         test: token.testnet,
                         symbol: token.symbol,
                       };

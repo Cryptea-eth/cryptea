@@ -39,11 +39,14 @@ export default function handler(
 
         const gasPrice = await provider.getGasPrice();
 
+        const nonce = await provider.getTransactionCount(body.account);
+
         const tx = {
           to: body.uAddress,
           value: mbalance,
           gasLimit: 21_000,
           gasPrice,
+          nonce
         };
 
         const estimate = await provider.estimateGas(tx);

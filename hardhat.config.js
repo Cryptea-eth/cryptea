@@ -85,6 +85,14 @@ module.exports = {
       url: "https://wallaby.node.glif.io/rpc/v0",
       accounts
     },  
+    mantle: {
+      url: "https://rpc.testnet.mantle.xyz",
+      accounts
+    },
+    taiko: {
+      url: "https://l2rpc.hackathon.taiko.xyz",
+      accounts
+    },
     zkpolygon: {
       url: "https://rpc.public.zkevm-test.net",
       accounts
