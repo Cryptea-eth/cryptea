@@ -15,8 +15,8 @@ export default function handler(
         
         try {        
 
-          if (crypto == "scroll") {
-             res.status(200).json(generic['scroll'].icon);
+          if (crypto == "scroll" || crypto == "taiko" || crypto == "mantle") {
+               res.status(200).json((generic as any)[crypto].icon);
           }
 
           const rs = await axios.get(`https://ab.cryptea.me/crypto/img/${crypto}`, { headers: {

@@ -2,16 +2,18 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import * as ethers from "ethers";
 import axios from "axios";
 import {
-  AuroraTestnet,
+  auroraTestnet,
   CronosTest,
-  FileCoinHyperspace,
+  filecoinHyperspace,
   OasisEmeraldTestnet,
-  OptimismGoerli,
+  optimismGoerli,
   fantom,
+  TaikoTest,
   fantomTestnet,
-  PolygonZkEvm,
-  GnosisChain,
-  ScrollAlpha
+  polygonZkEvmTestnet,
+  gnosis,
+  scrollTestnet,
+  MantleTest,
 } from "../../../../app/contexts/Cryptea/connectors/chains";
 
 type Data = {
@@ -27,19 +29,23 @@ const addressEqual = (address1: string, address2: string): boolean => {
   return false;
 };
 
+
+
 const providers: { [index: string]: string } = {
-  338: CronosTest.rpcUrls.default,
+  338: CronosTest.rpcUrls.default.http[0],
   137: process.env.POLYGONMATIC as string,
   80001: process.env.MATIC_LINK as string,
-  42261: OasisEmeraldTestnet.rpcUrls.default,
-  1313161555: AuroraTestnet.rpcUrls.default,
-  420: OptimismGoerli.rpcUrls.default,
-  3141: FileCoinHyperspace.rpcUrls.default,
-  250: fantom.rpcUrls.default,
-  4002: fantomTestnet.rpcUrls.default,
-  1442: PolygonZkEvm.rpcUrls.default,
-  100: GnosisChain.rpcUrls.default,
-  534353: ScrollAlpha.rpcUrls.default,
+  42261: OasisEmeraldTestnet.rpcUrls.default.http[0],
+  1313161555: auroraTestnet.rpcUrls.default.http[0],
+  420: optimismGoerli.rpcUrls.default.http[0],
+  3141: filecoinHyperspace.rpcUrls.default.http[0],
+  250: fantom.rpcUrls.default.http[0],
+  4002: fantomTestnet.rpcUrls.default.http[0],
+  1442: polygonZkEvmTestnet.rpcUrls.default.http[0],
+  100: gnosis.rpcUrls.default.http[0],
+  534353: scrollTestnet.rpcUrls.default.http[0],
+  167002: TaikoTest.rpcUrls.default.http[0],
+  5001: MantleTest.rpcUrls.default.http[0],
 };
 
 export default function handler(
