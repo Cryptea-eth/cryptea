@@ -27,11 +27,11 @@ const Loader = ({
       }}
       className="h-full left-0 bg-white top-0 z-[10000000] flex flex-col justify-center items-center w-full"
     >
-      {head && (
+      {/* {head && (
         <Head>
           <title>Easily Receive Payments in Crypto | Cryptea </title>
         </Head>
-      )}
+      )} */}
 
       {incLogo && (
         <div className="items-center flex justify-center">
