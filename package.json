@@ -2,7 +2,8 @@
   "name": "cryptea",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
+  "license": "MIT",
+  "scripts": { 
     "dev": "next dev",
     "serve": "next start",
     "build": "next build",

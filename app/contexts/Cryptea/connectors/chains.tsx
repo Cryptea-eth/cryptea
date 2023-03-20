@@ -216,6 +216,7 @@ export const { chains , provider, webSocketProvider } = configureChains(
   ]
 );
 
+
 export const tokenTrackers: explorer = {
   137: {
     name: "polygonscan",
@@ -307,7 +308,13 @@ export const CryptoList: token[] = [
     label: (
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
-          <CustomImg symbol={"xDAI"} name="xdai" size={20} alt={"Gnosis"} />
+          <CustomImg
+            key={0}
+            symbol={"xDAI"}
+            name="xdai"
+            size={20}
+            alt={"Gnosis"}
+          />
         </div>
         <span className="text-[#121212]">Gnosis Chain (xDAI)</span>
       </div>
@@ -332,6 +339,7 @@ export const CryptoList: token[] = [
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
+            key={2}
             symbol={"matic"}
             name="polygon"
             size={20}
@@ -362,6 +370,7 @@ export const CryptoList: token[] = [
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
+            key={3}
             symbol={"matic"}
             name="polygon"
             size={20}
@@ -393,6 +402,7 @@ export const CryptoList: token[] = [
         <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
             name="Polygon"
+            key={4}
             symbol="ETH"
             size={20}
             alt={"Polygon zkEvm"}
@@ -423,6 +433,7 @@ export const CryptoList: token[] = [
         <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
             name="scroll"
+            key={5}
             symbol="ETH"
             size={20}
             alt={"Scroll Alpha"}
@@ -453,6 +464,7 @@ export const CryptoList: token[] = [
         <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
             name="taiko"
+            key={6}
             symbol="ETH"
             size={20}
             alt={"Taiko (testnet)"}
@@ -482,6 +494,7 @@ export const CryptoList: token[] = [
   //     <div className="items-center flex">
   //       <div className="h-[20px] mr-2 relative w-[20px]">
   //         <CustomImg
+  // key={7}
   //           name="mantle"
   //           symbol="BIT"
   //           size={20}
@@ -511,6 +524,7 @@ export const CryptoList: token[] = [
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
+            key={8}
             name="fantom"
             symbol="FTM"
             size={20}
@@ -540,6 +554,7 @@ export const CryptoList: token[] = [
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
+            key={9}
             name="fantom"
             symbol="FTM"
             size={20}
@@ -572,6 +587,7 @@ export const CryptoList: token[] = [
             name="filecoin"
             symbol="FIL"
             size={20}
+            key={10}
             alt={"Filecoin (Testnet)"}
           />
         </div>
@@ -601,6 +617,7 @@ export const CryptoList: token[] = [
             symbol="CRO"
             name="cronos"
             size={20}
+            key={11}
             alt={"Cronos (Testnet)"}
           />
         </div>
@@ -628,6 +645,7 @@ export const CryptoList: token[] = [
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
+            key={14}
             symbol="aurora"
             name="aurora"
             size={20}
@@ -662,6 +680,7 @@ export const CryptoList: token[] = [
           <CustomImg
             symbol="op"
             name="optimism"
+            key={15}
             size={20}
             alt={"Optimism (Testnet)"}
           />
@@ -691,6 +710,7 @@ export const CryptoList: token[] = [
             symbol="rose"
             name="oasis"
             size={20}
+            key={16}
             alt={"Oasis (Testnet)"}
           />
         </div>

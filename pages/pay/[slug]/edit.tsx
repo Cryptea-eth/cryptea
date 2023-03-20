@@ -83,9 +83,12 @@ const Edit = () => {
 
   useEffect(() => {
     const init = async () => {
-      if (isAuthenticated !== undefined) {
+
+      if (isAuthenticated !== undefined && usern !== undefined) {
+
         if (isAuthenticated) {
-          const linkx: any = await `links/${String(usern).toLowerCase()}`.get(
+
+          const linkx: any = await`links/${String(usern).toLowerCase()}`.get(
             "link",
             true
           );
@@ -405,7 +408,7 @@ const Edit = () => {
                     <IconButton
                       onClick={() => {
                         if (!getRules.length) {
-                          router.push("/dashboard/pages");
+                          router.push(`/pay/${usern}/overview`);
                         } else {
                           setPart("");
                           setViewColor("");
