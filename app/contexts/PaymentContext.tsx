@@ -104,6 +104,8 @@ export const PaymentProvider = ({
     raw: {},
   });
 
+  const [sCallBack, setSCallBack] = useState<(cc?: any) => Promise<any> | any>()
+
   const [paymentData, setPaymentData] = useState<{
     price: number;
     type: "onetime" | "sub";
@@ -443,8 +445,11 @@ export const PaymentProvider = ({
             const { name, data: udata } = JSON.parse(lQ.template_data);
 
             if (!editMode) {
+
               setData(typeof udata == "string" ? JSON.parse(udata) : udata);
+
             } else {
+
               const { data: mdata } = await import(`../templates/${name}/data`);
 
               setData(mdata);
@@ -560,6 +565,7 @@ export const PaymentProvider = ({
             title: lQ.title !== undefined ? lQ.title : userl.username,
             username: userl.username,
             email: userl.email,
+            slug, 
             addresses: userl.address === null ? {'evm' : lQ.address } : userl.address,
             img: userl.img !== undefined ? userl.img : undefined,
             id: lQ.id,
@@ -620,6 +626,8 @@ export const PaymentProvider = ({
     setLoadingText("");
     setTransferFail(false);
     setTinterval("");
+
+    sCallBack?.();
 
     if (typeof userD.linkAmount != "number") {
       setAmount("");
@@ -775,6 +783,8 @@ export const PaymentProvider = ({
           await axios.post(`/api/payments/${token.blocktype}/validate`, post, {
             baseURL: window.origin,
           });
+
+          await sCallBack?.({ link: slug, linkId });
 
           setTransferSuccess(true);
 
@@ -954,6 +964,8 @@ export const PaymentProvider = ({
 
           // console.log(trxx);
 
+          await sCallBack?.({ link: slug, linkId });
+
           const trx = queryBalance.data;
 
           setHash(trx.hash);
@@ -1091,11 +1103,12 @@ export const PaymentProvider = ({
       });
   };
 
-  const begin = (type: "onetime" | "sub", auto: boolean) => {
+  const begin = (type: "onetime" | "sub", auto: boolean, onSuccess?: () => Promise<any> | any) => {
+
     setFailMessage("");
     setTransferFail(false);
     setHash("");
-
+    setSCallBack(onSuccess);
     setPaymentType(type);
 
     if (!subValue[type]) {

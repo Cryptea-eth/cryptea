@@ -231,10 +231,10 @@ const Origin = ({ className }: { className?: string }) => {
                           ? data.image.src
                           : img
                       }
-                      sx={data.image}
+                      sx={data.image.style}
                       alt={usern}
                     >
-                      {data.image.text.length
+                      {data?.image?.text.length
                         ? data.image.text.substr(0, 7)
                         : usern?.charAt(0).toUpperCase()}
                     </Avatar>
@@ -243,7 +243,7 @@ const Origin = ({ className }: { className?: string }) => {
                 <div className="flex flex-row usm:flex-col">
                   <div className="w-3/5 usm:mb-4 usm:w-full px-8">
                     {/* Header */}
-                    <div style={data.header} className="mt-8 header_page">
+                    <div style={data.header.style} className="mt-8 header_page">
                       {Boolean(data.header.text.length)
                         ? data.header.text
                         : `${usern}`}
@@ -306,7 +306,7 @@ const Origin = ({ className }: { className?: string }) => {
 
                     {/* work statement */}
                     <div className="links mt-5 work_state_page">
-                      <div style={data.workState}>
+                      <div style={data.workState.style}>
                         {Boolean(data.workState.text.length)
                           ? data.workState.text
                           : `Support ${usern}'s Work`}
@@ -315,10 +315,10 @@ const Origin = ({ className }: { className?: string }) => {
 
                     {/* intro text */}
                     <div
-                      style={data.introText}
+                      style={data.introText.style}
                       className="mt-8 intro_text_page"
                     >
-                      {Boolean(data.introText.text.length)
+                      {Boolean(data?.introText?.text?.length)
                         ? data.introText.text
                         : `${description || '...'}`}
                     </div>

@@ -14,32 +14,36 @@ data = {
   box: {
     background: "#f8f8f8",
     maxWidth: "360px",
-    width: "360px"
+    width: "360px",
   },
   header: {
-    fontSize: "19px",
-    color: "#353535",
-    textAlign: "center",
     text: "",
-    fontWeight: "bold",
+    style: {
+      fontSize: "19px",
+      color: "#353535",
+      textAlign: "center",
+      fontWeight: "bold",
+    },
   },
   image: {
-    top: "-50px",
-    borderRadius: "50%",
-    background: "#f8f8f8",
-    height: "100px",
-    lineHeight: "85px",
-    right: "-100px",
-    width: "100px",
-    display: "flex",
-    transform: "translateX(-50%)",
     src: "",
     text: "",
-    "&::before": {
-      background: data.colorScheme,
-      height: "90px",
-      width: "90px",
+    style: {
+      top: "-50px",
       borderRadius: "50%",
+      background: "#f8f8f8",
+      height: "100px",
+      lineHeight: "85px",
+      right: "-100px",
+      width: "100px",
+      display: "flex",
+      transform: "translateX(-50%)",
+      "&::before": {
+        background: data.colorScheme,
+        height: "90px",
+        width: "90px",
+        borderRadius: "50%",
+      },
     },
   },
   ...data,
@@ -106,9 +110,12 @@ const rules: { [index: string]: any } = {
       } else {
 
         return {
-          ...data.image,
-          width: data.image.width.substring(0, data.image.width.length - 2),
-          borderColor: data.image.background
+          ...data.image.style,
+          width: data.image.style.width.substring(
+            0,
+            data.image.style.width.length - 2
+          ),
+          borderColor: data.image.style.background,
         };
       }
     },
@@ -126,23 +133,23 @@ const rules: { [index: string]: any } = {
   header: {
     hide: (val: boolean) => {
       if (val !== undefined) {
-        data.header = { ...data.header, display: val ? "block" : "none" };
+        data.header = { ...data.header, style: { ...data.header.style, display: val ? "block" : "none"} };
       } else {
-        return data.header.display;
+        return data.header.style.display;
       }
     },
     colorChange: (col?: string) => {
       if (col !== undefined) {
-        data.header = { ...data.header, color: col };
+        data.header = { ...data.header, style: { ...data.header.style, color: col }};
       } else {
-        return data.header.color;
+        return data.header.style.color;
       }
     },
     sortAlignment: (textAlign?: string) => {
       if (textAlign !== undefined) {
-        data.header = { ...data.header, textAlign };
+        data.header = { ...data.header, style:{...data.header.style, textAlign } };
       } else {
-        return data.header.textAlign;
+        return data.header.style.textAlign;
       }
     },
     textChange: (text?: string) => {
