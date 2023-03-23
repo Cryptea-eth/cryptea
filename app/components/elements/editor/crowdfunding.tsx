@@ -69,14 +69,17 @@ const Crowd = ({
     }
 
     const {
-      data: { date: date2 },
+      data: { date: date2, expire },
     } = await axios.get("/api/droplets/init", {
-      baseURL: window.origin,
+        params: {
+            time: date,
+        },
+        baseURL: window.origin,
     });
 
     const xx = {
       total: Number(amount),
-      time: Number(date),
+      expire,
       start: date2,
     };
 
@@ -220,12 +223,9 @@ const Crowd = ({
 
             {!isLoading && (
               <Button
-                sx={{
-                  backgroundColor: `#F57059 !important`,
-                  color: `#fff !important`,
-                }}
+                
                 onClick={submit}
-                className="!py-2 !min-w-[130px] !font-[600] !px-3 !capitalize !flex !items-center !border !border-solid !border-[none] !transition-all !delay-500 !rounded-[0]"
+                className="!py-3 !font-bold !px-6 !normal-case !flex !items-center !text-white hover:!bg-[#f57059] !bg-[#f57059] !m-auto !rounded-lg"
               >
                 Save Changes
               </Button>

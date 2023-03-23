@@ -68,6 +68,8 @@ export default function handler(
 
                     const nData = JSON.stringify({name, data: udata});
 
+                    console.log(nData, 'joelll')
+
                     await axios.patch(`/link/${link}/update`, {
                         template_data: nData
                     }, {

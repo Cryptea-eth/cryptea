@@ -112,9 +112,9 @@ const Edit = () => {
 
             setRules(rules);
 
-            setData('carbon');
+            setData(name);
 
-            getData(typeof edata == "string" ? JSON.parse(edata) : edata);
+            getData(typeof udata == "string" ? JSON.parse(udata) : udata);
 
             const edx: string[] = [];
 

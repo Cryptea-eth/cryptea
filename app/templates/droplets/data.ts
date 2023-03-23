@@ -98,10 +98,13 @@ data = {
   config: {
     // total to be raised
     total: 1000,
+    
     // total number of backers
     backers: 0,
+
     // total number of days
-    time: 1000 * 60 * 60 * 24,
+    expire: new Date().getTime() + (1000 * 60 * 60 * 24),
+
     // amount raised
     raised: 0,
 
@@ -169,16 +172,23 @@ const rules: { [index: string]: any } = {
     imgMainChange: (mainD?: { src?: string; display?: boolean }) => {
       if (mainD !== undefined) {
         if (mainD.src !== undefined) {
+            
           data.board = {
             ...data.board,
             backgroundImage: mainD.src,
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: 'transparent',
           };
+        
+        
         }
 
         if (mainD.display !== undefined) {
           data.board = {
             ...data.board,
             backgroundImage: data.config.image,
+            backgroundRepeat: 'repeat',
+            backgroundColor: `${data.colorScheme}59`,
           };
         }
       } else {
