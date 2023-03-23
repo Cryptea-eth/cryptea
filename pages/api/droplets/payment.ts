@@ -16,18 +16,19 @@ export default function handler(
 
     if (req.method == 'POST') {
 
-        const { date, link, linkid } = req.body;
+        const { date, link, linkId } = req.body;
 
         (async () => {
             
             try {
 
-                const { data: { data: subData } } = await axios.get(`/payments/${linkid}/link`, {
+                const { data: { data: subData } } = await axios.get(`/payments/${linkId}/link`, {
                     baseURL: "https://ab.cryptea.me",
                     headers: {
                         Authorization: process.env.APP_KEY || "",
                     }
                 });
+
 
                if (subData.length) {
 
@@ -41,7 +42,9 @@ export default function handler(
 
                         if (mdate >= date) {
 
-                            total += amount;
+
+                            total += Number(amount);
+
 
                             if ( !backers.includes(address) ) {
 
@@ -52,13 +55,17 @@ export default function handler(
                         }
                     });
 
+
                     const { data: linkData } = await axios.get(`/link/${link}`, {
                         baseURL: "https://ab.cryptea.me",
                     });    
                    
+
+
                     const { name, data: udata } = JSON.parse(
-                      linkData?.template_data || '{ "name": "", "data": "" }'
+                      linkData?.data?.link?.template_data || '{ "name": "", "data": "" }'
                     );
+
 
                     udata.config = {
                         ...udata.config,
@@ -68,9 +75,7 @@ export default function handler(
 
                     const nData = JSON.stringify({name, data: udata});
 
-                    console.log(nData, 'joelll')
-
-                    await axios.patch(`/link/${link}/update`, {
+                    await axios.patch(`/link/${linkId}/update`, {
                         template_data: nData
                     }, {
                         baseURL: "https://ab.cryptea.me",

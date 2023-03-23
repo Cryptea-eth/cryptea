@@ -61,6 +61,7 @@ const Droplets = ({ className }: { className?: string }) => {
     token,
     setToken,
     data,
+    setData,
     isLoading,
     setIsLoading,
     pemail,
@@ -229,19 +230,18 @@ const Droplets = ({ className }: { className?: string }) => {
     });
 
     const configCheck = async () => {
+
       const { data: linkData } = await axios.get(`/link/${String(slug)}`, {
         baseURL: "https://ab.cryptea.me",
       });
 
       const { name, data: udata } = JSON.parse(
-        linkData?.template_data || '{ "name": "", "data": "{}" }'
+        linkData?.data?.link?.template_data || '{ "name": "", "data": "{}" }'
       );
 
-      data.config = {
-        ...(udata?.config || {}),
-      };
+      setData?.(udata);
 
-      setTimeout(configCheck, 6000);
+      setTimeout(configCheck, 3000);
     };
 
     if (!once.current && slug !== undefined) {
@@ -300,6 +300,8 @@ const Droplets = ({ className }: { className?: string }) => {
       await axios.post('/api/droplets/payment', {
         date: data.config.start,
         ...action
+      }, {
+        baseURL: window.origin
       });
     }
   };
@@ -1183,7 +1185,8 @@ const Droplets = ({ className }: { className?: string }) => {
                                   onSuccess
                                 )
                               }
-                              className="!py-2 !min-w-[130px] !font-[600] !px-3 !capitalize !flex !items-center !text-white !bg-[#3cb4ac] !border !border-solid !border-[none] !transition-all !delay-500 !rounded-[0]"
+                              className="!py-2 !min-w-[130px] !px-3 !capitalize !flex !items-center !text-white !bg-[#3cb4ac] !border !border-solid !border-[none] !transition-all !delay-500 !rounded-[0]"
+
                             >
                               Pay Manually
                             </Button>
@@ -1202,7 +1205,7 @@ const Droplets = ({ className }: { className?: string }) => {
                                   onSuccess
                                 )
                               }
-                              className="!py-2 !min-w-[130px] !font-[600] !px-3 !capitalize !flex !items-center !border !border-solid !border-[none] !transition-all !delay-500 !rounded-[0]"
+                              className="!py-2 !min-w-[130px] !px-3 !capitalize !flex !items-center !border !border-solid !border-[none] !transition-all !delay-500 !rounded-[0]"
                             >
                               Pay
                             </Button>
@@ -1339,7 +1342,9 @@ const Droplets = ({ className }: { className?: string }) => {
                       <div
                         style={{
                           width: `${
-                           (data.config.raised <= data.config.total) ? (data.config.raised / data.config.total) * 100 : 100
+                            data.config.raised <= data.config.total
+                              ? (data.config.raised / data.config.total) * 100
+                              : 100
                           }%`,
                           backgroundColor: data.colorScheme,
                         }}
@@ -1367,7 +1372,7 @@ const Droplets = ({ className }: { className?: string }) => {
                         } !important`,
                         color: `${data.white} !important`,
                       }}
-                      onClick={() => {
+                      onClick={async () => {
                         if (!expired) {
                           openModal();
                         }
