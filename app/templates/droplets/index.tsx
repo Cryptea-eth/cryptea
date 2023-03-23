@@ -52,7 +52,8 @@ const Droplets = ({ className }: { className?: string }) => {
   const onceCheck = useRef<boolean>(false);
 
   const timer = useRef<string>('');
-  
+
+  const [expired, setExpired] = useState<boolean>(false);
 
   const {
     userD,
@@ -113,11 +114,15 @@ const Droplets = ({ className }: { className?: string }) => {
 
   let tx: any;
 
-  const cal = () => {
+  const cal = async () => {
 
     const { expire } = data.config;
 
-    const milliseconds = expire - new Date().getTime();
+    const { data: { time: currentTime } } = await axios.get('/api/time', {
+      baseURL: window.origin
+    });
+
+    const milliseconds = expire - currentTime;
 
     const seconds = Math.round((milliseconds / 1000) % 60);
     const minutes = Math.round((milliseconds / (1000 * 60)) % 60);
@@ -149,7 +154,14 @@ const Droplets = ({ className }: { className?: string }) => {
 
       clearTimeout(tx);
 
-      tx = setTimeout(cal, 1_000);
+      tx = setTimeout(cal, 3_000);
+    }else{
+      clearTimeout(tx);
+
+      timer.current = `Time's up`;
+
+      setExpired(true);
+
     }
   };
 
@@ -1212,14 +1224,20 @@ const Droplets = ({ className }: { className?: string }) => {
                 </p>
 
                 <Button
-                  onClick={openModal}
+                  onClick={() => {
+                    if (!expired) {
+                      openModal();
+                    }
+                  }}
                   sx={{
-                    backgroundColor: `${data.colorScheme} !important`,
+                    backgroundColor: `${
+                      !expired ? "#777" : data.colorScheme
+                    } !important`,
                     color: `${data.white} !important`,
                   }}
                   className="!normal-case !cursor-pointer !text-[16px] !transition-all !delay-300 !font-bold !py-[1rem] !border-solid !px-[1rem] !rounded-[0px] !min-w-fit !outline-none"
                 >
-                  Back This Project
+                  {!expired ? "Campaign Expired" : "Back This Project"}
                 </Button>
               </div>
 
@@ -1321,11 +1339,11 @@ const Droplets = ({ className }: { className?: string }) => {
                       <div
                         style={{
                           width: `${
-                            (data.config.raised / data.config.total) * 100
+                           (data.config.raised <= data.config.total) ? (data.config.raised / data.config.total) * 100 : 100
                           }%`,
                           backgroundColor: data.colorScheme,
                         }}
-                        className="progressBar absolute h-full rounded-[99px]"
+                        className="progressBar transition-all delay-300 absolute h-full rounded-[99px]"
                       ></div>
                     </div>
                   </div>
@@ -1344,13 +1362,19 @@ const Droplets = ({ className }: { className?: string }) => {
                   <div className="flex items-center tsm:justify-center tsm:w-full">
                     <Button
                       sx={{
-                        backgroundColor: `${data.colorScheme} !important`,
+                        backgroundColor: `${
+                          expired ? "#777" : data.colorScheme
+                        } !important`,
                         color: `${data.white} !important`,
                       }}
-                      onClick={openModal}
+                      onClick={() => {
+                        if (!expired) {
+                          openModal();
+                        }
+                      }}
                       className="!text-white !normal-case !cursor-pointer !text-[16px] !transition-all !delay-300 !font-bold !py-[1rem]  !border-b-[5px] !border-solid !px-[2.6rem] !rounded-[0px] !outline-none"
                     >
-                      Back This Project
+                      {expired ? "Campaign Expired" : "Back This Project"}
                     </Button>
                   </div>
                 </div>
