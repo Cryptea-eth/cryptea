@@ -1185,7 +1185,7 @@ const Droplets = ({ className }: { className?: string }) => {
 
               <div
                 style={data.board0}
-                className="max-w-[730px] minMain mx-auto my-0 w-[90%] relative z-[10] tmd:w-full mb-[6rem] shadow-md"
+                className="max-w-[730px] minMain mx-auto my-0 w-[90%] relative z-[10] tmd:w-full mb-[6rem] tlg:shadow-md"
               >
                 <div className="w-full rounded-[.27rem] p-[3rem] items-center  flex justify-center flex-col bg-white pt-0 2usmm:px-[1.5rem]">
                   <div

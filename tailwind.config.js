@@ -18,7 +18,7 @@ module.exports = {
       "4zsm": { min: "950px" },
       "42sm": {min: "800px"},
       "3sm": { max: "1025px" },
-      "tlg": {max: "1250px"},
+      "tlg": {max: "1450px"},
       "2ism": { min: "975px" },
       "2sm": { max: "975px" },
       usm: { max: "940px" },
