@@ -34,7 +34,9 @@ data = {
     text: "",
     style: {
       width: 56,
-      display: "block",
+      display: "flex",
+      alignItems: 'center',
+      justifyContent: 'center',
       bgcolor: "#3cb4ac",
       height: 56,
       color: data.white,
@@ -177,6 +179,7 @@ const rules: { [index: string]: any } = {
             ...data.board,
             backgroundImage: mainD.src,
             backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
             backgroundColor: 'transparent',
           };
         
@@ -186,21 +189,21 @@ const rules: { [index: string]: any } = {
         if (mainD.display !== undefined) {
           data.board = {
             ...data.board,
-            backgroundImage: data.config.image,
-            backgroundRepeat: 'repeat',
+            backgroundImage: 'none',
             backgroundColor: `${data.colorScheme}59`,
           };
         }
       } else {
         return {
           src: data.board.backgroundImage,
-          display: data.board.backgroundImage != data.config.image,
+          display: data.board.backgroundImage != 'none' ? true : false,
         };
       }
     },
     bgOBColorChange: (newd?: {}) => {
       if (newd !== undefined) {
         data.board = { ...data.board, ...newd };
+        
       } else {
         return data.board.backgroundColor;
       }
