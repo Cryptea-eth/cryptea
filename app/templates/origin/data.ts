@@ -40,32 +40,39 @@ data = {
     borderWidth: "4px",
   },
   image: {
-    bgcolor: data.colorScheme,
-    width: 140,
-    height: 140,
-    src: '',
-    text: '',
+    src: "",
+    text: "",
+    style: {
+      bgcolor: data.colorScheme,
+      width: 140,
+      height: 140,
+    }
   },
   header: {
-    fontSize: 36,
-    display: "block",
-    backgroundColor: "#ffffff0",
-    lineHeight: "40px",
-    textAlign: "",
-    fontWeight: 600,
-    color: "#363636",
     text: "",
+    style: {
+      fontSize: 36,
+      display: "block",
+      backgroundColor: "#ffffff0",
+      lineHeight: "40px",
+      textAlign: "",
+      fontWeight: 600,
+      color: "#363636",
+    },
   },
   introText: {
-    color: "rgb(131, 131, 131)",
-    fontSize: 18,
-    lineHeight: "28px",
     text: "",
-    textAlign: "left",
-    display: "block",
-    backgroundColor: "#ffffff0",
+    style: {
+      color: "rgb(131, 131, 131)",
+      fontSize: 18,
+      lineHeight: "28px",
+      textAlign: "left",
+      display: "block",
+      backgroundColor: "#ffffff0",
+    },
   },
   workState: {
+    style: {
     backgroundColor:
       data.colorScheme.length > 7
         ? data.colorScheme.substring(0, 7) + "23"
@@ -76,6 +83,7 @@ data = {
     fontWeight: "bold",
     padding: "16px",
     textAlign: "left",
+    },
     text: "",
   },
   error: {
@@ -101,15 +109,12 @@ data = {
     },
     backgroundColor: data.colorScheme,
   },
-  ...data
+  ...data,
 };
 
 export const getData = async (linkData: object) => {
-  
-  data = {...data, ...linkData };
-
+  data = { ...data, ...linkData };
 };
-
 
 const rules: { [index: string]: any } = {
   body: {
@@ -118,11 +123,15 @@ const rules: { [index: string]: any } = {
         data.colorScheme = color;
         data.linkImage = { ...data.linkImage, borderColor: color };
         data.image = { ...data.image, bgcolor: color };
+
         data.workState = {
           ...data.workState,
-          backgroundColor:
-            color.length > 7 ? color.substring(0, 7) + "23" : color + "23",
-          color,
+          style: {
+            ...data.workState.style,
+            backgroundColor:
+              color.length > 7 ? color.substring(0, 7) + "23" : color + "23",
+            color,
+          },
         };
       } else {
         return data.colorScheme;
@@ -145,13 +154,21 @@ const rules: { [index: string]: any } = {
         };
         data.image = {
           ...data.image,
-          width: newD.size,
-          height: newD.size,
+          style: {
+             ...data.image.style,
+             width: newD.size,
+             height: newD.size,
+          },
           text: newD?.text,
           src: newD?.src,
         };
       } else {
-        return { ...data.image, ...data.linkImage };
+        return {
+          ...data.image.style,
+          text: data.image.text,
+          src: data.image.src,
+          ...data.linkImage,
+        };
       }
     },
     bgBColorChange: (layer: number, newd?: {}) => {
@@ -193,30 +210,30 @@ const rules: { [index: string]: any } = {
     },
     hide: (val: boolean) => {
       if (val !== undefined) {
-        data.header = { ...data.header, display: val ? "block" : "none" };
+        data.header = { ...data.header, style: { ...data.header.style, display: val ? "block" : "none" }};
       } else {
-        return data.header.display;
+        return data.header.style.display;
       }
     },
     colorChange: (col?: string) => {
       if (col !== undefined) {
-        data.header = { ...data.header, color: col };
+        data.header = { ...data.header, style: { ...data.header.style, color: col } };
       } else {
-        return data.header.color;
+        return data.header.style.color;
       }
     },
     BgColorChange: (col?: string) => {
       if (col !== undefined) {
-        data.header = { ...data.header, backgroundColor: col };
+        data.header = { ...data.header, style:{ ...data.header.style, backgroundColor: col } };
       } else {
-        return data.header.backgroundColor;
+        return data.header.style.backgroundColor;
       }
     },
     sortAlignment: (textAlign?: string) => {
       if (textAlign !== undefined) {
-        data.header = { ...data.header, textAlign };
+        data.header = { ...data.header, style: { ...data.header.style, textAlign } };
       } else {
-        return data.header.textAlign;
+        return data.header.style.textAlign;
       }
     },
   },
@@ -232,32 +249,40 @@ const rules: { [index: string]: any } = {
     },
     hide: (val: boolean) => {
       if (val !== undefined) {
-        data.introText = { ...data.introText, display: val ? "block" : "none" };
+        data.introText = {
+          ...data.introText,
+          style: { ...data.introText.style, display: val ? "block" : "none" },
+        };
       } else {
-        return data.introText.display;
+        return data.introText.style.display;
       }
     },
     colorChange: (col?: string) => {
       if (col !== undefined) {
-        data.introText = { ...data.introText, color: col };
+        data.introText = { ...data.introText,
+          style: { ...data.introText.style, color: col } };
       } else {
-        return data.introText.color;
+        return data.introText.style.color;
       }
     },
     BgColorChange: (col?: string) => {
       if (col !== undefined) {
-        data.introText = { ...data.introText, backgroundColor: col };
+        data.introText = { ...data.introText,
+          style: { ...data.introText.style, backgroundColor: col } };
       } else {
-        return data.introText.backgroundColor;
+        return data.introText.style.backgroundColor;
       }
     },
     spacing: true,
     textAdd: true,
     sortAlignment: (textAlign?: string) => {
       if (textAlign !== undefined) {
-        data.introText = { ...data.introText, textAlign };
+        data.introText = { ...data.introText,
+          style: { ...data.introText.style,
+          textAlign }
+        };
       } else {
-        return data.introText.textAlign;
+        return data.introText.style.textAlign;
       }
     },
   },
@@ -272,7 +297,8 @@ const rules: { [index: string]: any } = {
     socialImg: true,
     BgColorChange: (col?: string) => {
       if (col !== undefined) {
-        data.socials = { ...data.socials, backgroundColor: col };
+        data.socials = { ...data.socials,
+           backgroundColor: col };
       } else {
         return data.socials.backgroundColor;
       }
@@ -320,6 +346,5 @@ const rules: { [index: string]: any } = {
   },
   change_template: {},
 };
-
 
 export { data, rules };

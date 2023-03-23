@@ -8,42 +8,46 @@ const cache: { [index: string]: string } = {};
 const CustomImg = ({
   alt,
   symbol,
+  key,
   name,
   size = 40
 }: {
   alt: string;
   size?: number;
+  key: number;
   name: string;
   symbol: string;
 }) => {
 
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    if (cache[symbol] === undefined) {
+  const mName = name.toLowerCase();
 
+  useEffect(() => {
+    if (cache[mName] === undefined) {
       axios
-        .get(`/api/cryptoimg/${name}`, {
+        .get(`/api/cryptoimg/${mName}`, {
           baseURL: window.origin,
         })
         .then((main) => {
           if (Boolean(main.data)) {
-            cache[symbol] = main.data;
+            cache[mName] = main.data;
 
             setLoading(false);
-            
           }
         });
     }
-  }, [symbol, name]);
+  }, [symbol, mName]);
 
   
   return (
     <>
-      {loading && !Boolean(cache[symbol]) ? (
+      {loading && !Boolean(cache[mName]) ? (
         <Skeleton variant={"circular"} sx={{ width: size, height: size }} />
       ) : (
-        <Image layout={"fill"} alt={alt} src={cache[symbol]} />
+       
+          <Image layout={"fill"} alt={alt} src={cache[mName]} />
+    
       )}
     </>
   );

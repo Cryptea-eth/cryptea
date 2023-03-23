@@ -152,7 +152,7 @@ export interface PaymentContext {
   setData?: React.Dispatch<any>;
   isLoading?: boolean;
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
-  begin?: (type: "onetime" | "sub", auto: boolean) => void;
+  begin?: (type: "onetime" | "sub", auto: boolean, onSuccess?: () => Promise<any> | any) => void;
   reset?: () => void;
   pemail?: string[];
   setPemail?: React.Dispatch<React.SetStateAction<string[]>>;

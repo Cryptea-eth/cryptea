@@ -12,22 +12,32 @@ export default function handler(
     const crypto = String(req.query["symbol"]).toLowerCase();    
 
       (async () => {
+      
         
+
+        if (crypto == "scroll" || crypto == "taiko" || crypto == "mantle") {
+          
+          res.status(200).json((generic as any)[crypto].icon);
+
+          return;
+        }
+
+        
+
         try {        
 
-          if (crypto == "scroll" || crypto == "taiko" || crypto == "mantle") {
-               res.status(200).json((generic as any)[crypto].icon);
-          }
-
+      
           const rs = await axios.get(`https://ab.cryptea.me/crypto/img/${crypto}`, { headers: {
           Authorization: process.env.APP_KEY || "",
           }});
 
           const mainRs = rs.data.link;
 
-          res.status(200).json(mainRs);
+           res.status(200).json(mainRs);
 
         }catch (err) {
+
+          console.log(err)
 
             res.status(200).json(generic['GENERIC'].icon)
         }

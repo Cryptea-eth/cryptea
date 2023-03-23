@@ -337,7 +337,7 @@ useEffect(() => {
                   <div
                     onClick={() => {
                       if (!getRules.length) {
-                        window.location.href = "/dashboard/pages";
+                        window.location.href = `/pay/${usern}/overview`;
                       } else {
                         setPart("");
                         setViewColor("");

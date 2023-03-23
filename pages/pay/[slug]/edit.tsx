@@ -32,6 +32,8 @@ import tmp from "../../../styles/temp.module.css";
 import { get_request } from "../../../app/contexts/Cryptea/requests";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 import { PaymentProvider } from "../../../app/contexts/PaymentContext";
+import TextChangeMul from "../../../app/components/elements/editor/textChangeMul";
+import Crowd from "../../../app/components/elements/editor/crowdfunding";
 
 const Edit = () => {
   const { isAuthenticated, validator, signer } = useCryptea();
@@ -82,15 +84,20 @@ const Edit = () => {
   let [editable, setEditable] = useState<string[]>([]);
 
   useEffect(() => {
+
     const init = async () => {
-      if (isAuthenticated !== undefined) {
+
+      if (isAuthenticated !== undefined && usern !== undefined) {
+
         if (isAuthenticated) {
+
           const linkx: any = await `links/${String(usern).toLowerCase()}`.get(
             "link",
             true
           );
 
           const temx: any = await "templates".get("data", true);
+
 
           setTemplates(temx);
 
@@ -99,15 +106,15 @@ const Edit = () => {
           if (linkx?.template_data !== undefined) {
             const { name, data: udata } = JSON.parse(linkx?.template_data);
 
-            const { rules, getData } = await import(
+            const { rules, getData, data: edata } = await import(
               `../../../app/templates/${name}/data`
             );
 
             setRules(rules);
 
-            setData(name);
+            setData('carbon');
 
-            getData(typeof udata == "string" ? JSON.parse(udata) : udata);
+            getData(typeof edata == "string" ? JSON.parse(edata) : edata);
 
             const edx: string[] = [];
 
@@ -130,6 +137,7 @@ const Edit = () => {
 
             setLoader(false);
           }
+
         } else {
           router.push("/auth");
         }
@@ -142,9 +150,11 @@ const Edit = () => {
   let times: any;
 
   const saveSets = async () => {
+
     clearTimeout(times);
 
     try {
+      
       saveChanges({
         ...isSaving,
         one: true,
@@ -167,6 +177,7 @@ const Edit = () => {
           two: false,
         });
       }, 2000);
+
     } catch (err) {
       const error = err as Error;
 
@@ -188,6 +199,8 @@ const Edit = () => {
   const [viewColor, setViewColor] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [update, updateMe] = useState<any>("");
+
+  const [crowdModal, setCrowdModal] = useState<boolean>(false);
 
   const [isUploading, setIsUploading] = useState<number>(0);
 
@@ -247,8 +260,9 @@ const Edit = () => {
     setLoader(false);
   };
 
+
   const imgCrop = (
-    event: React.SyntheticEvent & { target: HTMLInputElement }
+    event: React.SyntheticEvent & { target: HTMLInputElement },
   ) => {
     setIsUploading(0);
     setViewColor("imgMChange");
@@ -274,7 +288,7 @@ const Edit = () => {
     }
   };
 
-  const beginUpload = async (files: File[], type: string) => {
+  const beginUpload = async (files: File[], type: string, exec: string) => {
     const { size: totalSize } = files[0];
 
     setIsUploading(1);
@@ -283,20 +297,28 @@ const Edit = () => {
       setError("");
 
       const src = `https://${cid}.ipfs.dweb.link/${usern}.${type}`;
-
-      updateMe(src);
+      
 
       const dataSent = rules[Boolean(getRules.length) ? getRules : "body"];
 
-      const { display, width: size, borderColor } = dataSent.imgChange();
 
-      dataSent.imgChange({
-        borderColor,
-        size,
-        text: "",
-        display: display != "none",
-        src,
-      });
+      if (dataSent?.imgChange && exec == "imgChange") {
+
+        const { display, width: size, borderColor } = dataSent.imgChange();
+
+        dataSent.imgChange({
+          borderColor,
+          size,
+          text: "",
+          display: display != "none",
+          src,
+        });
+      }
+
+      if (dataSent?.imgMainChange && exec == "imgMainChange") dataSent.imgMainChange({src: `url('${src}')`});
+
+      updateMe(src);
+
     };
 
     let uploaded: number = 0;
@@ -321,7 +343,7 @@ const Edit = () => {
     return client.put(files, { onRootCidReady, onStoredChunk });
   };
 
-  const cropImg = () => {
+  const cropImg = (exec: string) => {
     const img = document.querySelector(".img_custom") as HTMLImageElement;
 
     try {
@@ -349,7 +371,7 @@ const Edit = () => {
         (blob) => {
           if (blob !== null && ext !== undefined) {
             const files = [new File([blob], `${usern}.${ext[1]}`)];
-            beginUpload(files, ext[1]);
+            beginUpload(files, ext[1], exec);
           }
         },
         type,
@@ -360,6 +382,7 @@ const Edit = () => {
       setError(err?.message);
     }
   };
+
 
   return (
     <div>
@@ -397,6 +420,9 @@ const Edit = () => {
             </PaymentProvider>
           )}
 
+          
+          {crowdModal && <Crowd crowdModal={crowdModal} update={updateMe} rules={rules} save={saveSets} setCrowdModal={setCrowdModal} />}
+
           {
             <div className="flex relative z-[130] left-[calc(100%-257px)] right-0 flex-row">
               <div className="max-w-[257px] w-[257px] h-screen bg-[white]">
@@ -405,7 +431,7 @@ const Edit = () => {
                     <IconButton
                       onClick={() => {
                         if (!getRules.length) {
-                          router.push("/dashboard/pages");
+                          router.push(`/pay/${usern}/overview`);
                         } else {
                           setPart("");
                           setViewColor("");
@@ -632,6 +658,76 @@ const Edit = () => {
                         </div>
                       )}
 
+                      {Boolean(rules[Boolean(getRules.length) ? getRules : "body"]
+                          .bgOBColorChange
+                      ) && (
+                        <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                            <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                              Background Color
+                            </span>
+
+                            <div className="flex relative cursor-pointer items-center">
+                              {viewColor == "backgroundbbColor" && (
+                                <Color
+                                  color={rules[
+                                    Boolean(getRules.length) ? getRules : "body"
+                                  ].bgOBColorChange()}
+
+                                  className="right-[120%] !absolute"
+                                  onChange={(color) => {
+                                    updateMe(color);
+
+                                    rules[
+                                      Boolean(getRules.length)
+                                        ? getRules
+                                        : "body"
+                                    ].bgOBColorChange({
+                                      backgroundColor: color.hexa,
+                                    });
+                                  }}
+                                />
+                              )}
+                              <div
+                                onClick={(e: any) => {
+                                  if (viewColor == "backgroundbbColor") {
+                                    setViewColor("");
+                                  } else {
+                                    setViewColor("backgroundbbColor");
+                                  }
+                                }}
+                                className="border w-fit h-fit p-[3px] border-solid mr-[3px] border-[#bbbbbb24]"
+                              >
+                                <div
+                                  style={{
+                                    backgroundColor:
+                                      rules[
+                                        Boolean(getRules.length)
+                                          ? getRules
+                                          : "body"
+                                      ].bgOBColorChange(),
+                                  }}
+                                  className="h-[22px] w-[22px]"
+                                ></div>
+                              </div>
+
+                              <div
+                                onClick={(e: any) => {
+                                  if (viewColor == "backgroundbbColor") {
+                                    setViewColor("");
+                                  } else {
+                                    setViewColor("backgroundbbColor");
+                                  }
+                                }}
+                                className="text-[#9d9d9d] min-w-[100px] p-2 font-bold"
+                              >
+                                {rules[
+                                  Boolean(getRules.length) ? getRules : "body"
+                                ].bgOBColorChange()}
+                              </div>
+                            </div>
+                          </div>
+                          )}
+
                       {Boolean(
                         rules[Boolean(getRules.length) ? getRules : "body"]
                           .bgBColorChange
@@ -768,6 +864,11 @@ const Edit = () => {
                           </div>
                         </>
                       )}
+
+                      {Boolean(
+                        rules[Boolean(getRules.length) ? getRules : "body"]
+                          .textChangeMul
+                      ) && (<TextChangeMul update={updateMe} rules={rules} getRules={getRules} />)}
 
                       {Boolean(
                         rules[Boolean(getRules.length) ? getRules : "body"]
@@ -926,6 +1027,188 @@ const Edit = () => {
 
                       {Boolean(
                         rules[Boolean(getRules.length) ? getRules : "body"]
+                          .imgMainChange
+                      ) && (
+                        <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+                          <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
+                            Image
+                          </span>
+
+                          <div className="w-full flex flex-col">
+                            <div className="w-auto max-h-[200px] flex justify-between items-center">
+                              <div className="flex items-center">
+                                {viewColor == "imgMChange" && (
+                                  <div className="right-[105%] px-[5px] pt-[5px] pb-2 rounded-[4px] absolute w-[410px] max-h-[450px] bg-[#e5e5e5c7] flex flex-col justify-between items-center">
+                                    {isUploading > 0 && (
+                                      <Box className="text-[#3a3a3a] w-full">
+                                        <LinearProgress
+                                          variant="determinate"
+                                          className="w-full"
+                                          color="inherit"
+                                          value={isUploading}
+                                        />
+                                      </Box>
+                                    )}
+                                    <ReactCrop
+                                      minWidth={20}
+                                      minHeight={20}
+                                      circularCrop={false}
+                                      crop={crop}
+                                      aspect={1}
+                                      onChange={(c) => {
+                                        setCrop(c);
+                                      }}
+                                    >
+                                      <img
+                                        className="img_custom w-[400px] m-auto max-w-[400px]"
+                                        alt="crop me"
+                                        src={simg ? simg : ""}
+                                      />
+                                    </ReactCrop>
+
+                                    <div className="flex mt-2 justify-between">
+                                      {Boolean(isUploading) ? (
+                                        <Button
+                                          className={
+                                            "!flex !items-center !bg-[#979797] !w-fit !mr-2 !py-[3px] !font-bold !text-[13px] !capitalize"
+                                          }
+                                        >
+                                          <div className="mr-3 h-[20px] text-[#fff]">
+                                            <CircularProgress
+                                              color={"inherit"}
+                                              className="!w-[20px] !h-[20px]"
+                                            />
+                                          </div>
+                                          <span className="text-white">
+                                            updating...
+                                          </span>
+                                        </Button>
+                                      ) : (
+                                        <Button
+                                          variant="contained"
+                                          className="!bg-[#979797] !w-fit !mr-2 !py-[3px] !font-bold !text-[13px] !capitalize"
+                                          style={{
+                                            fontFamily: "inherit",
+                                          }}
+                                          onClick={() =>
+                                            cropImg("imgMainChange")
+                                          }
+                                        >
+                                          Update Image
+                                        </Button>
+                                      )}
+
+                                      <Button
+                                        onClick={() => setViewColor("")}
+                                        variant="contained"
+                                        className="!bg-[#979797] !w-[50px] !py-[3px] !font-bold !text-[13px] !capitalize"
+                                        style={{
+                                          fontFamily: "inherit",
+                                        }}
+                                      >
+                                        Close
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                                <div className="bg-[#979797] h-fit w-fit">
+                                  <img
+                                    alt=""
+                                    width="30"
+                                    src={
+                                      rules[
+                                        Boolean(getRules.length)
+                                          ? getRules
+                                          : "body"
+                                      ].imgMainChange().src.length
+                                        ? rules[
+                                            Boolean(getRules.length)
+                                              ? getRules
+                                              : "body"
+                                          ].imgMainChange().src
+                                        : document
+                                            .querySelector(".imgx_page img")
+                                            ?.getAttribute("src")
+                                    }
+                                  />
+                                </div>
+
+                                <span className="text-[#979797] ml-[10px] font-bold text-[13px]">
+                                  Link Image
+                                </span>
+                              </div>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={imgCrop}
+                                className="!hidden updatelink"
+                              />
+
+                              <Button
+                                sx={{
+                                  transition: "all .5s",
+                                  textTransform: "capitalize",
+                                  fontSize: "13px",
+                                  lineHeight: "15px",
+                                  backgroundColor: "#979797 !important",
+                                  padding: "4px 8px",
+                                  color: "#fff",
+                                  borderRadius: "3px !important",
+                                  fontWeight: "semibold",
+                                  ":hover": {
+                                    backgroundColor: "#818181 !importan",
+                                  },
+                                }}
+                                onClick={(eee: any) => {
+                                  const elem = eee.target
+                                    ?.previousSibling as HTMLInputElement;
+
+                                  elem.click();
+                                }}
+                              >
+                                update
+                              </Button>
+                            </div>
+                          </div>
+
+                          {rules[Boolean(getRules.length) ? getRules : "body"].imgMainChange?.().display && <div className="flex mt-[9px] w-full justify-between items-center">
+                            <span className=  "text-[#979797] mr-[11px] font-bold text-[13px]">
+                              Remove Image?
+                            </span>
+
+                             <Button
+                                sx={{
+                                  transition: "all .5s",
+                                  textTransform: "capitalize",
+                                  fontSize: "13px",
+                                  lineHeight: "15px",
+                                  backgroundColor: "#979797 !important",
+                                  padding: "4px 8px",
+                                  color: "#fff",
+                                  borderRadius: "3px !important",
+                                  fontWeight: "semibold",
+                                  ":hover": {
+                                    backgroundColor: "#818181 !importan",
+                                  },
+                                }}
+                                onClick={() => {
+                                  rules[
+                                        Boolean(getRules.length)
+                                          ? getRules
+                                          : "body"
+                                      ].imgMainChange({ display: true })
+                                }}
+                              >
+                                Yes
+                              </Button>
+                          </div>}
+
+
+                        </div>
+                      )}
+
+                      {Boolean(
+                        rules[Boolean(getRules.length) ? getRules : "body"]
                           .imgChange
                       ) && (
                         <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
@@ -989,7 +1272,11 @@ const Edit = () => {
                                           style={{
                                             fontFamily: "inherit",
                                           }}
-                                          onClick={cropImg}
+                                          onClick={() =>
+                                            cropImg(
+                                              "imgChange"
+                                            )
+                                          }
                                         >
                                           Update Image
                                         </Button>
@@ -1249,6 +1536,7 @@ const Edit = () => {
                               }}
                               sx={{
                                 color: "#979797",
+                                width: "calc(100% - 9px)",
                                 "& .MuiSlider-track, .MuiSlider-rail, .MuiSlider-thumb":
                                   {
                                     backgroundColor: "#979797",
@@ -1290,7 +1578,7 @@ const Edit = () => {
                               checked={Boolean(
                                 rules[
                                   Boolean(getRules.length) ? getRules : "body"
-                                ].imgChange().display == "none"
+                                ].imgChange()?.display == "none"
                               )}
                               onChange={(xx) => {
                                 const exx =
@@ -1347,6 +1635,7 @@ const Edit = () => {
                             }}
                             sx={{
                               color: "#979797",
+                              width: "calc(100% - 9px)",
                               "& .MuiSlider-track, .MuiSlider-rail, .MuiSlider-thumb":
                                 {
                                   backgroundColor: "#979797",
@@ -1379,7 +1668,7 @@ const Edit = () => {
                           <Slider
                             min={120}
                             size="small"
-                            max={300}
+                            max={400}
                             value={rules[
                               Boolean(getRules.length) ? getRules : "body"
                             ].height()}
@@ -1393,6 +1682,7 @@ const Edit = () => {
                             }}
                             sx={{
                               color: "#979797",
+                              width: "calc(100% - 9px)",
                               "& .MuiSlider-track, .MuiSlider-rail, .MuiSlider-thumb":
                                 {
                                   backgroundColor: "#979797",
@@ -1833,7 +2123,7 @@ const Edit = () => {
                             checked={Boolean(
                               rules[
                                 Boolean(getRules.length) ? getRules : "body"
-                              ].hide() == "none"
+                              ].hide?.() == "none"
                             )}
                             onChange={(xx) => {
                               const exx =
@@ -1907,6 +2197,7 @@ const Edit = () => {
                       defaultValue={50}
                       sx={{
                         color: "#979797",
+                        width: "calc(100% - 9px)",
                         "& .MuiSlider-track, .MuiSlider-rail, .MuiSlider-thumb":
                           {
                             backgroundColor: "#979797",
@@ -1923,6 +2214,13 @@ const Edit = () => {
                       valueLabelDisplay="auto"
                     />
                   </div> */}
+
+                      {/* crowdfunding */}
+                      {getRules == "crowdfund" && (
+                        <div className="w-full flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
+
+                        </div>
+                      )}
 
                       {getRules == "change_template" && (
                         <div className="w-full flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
@@ -1977,6 +2275,14 @@ const Edit = () => {
                                 <button
                                   className={`font-semibold ${style.cus_item} cursor-pointer text-xl justify-between pl-3 pr-2 transition-all delay-350 items-center hover:bg-[#e7e7e752] py-[5px] w-full flex`}
                                   onClick={() => {
+
+                                    if (elem == 'crowdfund') {
+
+                                       setCrowdModal(true);
+
+                                      return;
+                                    }
+
                                     setPart(elem);
                                   }}
                                 >

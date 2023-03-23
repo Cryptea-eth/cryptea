@@ -775,10 +775,12 @@ const DashHome = () => {
                         key={i}
                         className="border-solid w-[210px] h-[245px] text-[#6a6a6ab0] py-4 px-[15px] mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border"
                       >
+                        
                         <div className="flex items-center mb-2">
                           <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
                             <CustomImg
                               alt={name}
+                              key={i}
                               name={searchName}
                               symbol={symbol as string}
                             />

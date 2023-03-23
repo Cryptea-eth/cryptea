@@ -37,6 +37,7 @@ export const SolanaCryptoList: token[] = [
             symbol={"solana"}
             name="Solana"
             size={20}
+            key={12}
             alt={"Solana (mainnet)"}
           />
         </div>
@@ -66,6 +67,7 @@ export const SolanaCryptoList: token[] = [
             symbol={"solana"}
             name="Solana"
             size={20}
+            key={13}
             alt={"Solana (devnet)"}
           />
         </div>

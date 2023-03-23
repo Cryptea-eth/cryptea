@@ -232,7 +232,7 @@ const Carbon = ({ className }: { className?: string }) => {
               >
                 <Avatar
                   className="imgx_page shadow-[0_0_5px_rgba(0,0,0,0.2)] before:content-[''] before:-z-[1] font-bold text-[40px] text-center !absolute items-center justify-center before:block left-0 before:absolute before:top-[5px] mx-auto before:left-[5px]"
-                  sx={data.image}
+                  sx={data.image.style}
                   src={
                     !Boolean(data.image.text)
                       ? Boolean(data.image.src)
@@ -268,7 +268,7 @@ const Carbon = ({ className }: { className?: string }) => {
                   <h2
                     className="!font-ubuntu w-full header"
                     style={{
-                      ...data.header,
+                      ...data.header.style,
                       letterSpacing: "2px",
                     }}
                   >
