@@ -204,6 +204,8 @@ const Droplets = ({ className }: { className?: string }) => {
 
   const openModal = () => setPayModal(true);
 
+  const config = useRef<any>({});
+
   const closeModal = () => setPayModal(false);
 
   useEffect(() => {
@@ -229,6 +231,8 @@ const Droplets = ({ className }: { className?: string }) => {
       }
     });
 
+  
+
     const configCheck = async () => {
 
       const { data: linkData } = await axios.get(`/link/${String(slug)}`, {
@@ -239,9 +243,11 @@ const Droplets = ({ className }: { className?: string }) => {
         linkData?.data?.link?.template_data || '{ "name": "", "data": "{}" }'
       );
 
-      setData?.(udata);
+      config.current = {
+          ...(udata?.config || {})
+      }
 
-      setTimeout(configCheck, 3000);
+      setTimeout(configCheck, 4000);
     };
 
     if (!once.current && slug !== undefined) {
@@ -1186,7 +1192,6 @@ const Droplets = ({ className }: { className?: string }) => {
                                 )
                               }
                               className="!py-2 !min-w-[130px] !px-3 !capitalize !flex !items-center !text-white !bg-[#3cb4ac] !border !border-solid !border-[none] !transition-all !delay-500 !rounded-[0]"
-
                             >
                               Pay Manually
                             </Button>
@@ -1307,7 +1312,7 @@ const Droplets = ({ className }: { className?: string }) => {
                     <div className="priceCont">
                       <h2 className="text-[1.5em] block font-bold">
                         <NumberFormat
-                          value={data.config.raised}
+                          value={config.current?.raised || data.config.raised}
                           thousandSeparator={true}
                           displayType={"text"}
                           prefix={"$"}
@@ -1316,7 +1321,7 @@ const Droplets = ({ className }: { className?: string }) => {
                       <p className="text-[#9b9b9b] text-[14px]">
                         of{" "}
                         <NumberFormat
-                          value={data.config.total}
+                          value={config.current?.total || data.config.total}
                           thousandSeparator={true}
                           displayType={"text"}
                           prefix={"$"}
@@ -1327,7 +1332,7 @@ const Droplets = ({ className }: { className?: string }) => {
                     <div className="totalbackers">
                       <h2 className="text-[1.5em] block font-bold">
                         <NumberFormat
-                          value={data.config.backers}
+                          value={config.current?.backers || data.config.backers}
                           thousandSeparator={true}
                           displayType={"text"}
                         />
@@ -1342,8 +1347,9 @@ const Droplets = ({ className }: { className?: string }) => {
                       <div
                         style={{
                           width: `${
-                            data.config.raised <= data.config.total
-                              ? (data.config.raised / data.config.total) * 100
+                            (config.current?.raised || data.config.raised) <=
+                            (config.current?.total || data.config.total)
+                              ? ((config.current?.raised || data.config.raised) / (config.current?.total || data.config.total)) * 100
                               : 100
                           }%`,
                           backgroundColor: data.colorScheme,

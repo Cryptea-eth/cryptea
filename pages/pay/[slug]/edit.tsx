@@ -309,7 +309,6 @@ const Edit = () => {
 
         dataSent.imgChange({
           borderColor,
-          size,
           text: "",
           display: display != "none",
           src,
@@ -1222,6 +1221,7 @@ const Edit = () => {
                         rules[Boolean(getRules.length) ? getRules : "body"]
                           .imgChange
                       ) && (
+                        
                         <div className="w-full px-3 flex flex-col items-baseline py-2 border-b border-solid border-[#bbbbbb24]">
                           <span className="text-[#505050] mb-[7px] font-bold text-[12px]">
                             Image
@@ -1401,7 +1401,6 @@ const Edit = () => {
 
                                   dataSent.imgChange({
                                     borderColor,
-                                    size: width,
                                     display: display != "none",
                                     src,
                                     text,
@@ -1465,7 +1464,6 @@ const Edit = () => {
 
                                     dataSent.imgChange({
                                       borderColor: color.hexa,
-                                      size,
                                       display: display != "none",
                                       src,
                                       text,
@@ -1521,7 +1519,7 @@ const Edit = () => {
                             </span>
 
                             <Slider
-                              min={80}
+                              min={40}
                               size="small"
                               max={156}
                               value={
@@ -1537,12 +1535,9 @@ const Edit = () => {
                                   dx.imgChange();
 
                                 dx.imgChange({
-                                  borderColor,
                                   size: xx.target.value,
-                                  display: display != "none",
-                                  src,
-                                  text,
                                 });
+
                                 updateMe(xx);
                               }}
                               sx={{
@@ -1610,7 +1605,6 @@ const Edit = () => {
                                   display: !(
                                     exx.imgChange().display == "block"
                                   ),
-                                  size,
                                   text,
                                   src,
                                 });
