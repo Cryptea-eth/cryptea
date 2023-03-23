@@ -14,7 +14,7 @@ const CustomImg = ({
 }: {
   alt: string;
   size?: number;
-  key: number;
+  key?: number;
   name: string;
   symbol: string;
 }) => {
