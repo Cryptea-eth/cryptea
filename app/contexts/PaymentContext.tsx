@@ -104,7 +104,7 @@ export const PaymentProvider = ({
     raw: {},
   });
 
-  const [sCallBack, setSCallBack] = useState<(cc?: any) => Promise<any> | any>()
+  const sCallBack = useRef<(cc?: any) => Promise<any> | any>()
 
   const [paymentData, setPaymentData] = useState<{
     price: number;
@@ -627,7 +627,7 @@ export const PaymentProvider = ({
     setTransferFail(false);
     setTinterval("");
 
-    sCallBack?.();
+    sCallBack.current?.();
 
     if (typeof userD.linkAmount != "number") {
       setAmount("");
@@ -784,11 +784,11 @@ export const PaymentProvider = ({
             baseURL: window.origin,
           });
 
-          if(sCallBack){
+          
 
-          await sCallBack?.({ link: slug, linkId });
+          await sCallBack.current?.({ link: slug, linkId });
 
-          }
+      
 
           setTransferSuccess(true);
 
@@ -968,7 +968,7 @@ export const PaymentProvider = ({
 
           // console.log(trxx);
 
-          await sCallBack?.({ link: slug, linkId });
+          await sCallBack.current?.({ link: slug, linkId });
 
           const trx = queryBalance.data;
 
@@ -1112,7 +1112,7 @@ export const PaymentProvider = ({
     setFailMessage("");
     setTransferFail(false);
     setHash("");
-    setSCallBack(onSuccess);
+    sCallBack.current = onSuccess;
     setPaymentType(type);
 
     if (!subValue[type]) {
