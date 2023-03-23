@@ -784,7 +784,11 @@ export const PaymentProvider = ({
             baseURL: window.origin,
           });
 
+          if(sCallBack){
+
           await sCallBack?.({ link: slug, linkId });
+
+          }
 
           setTransferSuccess(true);
 

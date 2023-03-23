@@ -112,9 +112,9 @@ const Edit = () => {
 
             setRules(rules);
 
-            setData('carbon');
+            setData(name);
 
-            getData(typeof edata == "string" ? JSON.parse(edata) : edata);
+            getData(typeof udata == "string" ? JSON.parse(udata) : udata);
 
             const edx: string[] = [];
 
@@ -205,6 +205,7 @@ const Edit = () => {
   const [isUploading, setIsUploading] = useState<number>(0);
 
   const setXTemplates = async (name: string) => {
+
     setLoader(true);
 
     const { rules, data: newData } = await import(
@@ -319,6 +320,8 @@ const Edit = () => {
 
       updateMe(src);
 
+      
+
     };
 
     let uploaded: number = 0;
@@ -329,11 +332,14 @@ const Edit = () => {
       const pct: number = (totalSize / uploaded) * 100;
 
       // console.log(`Uploading... ${pct.toFixed(2)}% complete`);
-
-      if (pct > 93) {
+      updateMe(pct);
+      
+      if (pct > 80) {
         setViewColor("");
         setIsUploading(0);
       }
+
+    
     };
 
     const token = await get_request("/storagekey", {}, undefined, false);
@@ -675,6 +681,7 @@ const Edit = () => {
 
                                   className="right-[120%] !absolute"
                                   onChange={(color) => {
+
                                     updateMe(color);
 
                                     rules[
@@ -684,6 +691,7 @@ const Edit = () => {
                                     ].bgOBColorChange({
                                       backgroundColor: color.hexa,
                                     });
+
                                   }}
                                 />
                               )}
@@ -1196,7 +1204,10 @@ const Edit = () => {
                                         Boolean(getRules.length)
                                           ? getRules
                                           : "body"
-                                      ].imgMainChange({ display: true })
+                                      ].imgMainChange({ display: true });
+
+                                      updateMe(Math.random());
+
                                 }}
                               >
                                 Yes

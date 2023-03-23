@@ -34,7 +34,9 @@ data = {
     text: "",
     style: {
       width: 56,
-      display: "block",
+      display: "flex",
+      alignItems: 'center',
+      justifyContent: 'center',
       bgcolor: "#3cb4ac",
       height: 56,
       color: data.white,
@@ -98,10 +100,13 @@ data = {
   config: {
     // total to be raised
     total: 1000,
+    
     // total number of backers
     backers: 0,
+
     // total number of days
-    time: 1000 * 60 * 60 * 24,
+    expire: new Date().getTime() + (1000 * 60 * 60 * 24),
+
     // amount raised
     raised: 0,
 
@@ -169,28 +174,36 @@ const rules: { [index: string]: any } = {
     imgMainChange: (mainD?: { src?: string; display?: boolean }) => {
       if (mainD !== undefined) {
         if (mainD.src !== undefined) {
+            
           data.board = {
             ...data.board,
             backgroundImage: mainD.src,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            backgroundColor: 'transparent',
           };
+        
+        
         }
 
         if (mainD.display !== undefined) {
           data.board = {
             ...data.board,
-            backgroundImage: data.config.image,
+            backgroundImage: 'none',
+            backgroundColor: `${data.colorScheme}59`,
           };
         }
       } else {
         return {
           src: data.board.backgroundImage,
-          display: data.board.backgroundImage != data.config.image,
+          display: data.board.backgroundImage != 'none' ? true : false,
         };
       }
     },
     bgOBColorChange: (newd?: {}) => {
       if (newd !== undefined) {
         data.board = { ...data.board, ...newd };
+        
       } else {
         return data.board.backgroundColor;
       }

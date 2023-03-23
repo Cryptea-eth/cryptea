@@ -36,6 +36,12 @@ import NumberFormat from "react-number-format";
 import axios from "axios";
 
 const Droplets = ({ className }: { className?: string }) => {
+ 
+  const router = useRouter();
+ 
+  const { slug } = router.query;
+
+
   function a11yProps(index: number) {
     return {
       id: `simple-tab-${index}`,
@@ -43,24 +49,11 @@ const Droplets = ({ className }: { className?: string }) => {
     };
   }
 
-  const timeRemaining = (milliseconds: number) => {
-    const seconds = Math.floor((milliseconds / 1000) % 60);
-    const minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
-    const hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
-    const days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
+  const onceCheck = useRef<boolean>(false);
 
-    setTimeout(() => timeRemaining(milliseconds), 1000);
+  const timer = useRef<string>('');
 
-    if (days > 0) {
-      return `${days} day${days > 1 ? "s" : ""} left`;
-    } else if (hours > 0) {
-      return `${hours} hour${hours > 1 ? "s" : ""} left`;
-    } else if (minutes > 0) {
-      return `${minutes} minute${minutes > 1 ? "s" : ""} left`;
-    } else if (seconds > 0) {
-      return `${seconds} second${seconds > 1 ? "s" : ""} left`;
-    }
-  };
+  const [expired, setExpired] = useState<boolean>(false);
 
   const {
     userD,
@@ -118,6 +111,62 @@ const Droplets = ({ className }: { className?: string }) => {
 
   const { signer } = useCryptea();
 
+
+  let tx: any;
+
+  const cal = async () => {
+
+    const { expire } = data.config;
+
+    const { data: { time: currentTime } } = await axios.get('/api/time', {
+      baseURL: window.origin
+    });
+
+    const milliseconds = expire - currentTime;
+
+    const seconds = Math.round((milliseconds / 1000) % 60);
+    const minutes = Math.round((milliseconds / (1000 * 60)) % 60);
+    const hours = Math.round((milliseconds / (1000 * 60 * 60)) % 24);
+    const days = Math.round(milliseconds / (1000 * 60 * 60 * 24));
+
+    if (days > 0) {
+
+      timer.current = `${days} day${days > 1 ? "s" : ""} left`;
+
+      tx = setTimeout(cal, 60 * 60 * 24 * 1000);
+
+    } else if (hours > 0) {
+
+      timer.current = `${hours} hour${hours > 1 ? "s" : ""} left`;
+
+      clearTimeout(tx);
+
+      tx = setTimeout(cal, 60 * 60 * 1000);
+
+    } else if (minutes > 0) {
+      timer.current = `${minutes} minute${minutes > 1 ? "s" : ""} left`;
+
+      clearTimeout(tx);
+
+      tx = setTimeout(cal, 60_000);
+    } else if (seconds > 0) {
+      timer.current = `${seconds} second${seconds > 1 ? "s" : ""} left`;
+
+      clearTimeout(tx);
+
+      tx = setTimeout(cal, 3_000);
+    }else{
+      clearTimeout(tx);
+
+      timer.current = `Time's up`;
+
+      setExpired(true);
+
+    }
+  };
+
+
+
   useEffect(() => {
     setSigner?.(signer);
   }, [signer]);
@@ -136,7 +185,16 @@ const Droplets = ({ className }: { className?: string }) => {
 
         setSubValue?.(nsVal as subValueType);
       }
+    
+      if (!onceCheck.current) {
+        onceCheck.current = true;
+        cal();
+      }
+
     }
+
+     
+
   }, [value, userD, rnData]);
 
   const once = useRef<boolean>(false);
@@ -171,10 +229,9 @@ const Droplets = ({ className }: { className?: string }) => {
     });
 
     const configCheck = async () => {
-
-      const { data: linkData } = await axios.get(`/link/${userD!.slug}`, {
+      const { data: linkData } = await axios.get(`/link/${String(slug)}`, {
         baseURL: "https://ab.cryptea.me",
-      });    
+      });
 
       const { name, data: udata } = JSON.parse(
         linkData?.template_data || '{ "name": "", "data": "{}" }'
@@ -185,18 +242,18 @@ const Droplets = ({ className }: { className?: string }) => {
       };
 
       setTimeout(configCheck, 6000);
+    };
 
-    }
-
-    if(!once.current){
-
+    if (!once.current && slug !== undefined) {
+    
       once.current = true;
 
       configCheck();
-
+    
     }
+    
 
-  }, []);
+  }, [slug]);
 
   const {
     title: usern,
@@ -1167,14 +1224,20 @@ const Droplets = ({ className }: { className?: string }) => {
                 </p>
 
                 <Button
-                  onClick={openModal}
+                  onClick={() => {
+                    if (!expired) {
+                      openModal();
+                    }
+                  }}
                   sx={{
-                    backgroundColor: `${data.colorScheme} !important`,
+                    backgroundColor: `${
+                      !expired ? "#777" : data.colorScheme
+                    } !important`,
                     color: `${data.white} !important`,
                   }}
                   className="!normal-case !cursor-pointer !text-[16px] !transition-all !delay-300 !font-bold !py-[1rem] !border-solid !px-[1rem] !rounded-[0px] !min-w-fit !outline-none"
                 >
-                  Back This Project
+                  {!expired ? "Campaign Expired" : "Back This Project"}
                 </Button>
               </div>
 
@@ -1276,11 +1339,11 @@ const Droplets = ({ className }: { className?: string }) => {
                       <div
                         style={{
                           width: `${
-                            (data.config.raised / data.config.total) * 100
+                           (data.config.raised <= data.config.total) ? (data.config.raised / data.config.total) * 100 : 100
                           }%`,
                           backgroundColor: data.colorScheme,
                         }}
-                        className="progressBar absolute h-full rounded-[99px]"
+                        className="progressBar transition-all delay-300 absolute h-full rounded-[99px]"
                       ></div>
                     </div>
                   </div>
@@ -1288,8 +1351,8 @@ const Droplets = ({ className }: { className?: string }) => {
                   <div className="topCont flex items-start justify-between">
                     <div className="daysLeft">
                       <p className="text-[#9b9b9b] text-[14px]">
-                        {" "}
-                        {timeRemaining(data.config.time)}{" "}
+                        {/* time here */}
+                        {timer.current}
                       </p>
                     </div>
                   </div>
@@ -1299,13 +1362,19 @@ const Droplets = ({ className }: { className?: string }) => {
                   <div className="flex items-center tsm:justify-center tsm:w-full">
                     <Button
                       sx={{
-                        backgroundColor: `${data.colorScheme} !important`,
+                        backgroundColor: `${
+                          expired ? "#777" : data.colorScheme
+                        } !important`,
                         color: `${data.white} !important`,
                       }}
-                      onClick={openModal}
+                      onClick={() => {
+                        if (!expired) {
+                          openModal();
+                        }
+                      }}
                       className="!text-white !normal-case !cursor-pointer !text-[16px] !transition-all !delay-300 !font-bold !py-[1rem]  !border-b-[5px] !border-solid !px-[2.6rem] !rounded-[0px] !outline-none"
                     >
-                      Back This Project
+                      {expired ? "Campaign Expired" : "Back This Project"}
                     </Button>
                   </div>
                 </div>
