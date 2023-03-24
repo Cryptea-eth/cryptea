@@ -309,6 +309,7 @@ const Edit = () => {
 
         dataSent.imgChange({
           borderColor,
+          size,
           text: "",
           display: display != "none",
           src,
@@ -1401,6 +1402,7 @@ const Edit = () => {
 
                                   dataSent.imgChange({
                                     borderColor,
+                                    size: width,
                                     display: display != "none",
                                     src,
                                     text,
@@ -1464,6 +1466,7 @@ const Edit = () => {
 
                                     dataSent.imgChange({
                                       borderColor: color.hexa,
+                                      size,
                                       display: display != "none",
                                       src,
                                       text,
@@ -1535,9 +1538,12 @@ const Edit = () => {
                                   dx.imgChange();
 
                                 dx.imgChange({
+                                  borderColor,
                                   size: xx.target.value,
+                                  display: display != "none",
+                                  src,
+                                  text,
                                 });
-
                                 updateMe(xx);
                               }}
                               sx={{
@@ -1605,6 +1611,7 @@ const Edit = () => {
                                   display: !(
                                     exx.imgChange().display == "block"
                                   ),
+                                  size,
                                   text,
                                   src,
                                 });
