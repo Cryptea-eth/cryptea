@@ -170,40 +170,35 @@ const rules: { [index: string]: any } = {
   },
 
   board: {
-
     imgMainChange: (mainD?: { src?: string; display?: boolean }) => {
       if (mainD !== undefined) {
         if (mainD.src !== undefined) {
-            
           data.board = {
             ...data.board,
             backgroundImage: mainD.src,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundColor: 'transparent',
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            backgroundColor: "transparent",
           };
-        
-        
         }
 
         if (mainD.display !== undefined) {
           data.board = {
             ...data.board,
-            backgroundImage: 'none',
+            backgroundImage: "none",
             backgroundColor: `${data.colorScheme}59`,
           };
         }
       } else {
         return {
           src: data.board.backgroundImage,
-          display: data.board.backgroundImage != 'none' ? true : false,
+          display: data.board.backgroundImage != "none" ? true : false,
         };
       }
     },
     bgOBColorChange: (newd?: {}) => {
       if (newd !== undefined) {
         data.board = { ...data.board, ...newd };
-        
       } else {
         return data.board.backgroundColor;
       }
@@ -211,14 +206,74 @@ const rules: { [index: string]: any } = {
 
     height: (val?: number) => {
       if (val !== undefined) {
+
         data.board = { ...data.board, height: val };
 
         data.board0 = { marginTop: val - 107.2 };
+        
       } else {
         return String(data.board.height);
       }
     },
   },
+
+  image: {
+    imgChange: (newD?: {
+      borderColor: string;
+      size: number;
+      text?: string;
+      src?: string;
+    }) => {
+      if (newD !== undefined) {
+
+        data.linkImage = {
+          ...data.linkImage,
+          width: newD.size,
+          height: newD.size,
+          marginTop: -(newD.size / 2),
+          borderColor: newD.borderColor,
+        };
+
+        data.image = {
+          ...data.image,
+          style: {
+            ...data.image.style,
+            height: newD.size - 10,
+            width: newD.size - 10,
+          },
+          text: newD?.text,
+          src: newD?.src,
+        };
+
+      } else {
+        return {
+          ...data.image.style,
+          src: data.image?.src || "",
+          text: data.image.text,
+          width: String(data.linkImage.width),
+          borderColor: data.linkImage.borderColor,
+        };
+      }
+    },
+    BgColorChange: (col?: string) => {
+      if (col !== undefined) {
+       
+
+        data.image = {
+          ...data.image,
+          style: {
+            ...data.image.style,
+            bgcolor: col,
+          },
+        };
+
+
+      } else {
+        return data.image.style.bgcolor;
+      }
+    },
+  },
+
   header: {
     textChange: (text?: string) => {
       if (text !== undefined) {

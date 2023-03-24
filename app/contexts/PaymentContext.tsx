@@ -453,6 +453,7 @@ export const PaymentProvider = ({
               const { data: mdata } = await import(`../templates/${name}/data`);
 
               setData(mdata);
+              
             }
           }
 

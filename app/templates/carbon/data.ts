@@ -94,15 +94,18 @@ const rules: { [index: string]: any } = {
 
         data.image = {
           ...data.image,
-          background: newD.borderColor,
-          display: newD?.display ? "flex" : "none",
-          width: newD.size+'px',
-          height: newD.size+'px',
-          right: '-'+newD.size+'px',
-          "&::before": {
-            ...data.image["&::before"],
-            height: (newD.size - 10)+'px',
-            width: (newD.size - 10)+'px',
+          style: {
+            ...data.image.style,
+            background: newD.borderColor,
+            display: newD?.display ? "flex" : "none",
+            width: newD.size + "px",
+            height: newD.size + "px",
+            right: "-" + newD.size + "px",
+            "&::before": {
+              ...data.image["&::before"],
+              height: newD.size - 10 + "px",
+              width: newD.size - 10 + "px",
+            },
           },
           text: newD?.text,
           src: newD?.src,
@@ -111,6 +114,8 @@ const rules: { [index: string]: any } = {
 
         return {
           ...data.image.style,
+          src: data.image.src,
+          text: data.image.text,
           width: data.image.style.width.substring(
             0,
             data.image.style.width.length - 2
@@ -123,10 +128,13 @@ const rules: { [index: string]: any } = {
       if (col !== undefined) {
         data.image = {
           ...data.image,
-          "&::before": { ...data.image["&::before"], backgroundColor: col },
+          style: {
+            ...data.image.style,
+            "&::before": { ...data.image["&::before"], backgroundColor: col },
+          },
         };
       } else {
-        return data.image["&::before"].backgroundColor;
+        return data.image.style["&::before"].backgroundColor;
       }
     },
   },
