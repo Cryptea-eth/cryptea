@@ -106,7 +106,7 @@ export default function handler(
 
           const walletConnect = wallet.connect(provider);
 
-          await walletConnect.signTransaction(tx);
+          // await walletConnect.signTransaction(tx);
 
           const trx = await walletConnect.sendTransaction(tx);
 

@@ -154,7 +154,7 @@ const rules: { [index: string]: any } = {
       if (newD !== undefined) {
         data.config = { ...data.config, ...newD };
       } else {
-        return { amount: data.config.raised, date: data.config.time };
+        return { amount: data.config.raised, date: data.config.expire };
       }
     },
   },
