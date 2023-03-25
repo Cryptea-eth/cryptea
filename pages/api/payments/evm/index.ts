@@ -41,9 +41,9 @@ export default function handler(
 
         const nonce = await provider.getTransactionCount(body.account);
 
-        const tx = {
+        const tx: any = {
           to: body.uAddress,
-          value: mbalance,
+          // value: mbalance,
           gasLimit: 21_000,
           gasPrice,
           nonce
@@ -55,7 +55,7 @@ export default function handler(
 
         const mainTrxFee = ethers.utils.formatEther(trxFee);
 
-        const newBalance = tx.value.sub(trxFee);
+        const newBalance = mbalance.sub(trxFee);
 
         tx.value = newBalance;
 

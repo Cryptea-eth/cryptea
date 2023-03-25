@@ -250,7 +250,7 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
     {
       groupName: "Recommended",
       wallets:
-        router.pathname == "/pay/[slug]"
+        router.pathname.indexOf("/pay/[slug]") != -1
           ? [
               metaMaskWallet({ chains }),
 
