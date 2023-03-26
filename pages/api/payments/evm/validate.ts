@@ -14,6 +14,7 @@ import {
   gnosis,
   scrollTestnet,
   MantleTest,
+  optimism,
 } from "../../../../app/contexts/Cryptea/connectors/chains";
 
 type Data = {
@@ -46,6 +47,7 @@ const providers: { [index: string]: string } = {
   534353: scrollTestnet.rpcUrls.default.http[0],
   167002: TaikoTest.rpcUrls.default.http[0],
   5001: MantleTest.rpcUrls.default.http[0],
+  10: optimism.rpcUrls.default.http[0],
 };
 
 export default function handler(

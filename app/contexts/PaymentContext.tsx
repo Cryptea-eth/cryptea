@@ -291,6 +291,19 @@ export const PaymentProvider = ({
 
   };
 
+  const optimism = async (price: number) => {
+    const response = await getPriceReq({
+      ids: "optimism",
+      vs_currencies: "usd",
+    });
+
+    const e = response as { [index: string]: any };
+
+    const priceCurrency = Number(e["optimism"]["usd"]);
+
+    return price / priceCurrency;
+  };
+
   const getPrice = async (
     price: number,
     chain: string | number | undefined = 80001
@@ -374,18 +387,8 @@ export const PaymentProvider = ({
 
         return price / priceCurrency;
       },
-      "420": async () => {
-        const response = await getPriceReq({
-          ids: "optimism",
-          vs_currencies: "usd",
-        });
-
-        const e = response as { [index: string]: any };
-
-        const priceCurrency = Number(e["optimism"]["usd"]);
-
-        return price / priceCurrency;
-      },
+      "420": async () => optimism(price),
+      "10": async () => optimism(price)
     };
 
     final = await prices[chain]();
