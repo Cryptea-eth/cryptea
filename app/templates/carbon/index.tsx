@@ -232,7 +232,13 @@ const Carbon = ({ className }: { className?: string }) => {
               >
                 <Avatar
                   className="imgx_page shadow-[0_0_5px_rgba(0,0,0,0.2)] before:content-[''] before:-z-[1] font-bold text-[40px] text-center !absolute items-center justify-center before:block left-0 before:absolute before:top-[5px] mx-auto before:left-[5px]"
-                  sx={data.image.style}
+                  sx={{
+                    ...data.image.style,
+                    display:
+                      (transferSuccess || Boolean(eSubscription!.length))
+                        ? "none !important"
+                        : undefined,
+                  }}
                   src={
                     !Boolean(data.image.text)
                       ? Boolean(data.image.src)
@@ -360,6 +366,7 @@ const Carbon = ({ className }: { className?: string }) => {
                       </div>
                     </div>
                   )}
+
                   {/* success */}
                   {transferSuccess && (
                     <div className="h-full backdrop-blur-[3px] absolute left-0 bg-[rgba(255,255,255,.6)] top-0 z-[100] flex flex-col justify-evenly items-center w-full">
@@ -419,7 +426,7 @@ const Carbon = ({ className }: { className?: string }) => {
                         Payment was successful
                       </h2>
 
-                      <Link href={`${explorer!.link(hash || '')}`}>
+                      <Link href={`${explorer!.link(hash || "")}`}>
                         <a
                           target={"_blank"}
                           className="text-[#5a5a5a] cursor-pointer mb-1 font-normal"
@@ -739,82 +746,86 @@ const Carbon = ({ className }: { className?: string }) => {
                         )}
 
                         <div className="">
-                          {token?.payment.manual && <Button
-                            sx={{
-                              marginTop: "10px",
-                              backgroundColor: `${data.colorScheme} !important`,
-                              padding: "12px !important",
-                              textAlign: "center",
-                              fontWeight: "bold !important",
-                              lineHeight: "18px",
-                              fontSize: "16px",
-                              fontFamily: "'ubuntu', sans-serif !important",
-                              width: "100%",
-                              color: "#fff",
-                              borderRadius: "5px",
-                              textTransform: "none",
-                              cursor: "pointer",
-                              "&:hover": {
+                          {token?.payment.manual && (
+                            <Button
+                              sx={{
+                                marginTop: "10px",
                                 backgroundColor: `${data.colorScheme} !important`,
-                              },
-                            }}
-                            onClick={() => {
-                              if (!load("manual")) begin?.("onetime", false);
-                            }}
-                          >
-                            {load("manual") ? (
-                              <>
-                                <div className="mr-3 h-[20px] text-[#fff]">
-                                  <CircularProgress
-                                    color={"inherit"}
-                                    className="!w-[20px] !h-[20px]"
-                                  />
-                                </div>{" "}
-                                <span>Just a Sec...</span>
-                              </>
-                            ) : (
-                              <>Pay Manually</>
-                            )}
-                          </Button>}
-                          {token?.payment.auto && <Button
-                            sx={{
-                              marginTop: "10px",
-                              backgroundColor: `${data.colorScheme} !important`,
-                              padding: "12px !important",
-                              textAlign: "center",
-                              fontWeight: "bold !important",
-                              lineHeight: "18px",
-                              fontSize: "16px",
-                              fontFamily: "'ubuntu', sans-serif !important",
-                              width: "100%",
-                              color: "#fff",
-                              borderRadius: "5px",
-                              display: "flex",
-                              alignItems: "center",
-                              textTransform: "none",
-                              cursor: "pointer",
-                              "&:hover": {
+                                padding: "12px !important",
+                                textAlign: "center",
+                                fontWeight: "bold !important",
+                                lineHeight: "18px",
+                                fontSize: "16px",
+                                fontFamily: "'ubuntu', sans-serif !important",
+                                width: "100%",
+                                color: "#fff",
+                                borderRadius: "5px",
+                                textTransform: "none",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  backgroundColor: `${data.colorScheme} !important`,
+                                },
+                              }}
+                              onClick={() => {
+                                if (!load("manual")) begin?.("onetime", false);
+                              }}
+                            >
+                              {load("manual") ? (
+                                <>
+                                  <div className="mr-3 h-[20px] text-[#fff]">
+                                    <CircularProgress
+                                      color={"inherit"}
+                                      className="!w-[20px] !h-[20px]"
+                                    />
+                                  </div>{" "}
+                                  <span>Just a Sec...</span>
+                                </>
+                              ) : (
+                                <>Pay Manually</>
+                              )}
+                            </Button>
+                          )}
+                          {token?.payment.auto && (
+                            <Button
+                              sx={{
+                                marginTop: "10px",
                                 backgroundColor: `${data.colorScheme} !important`,
-                              },
-                            }}
-                            onClick={() => {
-                              if (!load("auto")) begin?.("onetime", true);
-                            }}
-                          >
-                            {load("auto") ? (
-                              <>
-                                <div className="mr-3 h-[20px] text-[#fff]">
-                                  <CircularProgress
-                                    color={"inherit"}
-                                    className="!w-[20px] !h-[20px]"
-                                  />
-                                </div>{" "}
-                                <span>Just a Sec...</span>
-                              </>
-                            ) : (
-                              <>Pay</>
-                            )}
-                          </Button>}
+                                padding: "12px !important",
+                                textAlign: "center",
+                                fontWeight: "bold !important",
+                                lineHeight: "18px",
+                                fontSize: "16px",
+                                fontFamily: "'ubuntu', sans-serif !important",
+                                width: "100%",
+                                color: "#fff",
+                                borderRadius: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                                textTransform: "none",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  backgroundColor: `${data.colorScheme} !important`,
+                                },
+                              }}
+                              onClick={() => {
+                                if (!load("auto")) begin?.("onetime", true);
+                              }}
+                            >
+                              {load("auto") ? (
+                                <>
+                                  <div className="mr-3 h-[20px] text-[#fff]">
+                                    <CircularProgress
+                                      color={"inherit"}
+                                      className="!w-[20px] !h-[20px]"
+                                    />
+                                  </div>{" "}
+                                  <span>Just a Sec...</span>
+                                </>
+                              ) : (
+                                <>Pay</>
+                              )}
+                            </Button>
+                          )}
                         </div>
                       </TabPanel>
                       {/* </SwipeableViews> */}
@@ -1053,81 +1064,85 @@ const Carbon = ({ className }: { className?: string }) => {
                           </div>
                         )}
 
-                        {token?.payment.manual && <Button
-                          sx={{
-                            marginTop: "10px",
-                            backgroundColor: `${data.colorScheme} !important`,
-                            padding: "12px !important",
-                            textAlign: "center",
-                            fontWeight: "bold !important",
-                            lineHeight: "18px",
-                            fontSize: "16px",
-                            fontFamily: "'ubuntu', sans-serif !important",
-                            width: "100%",
-                            color: "#fff",
-                            borderRadius: "5px",
-                            textTransform: "none",
-                            cursor: "pointer",
-                            "&:hover": {
+                        {token?.payment.manual && (
+                          <Button
+                            sx={{
+                              marginTop: "10px",
                               backgroundColor: `${data.colorScheme} !important`,
-                            },
-                          }}
-                          onClick={() => {
-                            if (!load("manual")) begin?.("sub", false);
-                          }}
-                        >
-                          {load("manual") ? (
-                            <>
-                              <div className="mr-3 h-[20px] text-[#fff]">
-                                <CircularProgress
-                                  color={"inherit"}
-                                  className="!w-[20px] !h-[20px]"
-                                />
-                              </div>{" "}
-                              <span>Just a Sec...</span>
-                            </>
-                          ) : (
-                            <>Pay Manually</>
-                          )}
-                        </Button>}
+                              padding: "12px !important",
+                              textAlign: "center",
+                              fontWeight: "bold !important",
+                              lineHeight: "18px",
+                              fontSize: "16px",
+                              fontFamily: "'ubuntu', sans-serif !important",
+                              width: "100%",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              textTransform: "none",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: `${data.colorScheme} !important`,
+                              },
+                            }}
+                            onClick={() => {
+                              if (!load("manual")) begin?.("sub", false);
+                            }}
+                          >
+                            {load("manual") ? (
+                              <>
+                                <div className="mr-3 h-[20px] text-[#fff]">
+                                  <CircularProgress
+                                    color={"inherit"}
+                                    className="!w-[20px] !h-[20px]"
+                                  />
+                                </div>{" "}
+                                <span>Just a Sec...</span>
+                              </>
+                            ) : (
+                              <>Pay Manually</>
+                            )}
+                          </Button>
+                        )}
 
-                        {token?.payment.auto && <Button
-                          sx={{
-                            marginTop: "10px",
-                            backgroundColor: `${data.colorScheme} !important`,
-                            padding: "12px !important",
-                            textAlign: "center",
-                            fontWeight: "bold !important",
-                            lineHeight: "18px",
-                            fontSize: "16px",
-                            fontFamily: "'ubuntu', sans-serif !important",
-                            width: "100%",
-                            color: "#fff",
-                            borderRadius: "5px",
-                            textTransform: "none",
-                            cursor: "pointer",
-                            "&:hover": {
+                        {token?.payment.auto && (
+                          <Button
+                            sx={{
+                              marginTop: "10px",
                               backgroundColor: `${data.colorScheme} !important`,
-                            },
-                          }}
-                          onClick={() => {
-                            if (!load("auto")) begin?.("sub", true);
-                          }}
-                        >
-                          {load("auto") ? (
-                            <>
-                              <div className="mr-3 h-[20px] text-[#fff]">
-                                <CircularProgress
-                                  color={"inherit"}
-                                  className="!w-[20px] !h-[20px]"
-                                />
-                              </div>{" "}
-                              <span>Just a Sec...</span>
-                            </>
-                          ) : (
-                            <>Pay</>
-                          )}
-                        </Button>}
+                              padding: "12px !important",
+                              textAlign: "center",
+                              fontWeight: "bold !important",
+                              lineHeight: "18px",
+                              fontSize: "16px",
+                              fontFamily: "'ubuntu', sans-serif !important",
+                              width: "100%",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              textTransform: "none",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: `${data.colorScheme} !important`,
+                              },
+                            }}
+                            onClick={() => {
+                              if (!load("auto")) begin?.("sub", true);
+                            }}
+                          >
+                            {load("auto") ? (
+                              <>
+                                <div className="mr-3 h-[20px] text-[#fff]">
+                                  <CircularProgress
+                                    color={"inherit"}
+                                    className="!w-[20px] !h-[20px]"
+                                  />
+                                </div>{" "}
+                                <span>Just a Sec...</span>
+                              </>
+                            ) : (
+                              <>Pay</>
+                            )}
+                          </Button>
+                        )}
                       </TabPanel>
                       {/* </SwipeableViews> */}
                     </TabPanel>
