@@ -27,6 +27,13 @@ export default function handler(
 
             const { authorization } = req.headers;
 
+            if (!authorization) {
+              res.status(404).json({
+                error: true,
+                message: "not found",
+              });
+            }
+
             try{
 
                 const { data } = await axios.get('https://ab.cryptea.me/user/extra', {

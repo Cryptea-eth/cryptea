@@ -31,6 +31,13 @@ export default function handler(
       settlement: userAccts,
     } = req.body;
 
+    if (!authorization) {
+      res.status(404).json({
+        error: true,
+        message: "not found",
+      });
+    }
+
     if (pin.length != 5) {
       res.status(400).json({
         error: true,

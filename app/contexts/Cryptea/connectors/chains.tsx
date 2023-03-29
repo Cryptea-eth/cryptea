@@ -24,7 +24,7 @@ import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import CustomImg from "../../../components/elements/customImg";
 import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi";
 import { explorer, token } from "../types";
-import { SolanaCryptoList, solanatokenTrackers } from "./solana";
+// import { SolanaCryptoList, solanatokenTrackers } from "./solana";
 
 
 export const OasisEmerald: Chain = {
@@ -276,7 +276,7 @@ export const tokenTrackers: explorer = {
     name: "Fantom Explorer",
     link: (hash: string) => "https://testnet.fantom.com/tx/" + hash,
   },
-  ...solanatokenTrackers,
+  // ...solanatokenTrackers,
 };
 
 export const inputsList = [
@@ -528,7 +528,6 @@ export const CryptoList: token[] = [
       <div className="items-center flex">
         <div className="h-[20px] mr-2 relative w-[20px]">
           <CustomImg
-            key={8}
             name="fantom"
             symbol="FTM"
             size={20}
@@ -641,7 +640,7 @@ export const CryptoList: token[] = [
       auto: true,
     },
   },
-  ...SolanaCryptoList,
+  // ...SolanaCryptoList,
   {
     value: 1313161555,
     type: "native",
