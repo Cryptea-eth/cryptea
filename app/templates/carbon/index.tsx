@@ -235,7 +235,7 @@ const Carbon = ({ className }: { className?: string }) => {
                   sx={{
                     ...data.image.style,
                     display:
-                      (transferSuccess || Boolean(eSubscription!.length))
+                      transferSuccess || Boolean(eSubscription!.length)
                         ? "none !important"
                         : undefined,
                   }}
@@ -684,8 +684,11 @@ const Carbon = ({ className }: { className?: string }) => {
                                       color: `#fff !important`,
                                     },
                                     "& .MuiButtonBase-root:first-of-type": {
-                                      marginRight: "0px !important",
                                       marginLeft: "0px !important",
+                                    },
+                                    "& .MuiButtonBase-root": {
+                                      marginRight: "6px !important",
+                                      marginLeft: "6px !important",
                                     },
 
                                     "& .MuiToggleButtonGroup-grouped": {
@@ -1003,8 +1006,11 @@ const Carbon = ({ className }: { className?: string }) => {
                                       color: `#fff !important`,
                                     },
                                     "& .MuiButtonBase-root:first-of-type": {
-                                      marginRight: "0px !important",
                                       marginLeft: "0px !important",
+                                    },
+                                    "& .MuiButtonBase-root": {
+                                      marginRight: "6px !important",
+                                      marginLeft: "6px !important",
                                     },
 
                                     "& .MuiToggleButtonGroup-grouped": {
@@ -1015,7 +1021,8 @@ const Carbon = ({ className }: { className?: string }) => {
                                       border:
                                         "1px solid rgba(0, 0, 0, 0.12) !important",
                                     },
-                                  }}
+                                  }
+                                }
                                   exclusive
                                   className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
                                   value={amount}

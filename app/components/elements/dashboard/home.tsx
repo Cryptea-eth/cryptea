@@ -326,9 +326,11 @@ const DashHome = () => {
         if (cache && Object.keys(cache).length > 0) {
 
         Object.values(sAddresses).forEach((e: any) => {
-          Object.values(cache[e]).forEach((value: any) => {
-            totlCache += Number(value.amtFiat);
-          });
+          if (cache[e]) {
+            Object.values(cache[e]).forEach((value: any) => {
+              totlCache += Number(value.amtFiat);
+            });
+          }
         });
       }
 
