@@ -84,25 +84,25 @@ const TypePayment = ({
             <>{children}</>
           ) : (
             <>
-              <div className="flex z-10 w-full bg-white pl-6 py-[6.8px] border-solid border-b border-b-[#E3E3E3] fixed items-center">
+              <div className="flex z-10 w-full bg-white pl-6 py-[16.8px] border-solid border-b border-b-[#E3E3E3] fixed items-center">
                 <Avatar
                   sx={{
-                    width: 60,
-                    height: 60,
+                    width: 40,
+                    height: 40,
                     marginRight: ".7pc",
                     backgroundColor: !Boolean(data.src) ? "#f57059" : undefined,
                   }}
-                  className="text-[22px] font-bold"
+                  className="text-[17px] font-bold"
                   variant="circular"
                   src={data.src}
                 >
                   {(
-                    String(data.slug).charAt(0) + String(data.slug).charAt(1)
+                    String(data.slug).substring(0, 2)
                   ).toUpperCase()}
                 </Avatar>
 
                 <Link href={`/pay/${data.slug}/overview`}>
-                  <a className="cursor-pointer text-[1.95rem] leading-[2.45rem] flex items-center">
+                  <a className="cursor-pointer text-[1.55rem] leading-[2.05rem] flex items-center">
                     <span className="mr-2">{data.title}</span>
                   </a>
                 </Link>
@@ -134,10 +134,12 @@ const TypePayment = ({
                   <h2 className="text-[22px] capitalize text-center font-bold">
                     {whichM} Support Required
                   </h2>
-                  <span className="mt-2 text-[17px] text-[#565656] block w-full text-center">
+                  {which != 'sub' ? <span className="mt-2 text-[17px] text-[#565656] block w-full text-center">
                     This link does not support {whichM} payments, Click the
                     button below to add support
-                  </span>
+                  </span> : <span className="mt-2 text-[17px] text-[#565656] block w-full text-center">
+                    Subscriptions are coming soon, we are working on it
+                  </span>}
                 </div>
 
                 {Boolean(genError) && (
@@ -150,7 +152,7 @@ const TypePayment = ({
                 )}
 
                 <div className="flex item-center justify-center">
-                  <Button
+                  {Boolean(which != 'sub') && <Button
                     onClick={addSupport}
                     className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                   >
@@ -170,13 +172,13 @@ const TypePayment = ({
                         <span>Add Support</span>
                       </>
                     )}
-                  </Button>
+                  </Button>}
 
                   {!isSaving && (
                     <Link href={`/pay/${data.slug}/overview`}>
                       <a>
                         <Button className="!py-2 opacity-80 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
-                          Maybe Later
+                          {which == 'sub' ? "Go back" : "Maybe Later"}
                         </Button>
                       </a>
                     </Link>

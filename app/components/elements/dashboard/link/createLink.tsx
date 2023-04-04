@@ -671,7 +671,7 @@ const NewLink = () => {
                         </div>
                       </div>
 
-                      <div className="w-full sm:px-2 px-10 pt-5 pb-0">
+                      {/* <div className="w-full sm:px-2 px-10 pt-5 pb-0">
                         <FormLabel
                           sx={{
                             fontWeight: "600",
@@ -741,7 +741,7 @@ const NewLink = () => {
                             <FaCoins className="mr-2" size={20} /> Subscription
                           </ToggleButton>
                         </ToggleButtonGroup>
-                      </div>
+                      </div> */}
 
                       <div className="w-full sm:px-2 px-10 py-5">
                         <div className="flex items-center ssm:flex-wrap">

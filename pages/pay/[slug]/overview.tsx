@@ -418,13 +418,14 @@ const Overview = () => {
                           </>
                         )}
                       </div>
+
                       <Link href={`/pay/${slug}/multiple`}>
                         <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
                           {data.type == "sub" || data.type == "both"
                             ? "View more subscription data"
                             : "Add subscription support to link"}
                         </a>
-                      </Link>
+                      </Link> 
                     </div>
 
                     <div className="border-[rgb(218,220,224)] rounded-[8px] border relative bg-white overflow-hidden border-solid">

@@ -469,7 +469,6 @@ const Settlements = () => {
 
     if (cache && Object.keys(cache).length) {
       
-
       Object.values(sAddresses.current).forEach((e: any) => {
         breakdown = { ...breakdown, ...cache[e] };
 
