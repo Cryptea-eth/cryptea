@@ -240,8 +240,8 @@ const Origin = ({ className }: { className?: string }) => {
                     </Avatar>
                   </div>
                 </div>
-                <div className="flex flex-row usm:flex-col">
-                  <div className="w-3/5 usm:mb-4 usm:w-full px-8">
+                <div className="flex flex-row ausm:flex-col">
+                  <div className="w-3/5 ausm:mb-4 ausm:w-full px-8">
                     {/* Header */}
                     <div style={data.header.style} className="mt-8 header_page">
                       {Boolean(data.header.text.length)
@@ -320,27 +320,29 @@ const Origin = ({ className }: { className?: string }) => {
                     >
                       {Boolean(data?.introText?.text?.length)
                         ? data.introText.text
-                        : `${description || '...'}`}
+                        : `${description || "..."}`}
                     </div>
                   </div>
 
-                  <div className="w-2/5 2usm:w-full relative mmd:w-[85%] usm:w-[70%] usm:m-auto min-w-[340px] px-6 !my-8 justify-items-center">
-                    {Boolean(loadingText) && !transferFail && !transferSuccess && (
-                      <Loader
-                        head={false}
-                        sx={{
-                          backgroundColor: "rgba(255,255,255,.6)",
-                          backdropFilter: "blur(5px)",
-                        }}
-                        fixed={false}
-                        text={loadingText}
-                        color={data.colorScheme}
-                        incLogo={false}
-                      />
-                    )}
+                  <div className="w-2/5 2usm:w-full relative mmd:w-[85%] ausm:w-[70%] ausm:m-auto min-w-[340px] px-6 !my-8 justify-items-center">
+                    {Boolean(loadingText) &&
+                      !transferFail &&
+                      !transferSuccess && (
+                        <Loader
+                          head={false}
+                          sx={{
+                            backgroundColor: "rgba(255,255,255,.6)",
+                            backdropFilter: "blur(5px)",
+                          }}
+                          fixed={false}
+                          text={loadingText}
+                          color={data.colorScheme}
+                          incLogo={false}
+                        />
+                      )}
 
                     {/* paymentbox */}
-                    <div className="rounded-lg bg-white usm:shadow-sm usm:border shadow-lg usm:border-[#e2e2e2] usm:mb-2 shadow-[#cccccc]">
+                    <div className="rounded-lg bg-white ausm:shadow-sm ausm:border shadow-lg ausm:border-[#e2e2e2] ausm:mb-2 shadow-[#cccccc]">
                       <div className="border-b items-center flex py-[14px] px-[17px] text-xl font-bold">
                         {userD!.rdata[!value ? "onetime" : "sub"].length >= 1 &&
                           !apiState &&
@@ -364,61 +366,62 @@ const Origin = ({ className }: { className?: string }) => {
                       </div>
                       <div className="form relative pt-[10px]">
                         <Box sx={{ width: "100%" }}>
-                          {(userD?.linktype == "both" && Boolean(rnData!.amount))&&(
-                            <Box
-                              sx={{
-                                borderBottom: 1,
-                                borderColor: "divider",
-                              }}
-                            >
-                              {/* body */}
-                              <Tabs
-                                value={value}
-                                onChange={handleChange}
+                          {userD?.linktype == "both" &&
+                            Boolean(rnData!.amount) && (
+                              <Box
                                 sx={{
-                                  "& .MuiTabs-flexContainer": {
-                                    width: "100%",
-                                    justifyContent: "space-around",
-                                  },
-                                  "& .MuiTab-root.MuiButtonBase-root.Mui-selected":
-                                    {
+                                  borderBottom: 1,
+                                  borderColor: "divider",
+                                }}
+                              >
+                                {/* body */}
+                                <Tabs
+                                  value={value}
+                                  onChange={handleChange}
+                                  sx={{
+                                    "& .MuiTabs-flexContainer": {
+                                      width: "100%",
+                                      justifyContent: "space-around",
+                                    },
+                                    "& .MuiTab-root.MuiButtonBase-root.Mui-selected":
+                                      {
+                                        fontWeight: "bold",
+                                        borderRadius: "4px",
+                                        color: data.colorScheme,
+                                        backgroundColor: `${
+                                          data.colorScheme.length > 7
+                                            ? data.colorScheme.substring(0, 7) +
+                                              "23"
+                                            : data.colorScheme + "23"
+                                        } !important`,
+                                        textTransform: "capitalize",
+                                      },
+                                    "& .MuiButtonBase-root.MuiTab-root": {
                                       fontWeight: "bold",
                                       borderRadius: "4px",
-                                      color: data.colorScheme,
-                                      backgroundColor: `${
-                                        data.colorScheme.length > 7
-                                          ? data.colorScheme.substring(0, 7) +
-                                            "23"
-                                          : data.colorScheme + "23"
-                                      } !important`,
                                       textTransform: "capitalize",
                                     },
-                                  "& .MuiButtonBase-root.MuiTab-root": {
-                                    fontWeight: "bold",
-                                    borderRadius: "4px",
-                                    textTransform: "capitalize",
-                                  },
-                                  "& .MuiTabs-indicator": {
-                                    backgroundColor: `${data.colorScheme} !important`,
-                                    opacity: "0.14",
-                                  },
-                                }}
-                                aria-label="payment tabs"
-                              >
-                                <Tab
-                                  className="!font-bold !rounded-[4px] !capitalize"
-                                  label="Onetime😇"
-                                  {...a11yProps(0)}
-                                />
+                                    "& .MuiTabs-indicator": {
+                                      backgroundColor: `${data.colorScheme} !important`,
+                                      opacity: "0.14",
+                                    },
+                                  }}
+                                  aria-label="payment tabs"
+                                >
+                                  <Tab
+                                    className="!font-bold !rounded-[4px] !capitalize"
+                                    label="Onetime😇"
+                                    {...a11yProps(0)}
+                                  />
 
-                                <Tab
-                                  className="!font-bold !rounded-[4px] !capitalize"
-                                  label="Subscription😍"
-                                  {...a11yProps(1)}
-                                />
-                              </Tabs>
-                            </Box>
-                          )}
+                                  <Tab
+                                    className="!font-bold !rounded-[4px] !capitalize"
+                                    label="Subscription😍"
+                                    {...a11yProps(1)}
+                                  />
+                                </Tabs>
+                              </Box>
+                            )}
 
                           {/* error */}
                           {(transferFail || Boolean(failMessage)) && (
@@ -568,7 +571,7 @@ const Origin = ({ className }: { className?: string }) => {
                                   : `Subscription was successful`}
                               </h2>
 
-                              <Link href={`${explorer!.link(hash || '')}`}>
+                              <Link href={`${explorer!.link(hash || "")}`}>
                                 <a
                                   target={"_blank"}
                                   className="text-[#5a5a5a] cursor-pointer mb-1 font-normal"
@@ -859,14 +862,14 @@ const Origin = ({ className }: { className?: string }) => {
                                       />
                                     )}
 
-                                    <div className="2mmd:flex-col usm:flex usm:items-center">
-                                      
-                                        {token?.payment.manual && <Button
+                                    <div className="2mmd:flex-col ausm:justify-between ausm:flex ausm:items-center">
+                                      {token?.payment.manual && (
+                                        <Button
                                           sx={{
                                             backgroundColor: `${data.colorScheme} !important`,
                                           }}
                                           variant="contained"
-                                          className="!mt-4 !py-[13px] !font-medium 2mmd:mr-0 usm:mr-2  !capitalize"
+                                          className="!mt-4 !py-[13px] !font-medium 2mmd:max-w-full !shadow-none ausm:max-w-[47%] 2mmd:mr-0 !capitalize"
                                           style={{
                                             fontFamily: "inherit",
                                           }}
@@ -876,22 +879,27 @@ const Origin = ({ className }: { className?: string }) => {
                                           fullWidth
                                         >
                                           Pay Manually
-                                        </Button>}
+                                        </Button>
+                                      )}
 
-                                      {token?.payment.auto && <Button
-                                        sx={{
-                                          backgroundColor: `${data.colorScheme} !important`,
-                                        }}
-                                        variant="contained"
-                                        className="!mt-4 !py-[13px] !font-medium 2mmd:ml-0 usm:ml-2  !capitalize"
-                                        style={{
-                                          fontFamily: "inherit",
-                                        }}
-                                        onClick={() => begin?.("onetime", true)}
-                                        fullWidth
-                                      >
-                                        Pay
-                                      </Button>}
+                                      {token?.payment.auto && (
+                                        <Button
+                                          sx={{
+                                            backgroundColor: `${data.colorScheme} !important`,
+                                          }}
+                                          variant="contained"
+                                          className="!mt-4 !py-[13px] !font-medium 2mmd:max-w-full 2mmd:ml-0 ausm:max-w-[47%] !shadow-none !capitalize"
+                                          style={{
+                                            fontFamily: "inherit",
+                                          }}
+                                          onClick={() =>
+                                            begin?.("onetime", true)
+                                          }
+                                          fullWidth
+                                        >
+                                          Pay
+                                        </Button>
+                                      )}
                                     </div>
                                   </FormControl>
                                 </TabPanel>
@@ -1158,36 +1166,40 @@ const Origin = ({ className }: { className?: string }) => {
                                       />
                                     )}
 
-                                    <div className="2mmd:flex-col usm:flex usm:items-center">
-                                      {token?.payment.manual && <Button
-                                        variant="contained"
-                                        sx={{
-                                          backgroundColor: `${data.colorScheme} !important`,
-                                        }}
-                                        className="!mt-4 !py-[13px] !font-medium 2mmd:mr-0 usm:mr-2 !capitalize"
-                                        style={{
-                                          fontFamily: "inherit",
-                                        }}
-                                        onClick={() => begin?.("sub", false)}
-                                        fullWidth
-                                      >
-                                        Subscribe Manually
-                                      </Button>}
+                                    <div className="2mmd:flex-col ausm:justify-between ausm:flex ausm:items-center">
+                                      {token?.payment.manual && (
+                                        <Button
+                                          variant="contained"
+                                          sx={{
+                                            backgroundColor: `${data.colorScheme} !important`,
+                                          }}
+                                          className="!mt-4 !py-[13px] !font-medium 2mmd:max-w-full !shadow-none ausm:max-w-[47%] 2mmd:mr-0 !capitalize"
+                                          style={{
+                                            fontFamily: "inherit",
+                                          }}
+                                          onClick={() => begin?.("sub", false)}
+                                          fullWidth
+                                        >
+                                          Subscribe Manually
+                                        </Button>
+                                      )}
 
-                                      {token?.payment.auto && <Button
-                                        variant="contained"
-                                        sx={{
-                                          backgroundColor: `${data.colorScheme} !important`,
-                                        }}
-                                        className="!mt-4 !py-[13px] !font-medium 2mmd:ml-0 usm:ml-2 !capitalize"
-                                        style={{
-                                          fontFamily: "inherit",
-                                        }}
-                                        onClick={() => begin?.("sub", true)}
-                                        fullWidth
-                                      >
-                                        Subscribe
-                                      </Button>}
+                                      {token?.payment.auto && (
+                                        <Button
+                                          variant="contained"
+                                          sx={{
+                                            backgroundColor: `${data.colorScheme} !important`,
+                                          }}
+                                          className="!mt-4 !py-[13px] !font-medium 2mmd:max-w-full 2mmd:ml-0 ausm:max-w-[47%] !shadow-none !capitalize"
+                                          style={{
+                                            fontFamily: "inherit",
+                                          }}
+                                          onClick={() => begin?.("sub", true)}
+                                          fullWidth
+                                        >
+                                          Subscribe
+                                        </Button>
+                                      )}
                                     </div>
                                   </FormControl>
                                 </TabPanel>

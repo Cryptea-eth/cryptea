@@ -1225,7 +1225,7 @@ export const PaymentProvider = ({
             aria-describedby="Switch Networks"
           >
             <Box
-              className="sm:w-full h-fit 3mdd:px-[2px]"
+              className="sm:!w-full 3md:!p-1 h-fit 3mdd:px-[2px]"
               sx={{
                 minWidth: 300,
                 width: "70%",
@@ -1240,7 +1240,7 @@ export const PaymentProvider = ({
               <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
                 <div className="mb-2 flex items-start justify-between">
                   <div>
-                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem]">
+                    <h2 className="font-[500] text-[rgb(32,33,36)] text-[1.55rem] 3md:text-[1.2rem]">
                       Switch Network
                     </h2>
                     <span className="text-[rgb(69,70,73)] font-[500] text-[14px]">

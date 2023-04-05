@@ -20,6 +20,7 @@ module.exports = {
       "3sm": { max: "1025px" },
       "tlg": { max: "1450px" },
       "2ism": { min: "975px" },
+      "ausm": {max: "985px"},
       "2sm": { max: "975px" },
       usm: { max: "940px" },
       dsm: { max: "900px" },

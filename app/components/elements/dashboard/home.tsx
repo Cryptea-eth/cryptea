@@ -326,9 +326,11 @@ const DashHome = () => {
         if (cache && Object.keys(cache).length > 0) {
 
         Object.values(sAddresses).forEach((e: any) => {
-          Object.values(cache[e]).forEach((value: any) => {
-            totlCache += Number(value.amtFiat);
-          });
+          if (cache[e]) {
+            Object.values(cache[e]).forEach((value: any) => {
+              totlCache += Number(value.amtFiat);
+            });
+          }
         });
       }
 
@@ -440,6 +442,7 @@ const DashHome = () => {
                 margin: "auto",
               }}
             >
+              
               <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
                 <div className="mb-2 flex items-start justify-between">
                   <div>

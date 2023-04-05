@@ -479,7 +479,7 @@ const Links = () => {
                         action="#"
                       >
                         
-                        <div className="py-3">
+                        {/* <div className="py-3">
                           <label className="text-[#565656] mb-2 font-[600]">
                             Type
                           </label>
@@ -540,7 +540,7 @@ const Links = () => {
                               Subscription
                             </ToggleButton>
                           </ToggleButtonGroup>
-                        </div>
+                        </div> */}
 
                         <div className="py-3">
                           <label className="text-[#565656] mb-2 font-[600]">
