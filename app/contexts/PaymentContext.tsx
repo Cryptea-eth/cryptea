@@ -821,6 +821,7 @@ export const PaymentProvider = ({
           }
 
           setTimeout(reset, 12000);
+
         })
         .catch((err: any) => {
           const error = err as Error;
@@ -1044,6 +1045,7 @@ export const PaymentProvider = ({
   };
 
   useEffect(() => {
+    
     if (timeCounted >= 720) {
       clearInterval(timer.current);
       clearTimeout(timerTimeout.current);

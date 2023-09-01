@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "scripts": { 
-    "dev": "next dev",
-    "serve": "next start",
+  "scripts": {
+    "dev": "next dev -p 4000",
+    "serve": "next start -p 4000",
     "build": "next build",
     "buildx": "npx next build",
     "start": "NODE_ENV=production node app.js",

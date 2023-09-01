@@ -243,9 +243,6 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
     },
   });
 
-
-  const walletChains = chains as Chain[];
-
   const connectors = connectorsForWallets([
     {
       groupName: "Recommended",
