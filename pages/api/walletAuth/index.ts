@@ -77,6 +77,7 @@ export default function handler(
             getToken(address, tz);
 
           } else {
+
             res.status(400).json({
               message: "Signature verification failed",
               error: true,
