@@ -98,7 +98,7 @@ const DashboardIndex = () => {
           >
             <DashHeader
               className={
-                "flex transition-all delay-500 z-10 fixed px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
+                "flex transition-all delay-500 z-[100] fixed px-[20px] py-[13px] justify-between items-center border-solid border-b-[1px] 3md:border-b-transparent bg-white border-b-[#E3E3E3]"
               }
               dp={data.img}
               username={data.username}

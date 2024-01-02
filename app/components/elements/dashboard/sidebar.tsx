@@ -28,10 +28,8 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
 
   return (
     <div
-      className={`sidebar fixed transition-all min-h-full z-[100] delay-500 ${
-        sidebar?.open
-          ? "min-w-[210px] w-[210px]"
-          : `w-[75px] min-w-[75px]`
+      className={`sidebar fixed transition-all min-h-full z-[101] delay-500 ${
+        sidebar?.open ? "min-w-[210px] w-[210px]" : `w-[75px] min-w-[75px]`
       } bg-white border-solid border-r-[1px] border-r-[#E3E3E3] h-[inherit]`}
     >
       <div
@@ -61,7 +59,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
         {sidebar?.openDelay ? (
           <IoIosArrowDropleftCircle
             onClick={sidebar?.toggle}
-            className={`transition-all cursor-pointer delay-500 text-[#F57059] absolute right-[-15px] m-auto z-50 top-0 bottom-0`}
+            className={`transition-all cursor-pointer delay-500 text-[#F57059] absolute right-[-15px] m-auto z-[101] top-0 bottom-0`}
             size={25}
             style={{
               backgroundColor: "#ffffff",
@@ -73,7 +71,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
         ) : (
           <IoIosArrowDroprightCircle
             onClick={sidebar?.toggle}
-            className={`transition-all cursor-pointer delay-500 text-[#F57059] absolute right-[-15px] m-auto z-50 top-0 bottom-0`}
+            className={`transition-all cursor-pointer delay-500 text-[#F57059] absolute right-[-15px] m-auto z-[101] top-0 bottom-0`}
             size={25}
             style={{
               backgroundColor: "#ffffff",

@@ -153,7 +153,7 @@ const Settlements = () => {
 
   const [soon, setSoon] = useState<boolean>(false);
 
-  const [copied, mainCopy] = useState<boolean[]>([false]);
+  const [copied, mainCopy] = useState<boolean[]>([]);
 
   const [pageCheck, setPageCheck] = useState<any>({});
 
@@ -172,9 +172,14 @@ const Settlements = () => {
   const [pageLoading, setPageLoad] = useState<boolean>(false);
 
   const switchCopy = (val: boolean, index: number) => {
-    const copx = [...copied];
-    copx[index] = val;
-    mainCopy(copx);
+    mainCopy((copied) => {
+
+       const copx = [...copied];
+       copx[index] = val;
+
+       return copx;
+    });
+
   };
 
   const withdrawCrypto = async () => {
@@ -664,6 +669,7 @@ const Settlements = () => {
 
         setData(e);
 
+
         setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
 
         if (!Boolean(e.settlement ? e.settlement.length : 0)) {
@@ -671,6 +677,8 @@ const Settlements = () => {
         }
 
         e.settlement.forEach((vv: any) => {
+
+            mainCopy(prev => [...prev, false]);
 
             sAddresses.current = {
               ...sAddresses.current,
@@ -681,6 +689,7 @@ const Settlements = () => {
 
 
         const userAddresses = JSON.parse(e.accounts || "[]");
+        
         
 
         init();
