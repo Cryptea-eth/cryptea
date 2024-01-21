@@ -25,10 +25,9 @@ export default function handler(
         
 
         try {        
-
       
-          const rs = await axios.get(`https://ab.cryptea.me/crypto/img/${crypto}`, { headers: {
-          Authorization: process.env.APP_KEY || "",
+          const rs = await axios.get(`https://ab.cryptea.me/crypto/img/${crypto.split(' ').shift()}`, { headers: {
+            Authorization: process.env.APP_KEY || "",
           }});
 
           const mainRs = rs.data.link;
@@ -37,7 +36,7 @@ export default function handler(
 
         }catch (err) {
 
-          console.log(err)
+          // console.log(err)
 
             res.status(200).json(generic['GENERIC'].icon)
         }

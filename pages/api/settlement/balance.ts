@@ -4,6 +4,7 @@ import axios from 'axios';
 import { CryptoList } from '../../../app/contexts/Cryptea/connectors/chains';
 import { blockchains } from '../../../app/contexts/Cryptea/blockchains';
 import { token } from '../../../app/contexts/Cryptea/types';
+import { SolanaCryptoList } from '../../../app/contexts/Cryptea/connectors/solana';
 
 type base = { [index: string]: any }; 
 
@@ -56,15 +57,15 @@ export default function handler(
 
                 payments.forEach((value: any) => {
                   if (value.meta !== null) {
+
                     const metadata = JSON.parse(value.meta);
 
                     fees[metadata["chain"]] = Number(metadata["discount"]);
+
                   }
                 });
 
                  const prices: base = {};
-
-                 
                 
                 let finalBal = 0;
 
@@ -72,9 +73,11 @@ export default function handler(
 
                 const bdown: base = {};
 
-                for (let i = 0; i < CryptoList.length; i++) {
+                const totalCryptos = [...CryptoList, ...SolanaCryptoList];
 
-                  const token = CryptoList[i];
+                for (let i = 0; i < totalCryptos.length; i++) {
+
+                  const token = totalCryptos[i];
 
                   cryptoListObj[token.value] = token;
 
@@ -121,7 +124,6 @@ export default function handler(
 
                       finalBal += total * price;
 
-                    
 
                       bdown[value] = {
                         amount: total,
@@ -143,8 +145,6 @@ export default function handler(
                         symbol: token.symbol,
                       };
                     }
-
-
 
                   } else if (token.type == "non-native") {
                     // do stuff here

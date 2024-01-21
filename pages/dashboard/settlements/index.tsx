@@ -51,6 +51,8 @@ import { token } from "../../../app/contexts/Cryptea/types";
 import { ValueContainer } from "react-select/dist/declarations/src/components/containers";
 import { blockchains } from "../../../app/contexts/Cryptea/blockchains";
 import { TbPoint, TbPointOff } from "react-icons/tb";
+import { SolanaCryptoList } from "../../../app/contexts/Cryptea/connectors/solana";
+import { TronCryptoList } from "../../../app/contexts/Cryptea/connectors/tron";
 
 const Settlements = () => {
 
@@ -108,7 +110,7 @@ const Settlements = () => {
       amount: number;
       name: string;
       test: boolean;
-      blocktype: "evm" | "sol";
+      blocktype: "evm" | "sol" | "trx";
       symbol: string;
     };
   };
@@ -118,7 +120,7 @@ const Settlements = () => {
     amtFiat: number;
     token: string;
     test: boolean;
-    blocktype: 'evm' | 'sol';
+    blocktype: 'evm' | 'sol' | 'trx';
     symbol: string;
   };
 
@@ -460,7 +462,7 @@ const Settlements = () => {
        .sort((a: any, b: any) => Number(a.test) - Number(b.test))
        .sort((a: any, b: any) => b.amount - a.amount),
    });
-
+   
 
   useEffect(() => {
 
@@ -489,7 +491,7 @@ const Settlements = () => {
         (a, b) => breakdown[b].amount - breakdown[a].amount
       );
 
-      CryptoList.forEach((a) => {
+      [...CryptoList, ...SolanaCryptoList, ...TronCryptoList].forEach((a) => {
         if (a.value == Number(maxAmt[0])) {
           setWithdrawToken(a);
         }
@@ -559,7 +561,7 @@ const Settlements = () => {
       setPageCheck({ current_page, last_page });
     }
 
-    console.log(settlements.trx, 'ss');
+    // console.log(breakdown, 'sxs')
 
     setSettlementsTrx(settlements.trx);
 
@@ -634,14 +636,12 @@ const Settlements = () => {
          (a, b) => breakdown[b].amount - breakdown[a].amount
        );
 
-       CryptoList.forEach((a) => {
+       [...CryptoList, ...SolanaCryptoList, ...TronCryptoList].forEach((a) => {
          if (a.value == Number(maxAmt[0])) {
            setWithdrawToken(a);
          }
        });
-
-
-      //  
+      
       
 
        setDashData({
@@ -841,9 +841,15 @@ const Settlements = () => {
                             `${option.value} ${option.data.name}`,
                         })}
                         placeholder={"Tokens..."}
-                        options={Object.values(dashData["breakDownObj"]).filter(
-                            (a: any) => a.amtFiat > 0
-                          )}
+                        options={Object.keys(dashData["breakDownObj"])
+                          .filter(
+                            (a: any) => dashData["breakDownObj"][a].amtFiat > 0
+                          )
+                          .map((e: any) => ({
+                            ...[...CryptoList, ...SolanaCryptoList, ...TronCryptoList].find(
+                              (a) => a.value == Number(e)
+                            ),
+                          }))}
                         styles={{
                           option: (provided, state) => {
                             return {
@@ -854,7 +860,6 @@ const Settlements = () => {
                               cursor: "pointer",
                               "&:active": {
                                 backgroundColor: "#dfdfdf",
-
                                 color: "#121212 !important",
                               },
                               "&:hover": {
@@ -1629,7 +1634,6 @@ const Settlements = () => {
                 <Skeleton sx={{ fontSize: "2.5rem", width: "156px" }} />
               ) : (
                 <>
-                  
                   <NumberFormat
                     value={String(dashData["balance"]).split(".")[0]}
                     style={{
@@ -1782,6 +1786,9 @@ const Settlements = () => {
                     );
                   })
                 : dashData["breakdown"].map((val: balVal, key: number) => {
+
+
+
                     return (
                       <div key={key} className="flex flex-col items-start">
                         {Boolean(data.settlement[key]) && (

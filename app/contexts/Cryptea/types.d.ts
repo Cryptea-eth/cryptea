@@ -107,17 +107,17 @@ export interface mainAppManager extends AuthContext {
   authenticate: (e?: boolean) => void;
 }
 
-export type token = {
+export type token<T = string> = {
   value: number;
   label: string | JSX.Element;
   symbol: string;
   useSymbol?: boolean;
-  blocktype: "evm" | "sol";
+  blocktype: "evm" | "sol" | "trx";
   network: string;
   tokenAddr: string;
   testnet: boolean;
   type: "native" | "non-native";
-  rpc: string;
+  rpc: T | string;
   payment: {
     manual: boolean;
     auto: boolean;

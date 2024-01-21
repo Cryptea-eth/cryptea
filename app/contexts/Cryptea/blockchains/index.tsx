@@ -1,6 +1,7 @@
 
 import * as ethers from 'ethers';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+const TronWeb = require("tronweb");
 
 export const validateSol = (addr: string) => {
       try {
@@ -26,6 +27,32 @@ export const blockchains: { [index: string]: any } = {
       const balance = await connection.getBalance(new PublicKey(addr));
 
       return Number(balance / LAMPORTS_PER_SOL);
+    },
+  },
+  trx: {
+    validateAddr: (addr: string) => {
+      try {
+        return TronWeb.isAddress(addr);
+      } catch (e) {
+        return false;
+      }
+    },
+    balance: async (addr: string, rpc: { 
+      solidity: string;
+      main: string;
+    }) => {
+      if (!TronWeb.isAddress(addr)) {
+        return 0;
+      }
+
+      const tron = new TronWeb({
+        fullNode: rpc.main,
+        solidityNode: rpc.solidity,
+      });
+
+      const balance = await tron.trx.getBalance(addr);
+
+      return Number(TronWeb.fromSun(balance));
     },
   },
   evm: {

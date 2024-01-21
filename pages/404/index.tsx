@@ -27,7 +27,7 @@ const Notfound = () => {
           Click this button below, to go back home
         </h3>
         <div className="mx-auto mt-8">
-          <Link href="https://cryptea.me">
+          <Link href="/dashboard">
             <a className="text-center mt-3">
               <Button className="!ml-2 hover:!bg-[#ff320e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-4 !mx-auto">
                 Go home

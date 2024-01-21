@@ -1,12 +1,10 @@
 import { BiHomeAlt, BiLinkAlt, BiCreditCard, BiLogOut } from "react-icons/bi";
-
 import {
   IoIosArrowDropleftCircle,
   IoIosArrowDroprightCircle,
 } from "react-icons/io";
-
+import { PiWalletBold } from "react-icons/pi";
 import { dash, DashContext } from "../../../contexts/GenContext";
-
 import Image from "next/image";
 import Link from "next/link";
 import { RiSettingsLine } from "react-icons/ri";
@@ -143,6 +141,24 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
             </a>
           </Link>
         </div>
+
+        {/* <div
+          className={`rounded-tr-[4px] rounded-br-[4px]  border-l-[3px] overflow-hidden flex-nowrap my-1 ${
+            ["wallets", "wallet"].includes(page as string) ? active : ""
+          } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#d3d3d333] flex cursor-pointer items-center py-[9px]`}
+        >
+          <Link href="/dashboard/wallets">
+            <a className="text-inherit flex font-[600] w-full items-center text-[14px]">
+              <PiWalletBold
+                size={sidebar?.openDelay ? 16.5 : 21}
+                className={`text-inherit transition-all delay-400 ${
+                  sidebar?.openDelay ? "min-w-[16.5px]" : "min-w-[21px]"
+                } mx-[22.5px]`}
+              />
+              {sidebar?.openDelay ? "Wallets" : ""}
+            </a>
+          </Link>
+        </div> */}
 
         <div
           className={`rounded-tr-[4px] rounded-br-[4px] cursor-pointer border-l-[3px] overflow-hidden flex-nowrap my-1 transition-all delay-200 border-solid hover:border-l-[3px] hover:border-l-[#F57059] hover:text-[#F57059] border-l-transparent text-[#A9A9A9] hover:bg-[#d3d3d333] flex items-center py-[9px] ${
