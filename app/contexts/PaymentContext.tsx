@@ -247,6 +247,7 @@ export const PaymentProvider = ({
   };
 
   const solana = async (price: number) => {
+    
     const response = await getPriceReq({
         ids: "solana",
         vs_currencies: "usd",
@@ -257,8 +258,39 @@ export const PaymentProvider = ({
     const priceCurrency = Number(e["solana"]["usd"]);
 
     return price / priceCurrency;
+  
   }
   
+  const tron = async (price: number) => {
+      
+      const response = await getPriceReq({
+        ids: "tron",
+        vs_currencies: "usd",
+      });
+  
+      const e = response.data as { [index: string]: any };
+  
+      const priceCurrency = Number(e["tron"]["usd"]);
+  
+      return price / priceCurrency;
+
+  }
+
+  const usdt = async (price: number) => {
+      
+      const response = await getPriceReq({
+        ids: "tether",
+        vs_currencies: "usd",
+      });
+  
+      const e = response.data as { [index: string]: any };
+  
+      const priceCurrency = Number(e["tether"]["usd"]);
+  
+      return price / priceCurrency;
+
+  }
+
   const ethereum = async (price: number) => {
 
     const response = await getPriceReq({
@@ -337,6 +369,9 @@ export const PaymentProvider = ({
       "4002": async () => await fantom(price),
       "80001": async () => await matic(price),
       "137": async () => await matic(price),
+      "1131": async () => await tron(price),
+      "1130": async () => await tron(price),
+      "1132": async () => await usdt(price),
       "31415": async () => {
         const response = await getPriceReq({
           ids: "filecoin",
@@ -388,7 +423,7 @@ export const PaymentProvider = ({
         return price / priceCurrency;
       },
       "420": async () => optimism(price),
-      "10": async () => optimism(price)
+      "10": async () => optimism(price),
     };
 
     final = await prices[chain]();
@@ -821,6 +856,7 @@ export const PaymentProvider = ({
           }
 
           setTimeout(reset, 12000);
+
         })
         .catch((err: any) => {
           const error = err as Error;
@@ -1044,6 +1080,7 @@ export const PaymentProvider = ({
   };
 
   useEffect(() => {
+    
     if (timeCounted >= 720) {
       clearInterval(timer.current);
       clearTimeout(timerTimeout.current);

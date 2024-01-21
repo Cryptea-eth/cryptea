@@ -4,7 +4,7 @@ import axios from "axios";
 import { decryptData, encryptData } from "../../../app/functions/crypto-data";
 import { Keypair } from "@solana/web3.js";
 import logger from "../../../app/functions/logger";
-
+const TronWeb = require("tronweb");
 const bs58 = require("bs58");
 
 type Data = {
@@ -92,6 +92,33 @@ export default function handler(
                           type: 'sol',
                         });
 
+                      }else if (main.type == 'trx') {
+                          
+                          let secret = decryptData(main.account, data.oldpin);
+
+                        if (!Number(main.init)) {
+                          // not initialized
+
+                          secret = decryptData(main.account, username);
+
+                          // display false pin error
+                          bs58.decode(secret);
+
+                        } else {
+
+                          // display false pin error
+                          bs58.decode(secret);
+
+                        }
+
+                        const account = JSON.stringify(encryptData(secret, data.newpin));
+  
+                          accounts.push({
+                            address: main.address,
+                            account,
+                            type: 'trx',
+                          });
+
                       }
 
                     } catch (error) {
@@ -132,7 +159,8 @@ export default function handler(
                   message: "Your current pin is required",
                 });
               }
-              } else {
+              
+            } else {
 
                 const wallet = ethers.Wallet.createRandom();
 
@@ -147,8 +175,24 @@ export default function handler(
 
                 const solAccount = JSON.stringify(encryptData(bs58.encode(solWallet.secretKey), data.newpin));
 
-                const accounts = [{ address, account, type: 'evm' }, { address: solAddress, account: solAccount, type: 'sol' }];
+                const trxWallet = new TronWeb({
+                  fullNode: process.env.TRON || "https://api.trongrid.io",
+                  solidityNode: process.env.TRON || "https://api.trongrid.io",
+                })
 
+                const trxAccount = await trxWallet.createAccount();
+
+                const trxAccountEncrypted = JSON.stringify(encryptData(trxAccount.privateKey, data.newpin));
+
+                    const accounts = [
+                      { address, account, type: "evm" },
+                      { address: solAddress, account: solAccount, type: "sol" },
+                      {
+                        address: trxAccount.address.base58,
+                        account: trxAccountEncrypted,
+                        type: "trx",
+                      },
+                    ];
                 
                     await axios.post(
                       "https://ab.cryptea.me/user/update",

@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Keypair } from "@solana/web3.js";
 import { encryptData } from "../../../app/functions/crypto-data";
 import logger from "../../../app/functions/logger";
+// <reference types="@types/tronweb" />
+const TronWeb = require("tronweb");
 
 const bs58 = require("bs58");
 type Data = {
@@ -17,7 +19,6 @@ export default function handler(
 ) {
   
     if (req.method == "POST") {
-
 
       const { body, headers } = req;
 
@@ -49,21 +50,29 @@ export default function handler(
 
         const account = await wallet.encrypt(pin);
 
-        await axios
-            .post(
-              "https://ab.cryptea.me/update/settlement/pin",
-              {
-                pin,
-                address,
-                type: 'evm',
-                account,
-              },
-              {
-                headers: {
-                  Authorization: authorization as string,
-                },
-              }
-            );
+        const ethObj = [
+          {
+            address,
+            type: "evm",
+            account,
+          },
+        ];
+
+        // await axios
+        //     .post(
+        //       "https://ab.cryptea.me/update/settlement/pin",
+        //       {
+        //         pin,
+        //         address,
+        //         type: 'evm',
+        //         account,
+        //       },
+        //       {
+        //         headers: {
+        //           Authorization: authorization as string,
+        //         },
+        //       }
+        //     );
 
               const solWallet = Keypair.generate();
 
@@ -71,13 +80,31 @@ export default function handler(
 
               const solAccount = encryptData(bs58.encode(solWallet.secretKey), pin);
 
+              ethObj.push({
+                address: solAddress,
+                type: "sol",
+                account: JSON.stringify(solAccount),
+              });
+
+              // create tron account
+              const tronWeb = new TronWeb({
+                fullNode: process.env.TRON_MAINNET || "https://api.trongrid.io",
+                solidityNode: process.env.TRON_MAINNET_SOLIDITY || "https://api.trongrid.io",
+              });
+
+              const tronAccount = await tronWeb.createAccount();
+
+              ethObj.push({
+                address: tronAccount.address.base58,
+                type: "trx",
+                account: tronAccount.privateKey,
+              })
+
               await axios.post(
                 "https://ab.cryptea.me/update/settlement/pin",
                 {
-                  pin,
-                  address: solAddress,
-                  type: "sol",
-                  account: JSON.stringify(solAccount),
+                   data: ethObj,
+                   pin
                 },
                 {
                   headers: {

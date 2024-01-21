@@ -12,7 +12,7 @@ const Home: NextPage = () => {
 
   const [isLoading, setLoading] = useState(true);
 
-
+  
   useEffect(() => {
 
     if (isAuthenticated !== undefined) {

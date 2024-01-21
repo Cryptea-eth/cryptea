@@ -119,7 +119,9 @@ export const AuthAddress = async ({
     const error = err as AxiosError;
     // console.log(err);
     if (error.response) {
+
       throw "Invalid Login Details";
+      
     }
   }
   return user;
@@ -242,9 +244,6 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
       };
     },
   });
-
-
-  const walletChains = chains as Chain[];
 
   const connectors = connectorsForWallets([
     {

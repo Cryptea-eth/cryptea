@@ -650,6 +650,7 @@ const NewLink = () => {
 
                 <SwipeableViews index={value}>
                   <TabPanel value={value} index={0}>
+                    
                     <form
                       encType="multipart/form-data"
                       action="#"
@@ -1366,7 +1367,7 @@ const NewLink = () => {
               <div className="flex relative justify-center items-center">
                 {" "}
                 {isLoading && (
-                  <Button className="!py-3 !font-bold !px-6 !normal-case !flex !items-center !text-white hover:!bg-[#f57059] !bg-[#f57059] !m-auto !rounded-lg">
+                  <Button className="!py-[16.5px] !font-bold !px-[14px] !normal-case !flex !items-center !text-white hover:!bg-[#f57059] !bg-[#f57059] !m-auto !rounded-lg">
                     <CircularProgress
                       sx={{
                         color: "white",

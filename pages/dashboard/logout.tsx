@@ -39,7 +39,7 @@ const Logout = () => {
 
     }, []);
 
-    return (<Loader/>)
+    return (<Loader />)
 }
 
 export default Logout

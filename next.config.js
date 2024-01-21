@@ -37,7 +37,13 @@ const nextConfig = {
     JSON: process.env.JSON,
     UDREDIRECT: process.env.UDREDIRECT,
     SOLANA_MAINNET: process.env.SOLANA_MAINNET,
-    SOLANA_DEVNET: process.env.SOLANA_DEVNET
+    SOLANA_DEVNET: process.env.SOLANA_DEVNET,
+    HOST: process.env.HOST,
+    TRON_TESTNET_SOLIDITY: process.env.TRON_TESTNET_SOLIDITY,
+    TRON_TESTNET: process.env.TRON_TESTNET,
+    TRON_MAINNET: process.env.TRON_MAINNET,
+    TRON_MAINNET_SOLIDITY: process.env.TRON_MAINNET_SOLIDITY,
+    TRON: process.env.TRON,
   },
   images: {
     domains: ['assets.coingecko.com', 'coingecko.com']

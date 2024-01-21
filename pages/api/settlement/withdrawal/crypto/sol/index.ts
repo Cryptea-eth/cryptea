@@ -1,7 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
-import { tokenTrackers } from "../../../../../../app/contexts/Cryptea/connectors/chains";
 import {
   Connection,
   Keypair,
@@ -17,6 +16,7 @@ import {
 } from "../../../../../../app/functions/crypto-data";
 import { validateSol } from "../../../../../../app/contexts/Cryptea/blockchains";
 import logger from "../../../../../../app/functions/logger";
+import { solanatokenTrackers } from "../../../../../../app/contexts/Cryptea/connectors/solana";
 const bs58 = require("bs58");
 
 
@@ -35,6 +35,7 @@ export default function handler(
   res: NextApiResponse<Data>
 ) {
   if (req.method == "POST") {
+
     const { authorization } = req.headers;
 
     const {
@@ -55,10 +56,12 @@ export default function handler(
     }
 
     if (pin.length != 5) {
+
       res.status(400).json({
         error: true,
         message: "Your pin is incorrect",
       });
+
     } else if (!validateSol(addressTo)) {
       res.status(400).json({
         error: true,
@@ -184,7 +187,7 @@ export default function handler(
           data: JSON.stringify({
             token: token.name,
             receiver: addressTo,
-            explorer: tokenTrackers[token.value].link(trx),
+            explorer: solanatokenTrackers[token.value].link(trx),
           }),
           desc: `${token.name} Crypto Withdrawal`,
         };
@@ -199,11 +202,12 @@ export default function handler(
           error: false,
           message: "Transaction Successful",
           ref: {
-            link: tokenTrackers[token.value].link(trx),
-            name: tokenTrackers[token.value].name,
+            link: solanatokenTrackers[token.value].link(trx),
+            name: solanatokenTrackers[token.value].name,
           },
         });
       } catch (err) {
+
         const error = err as any;
 
         // console.log(error)
