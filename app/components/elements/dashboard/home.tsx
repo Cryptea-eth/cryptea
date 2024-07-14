@@ -20,6 +20,7 @@ import {
 import { PinField } from "react-pin-field";
 import { CryptoList } from "../../../contexts/Cryptea/connectors/chains";
 import { blockchains } from "../../../contexts/Cryptea/blockchains";
+import http from "../../../../utils/http";
 
 const DashHome = () => {
 
@@ -138,10 +139,7 @@ const DashHome = () => {
           newpin: pins["newpin"],
         };
 
-        await axios.post(`/api/settlement/new`, newData, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-          },
+        await http.post(`/api/settlement/new`, newData, {
           baseURL: window.origin,
         });
 
@@ -339,11 +337,8 @@ const DashHome = () => {
 
       const authToken = localStorage.getItem("userToken");
 
-      const { data: balances } = await axios.get(`/api/settlement/balance`, {
+      const { data: balances } = await http.get(`/api/settlement/balance`, {
         baseURL: window.origin,
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
         timeout: 300_000,
       });
 

@@ -7,6 +7,7 @@ import {
 } from "../../../../../../app/functions/crypto-data";
 import logger from "../../../../../../app/functions/logger";
 import { tronTokenTrackers } from "../../../../../../app/contexts/Cryptea/connectors/tron";
+import http from "../../../../../../utils/http";
 const bs58 = require("bs58");
 const TronWeb = require("tronweb");
 
@@ -63,17 +64,13 @@ export default function handler(
 
     (async () => {
       try {
-        await axios.get("https://ab.cryptea.me/user", {
-          headers: {
-            Authorization: authorization as string,
-          },
-        });
+        await http.get("/user");
 
 
         const tron = new TronWeb({
             fullNode: token.rpc || "",
             solidityNode: token.rpc || "",
-        })
+        });
 
         const balance = token.type == "native" ? TronWeb.fromSun(await tron.trx.getBalance(userAccts.address)) - fee : 0;
 
@@ -115,14 +112,9 @@ export default function handler(
             desc: `${token.name} Crypto Withdrawal`,
             };
 
-            await axios.post(
-            "https://ab.cryptea.me/settlements/new",
+            await http.post(
+            "/settlements/new",
             StoredData,
-            {
-                headers: {
-                Authorization: authorization as string,
-                },
-              }
             );
 
         }else{

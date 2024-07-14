@@ -4,6 +4,7 @@ import axios from "axios";
 import { tokenTrackers } from "../../../../app/contexts/Cryptea/connectors/chains";
 import mainIx from "../../../../app/functions/interval";
 import logger from "../../../../app/functions/logger";
+import http from "../../../../utils/http";
 
 type Data = {
   proceed: boolean;
@@ -116,8 +117,8 @@ export default function handler(
                 explorer: tokenTrackers[body.chain].link(trx.hash),
               };
 
-              await axios.post(
-                `https://ab.cryptea.me/link/payments/${body.linkId}`,
+              await http.post(
+                `/link/payments/${body.linkId}`,
                 {
                   ...post,
                   paymentAddress: walletConnect.address,

@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import Router from 'next/router';
+import http from "../../../utils/http";
 
-axios.defaults.baseURL = "https://ab.cryptea.me";
 axios.defaults.withCredentials = true;
 
 const headers = {
@@ -21,9 +21,9 @@ export const get_request = async (
   const token: string = localStorage.getItem("userToken") ?? "";
       try {
         
-        return await axios.get(url, {
+        return await http.get(url, {
           ...config,
-          headers: { ...headers, Authorization: `Bearer ${token}` },
+          headers: { ...headers },
         });
       } catch (ee) {
 
@@ -45,11 +45,11 @@ export const post_request = async (
   data: object,
   config: AxiosRequestConfig<any> = {} 
 ): Promise<AxiosResponse<any, any>> => {
-  return axios.get("/sanctum/csrf-cookie").then(async (e) => {
-     const token: string = localStorage.getItem("userToken") ?? "";
-    return await axios.post(url, data, {
+  return http.get("/sanctum/csrf-cookie").then(async (e) => {
+
+    return await http.post(url, data, {
       ...config,
-      headers: { ...headers, Authorization: `Bearer ${token}` },
+      headers: { ...headers },
     });
   });
 };
@@ -59,11 +59,11 @@ export const patch_request = async (
   data: object,
   config: AxiosRequestConfig<any> = {}
 ): Promise<AxiosResponse<any, any>> => {
-  return axios.get("/sanctum/csrf-cookie").then(async (e) => {
-    const token: string = localStorage.getItem("userToken") ?? "";
-    return await axios.patch(url, data, {
+  return http.get("/sanctum/csrf-cookie").then(async (e) => {
+
+    return await http.patch(url, data, {
       ...config,
-      headers: { ...headers, Authorization: `Bearer ${token}` },
+      headers: { ...headers },
     });
   });
 };
@@ -72,12 +72,11 @@ export const del_request = async (
   url: string,
   config: AxiosRequestConfig<any> = {}
 ): Promise<AxiosResponse<any, any>> => {
-  return axios.get("/sanctum/csrf-cookie").then(async (e) => {
-   const token: string = localStorage.getItem("userToken") ?? "";
+  return http.get("/sanctum/csrf-cookie").then(async (e) => {
    
-    return await axios.delete(url, {
+    return await http.delete(url, {
       ...config,
-      headers: { ...headers, Authorization: `Bearer ${token}` },
+      headers: { ...headers },
     });
   });
 };

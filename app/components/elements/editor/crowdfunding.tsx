@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { MdClose, MdInfo } from "react-icons/md";
+import http from "../../../../utils/http";
 
 const Crowd = ({
   setCrowdModal,
@@ -70,7 +71,7 @@ const Crowd = ({
 
     const {
       data: { date: date2, expire },
-    } = await axios.get("/api/droplets/init", {
+    } = await http.get("/api/droplets/init", {
         params: {
             time: date,
         },

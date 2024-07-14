@@ -34,6 +34,7 @@ import { MdChevronLeft } from "react-icons/md";
 import { subValueType } from "../../contexts/Cryptea/types";
 import NumberFormat from "react-number-format";
 import axios from "axios";
+import http from "../../../utils/http";
 
 const Droplets = ({ className }: { className?: string }) => {
  
@@ -235,9 +236,7 @@ const Droplets = ({ className }: { className?: string }) => {
 
     const configCheck = async () => {
 
-      const { data: linkData } = await axios.get(`/link/${String(slug)}`, {
-        baseURL: "https://ab.cryptea.me",
-      });
+      const { data: linkData } = await http.get(`/link/${String(slug)}`);
 
       const { name, data: udata } = JSON.parse(
         linkData?.data?.link?.template_data || '{ "name": "", "data": "{}" }'
@@ -303,7 +302,7 @@ const Droplets = ({ className }: { className?: string }) => {
     if (action === undefined) {
       closeModal();
     } else {
-      await axios.post('/api/droplets/payment', {
+      await http.post('/api/droplets/payment', {
         date: data.config.start,
         ...action
       }, {

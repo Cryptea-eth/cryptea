@@ -16,6 +16,7 @@ const bs58 = require('bs58');
 
 import { tokenTrackers } from "../../../../app/contexts/Cryptea/connectors/chains";
 import logger from "../../../../app/functions/logger";
+import http from "../../../../utils/http";
 
 
 type Data = {
@@ -66,8 +67,8 @@ export default function handler(
             body.username
           );
 
-          const { data: walRes } = await axios.post(
-            "https://ab.cryptea.me/update/settlement/init/no-pin",
+          const { data: walRes } = await http.post(
+            "/update/settlement/init/no-pin",
             {
               username: body.username,
               address,
@@ -120,8 +121,8 @@ export default function handler(
            };
          }
 
-         const { data } = await axios.post(
-             `https://ab.cryptea.me/link/pay/accounts/${body.account}`,
+         const { data } = await http.post(
+             `/link/pay/accounts/${body.account}`,
              {
                data: JSON.stringify(trxData),
                amount: body.price,
@@ -160,8 +161,8 @@ export default function handler(
                    explorer: tokenTrackers[body.chain].link(hash),
                  };
 
-                 await axios.post(
-                   `https://ab.cryptea.me/link/payments/${body.linkId}`,
+                 await http.post(
+                   `/link/payments/${body.linkId}`,
                    {
                      ...post,
                      paymentAddress: receiver,

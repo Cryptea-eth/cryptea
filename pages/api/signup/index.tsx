@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from 'axios';
+import http from "../../../utils/http";
 
 type Data = {
   message: string;
@@ -22,12 +23,8 @@ export default function handler(
         const { user, link, pins, host } = req.body;
 
         ( authorization == 'null' ?
-          axios.post("https://ab.cryptea.me/user", user) :
-          axios.patch("https://ab.cryptea.me/user", user, {
-            headers: {
-              Authorization: `Bearer ${authorization as string}`,
-            },
-          })
+          http.post("/user", user) :
+          http.patch("/user", user)
         )
           .then(({data: results}) => {
 

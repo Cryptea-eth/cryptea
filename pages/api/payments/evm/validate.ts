@@ -16,6 +16,7 @@ import {
   MantleTest,
   optimism,
 } from "../../../../app/contexts/Cryptea/connectors/chains";
+import http from "../../../../utils/http";
 
 type Data = {
   error: boolean;
@@ -88,8 +89,8 @@ export default function handler(
           }
 
           if (valid) {
-            const resMain = await axios.post(
-              `https://ab.cryptea.me/link/payments/${data.linkId}`,
+            const resMain = await http.post(
+              `/link/payments/${data.linkId}`,
               data,
               {
                 headers: {

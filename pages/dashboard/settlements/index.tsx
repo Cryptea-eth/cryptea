@@ -53,6 +53,7 @@ import { blockchains } from "../../../app/contexts/Cryptea/blockchains";
 import { TbPoint, TbPointOff } from "react-icons/tb";
 import { SolanaCryptoList } from "../../../app/contexts/Cryptea/connectors/solana";
 import { TronCryptoList } from "../../../app/contexts/Cryptea/connectors/tron";
+import http from "../../../utils/http";
 
 const Settlements = () => {
 
@@ -260,14 +261,11 @@ const Settlements = () => {
 
         const token = localStorage.getItem("userToken");
 
-        const { data: reqData } = await axios.post(
+        const { data: reqData } = await http.post(
           `/api/settlement/withdrawal/crypto/${withdrawToken.blocktype}`,
           payload,
           {
             baseURL: window.origin,
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
             timeout: 300_000,
           }
         );
@@ -419,10 +417,7 @@ const Settlements = () => {
           newpin: pins["newpin"],
         };
 
-        await axios.post(`/api/settlement/new`, newData, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-          },
+        await http.post(`/api/settlement/new`, newData, {
           baseURL: window.origin,
         });
 
@@ -462,6 +457,7 @@ const Settlements = () => {
        .sort((a: any, b: any) => Number(a.test) - Number(b.test))
        .sort((a: any, b: any) => b.amount - a.amount),
    });
+   
    
 
   useEffect(() => {
@@ -597,11 +593,8 @@ const Settlements = () => {
 
        const authToken = localStorage.getItem("userToken");
 
-       const { data: balances } = await axios.get(`/api/settlement/balance`, {
+       const { data: balances } = await http.get(`/api/settlement/balance`, {
          baseURL: window.origin,
-         headers: {
-           Authorization: `Bearer ${authToken}`,
-         },
          timeout: 300_000,
        });
 

@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios';
 import nacl from "tweetnacl";
 import * as ethers from 'ethers';
+import http from '../../../utils/http';
 
 // authentication for wallets from different blockchains
 
@@ -27,7 +28,7 @@ export default function handler(
 
     try {
 
-    const rs = await axios
+    const rs = await http
       .post(
         "/login/walletAuth",
         {
@@ -38,7 +39,6 @@ export default function handler(
           headers: {
             Authorization: key,
           },
-          baseURL: 'https://ab.cryptea.me'
         }
       )
 
@@ -56,10 +56,14 @@ export default function handler(
 
         const errx = err as any;
 
-        res.status(400).json({
-          message: errx.response?.data?.message,
+        console.log(process.env.APP_KEY, 'sss', "ss");
+
+        res.status(errx?.response?.status || 400).json({
+          message:
+            errx.response?.data?.message ||
+            "Something went wrong, please try again",
           error: true,
-      }); 
+        }); 
    }
 }
 
@@ -96,7 +100,7 @@ export default function handler(
   
             getToken(address, tz);              
 
-          }else{
+          } else {
             res.status(400).json({
               message: "Signature verification failed",
               error: true,

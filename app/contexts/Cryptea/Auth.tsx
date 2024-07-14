@@ -48,6 +48,7 @@ import {
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { PhantomWallet } from "./connectors/solana";
+import http from '../../../utils/http';
 
 let user: userData | undefined;
 
@@ -69,7 +70,7 @@ export const AuthAddress = async ({
     //   tz: window.jstz.determine().name(),
     // });
 
-    const userx = await axios.post(
+    const userx = await http.post(
       "/api/walletAuth",
       {
         blocktype,
