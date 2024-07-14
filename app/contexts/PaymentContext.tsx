@@ -43,6 +43,7 @@ import { BsCheck, BsCheck2, BsMailbox } from "react-icons/bs";
 
 import TabPanel from "../components/elements/dashboard/link/TabPanel";
 import { BiMailSend, BiSync, BiX } from "react-icons/bi";
+import http from "../../utils/http";
 
 export const PaymentContext = createContext<PaymentCont>({});
 
@@ -819,7 +820,7 @@ export const PaymentProvider = ({
             };
           }
 
-          await axios.post(`/api/payments/${token.blocktype}/validate`, post, {
+          await http.post(`/api/payments/${token.blocktype}/validate`, post, {
             baseURL: window.origin,
           });
 
@@ -987,7 +988,7 @@ export const PaymentProvider = ({
 
         setManLoader(true);
 
-        const queryBalance = await axios.post(
+        const queryBalance = await http.post(
           `/api/payments/${token.blocktype}`,
           {
             ...base,

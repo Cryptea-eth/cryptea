@@ -7,6 +7,7 @@ import Image from "next/image";
 import emailImg from "../../../public/images/email_fail.svg";
 import axios, { AxiosError } from "axios";
 import { useCryptea } from "../../../app/contexts/Cryptea";
+import http from "../../../utils/http";
 
 const VerifyHash = () => {
 
@@ -22,8 +23,8 @@ const VerifyHash = () => {
       
       if (hash !== undefined && isAuthenticated !== undefined) {
         if(!isAuthenticated){
-        axios.post(
-            `https://ab.cryptea.me/verify/user?tz=${window.jstz
+        http.post(
+            `/verify/user?tz=${window.jstz
               .determine()
               .name()}`,
             {

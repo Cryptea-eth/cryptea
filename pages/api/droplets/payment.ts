@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from 'axios';
 import logger from "../../../app/functions/logger";
+import http from "../../../utils/http";
 
 type Data = {
   message: string;
@@ -22,8 +23,7 @@ export default function handler(
             
             try {
 
-                const { data: { data: subData } } = await axios.get(`/payments/${linkId}/link`, {
-                    baseURL: "https://ab.cryptea.me",
+                const { data: { data: subData } } = await http.get(`/payments/${linkId}/link`, {
                     headers: {
                         Authorization: process.env.APP_KEY || "",
                     }
@@ -56,9 +56,7 @@ export default function handler(
                     });
 
 
-                    const { data: linkData } = await axios.get(`/link/${link}`, {
-                        baseURL: "https://ab.cryptea.me",
-                    });    
+                    const { data: linkData } = await http.get(`/link/${link}`);    
                    
 
 
@@ -75,10 +73,9 @@ export default function handler(
 
                     const nData = JSON.stringify({name, data: udata});
 
-                    await axios.patch(`/link/${linkId}/update`, {
+                    await http.patch(`/link/${linkId}/update`, {
                         template_data: nData
                     }, {
-                        baseURL: "https://ab.cryptea.me",
                         headers: {
                             Authorization: process.env.APP_KEY || "",
                         }

@@ -21,6 +21,7 @@ import TabPanel from "../dashboard/link/TabPanel";
 import { PinField } from "react-pin-field";
 import axios from 'axios';
 import Link from "next/link";
+import http from "../../../../utils/http";
 
 
 const SignupForm = () => {
@@ -181,11 +182,8 @@ const SignupForm = () => {
 
               
 
-              const { data: mdata } = await axios.post('/api/signup', signData, {
+              const { data: mdata } = await http.post('/api/signup', signData, {
                 baseURL: window.origin,
-                headers: {
-                  Authorization
-                }
               });
 
 

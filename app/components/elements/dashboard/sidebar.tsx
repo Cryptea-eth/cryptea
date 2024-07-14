@@ -106,7 +106,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
 
         <div
           className={`rounded-tr-[4px] rounded-br-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#d3d3d333] flex items-center py-[9px] ${
-            page === "links" || page === "link" ? active : ""
+            page == "links" || page == "link" ? active : ""
           }`}
         >
           <Link href="/dashboard/links">
@@ -121,6 +121,8 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
             </a>
           </Link>
         </div>
+
+
 
         <div
           className={`rounded-tr-[4px] rounded-br-[4px]  border-l-[3px] overflow-hidden flex-nowrap my-1 ${
@@ -142,7 +144,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
           </Link>
         </div>
 
-        {/* <div
+        <div
           className={`rounded-tr-[4px] rounded-br-[4px]  border-l-[3px] overflow-hidden flex-nowrap my-1 ${
             ["wallets", "wallet"].includes(page as string) ? active : ""
           } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#d3d3d333] flex cursor-pointer items-center py-[9px]`}
@@ -158,7 +160,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
               {sidebar?.openDelay ? "Wallets" : ""}
             </a>
           </Link>
-        </div> */}
+        </div>
 
         <div
           className={`rounded-tr-[4px] rounded-br-[4px] cursor-pointer border-l-[3px] overflow-hidden flex-nowrap my-1 transition-all delay-200 border-solid hover:border-l-[3px] hover:border-l-[#F57059] hover:text-[#F57059] border-l-transparent text-[#A9A9A9] hover:bg-[#d3d3d333] flex items-center py-[9px] ${

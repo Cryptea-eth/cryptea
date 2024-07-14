@@ -41,6 +41,7 @@ export const blockchains: { [index: string]: any } = {
       solidity: string;
       main: string;
     }) => {
+      
       if (!TronWeb.isAddress(addr)) {
         return 0;
       }

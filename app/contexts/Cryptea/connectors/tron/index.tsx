@@ -94,8 +94,8 @@ export const TronCryptoList: token<{
     blocktype: "trx",
     tokenAddr: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
     rpc: {
-      solidity: "https://api.trongrid.io",
-      main: "https://api.trongrid.io",
+      solidity: process.env.TRON || "https://api.trongrid.io",
+      main: process.env.TRON || "https://api.trongrid.io",
     },
     testnet: false,
     type: "non-native",

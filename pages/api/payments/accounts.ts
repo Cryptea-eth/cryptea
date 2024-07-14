@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios';
 import * as ethers from 'ethers'; 
 import { Keypair } from '@solana/web3.js';
 import logger from '../../../app/functions/logger';
+import http from '../../../utils/http';
 
 const bs58 = require('bs58');
 const { encryptData } = require('../../../app/functions/crypto-data');
@@ -31,7 +32,7 @@ export default function handler(
 
       wallet.encrypt(process.env.KEY || '').then(async (encrypted) => {  
         try {
-        await axios.post(
+        await http.post(
           "/link/pay/accounts",
           {
             account: wallet.address,
@@ -42,7 +43,6 @@ export default function handler(
             headers: {
               Authorization: process.env.APP_KEY || "",
             },
-            baseURL: "https://ab.cryptea.me",
           }
         );
 
@@ -78,7 +78,7 @@ export default function handler(
         (async () => {
 
           try {
-          await axios.post(
+          await http.post(
             "/link/pay/accounts",
             {
               account: wallet.publicKey.toBase58(),
@@ -89,7 +89,6 @@ export default function handler(
               headers: {
                 Authorization: process.env.APP_KEY || "",
               },
-              baseURL: "https://ab.cryptea.me",
             }
           );
               

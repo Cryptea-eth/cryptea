@@ -4,6 +4,7 @@ import axios from "axios";
 import { decryptData, encryptData } from "../../../app/functions/crypto-data";
 import { Keypair } from "@solana/web3.js";
 import logger from "../../../app/functions/logger";
+import http from "../../../utils/http";
 const TronWeb = require("tronweb");
 const bs58 = require("bs58");
 
@@ -134,17 +135,12 @@ export default function handler(
                   }
                                   
 
-                  await axios.post(
-                    `https://ab.cryptea.me/user/update`,
+                  await http.post(
+                    `/user/update`,
                     {
                       pin: data.newpin,
                       oldpin: data.oldpin,
                       accounts,
-                    },
-                    {
-                      headers: {
-                        Authorization: `Bearer ${data.token}`,
-                      },
                     }
                   );
 
@@ -194,17 +190,12 @@ export default function handler(
                       },
                     ];
                 
-                    await axios.post(
-                      "https://ab.cryptea.me/user/update",
+                    await http.post(
+                      "/user/update",
                       {
                         pin: data.newpin,
                         address,
                         accounts,
-                      },
-                      {
-                        headers: {
-                          Authorization: `Bearer ${data.token}`,
-                        },
                       }
                     )
 

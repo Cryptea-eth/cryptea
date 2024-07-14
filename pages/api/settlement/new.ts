@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Keypair } from "@solana/web3.js";
 import { encryptData } from "../../../app/functions/crypto-data";
 import logger from "../../../app/functions/logger";
+import http from "../../../utils/http";
 // <reference types="@types/tronweb" />
 const TronWeb = require("tronweb");
 
@@ -100,16 +101,11 @@ export default function handler(
                 account: tronAccount.privateKey,
               })
 
-              await axios.post(
-                "https://ab.cryptea.me/update/settlement/pin",
+              await http.post(
+                "/update/settlement/pin",
                 {
                    data: ethObj,
                    pin
-                },
-                {
-                  headers: {
-                    Authorization: authorization as string,
-                  },
                 }
               )
             

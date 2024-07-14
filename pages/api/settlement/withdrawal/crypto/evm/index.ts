@@ -4,6 +4,7 @@ import axios, { AxiosError } from "axios";
 import * as ethers from "ethers";
 import { tokenTrackers } from "../../../../../../app/contexts/Cryptea/connectors/chains";
 import logger from "../../../../../../app/functions/logger";
+import http from "../../../../../../utils/http";
 
 type Data = {
   message: string;
@@ -128,14 +129,9 @@ export default function handler(
             desc: `${token.name} Crypto Withdrawal`,
           };
 
-          await axios.post(
-            "https://ab.cryptea.me/settlements/new",
-            StoredData,
-            {
-              headers: {
-                Authorization: authorization as string,
-              },
-            }
+          await http.post(
+            "/settlements/new",
+            StoredData
           );
 
           res.status(201).json({

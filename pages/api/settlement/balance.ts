@@ -5,6 +5,7 @@ import { CryptoList } from '../../../app/contexts/Cryptea/connectors/chains';
 import { blockchains } from '../../../app/contexts/Cryptea/blockchains';
 import { token } from '../../../app/contexts/Cryptea/types';
 import { SolanaCryptoList } from '../../../app/contexts/Cryptea/connectors/solana';
+import http from '../../../utils/http';
 
 type base = { [index: string]: any }; 
 
@@ -37,11 +38,11 @@ export default function handler(
 
             try{
 
-                const { data } = await axios.get('https://ab.cryptea.me/user/extra', {
+                const { data } = await http.get('/user/extra', {
                     headers: {
                         Authorization: authorization as string
                     }
-                })
+                });
 
                 const { user, accounts, pending, payments } = data;
 
@@ -111,11 +112,8 @@ export default function handler(
 
                      if (!price) {
 
-                      const res = await axios.get(
-                        `/token/price/${useSymbol ? symbol : name}`,
-                        {
-                            baseURL: 'https://ab.cryptea.me'
-                        }
+                      const res = await http.get(
+                        `/token/price/${useSymbol ? symbol : name}`
                       );
                    
                       prices[value] = price = res?.data.price;
@@ -169,11 +167,8 @@ export default function handler(
                     let price = prices?.[data.chainId];
 
                     if (!price) {
-                      const res = await axios.get(
-                        `/token/price/${tObj?.useSymbol ? tObj.symbol : token.toLowerCase()}`,
-                        {
-                          baseURL: "https://ab.cryptea.me",
-                        }
+                      const res = await http.get(
+                        `/token/price/${tObj?.useSymbol ? tObj.symbol : token.toLowerCase()}`
                       );
 
                       prices[data.chainId] = price = res?.data.price;
@@ -198,7 +193,7 @@ export default function handler(
 
                logger.error(error);
 
-               res.status(error?.status || 400).json({
+               res.status(error?.response?.status || 400).json({
                  error: true,
                  message:
                    error?.response?.data?.message ||

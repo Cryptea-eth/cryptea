@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import generic from "../../../public/images/generic.json";
+import http from "../../../utils/http";
 
 export default function handler(
   req: NextApiRequest,
@@ -26,7 +27,7 @@ export default function handler(
 
         try {        
       
-          const rs = await axios.get(`https://ab.cryptea.me/crypto/img/${crypto.split(' ').shift()}`, { headers: {
+          const rs = await http.get(`/crypto/img/${crypto.split(' ').shift()}`, { headers: {
             Authorization: process.env.APP_KEY || "",
           }});
 

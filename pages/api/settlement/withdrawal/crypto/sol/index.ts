@@ -17,6 +17,7 @@ import {
 import { validateSol } from "../../../../../../app/contexts/Cryptea/blockchains";
 import logger from "../../../../../../app/functions/logger";
 import { solanatokenTrackers } from "../../../../../../app/contexts/Cryptea/connectors/solana";
+import http from "../../../../../../utils/http";
 const bs58 = require("bs58");
 
 
@@ -74,11 +75,7 @@ export default function handler(
      
       try {
         
-        await axios.get("https://ab.cryptea.me/user", {
-          headers: {
-            Authorization: authorization as string,
-          },
-        });
+        await http.get("/user");
 
         const provider = new Connection(token.rpc || "");
 
@@ -143,8 +140,8 @@ export default function handler(
                 });
           }
 
-          await axios.patch(
-            `https://ab.cryptea.me/settlements/update/${userAccts.address}`,
+          await http.patch(
+            `/settlements/update/${userAccts.address}`,
             {
               account: JSON.stringify(encryptData(secretKey, pin)),
             },
@@ -192,11 +189,7 @@ export default function handler(
           desc: `${token.name} Crypto Withdrawal`,
         };
 
-        await axios.post("https://ab.cryptea.me/settlements/new", StoredData, {
-          headers: {
-            Authorization: authorization as string,
-          },
-        });
+        await http.post("/settlements/new", StoredData);
 
         res.status(201).json({
           error: false,

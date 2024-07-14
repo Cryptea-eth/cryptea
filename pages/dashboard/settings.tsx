@@ -28,6 +28,7 @@ import { useCryptea } from "../../app/contexts/Cryptea";
 import Page from "../../app/components/elements/dashboard";
 import Loader from "../../app/components/elements/loader";
 import Head from "next/head";
+import http from "../../utils/http";
 
 interface PixelCrop {
   x: number;
@@ -378,7 +379,7 @@ const Settings = () => {
 
           if (Boolean(data.settlement.length)) newData['oldpin'] = pins['oldpin'];
         
-          await axios.post(`/api/settlement/update`, {  
+          await http.post(`/api/settlement/update`, {  
               ...newData, token: localStorage.getItem('userToken')
           }, {
             baseURL: window.origin,
