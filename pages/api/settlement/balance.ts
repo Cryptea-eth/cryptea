@@ -38,7 +38,11 @@ export default function handler(
 
             try{
 
-                const { data } = await http.get('/user/extra')
+                const { data } = await http.get('/user/extra', {
+                    headers: {
+                        Authorization: authorization as string
+                    }
+                });
 
                 const { user, accounts, pending, payments } = data;
 
@@ -189,7 +193,7 @@ export default function handler(
 
                logger.error(error);
 
-               res.status(error?.status || 400).json({
+               res.status(error?.response?.status || 400).json({
                  error: true,
                  message:
                    error?.response?.data?.message ||

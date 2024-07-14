@@ -160,7 +160,7 @@ const Api = () => {
         init();
       }
     }
-  }, [isAuthenticated, slug, router.isReady, router, ref]);
+  }, [isAuthenticated, slug, router.isReady, hash, rdialog, router, ref]);
 
   return (
     <>
@@ -671,7 +671,7 @@ const Api = () => {
 
                             revokeDialog(true);
                           }}
-                          className="cursor-pointer min-w-[180px] flex items-center border-t pr-6 transition-all delay-150 p-3 border-solid border-[rgb(218,220,224)] hover:bg-[#fff6f5]"
+                          className="cursor-pointer min-w-[140px] flex items-center border-t pr-6 transition-all delay-150 p-3 border-solid border-[rgb(218,220,224)] hover:bg-[#fff6f5]"
                         >
                           {rLoader ? (
                             <>
