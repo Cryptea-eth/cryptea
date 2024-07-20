@@ -108,10 +108,10 @@ const Magic = () => {
   return !loader ? (
     <div className="flex h-screen items-center flex-col justify-center">
       <Head>
-        <title>Request Magic Link | Cryptea</title>
+        <title>Request Magic Link | Breew</title>
         <meta
           name="description"
-          content="Cryptea - Receive Payments Instantly With Ease."
+          content="Breew - Receive Payments Instantly With Ease."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -166,11 +166,11 @@ const Magic = () => {
               }}
               sx={{
                 "& .MuiFormLabel-root": {
-                  color: "#f57059",
-                  borderColor: `#f57059 !important`,
+                  color: "#8036de",
+                  borderColor: `#8036de !important`,
                 },
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: `#f57059 !important`,
+                  borderColor: `#8036de !important`,
                   borderWidth: `2px`,
                 },
               }}
@@ -178,12 +178,12 @@ const Magic = () => {
               fullWidth
               helperText={Boolean(error) ? error : ""}
               error={Boolean(error)}
-              placeholder="hello@cryptea.me"
+              placeholder="hello@Breew.me"
             />
 
             <Button
               onClick={auth}
-              className="!py-3 !w-full !mt-3 !font-bold !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !transition-all !delay-500 !rounded-lg !text-[17px]"
+              className="!py-3 !w-full !mt-3 !font-bold !capitalize !flex !items-center !text-white !bg-[#8036de] !border-none !transition-all !delay-500 !rounded-lg !text-[17px]"
             >
               {loading ? (
                 <>

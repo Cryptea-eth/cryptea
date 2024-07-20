@@ -15,13 +15,13 @@ const Blog = () => {
           <span
             style={{
               background:
-                "linear-gradient(90deg, #F57059 31.38%, #8B59F5 102.16%)",
+                "linear-gradient(90deg, #8036de 31.38%, #8B59F5 102.16%)",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
               WebkitBackgroundClip: "text",
             }}
           >
-            Cryptea&#39;s Blog
+            Breew&#39;s Blog
           </span>
         </div>
 
@@ -33,7 +33,7 @@ const Blog = () => {
 
             <div className="featured-conttent">
               <div className="featured-tag my-4">
-                <p>Cryptea&#39;s Blog</p>
+                <p>Breew&#39;s Blog</p>
               </div>
               <div className="featured-title my-3">
                 <p className="text-4xl font-bold">Featured Title</p>
@@ -47,7 +47,7 @@ const Blog = () => {
               </div>
               <div className="continue my-3">
                 <Link href="/blog/featured">
-                  <div className="text-[#f57059] font-bold flex items-center">
+                  <div className="text-[#8036de] font-bold flex items-center">
                     <p className="mr-2">Continue Reading</p>
                     <FaArrowCircleRight />
                   </div>
@@ -95,7 +95,7 @@ const Blog = () => {
         <div className="mx-auto mt-8">
           <Link href="/">
             <a>
-              <button className="ml-2 hover:bg-[#ff320e] transition-all delay-500 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4">
+              <button className="ml-2 hover:bg-[#4a168e] transition-all delay-500 text-sm rounded-lg bg-[#8036de] text-white font-semibold py-4 px-4">
                 Go Back Home
               </button>
             </a>

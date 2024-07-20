@@ -49,7 +49,7 @@ const AuthModal = ({
     const elem = document.querySelector("#rk_connect_title");
 
     if (elem !== null) {
-      elem.innerHTML = `<a class="flex flex-row max-w-[116px] min-w-[116px] items-center justify-between" href="/" style="transform: scale(0.7);left: -8px;margin-bottom: 2px;position: relative;"><span style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span style="box-sizing: border-box; display: block; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; max-width: 100%;"><img alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2730%27%20height=%2730%27/%3e" style="display: block; max-width: 100%; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px;"></span><img alt="cryptea" src="${logo.src}" decoding="async" data-nimg="intrinsic" class="min-w-[30px]" srcset="${logo.src} 1x, ${logo.src} 2x" style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"></span><span style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span style="box-sizing: border-box; display: block; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; max-width: 100%;"><img alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2782%27%20height=%2715%27/%3e" style="display: block; max-width: 100%; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px;"></span><img alt="cryptea" src="${logo1.src}" decoding="async" data-nimg="intrinsic" class="min-w-[30px]" srcset="${logo1.src} 1x, ${logo1.src} 2x" style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"></span></a> Launch App `;
+      elem.innerHTML = `<a class="flex flex-row max-w-[116px] min-w-[116px] items-center justify-between" href="/" style="transform: scale(0.7);left: -8px;margin-bottom: 2px;position: relative;"><span style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span style="box-sizing: border-box; display: block; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; max-width: 100%;"><img alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2730%27%20height=%2730%27/%3e" style="display: block; max-width: 100%; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px;"></span><img alt="Breew" src="${logo.src}" decoding="async" data-nimg="intrinsic" class="min-w-[30px]" srcset="${logo.src} 1x, ${logo.src} 2x" style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"></span><span style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span style="box-sizing: border-box; display: block; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; max-width: 100%;"><img alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2782%27%20height=%2715%27/%3e" style="display: block; max-width: 100%; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px;"></span><img alt="Breew" src="${logo1.src}" decoding="async" data-nimg="intrinsic" class="min-w-[30px]" srcset="${logo1.src} 1x, ${logo1.src} 2x" style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"></span></a> Launch App `;
 
       (
         document.querySelector("._1vwt0cg2") || {
@@ -154,7 +154,7 @@ const AuthModal = ({
         
 
           isAuthing = await authenticateUser({
-            signMessage: message ?? "Welcome to Cryptea",
+            signMessage: message ?? "Welcome to Breew",
             type: connectors[2],
           });
 
@@ -233,7 +233,7 @@ const AuthModal = ({
           }  flex-col items-center justify-center shadow-lg bg-white`}
         >
           {Boolean(authError?.length) && (
-            <div className="transition-all rounded-md delay-500 border-[#F57059] text-[rgb(245,112,89)] items-center font-bold text-[16px] border-[1px] mx-6 mb-4 w-[calc(100%-48px)] p-3">
+            <div className="transition-all rounded-md delay-500 border-[#8036de] text-[#8036de] items-center font-bold text-[16px] border-[1px] mx-6 mb-4 w-[calc(100%-48px)] p-3">
               {authError}
             </div>
           )}
@@ -264,7 +264,7 @@ const AuthModal = ({
                         login();
                       }
                     }}
-                    className="uppercase text-white bg-[#f57059] transition-all py-1 leading-normal hover:bg-[#f05338] px-3 text-center h-auto rounded-[3rem] font-bold block cursor-pointer mx-auto"
+                    className="uppercase text-white bg-[#8036de] transition-all py-1 leading-normal hover:bg-[#f05338] px-3 text-center h-auto rounded-[3rem] font-bold block cursor-pointer mx-auto"
                   >
                     Retry
                   </button>
@@ -276,7 +276,10 @@ const AuthModal = ({
                   </div>
 
                   <div className="mx-auto block mt-1 text-center">
-                    <CircularProgress size={20} className="!text-[rgba(60,66,66,0.6)]" />
+                    <CircularProgress
+                      size={20}
+                      className="!text-[rgba(60,66,66,0.6)]"
+                    />
                   </div>
                 </>
               )}

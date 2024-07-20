@@ -30,8 +30,8 @@ const Document = () => {
         />
         <script async src="/tz.js"></script>
         <link rel="manifest" href="/site.webmanifest" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#F57059" />
-        <meta name="msapplication-TileColor" content="#F57059" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#8036de" />
+        <meta name="msapplication-TileColor" content="#8036de" />
         <meta name="theme-color" content="#ffffff"></meta>
       </Head>
       <body>

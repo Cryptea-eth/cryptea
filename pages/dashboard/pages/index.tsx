@@ -45,7 +45,7 @@ const Pages = () => {
   return (
     <Page>
       <Head>
-        <title>Pages | Dashboard | Cryptea</title>
+        <title>Pages | Dashboard | Breew</title>
         <meta name="description" content={`Edit All Your Pages`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -107,14 +107,14 @@ const Pages = () => {
                 return (
                   <div
                     key={i}
-                    className="w-full cursor-default border-2 border-[#f5705982] border-solid p-4 rounded-md"
+                    className="w-full cursor-default border-2 border-[#8036de82] border-solid p-4 rounded-md"
                   >
                     <div className="flex items-start">
                       <Avatar
                         sx={{
                           width: 60,
                           height: 60,
-                          backgroundColor: !Boolean(realS) ? "#f57059" : undefined,
+                          backgroundColor: !Boolean(realS) ? "#8036de" : undefined,
                           fontWeight: 600,
                           marginRight: "10px",
                         }}

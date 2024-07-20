@@ -91,14 +91,14 @@ export const GenProvider = ({ children }: { children: JSX.Element }) => {
   });
 
   const toggle = () => {
-    close(!isOpen);
+    close((prev) => !prev);
 
     setTimeout(() => {
-      close2(!isOpen2);
+      close2((prev) => !prev);
     }, 10);
 
     setTimeout(() => {
-      close3(!isOpen3);
+      close3((prev) => !prev);
     }, 900);
   };
 

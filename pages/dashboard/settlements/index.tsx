@@ -326,7 +326,7 @@ const Settlements = () => {
 
     return (
       <div key={key} className="mx-4 flex items-start py-4">
-        <div className="text-[#F57059] mt-2 flex-shrink-0">
+        <div className="text-[#8036de] mt-2 flex-shrink-0">
           {val.type == "fiat" && <MdPayment size={18} />}
           {val.type == "crypto" && <FaCoins size={18} />}
           {val.type == "swap" && <RiCoinFill size={18} />}
@@ -732,7 +732,7 @@ const Settlements = () => {
   return (
     <Page>
       <Head>
-        <title>Settlements | Dashboard | Cryptea</title>
+        <title>Settlements | Dashboard | Breew</title>
         <meta
           name="description"
           content={`Distribute and receive all your funds in crypto and fiat`}
@@ -805,7 +805,7 @@ const Settlements = () => {
                     <div className="flex mb-5 bg-white items-center">
                       <div className="bg-[#ebebeb] px-2 font-[600] truncate mr-3 rounded py-2 w-full text-[#7a7a7a]">
                         {Boolean(data.username) ? data.username : ""}{" "}
-                        {"Cryptea Wallets"}
+                        {"Breew Wallets"}
                       </div>
 
                       <div className="bg-[#ebebeb] px-2 rounded py-2 min-w-fit font-[600] text-[#7a7a7a]">
@@ -880,7 +880,7 @@ const Settlements = () => {
                             "& .select__control--is-focused": {
                               borderWidth: "0px",
                               borderBottomWidth: "2px",
-                              borderBottomColor: `#F57059 !important`,
+                              borderBottomColor: `#8036de !important`,
                               boxShadow: "none",
                             },
                           }),
@@ -970,7 +970,7 @@ const Settlements = () => {
 
                                   "& .select__control--is-focused": {
                                     borderWidth: "2px",
-                                    borderColor: `#F57059 !important`,
+                                    borderColor: `#8036de !important`,
                                     boxShadow: "none",
                                   },
                                 }),
@@ -1005,12 +1005,12 @@ const Settlements = () => {
                               className="cursor-pointer"
                               sx={{
                                 "& p": {
-                                  color: "#F57059",
+                                  color: "#8036de",
                                 },
                               }}
                               position="end"
                             >
-                              <Button className="!py-0 !font-[600] !capitalize !flex !items-center !text-[#F57059] !bg-[#f5705904] !min-w-fit !border-none !transition-all !delay-500 !px-3 !text-[14px]">
+                              <Button className="!py-0 !font-[600] !capitalize !flex !items-center !text-[#8036de] !bg-[#8036de04] !min-w-fit !border-none !transition-all !delay-500 !px-3 !text-[14px]">
                                 paste
                               </Button>
                             </InputAdornment>
@@ -1018,7 +1018,7 @@ const Settlements = () => {
                         }}
                         sx={{
                           "& .Mui-focused.MuiInputLabel-root": {
-                            color: "#f57059",
+                            color: "#8036de",
                           },
                           "& .MuiInputLabel-root": {
                             fontWeight: "600",
@@ -1026,7 +1026,7 @@ const Settlements = () => {
                           },
                           "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
                             {
-                              borderColor: `#f57059 !important`,
+                              borderColor: `#8036de !important`,
                             },
                           "& .MuiFormHelperText-root": {
                             padding: "6px 3px",
@@ -1081,7 +1081,7 @@ const Settlements = () => {
                                     crypto: String(bal),
                                   });
                                 }}
-                                className="!py-0 !font-[600] !capitalize !flex !items-center !text-[#565656] !bg-[#f5705904] !cursor-pointer !min-w-fit !border-none !transition-all !delay-500 !px-3 !text-[14px]"
+                                className="!py-0 !font-[600] !capitalize !flex !items-center !text-[#565656] !bg-[#8036de04] !cursor-pointer !min-w-fit !border-none !transition-all !delay-500 !px-3 !text-[14px]"
                               >
                                 MAX
                               </Button>
@@ -1094,7 +1094,7 @@ const Settlements = () => {
                         }}
                         sx={{
                           "& .Mui-focused.MuiInputLabel-root": {
-                            color: "#f57059",
+                            color: "#8036de",
                           },
                           "& .MuiInputLabel-root": {
                             fontWeight: "600",
@@ -1102,7 +1102,7 @@ const Settlements = () => {
                           },
                           "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
                             {
-                              borderColor: `#f57059 !important`,
+                              borderColor: `#8036de !important`,
                             },
                           "& .MuiFormHelperText-root": {
                             padding: "6px 3px",
@@ -1155,7 +1155,7 @@ const Settlements = () => {
                         }}
                         sx={{
                           "& .Mui-focused.MuiInputLabel-root": {
-                            color: "#f57059",
+                            color: "#8036de",
                           },
                           "& .MuiInputLabel-root": {
                             fontWeight: "600",
@@ -1163,7 +1163,7 @@ const Settlements = () => {
                           },
                           "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
                             {
-                              borderColor: `#f57059 !important`,
+                              borderColor: `#8036de !important`,
                             },
                           "& .MuiFormHelperText-root": {
                             padding: "6px 3px",
@@ -1260,7 +1260,7 @@ const Settlements = () => {
                           width="154px"
                           height="154px"
                         >
-                          <g fill="none" stroke={"#F57059"} strokeWidth="2">
+                          <g fill="none" stroke={"#8036de"} strokeWidth="2">
                             <circle
                               cx="77"
                               cy="77"
@@ -1272,7 +1272,7 @@ const Settlements = () => {
                             ></circle>
                             <circle
                               id="colored"
-                              fill={"#F57059"}
+                              fill={"#8036de"}
                               cx="77"
                               cy="77"
                               r="72"
@@ -1298,7 +1298,7 @@ const Settlements = () => {
 
                     <h2
                       style={{
-                        color: "#F57059",
+                        color: "#8036de",
                       }}
                       className="mb-3 text-[19px] font-bold"
                     >
@@ -1336,7 +1336,7 @@ const Settlements = () => {
                   {cryptoWithdrawStage == 2 && (
                     <Button
                       variant="contained"
-                      className="!py-2 !font-bold !px-3 !capitalize min-w-[120px] !flex !items-center !text-white !bg-[#F57059] !border-solid !transition-all !delay-500 !rounded-lg"
+                      className="!py-2 !font-bold !px-3 !capitalize min-w-[120px] !flex !items-center !text-white !bg-[#8036de] !border-solid !transition-all !delay-500 !rounded-lg"
                       style={{
                         fontFamily: "inherit",
                       }}
@@ -1358,7 +1358,7 @@ const Settlements = () => {
                   {cryptoWithdrawStage != 2 && (
                     <Button
                       onClick={withdrawCrypto}
-                      className="!py-2 !font-bold !px-3 !capitalize min-w-[120px] !flex !items-center !text-white !bg-[#F57059] !transition-all !delay-500 !rounded-lg"
+                      className="!py-2 !font-bold !px-3 !capitalize min-w-[120px] !flex !items-center !text-white !bg-[#8036de] !transition-all !delay-500 !rounded-lg"
                     >
                       {withdrawLoading && (
                         <CircularProgress
@@ -1437,7 +1437,7 @@ const Settlements = () => {
               <div className="flex items-center">
                 <Button
                   onClick={() => setSoon(false)}
-                  className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                  className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                 >
                   Thank you
                 </Button>
@@ -1569,7 +1569,7 @@ const Settlements = () => {
                   <div className="flex items-center">
                     <Button
                       onClick={savePin}
-                      className="!py-2 !font-bold !min-w-[250px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#F57059] !normal-case !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                      className="!py-2 !font-bold !min-w-[250px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#8036de] !normal-case !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                     >
                       {pinLoading ? (
                         <>
@@ -1705,7 +1705,7 @@ const Settlements = () => {
                   sAddresses.current[withdrawToken.blocktype]
                 );
               }}
-              className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] !mr-[2px]"
+              className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#8036de] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] !mr-[2px]"
             >
               <FaCoins size={16} className="mr-1" /> Withdraw Crypto
             </Button>
@@ -1719,7 +1719,7 @@ const Settlements = () => {
           ) : (
             <Button
               onClick={() => setSoon(true)}
-              className="!py-2 !px-3 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !min-w-fit !transition-all !delay-500 !rounded-lg !text-[14px] !mx-[2px]"
+              className="!py-2 !px-3 !font-[600] !capitalize !flex !items-center !text-white !bg-[#8036de] !border-none !min-w-fit !transition-all !delay-500 !rounded-lg !text-[14px] !mx-[2px]"
             >
               <MdPayment size={16} className="mr-1" /> Withdraw Fiat
             </Button>
@@ -1733,7 +1733,7 @@ const Settlements = () => {
           ) : (
             <Button
               onClick={() => setSoon(true)}
-              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] !mx-[2px]"
+              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#8036de] !border-[#8036de] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] !mx-[2px]"
             >
               <RiCoinFill size={16} className="mr-1" /> Swap USDT
             </Button>
@@ -1747,7 +1747,7 @@ const Settlements = () => {
           ) : (
             <Button
               onClick={() => setSoon(true)}
-              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#F57059] !border-[#F57059] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] !mx-[2px]"
+              className="!py-2 !px-3 !font-[600] !min-w-fit !capitalize !flex !items-center !text-[#8036de] !border-[#8036de] !border !border-solid !transition-all !bg-transparent !delay-500 !rounded-lg !text-[14px] !mx-[2px]"
             >
               <MdSubscriptions size={16} className="mr-1" /> Auto Withdrawals
             </Button>
@@ -1820,7 +1820,7 @@ const Settlements = () => {
                           </Tooltip>
                         )}
 
-                        <div className="border-solid flex items-center w-[350px] justify-between text-[#6a6a6ab0] p-4 mr-2 bg-white border-[rgb(218,220,224)] rounded-[8px] border">
+                        <div className="border-solid flex items-center w-[350px] justify-between text-[#6a6a6ab0] p-4 mr-2 bg-white border-[rgb(245,245,255)] rounded-[8px] border">
                           <div className="flex items-center">
                             <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
                               <CustomImg
@@ -1883,7 +1883,7 @@ const Settlements = () => {
           ) : Boolean(settlementsTrx.data) &&
             Boolean(settlementsTrx.data.length) ? (
             <>
-              <div className="max-w-[650px] border border-solid border-[rgb(218,220,224)] rounded-lg py-3 flex flex-col w-full">
+              <div className="max-w-[650px] border border-solid border-[rgb(245,245,255)] rounded-lg py-3 flex flex-col w-full">
                 {settlementsTrx.data.map((val: any, key: number) =>
                   trx(val, key)
                 )}
@@ -1920,7 +1920,7 @@ const Settlements = () => {
 
                         setPageLoad(false);
                       }}
-                      className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                      className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#8036de] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                     >
                       {pageLoading ? (
                         <>
@@ -1941,7 +1941,7 @@ const Settlements = () => {
             </>
           ) : (
             <div
-              className="empty border border-solid border-[rgb(218,220,224)] rounded-lg py-3"
+              className="empty border border-solid border-[rgb(245,245,255)] rounded-lg py-3"
               style={{
                 display: "flex",
                 width: "100%",

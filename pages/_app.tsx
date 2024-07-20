@@ -11,7 +11,7 @@ import { GenProvider } from "../app/contexts/GenContext";
 import { HomeProvider } from "../app/contexts/HomeContext";
 import "../app/contexts/Cryptea/types.d.ts";
 import { CrypteaProvider } from "../app/contexts/Cryptea/Auth";
-import { crypteaCon, stylesCon } from "../app/contexts/Cryptea/icon";
+import { BreewCon as crypteaCon, stylesCon } from "../app/contexts/Cryptea/icon";
 import analytics from "../analytics";
 import Script from "next/script";
 
@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (once.current) {
       once.current = false;
 
-      console.log(`${crypteaCon} \n\n   %c Pay with Cryptea😊`, stylesCon);
+      console.log(`${crypteaCon} \n\n   %c Pay with Breew😊`, stylesCon);
     }
   }, []);
 

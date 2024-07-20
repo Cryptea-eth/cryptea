@@ -16,7 +16,7 @@ contract Subscription is ERC721URIStorage{
         event TransferReceived(address indexed _to, address indexed _from, uint indexed _amount);
         event TransferSent(address indexed _from, address indexed _desAddr , uint indexed _amount);
 
-         constructor() ERC721("Cryptea Subscription", "CPS") { 
+         constructor() ERC721("Breew Subscription", "CPS") { 
             owner = msg.sender;
             wallet = 0;
          }

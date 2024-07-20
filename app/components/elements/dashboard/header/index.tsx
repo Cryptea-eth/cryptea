@@ -93,7 +93,7 @@ const DashHeader = ({
   const id = nopen ? "Your Notifications" : undefined;
 
   const active =
-    "before:content-[''] before:bottom-[25px] before:left-[28px] before:bg-[#f57059] before:h-[7px] before:rounded-[50%] before:w-[7px]";
+    "before:content-[''] before:bottom-[25px] before:left-[28px] before:bg-[#8036de] before:h-[7px] before:rounded-[50%] before:w-[7px]";
 
   const noteValues = (d: any, i: number) => {
     let text: JSX.Element = <></>;
@@ -119,7 +119,7 @@ const DashHeader = ({
       <div
         key={i}
         style={{
-          backgroundColor: !d.read ? "#f5705914" : undefined,
+          backgroundColor: !d.read ? "#8036de14" : undefined,
         }}
         className="w-full px-6 py-2 flex items-center"
       >
@@ -129,7 +129,7 @@ const DashHeader = ({
             height: 30,
             fontSize: "13px",
             color: "rgba(0, 0, 0, .4)",
-            bgcolor: "#f57059",
+            bgcolor: "#8036de",
           }}
           variant={"rounded"}
           className="font-bold"
@@ -278,7 +278,7 @@ const DashHeader = ({
 
             {mloader && (
               <div className="flex items-center py-2 justify-center">
-                <CircularProgress className="text-[#f57059]" size={25} />
+                <CircularProgress className="text-[#8036de]" size={25} />
               </div>
             )}
           </div>
@@ -362,7 +362,7 @@ const DashHeader = ({
               width: 40,
               height: 40,
               fontWeight: "bold",
-              bgcolor: !Boolean(dp) ? "#f57059" : undefined,
+              bgcolor: !Boolean(dp) ? "#8036de" : undefined,
             }}
             alt={username}
           >

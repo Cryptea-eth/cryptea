@@ -59,7 +59,7 @@ const AboutWaitlist = () => {
   return (
     <div className="mx-[30px] mt-24 px-14 2md:px-4 2md:mx-1" id="about">
       <div className="w-[320px]">
-        <span className="uppercase text-[#F57059] font-semibold text-[14px]">
+        <span className="uppercase text-[#8036de] font-semibold text-[14px]">
           receive tips daily
         </span>
         <h1 className="text-black w-fit font-bold text-[29px] my-1">
@@ -74,7 +74,7 @@ const AboutWaitlist = () => {
           onClick={() => {
             if (open !== undefined) open();
           }}
-          className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
+          className="text-sm hover:bg-[#4a168e] transition-all delay-500 rounded-[6rem] bg-[#8036de] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet
         </button>
@@ -140,7 +140,7 @@ const AboutWaitlist = () => {
 
         <div className="mx-[10px]">
           {loading && (
-            <Box className="text-[#F57059]" sx={{ width: "100%" }}>
+            <Box className="text-[#8036de]" sx={{ width: "100%" }}>
               <LinearProgress color="inherit" />
             </Box>
           )}
@@ -162,7 +162,7 @@ const AboutWaitlist = () => {
                 Name{" "}
               </label>
               <input
-                className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#ff320e]"
+                className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#4a168e]"
                 id="username"
                 value={name}
                 onChange={(e) => {
@@ -181,7 +181,7 @@ const AboutWaitlist = () => {
                 Email Address{" "}
               </label>
               <input
-                className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#ff320e]"
+                className="shadow-sm appearance-none border border-gray-400 rounded w-full py-4 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:border-[#4a168e]"
                 id="email"
                 value={email}
                 type="email"
@@ -200,7 +200,7 @@ const AboutWaitlist = () => {
 
                   setSuccess("");
                 }}
-                placeholder="hello@cryptea.me"
+                placeholder="hello@breew.co"
               />
             </div>
           </div>
@@ -208,7 +208,7 @@ const AboutWaitlist = () => {
 
         <button
           onClick={addToWait}
-          className="text-sm mmd:mt-5 hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-5 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
+          className="text-sm mmd:mt-5 hover:bg-[#4a168e] transition-all delay-500 rounded-[6rem] bg-[#8036de] mt-5 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Submit
         </button>

@@ -115,7 +115,7 @@ const Overview = () => {
           ) : (
             <>
               <Head>
-                <title>Overview | {slug} | Cryptea</title>
+                <title>Overview | {slug} | Breew</title>
               </Head>
 
               <div className="h-full transition-all delay-500 dash w-full bg-[#fff] flex">
@@ -146,7 +146,7 @@ const Overview = () => {
                         height: 120,
                         margin: "1pc auto",
                         backgroundColor: !Boolean(data.src)
-                          ? "#f57059"
+                          ? "#8036de"
                           : undefined,
                       }}
                       className="text-[50px] font-bold"
@@ -209,7 +209,7 @@ const Overview = () => {
                     }}
                     className="m-auto gridTemplate transition-all delay-500 grid gap-6 grid-flow-dense"
                   >
-                    <div className="col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                    <div className="col-span-full border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -251,7 +251,7 @@ const Overview = () => {
                           label={["onetime", "subscribers"]}
                           name="chart1"
                           prefix="$"
-                          color={["#f57059", "#961d08"]}
+                          color={["#8036de", "#961d08"]}
                           dataList={[
                             sortData(
                               data.onetime.length
@@ -280,13 +280,13 @@ const Overview = () => {
                       </div>
 
                       <Link href={`/pay/${slug}/onetime`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] transition-all cursor-pointer relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] transition-all cursor-pointer relative bg-white delay-150">
                           View more payment data
                         </a>
                       </Link>
                     </div>
 
-                    <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                    <div className="border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -336,13 +336,13 @@ const Overview = () => {
                       </div>
 
                       {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
                     </div>
 
-                    <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                    <div className="border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         {data.type == "both" || data.type == "sub" ? (
                           <>
@@ -408,7 +408,7 @@ const Overview = () => {
 
                             <div className="z-0 right-0 flex items-center top-[32px] bottom-0 m-auto absolute">
                               <div className="absolute z-0 h-full w-[100px] bg-overlay"></div>
-                              <AiOutlineUser size={180} color={"#f5705933"} />
+                              <AiOutlineUser size={180} color={"#8036de33"} />
                             </div>
 
                             <div className="w-full z-10 relative items-center flex text-[rgb(95,99,104)] h-[100px]">
@@ -420,7 +420,7 @@ const Overview = () => {
                       </div>
 
                       <Link href={`/pay/${slug}/multiple`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                           {data.type == "sub" || data.type == "both"
                             ? "View more subscription data"
                             : "Add subscription support to link"}
@@ -428,7 +428,7 @@ const Overview = () => {
                       </Link> 
                     </div>
 
-                    <div className="border-[rgb(218,220,224)] rounded-[8px] border relative bg-white overflow-hidden border-solid">
+                    <div className="border-[rgb(245,245,255)] rounded-[8px] border relative bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-[400] z-[1] text-[1.375rem] leading-[1.75rem] ">
@@ -441,7 +441,7 @@ const Overview = () => {
                         </div>
                         <div className="z-0 right-0 top-0 bottom-0 m-auto absolute">
                           <div className="absolute z-0 h-full w-[100px] bg-overlay"></div>
-                          <MdLink size={220} color={"#f5705933"} />
+                          <MdLink size={220} color={"#8036de33"} />
                         </div>
                         <div className="w-full relative z-10 items-center flex text-[rgb(95,99,104)] h-[100px]">
                           Make changes to your link template here, click the
@@ -449,13 +449,13 @@ const Overview = () => {
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/edit`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                           Edit Template
                         </a>
                       </Link>
                     </div>
 
-                    <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
+                    <div className="border-[rgb(245,245,255)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] z-[1]">
@@ -469,7 +469,7 @@ const Overview = () => {
 
                         <div className="z-0 right-0 flex items-center top-[50px] bottom-0 m-auto absolute">
                           <div className="absolute z-0 h-full w-[100px] bg-overlay"></div>
-                          <TbApiApp size={180} color={"#f5705933"} />
+                          <TbApiApp size={180} color={"#8036de33"} />
                         </div>
 
                         <div className="w-full relative z-[10] items-center flex text-[rgb(95,99,104)] h-[100px]">
@@ -477,13 +477,13 @@ const Overview = () => {
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/api`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                           Lookup SDK/API
                         </a>
                       </Link>
                     </div>
 
-                    <div className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
+                    <div className="w-full col-span-full border-[rgb(245,245,255)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-[400] text-[1.375rem] leading-[1.75rem]">
@@ -495,7 +495,7 @@ const Overview = () => {
                           <div className="absolute z-0 h-full w-0 bg-overlay"></div>
                           <MdOutlineSettingsSuggest
                             size={180}
-                            color={"#f5705933"}
+                            color={"#8036de33"}
                           />
                         </div>
 
@@ -504,7 +504,7 @@ const Overview = () => {
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/settings`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                           Go To Settings
                         </a>
                       </Link>

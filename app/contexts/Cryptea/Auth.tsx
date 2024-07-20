@@ -52,7 +52,7 @@ import http from '../../../utils/http';
 
 let user: userData | undefined;
 
-export let message = "Welcome to Cryptea";
+export let message = "Welcome to Breew";
 
 let isAuth = false;
 
@@ -223,7 +223,7 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
     id: "mail",
     name: "Email link",
     iconUrl: mimg.src,
-    iconBackground: "#f57059",
+    iconBackground: "#8036de",
     createConnector: () => {
       const connector = new LinkConnector({ chains, options: {} });
 
@@ -256,7 +256,7 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
 
               walletConnectWallet({ chains }),
 
-              coinbaseWallet({ chains, appName: "Cryptea" }),
+              coinbaseWallet({ chains, appName: "Breew" }),
 
               PhantomWallet({ chains }),
             ]
@@ -266,7 +266,7 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
               walletConnectWallet({ chains }),
               PhantomWallet({ chains }),
               UD({ chains }),
-              coinbaseWallet({ chains, appName: "Cryptea" }),
+              coinbaseWallet({ chains, appName: "Breew" }),
             ],
     },
     {
@@ -337,7 +337,7 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
       <RainbowKitProvider
         coolMode
         theme={lightTheme({
-          accentColor: "#f57059",
+          accentColor: "#8036de",
         })}
         chains={chains}
       >

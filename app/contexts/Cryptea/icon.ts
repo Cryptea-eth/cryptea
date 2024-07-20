@@ -1,4 +1,4 @@
-export const crypteaCon = `    
+export const BreewCon = `    
                ,&&@@&.   /&&@@&
                /@* (@,   #@, %@.
                /@* (@,   #@, %@.
@@ -6,7 +6,7 @@ export const crypteaCon = `
                /@* (@,   #@, %@.
         &@@@@@@@@* (@@@@@@@, %@@@@@@@@#        
        %@.                           %@..,,.
-       #@,                           /CRYPTEA@* 
+       #@,                           /Breew@* 
        .@%                          .@WELCOMES#   
         (@(                        .@.@,YOU(@&.
          ,@@.                      *..,#@@&*
@@ -20,7 +20,7 @@ export const crypteaCon = `
                *@@@@@*   (@@@@@.`; 
 
 export const stylesCon = [
-  " background: #f57059;",
+  " background: #8036de;",
   "border: 1px solid #3E0E02",
   "color: white",
   "font-size: 20px",

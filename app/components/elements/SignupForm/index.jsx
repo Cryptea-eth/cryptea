@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import analytics from "../../../../analytics";
 import Router from "next/router";
-import { useCryptea } from "../../../contexts/Cryptea";
+import { useBreew } from "../../../contexts/Breew";
 import Loader from "../loader";
 import LogoSpace from "../logo";
 import { BiEnvelope, BiUserCircle, BiWallet } from "react-icons/bi";
@@ -31,7 +31,7 @@ const SignupForm = () => {
     isAuthenticated,
     account,
     authenticate
-  } = useCryptea();
+  } = useBreew();
 
   const [userDescription, setUserDescription] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -287,7 +287,7 @@ useEffect(() => {
             <LogoSpace className="ml-3" />
 
             <Link href="/dashboard/logout">
-              <Button className="!text-sm !rounded-lg 3mdd:!relative !absolute !right-0 !text-[#F57059] !font-semibold 3mdd:!mx-0 !py-3 !px-3 !mx-2 !capitalize">
+              <Button className="!text-sm !rounded-lg 3mdd:!relative !absolute !right-0 !text-[#8036de] !font-semibold 3mdd:!mx-0 !py-3 !px-3 !mx-2 !capitalize">
                 <MdArrowBack className="mr-1" size={14} /> Log out
               </Button>
             </Link>
@@ -335,11 +335,11 @@ useEffect(() => {
                             fullWidth
                             sx={{
                               "& .Mui-focused.MuiFormLabel-root": {
-                                color: "#f57059",
+                                color: "#8036de",
                               },
                               "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                 {
-                                  borderColor: `#f57059 !important`,
+                                  borderColor: `#8036de !important`,
                                 },
                             }}
                             InputProps={{
@@ -371,11 +371,11 @@ useEffect(() => {
                             }}
                             sx={{
                               "& .Mui-focused.MuiFormLabel-root": {
-                                color: "#f57059",
+                                color: "#8036de",
                               },
                               "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                 {
-                                  borderColor: `#f57059 !important`,
+                                  borderColor: `#8036de !important`,
                                 },
                             }}
                             name="desc"
@@ -410,11 +410,11 @@ useEffect(() => {
                               }}
                               sx={{
                                 "& .Mui-focused.MuiFormLabel-root": {
-                                  color: "#f57059",
+                                  color: "#8036de",
                                 },
                                 "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
-                                    borderColor: `#f57059 !important`,
+                                    borderColor: `#8036de !important`,
                                   },
                               }}
                               onChange={(e) => {
@@ -439,11 +439,11 @@ useEffect(() => {
                               helperText={"Not required"}
                               sx={{
                                 "& .Mui-focused.MuiFormLabel-root": {
-                                  color: "#f57059",
+                                  color: "#8036de",
                                 },
                                 "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
-                                    borderColor: `#f57059 !important`,
+                                    borderColor: `#8036de !important`,
                                   },
                               }}
                               onChange={(e) => {
@@ -492,7 +492,7 @@ useEffect(() => {
                             }
                             length={5}
                             onComplete={(e) => setPin({ ...pins, newpin: e })}
-                            className="font-[inherit] outline-none border border-[#d3d3d3] h-[3.6rem] text-center transition-all focus:border-[#f57059] focus:border-2 text-[1.6rem] hover:border-[#121212] w-[3.6rem] rounded-[.5rem] mx-auto"
+                            className="font-[inherit] outline-none border border-[#d3d3d3] h-[3.6rem] text-center transition-all focus:border-[#8036de] focus:border-2 text-[1.6rem] hover:border-[#121212] w-[3.6rem] rounded-[.5rem] mx-auto"
                             validate={/^[0-9]$/}
                           />
                         </div>
@@ -527,7 +527,7 @@ useEffect(() => {
                             }
                             length={5}
                             onComplete={(e) => setPin({ ...pins, renewpin: e })}
-                            className="font-[inherit] outline-none border border-[#d3d3d3] h-[3.6rem] text-center transition-all focus:border-[#f57059] focus:border-2 text-[1.6rem] hover:border-[#121212] w-[3.6rem] rounded-[.5rem] mx-auto"
+                            className="font-[inherit] outline-none border border-[#d3d3d3] h-[3.6rem] text-center transition-all focus:border-[#8036de] focus:border-2 text-[1.6rem] hover:border-[#121212] w-[3.6rem] rounded-[.5rem] mx-auto"
                             validate={/^[0-9]$/}
                           />
                         </div>
@@ -545,7 +545,7 @@ useEffect(() => {
               <div className="flex flex-row w-full mt-3">
                 <Button
                   onClick={submitForm}
-                  className="!py-3 !w-full !mt-3 !font-bold !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !transition-all !delay-500 !rounded-lg !text-[17px]"
+                  className="!py-3 !w-full !mt-3 !font-bold !capitalize !flex !items-center !text-white !bg-[#8036de] !border-none !transition-all !delay-500 !rounded-lg !text-[17px]"
                 >
                   {isLoading ? (
                     <>

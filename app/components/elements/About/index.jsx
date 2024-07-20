@@ -15,7 +15,7 @@ const About = () => {
   return (
     <div className="mx-[30px] mt-24 px-14 2md:px-4 2md:mx-1" id="about">
       <div className="w-[350px]">
-        <span className="uppercase text-[#F57059] font-semibold text-[14px]">
+        <span className="uppercase text-[#8036de] font-semibold text-[14px]">
           receive payments globally
         </span>
         <h1 className="text-black w-fit font-bold text-[29px] my-1">
@@ -31,7 +31,7 @@ const About = () => {
           onClick={() => {
             if (open !== undefined) open();
           }}
-          className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
+          className="text-sm hover:bg-[#4a168e] transition-all delay-500 rounded-[6rem] bg-[#8036de] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet
         </button>
@@ -94,7 +94,7 @@ const About = () => {
           onClick={() => {
             if (open !== undefined) open();
           }}
-          className="text-sm mmd:mt-10 hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-20 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
+          className="text-sm mmd:mt-10 hover:bg-[#4a168e] transition-all delay-500 rounded-[6rem] bg-[#8036de] mt-20 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet
         </button>

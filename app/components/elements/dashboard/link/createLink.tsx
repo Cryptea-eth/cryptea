@@ -57,12 +57,12 @@ const NewLink = () => {
     },
     [`&.${stepConnectorClasses.active}`]: {
       [`& .${stepConnectorClasses.line}`]: {
-        borderColor: "#f57059",
+        borderColor: "#8036de",
       },
     },
     [`&.${stepConnectorClasses.completed}`]: {
       [`& .${stepConnectorClasses.line}`]: {
-        borderColor: "#f57059",
+        borderColor: "#8036de",
       },
     },
     [`& .${stepConnectorClasses.line}`]: {
@@ -81,10 +81,10 @@ const NewLink = () => {
     height: 22,
     alignItems: "center",
     ...(ownerState.active && {
-      color: "#f57059",
+      color: "#8036de",
     }),
     "& .QontoStepIcon-completedIcon": {
-      color: "#f57059",
+      color: "#8036de",
       zIndex: 1,
       fontSize: 18,
     },
@@ -93,7 +93,7 @@ const NewLink = () => {
       height: 10,
       border: `2px solid ${
         ownerState.active
-          ? "#f57059"
+          ? "#8036de"
           : theme.palette.mode === "dark"
           ? theme.palette.grey[700]
           : theme.palette.grey[500]
@@ -218,7 +218,7 @@ const NewLink = () => {
 
   const text = {
     "& .Mui-focused.MuiFormLabel-root": {
-      color: "#f57059",
+      color: "#8036de",
     },
     "& .MuiInputLabel-root": {
       fontWeight: "600",
@@ -226,7 +226,7 @@ const NewLink = () => {
     },
     "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
       {
-        borderColor: `#f57059 !important`,
+        borderColor: `#8036de !important`,
       },
     "& .MuiFormHelperText-root": helper,
   };
@@ -597,7 +597,7 @@ const NewLink = () => {
     <>
       <Head>
         <title>
-          Create New Link | Receive Payments Instantly With Ease | Cryptea
+          Create New Link | Receive Payments Instantly With Ease | Breew
         </title>
       </Head>
 
@@ -614,7 +614,7 @@ const NewLink = () => {
               }}
             />
 
-            <h2 className="font-[900] text-[#f57059] text-[30px] mt-0 flex items-center mx-auto mb-5">
+            <h2 className="font-[900] text-[#8036de] text-[30px] mt-0 flex items-center mx-auto mb-5">
               <MdAddLink size={32} className="mr-1" /> Create A Link
             </h2>
 
@@ -660,7 +660,7 @@ const NewLink = () => {
                       }}
                       className="mt-3 w-full relative overflow-hidden"
                     >
-                      <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
+                      <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#8036de] text-white">
                         <span className="uppercase font-bold mr-3">
                           Link Details
                         </span>
@@ -809,7 +809,7 @@ const NewLink = () => {
                     <div
                       className="mt-3 w-full overflow-hidden"
                     >
-                      <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
+                      <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#8036de] text-white">
                         <span className="uppercase font-bold mr-3">Amount</span>
                         <div className="flex items-center">
                           <span className="mr-2 text-sm">
@@ -1092,7 +1092,7 @@ const NewLink = () => {
                       }}
                       className="mt-3 w-full overflow-hidden"
                     >
-                      <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
+                      <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#8036de] text-white">
                         <span className="uppercase font-bold mr-3">Link</span>
                         <div className="flex items-center">
                           <span className="mr-2 text-sm">
@@ -1173,7 +1173,7 @@ const NewLink = () => {
                             variant="standard"
                             sx={{
                               "& .Mui-focused.MuiInputLabel-root": {
-                                color: "#f57059",
+                                color: "#8036de",
                               },
                               "& .MuiInputLabel-root": {
                                 fontWeight: "600",
@@ -1181,7 +1181,7 @@ const NewLink = () => {
                               },
                               "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
                                 {
-                                  borderColor: `#f57059 !important`,
+                                  borderColor: `#8036de !important`,
                                 },
                               "& .MuiFormHelperText-root": {
                                 padding: "6px 3px",
@@ -1196,7 +1196,7 @@ const NewLink = () => {
                               variant="standard"
                               sx={{
                                 "& .Mui-focused.MuiFormLabel-root": {
-                                  color: "#f57059",
+                                  color: "#8036de",
                                 },
                               }}
                               id="inputBox"
@@ -1238,7 +1238,7 @@ const NewLink = () => {
                                 <MenuItem
                                   sx={{
                                     "&.Mui-selected": {
-                                      backgroundColor: "#f5705914 !important",
+                                      backgroundColor: "#8036de14 !important",
                                     },
                                   }}
                                   key={name}
@@ -1247,7 +1247,7 @@ const NewLink = () => {
                                   <Checkbox
                                     sx={{
                                       "& .MuiSvgIcon-root": {
-                                        fill: "#f57059",
+                                        fill: "#8036de",
                                       },
                                     }}
                                     checked={
@@ -1280,7 +1280,7 @@ const NewLink = () => {
                       }}
                       className="mt-3 w-full overflow-hidden"
                     >
-                      <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#f57059] text-white">
+                      <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#8036de] text-white">
                         <span className="uppercase font-bold mr-3">
                           Custom Template
                         </span>
@@ -1367,7 +1367,7 @@ const NewLink = () => {
               <div className="flex relative justify-center items-center">
                 {" "}
                 {isLoading && (
-                  <Button className="!py-[16.5px] !font-bold !px-[14px] !normal-case !flex !items-center !text-white hover:!bg-[#f57059] !bg-[#f57059] !m-auto !rounded-lg">
+                  <Button className="!py-[16.5px] !font-bold !px-[14px] !normal-case !flex !items-center !text-white hover:!bg-[#8036de] !bg-[#8036de] !m-auto !rounded-lg">
                     <CircularProgress
                       sx={{
                         color: "white",
@@ -1394,7 +1394,7 @@ const NewLink = () => {
 
                     <Button
                       onClick={saveLink}
-                      className="!py-3 !font-bold !px-6 !capitalize !flex !items-center !text-white !bg-[#f57059] !transition-all !delay-500 hover:!bg-[#fb4d2e] !m-auto !rounded-lg"
+                      className="!py-3 !font-bold !px-6 !capitalize !flex !items-center !text-white !bg-[#8036de] !transition-all !delay-500 hover:!bg-[#fb4d2e] !m-auto !rounded-lg"
                     >
                       <MdInsertLink size={25} className="mr-1" />{" "}
                       {value != 3 ? "Next" : "Create Link"}

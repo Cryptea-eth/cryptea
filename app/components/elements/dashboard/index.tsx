@@ -70,7 +70,7 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
               String(page).substring(1) +
               " | "
             : ""}{" "}
-          Dashboard | Cryptea
+          Dashboard | Breew
         </title>
         <meta
           name="description"

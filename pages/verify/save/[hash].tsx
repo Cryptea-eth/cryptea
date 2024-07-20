@@ -89,10 +89,10 @@ return isLoading ? (
 ) : (
   <div className="h-screen">
     <Head>
-      <title>Something&rsquo;s wrong with verification link | Cryptea</title>
+      <title>Something&rsquo;s wrong with verification link | Breew</title>
       <meta
         name="description"
-        content="Cryptea - Receive Payments Instantly With Ease."
+        content="Breew - Receive Payments Instantly With Ease."
       />
       <link rel="icon" href="/favicon.ico" />
     </Head>
@@ -102,7 +102,7 @@ return isLoading ? (
     <div className="w-full h-[calc(100vh-100px)] flex flex-col justify-center items-center px-5 my-8">
       <Image src={emailImg} width={100} height={122} alt={"Email error"} />
 
-      <h2 className="text-[#F57059] font-[400] 2md:text-2xl text-4xl mx-auto mt-10">
+      <h2 className="text-[#8036de] font-[400] 2md:text-2xl text-4xl mx-auto mt-10">
         Link validation Failed, please try again
       </h2>
 

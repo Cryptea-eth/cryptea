@@ -23,7 +23,7 @@ const Auth = () => {
     }, [isAuthenticated]);
 
     return (loader ? <Loader /> : <div className="h-screen w-screen flex bg-pattern2 items-center">
-        <AuthModal blur={false} openM={true} message={"Welcome to Cryptea"}/>    
+        <AuthModal blur={false} openM={true} message={"Welcome to Breew"}/>    
     </div>)
 }
 

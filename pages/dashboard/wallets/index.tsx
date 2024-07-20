@@ -92,7 +92,7 @@ const Wallets = () => {
       ) : (
         <>
           <Head>
-            <title>Wallets by Cryptea</title>
+            <title>Wallets by Breew</title>
             <meta
               name="description"
               content={`You go to wallet management service`}
@@ -165,7 +165,7 @@ const Wallets = () => {
                     <div className="flex items-center">
                       <Button
                         onClick={cxHash}
-                        className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                        className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                       >
                         <BiCopy className={"mr-2"} size={23} /> Copy and Close
                       </Button>
@@ -256,14 +256,14 @@ const Wallets = () => {
                             setRLoader(false);
                           }
                         }}
-                        className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] mr-1 !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                        className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] mr-1 !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                       >
                         <FiThumbsUp className={"mr-2"} size={23} /> Yes
                       </Button>
 
                       <Button
                         onClick={() => revokeDialog(false)}
-                        className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] ml-1 !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                        className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] ml-1 !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                       >
                         <FiThumbsDown className={"mr-2"} size={23} /> No
                       </Button>
@@ -286,7 +286,7 @@ const Wallets = () => {
                 }}
                 className="m-auto px-3 gridTemplate transition-all delay-500 grid gap-6 grid-flow-dense"
               >
-                <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                <div className="border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="px-6 pt-6 relative pb-3">
                     {
                       <>
@@ -306,7 +306,7 @@ const Wallets = () => {
 
                         <div className="z-0 right-0 flex items-center top-[32px] bottom-0 m-auto absolute">
                           <div className="absolute z-0 h-[117%] w-[100px] bg-overlay"></div>
-                          <IoWalletOutline size={180} color={"#f5705933"} />
+                          <IoWalletOutline size={180} color={"#8036de33"} />
                         </div>
 
                         <div className="w-full z-10 relative items-center flex text-[rgb(95,99,104)] h-[100px]">
@@ -316,7 +316,7 @@ const Wallets = () => {
                       </>
                     }
                   </div>
-                  <div className="text-[#f57059] font-bold justify-between flex items-center transition-all relative bg-white delay-150">
+                  <div className="text-[#8036de] font-bold justify-between flex items-center transition-all relative bg-white delay-150">
                     <div
                       onClick={async () => {
                         if (gLoader) {
@@ -350,14 +350,14 @@ const Wallets = () => {
                           setGLoader(false);
                         }
                       }}
-                      className="cursor-pointer border-t pl-6 p-3 border-solid border-[rgb(218,220,224)] hover:bg-[#fff6f5] flex items-center transition-all delay-150 w-full"
+                      className="cursor-pointer border-t pl-6 p-3 border-solid border-[rgb(245,245,255)] hover:bg-[#f5f5ff] flex items-center transition-all delay-150 w-full"
                     >
                       {gLoader ? (
                         <>
                           <div className="mr-3 h-[20px] text-[#fff]">
                             <CircularProgress
                               color={"inherit"}
-                              className="!w-[20px] text-[#f57059] !h-[20px]"
+                              className="!w-[20px] text-[#8036de] !h-[20px]"
                             />
                           </div>{" "}
                           <span>Generating...</span>
@@ -383,14 +383,14 @@ const Wallets = () => {
                             revokeDialog(true);
 
                           }}
-                          className="cursor-pointer min-w-[140px] flex items-center border-t pr-6 transition-all delay-150 p-3 border-solid border-[rgb(218,220,224)] hover:bg-[#fff6f5]"
+                          className="cursor-pointer min-w-[140px] flex items-center border-t pr-6 transition-all delay-150 p-3 border-solid border-[rgb(245,245,255)] hover:bg-[#f5f5ff]"
                         >
                           {rLoader ? (
                             <>
                               <div className="mr-3 h-[20px] text-[#fff]">
                                 <CircularProgress
                                   color={"inherit"}
-                                  className="!w-[20px] text-[#f57059] !h-[20px]"
+                                  className="!w-[20px] text-[#8036de] !h-[20px]"
                                 />
                               </div>{" "}
                               <span>Revoking...</span>
@@ -406,7 +406,7 @@ const Wallets = () => {
                   </div>
                 </div>
 
-                <div className="border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                <div className="border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="px-6 pt-6 relative pb-3">
                     {
                       <>
@@ -420,7 +420,7 @@ const Wallets = () => {
 
                         <div className="z-0 right-0 flex items-center top-[32px] bottom-0 m-auto absolute">
                           <div className="absolute z-0 h-[117%] w-[100px] bg-overlay"></div>
-                          <BiBook size={180} color={"#f5705933"} />
+                          <BiBook size={180} color={"#8036de33"} />
                         </div>
 
                         <div className="w-full z-10 relative items-center flex text-[rgb(95,99,104)] h-[100px]">
@@ -431,7 +431,7 @@ const Wallets = () => {
                     }
                   </div>
                   <Link href={`https://docs.cryptea.me/#`}>
-                    <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] cursor-pointer block font-bold hover:bg-[rgb(255,246,245)] transition-all relative bg-white delay-150">
+                    <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] cursor-pointer block font-bold hover:bg-[rgb(245,245,255)] transition-all relative bg-white delay-150">
                       Go to Documentation
                     </a>
                   </Link>

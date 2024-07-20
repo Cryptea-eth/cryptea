@@ -321,10 +321,10 @@ const Droplets = ({ className }: { className?: string }) => {
             <>
               <div className="h-screen">
                 <Head>
-                  <title>Cryptea - 500</title>
+                  <title>Breew - 500</title>
                   <meta
                     name="description"
-                    content="Cryptea - 500 Internal Server Error"
+                    content="Breew - 500 Internal Server Error"
                   />
 
                   <link rel="icon" href="/favicon.ico" />

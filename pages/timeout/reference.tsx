@@ -9,10 +9,10 @@ const Usedkey = () => {
   return (
     <div className="h-screen">
       <Head>
-        <title>Used Reference Key | Cryptea</title>
+        <title>Used Reference Key | Breew</title>
         <meta
           name="description"
-          content="Cryptea - Receive Payments Instantly With Ease."
+          content="Breew - Receive Payments Instantly With Ease."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -20,7 +20,7 @@ const Usedkey = () => {
       <Nav />
 
       <div className="w-full h-fit flex flex-col justify-items-center mx-5 my-8">
-        <h2 className="text-[#F57059] font-[400] 2sm:text-2xl text-4xl mx-auto mt-24">
+        <h2 className="text-[#8036de] font-[400] 2sm:text-2xl text-4xl mx-auto mt-24">
           Oops... Incorrect transaction reference
         </h2>
 

@@ -88,10 +88,10 @@ return isLoading ? (
 ) : (
   <div className="h-screen">
     <Head>
-      <title>Something&rsquo;s wrong with magic link | Cryptea</title>
+      <title>Something&rsquo;s wrong with magic link | Breew</title>
       <meta
         name="description"
-        content="Cryptea - Receive Payments Instantly With Ease."
+        content="Breew - Receive Payments Instantly With Ease."
       />
       <link rel="icon" href="/favicon.ico" />
     </Head>
@@ -101,7 +101,7 @@ return isLoading ? (
     <div className="w-full h-[calc(100vh-100px)] flex flex-col justify-center items-center px-5 my-8">
       <Image src={emailImg} width={100} height={122} alt={"Email error"} />
 
-      <h2 className="text-[#F57059] font-[400] 2md:text-2xl text-4xl mx-auto mt-10">
+      <h2 className="text-[#8036de] font-[400] 2md:text-2xl text-4xl mx-auto mt-10">
         Link validation Failed, please try again
       </h2>
 
@@ -114,7 +114,7 @@ return isLoading ? (
       <Link href={'/magic'}>
         <a className="flex items-center justify-center mt-3">
         <Button
-            className="hover:!bg-[#ff320e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-4"
+            className="hover:!bg-[#4a168e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#8036de] !text-white !font-semibold !py-3 !px-4"
           >
             <BiSync size={22} className="mr-1" /> Request Link
           </Button>

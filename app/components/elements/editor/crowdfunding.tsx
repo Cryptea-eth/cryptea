@@ -27,7 +27,7 @@ const Crowd = ({
 }) => {
   const text = {
     "& .Mui-focused.MuiFormLabel-root": {
-      color: "#f57059",
+      color: "#8036de",
     },
     "& .MuiInputLabel-root": {
       fontWeight: "600",
@@ -35,7 +35,7 @@ const Crowd = ({
     },
     "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
       {
-        borderColor: `#f57059 !important`,
+        borderColor: `#8036de !important`,
       },
     "& .MuiInputBase-input": {
       color: "#666666",
@@ -207,7 +207,7 @@ const Crowd = ({
         <div className="bg-[#efefef] flex justify-center items-center rounded-b-[.9rem] px-6 py-4">
           <div className="flex items-center">
             {isLoading && (
-              <Button className="!py-3 !font-bold !px-6 !normal-case !flex !items-center !text-white hover:!bg-[#f57059] !bg-[#f57059] !m-auto !rounded-lg">
+              <Button className="!py-3 !font-bold !px-6 !normal-case !flex !items-center !text-white hover:!bg-[#8036de] !bg-[#8036de] !m-auto !rounded-lg">
                 <CircularProgress
                   sx={{
                     color: "white",
@@ -225,7 +225,7 @@ const Crowd = ({
             {!isLoading && (
               <Button 
                 onClick={submit}
-                className="!py-3 !font-bold !px-6 !normal-case !flex !items-center !text-white hover:!bg-[#f57059] !bg-[#f57059] !m-auto !rounded-lg"
+                className="!py-3 !font-bold !px-6 !normal-case !flex !items-center !text-white hover:!bg-[#8036de] !bg-[#8036de] !m-auto !rounded-lg"
               >
                 Save Changes
               </Button>

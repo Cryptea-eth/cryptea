@@ -3,11 +3,11 @@ import pattern from "../../../public/images/pattern.png";
 let data: {
   [index: string]: any;
 } = {
-  colorScheme: "#f57059",
-  hoverColorScheme: "#ff320e",
+  colorScheme: "#8036de",
+  hoverColorScheme: "#4a168e",
   boardScheme: "#ffebcd",
   boardScheme0: "#dfcdb3",
-  lightColorScheme1: "#f5705923",
+  lightColorScheme1: "#8036de23",
   errorColor: "#ff8f33",
   white: "#fff",
 };

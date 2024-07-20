@@ -22,7 +22,7 @@ const Extras = () => {
         </svg>
       </div>
       <div className="text-center w-[300px]">
-        <span className="uppercase text-[#F57059] font-semibold text-[14px]">
+        <span className="uppercase text-[#8036de] font-semibold text-[14px]">
           receive payments globally
         </span>
 
@@ -38,7 +38,7 @@ const Extras = () => {
           onClick={() => {
             if (open !== undefined) open();
           }}
-          className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
+          className="text-sm hover:bg-[#4a168e] transition-all delay-500 rounded-[6rem] bg-[#8036de] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
         >
           Connect Wallet
         </button>

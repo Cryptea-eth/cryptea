@@ -77,7 +77,7 @@ const DashboardIndex = () => {
     <>
       <Head>
         <title>
-          {data?.username ? data?.username + " | " : ""} Dashboard | Cryptea
+          {data?.username ? data?.username + " | " : ""} Dashboard | Breew
         </title>
         <meta
           name="description"

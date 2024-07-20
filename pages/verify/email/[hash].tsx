@@ -50,10 +50,10 @@ return isLoading ? (
 ) : (
   <div className="h-screen">
     <Head>
-      <title>Verification link invalid | Cryptea</title>
+      <title>Verification link invalid | Breew</title>
       <meta
         name="description"
-        content="Cryptea - Receive Payments Instantly With Ease."
+        content="Breew - Receive Payments Instantly With Ease."
       />
       <link rel="icon" href="/favicon.ico" />
     </Head>
@@ -63,7 +63,7 @@ return isLoading ? (
     <div className="w-full h-fit flex flex-col justify-items-center px-5 my-8">
       <Image src={emailImg} width={200} height={222} alt={"Email error"} />
 
-      <h2 className="text-[#F57059] font-[400] 2md:text-2xl text-4xl mx-auto mt-24">
+      <h2 className="text-[#8036de] font-[400] 2md:text-2xl text-4xl mx-auto mt-24">
         Verification Failed, please try again
       </h2>
 

@@ -43,7 +43,7 @@ const Footer = () => {
                 onClick={() => {
                   if (open !== undefined) open();
                 }}
-                className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
+                className="text-sm hover:bg-[#4a168e] transition-all delay-500 rounded-[6rem] bg-[#8036de] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
               >
                 Connect Wallet
               </button>
@@ -90,7 +90,7 @@ const Footer = () => {
                 onClick={() => {
                   if (open !== undefined) open();
                 }}
-                className="text-sm hover:bg-[#ff320e] transition-all delay-500 rounded-[6rem] bg-[#F57059] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
+                className="text-sm hover:bg-[#4a168e] transition-all delay-500 rounded-[6rem] bg-[#8036de] mt-2 mx-auto justify-self-center place-self-center object-center text-white font-normal py-[14px] px-8"
               >
                 Connect Wallet
               </button>
@@ -99,7 +99,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="text-center font-semibold py-5">
-      Copyright &copy; Cryptea {date.getFullYear()}. All Rights Reserved.
+      Copyright &copy; Breew {date.getFullYear()}. All Rights Reserved.
       </div>
     </div>
   );

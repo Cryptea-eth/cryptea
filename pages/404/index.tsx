@@ -8,10 +8,10 @@ const Notfound = () => {
   return (
     <div className="h-screen">
       <Head>
-        <title>404 page not found | Cryptea</title>
+        <title>404 page not found | Breew</title>
         <meta
           name="description"
-          content="Cryptea - Receive Payments Instantly With Ease."
+          content="Breew - Receive Payments Instantly With Ease."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -23,13 +23,13 @@ const Notfound = () => {
           Oops... Page not found
         </h2>
 
-        <h3 className="text-[#F57059] font-semibold text-lg mx-auto mt-12">
+        <h3 className="text-[#8036de] font-semibold text-lg mx-auto mt-12">
           Click this button below, to go back home
         </h3>
         <div className="mx-auto mt-8">
           <Link href="/dashboard">
             <a className="text-center mt-3">
-              <Button className="!ml-2 hover:!bg-[#ff320e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-4 !mx-auto">
+              <Button className="!ml-2 hover:!bg-[#4a168e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#8036de] !text-white !font-semibold !py-3 !px-4 !mx-auto">
                 Go home
               </Button>
             </a>
