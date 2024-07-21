@@ -24,9 +24,14 @@ const getKey = (
 
 export const time = async () =>
   await (
-    ((await get_request(`/time`, {
-      params: { timezone: window.jstz.determine().name() },
-    }, undefined, false)) as any) || { data: undefined }
+    ((await get_request(
+      `/time`,
+      {
+        params: { timezone: window?.jstz?.determine?.()?.name?.() },
+      },
+      undefined,
+      false
+    )) as any) || { data: undefined }
   ).data;
 
 const allowed: CrypteaDBS = {
@@ -108,7 +113,7 @@ String.prototype.get = async function (
     if (fresh || cache === null) {
       try {
       const res: any = await get_request(`${allowP.endpoint}${extra}`, {
-        params: { tz: window.jstz.determine().name() },
+        params: { tz: window?.jstz?.determine?.()?.name?.() },
       });
 
       const { data } = res || { data: { error: true } };

@@ -77,7 +77,7 @@ export const AuthAddress = async ({
         address,
         signature,
         message,
-        tz: window.jstz.determine().name(),
+        tz: window?.jstz?.determine?.()?.name?.(),
       },
       { baseURL: window.origin }
     );

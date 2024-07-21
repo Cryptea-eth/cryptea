@@ -164,7 +164,7 @@ const Settings = () => {
           await post_request("/user/update", {
             username: userInfo,
             email: validator.normalizeEmail(userEmail),
-            tz: window.jstz.determine().name(),
+            tz: window?.jstz?.determine?.()?.name?.(),
           });
 
           await logout();
