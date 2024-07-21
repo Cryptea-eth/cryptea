@@ -9,10 +9,10 @@ const Timeout = () => {
   return (
     <div className="h-screen">
       <Head>
-        <title>Seems Connection Timed out | Cryptea</title>
+        <title>Seems Connection Timed out | Breew</title>
         <meta
           name="description"
-          content="Cryptea - Receive Payments Instantly With Ease."
+          content="Breew - Receive Payments Instantly With Ease."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -20,7 +20,7 @@ const Timeout = () => {
       <Nav />
 
       <div className="w-full h-fit flex flex-col justify-items-center mx-5 my-8">
-        <h2 className="text-[#F57059] font-[400] 2sm:text-2xl text-4xl mx-auto mt-24">
+        <h2 className="text-[#8036de] font-[400] 2sm:text-2xl text-4xl mx-auto mt-24">
           Oops... Connection Timed out
         </h2>
 
@@ -54,7 +54,7 @@ const Timeout = () => {
         <div className="mx-auto mt-8">
           <Button
             onClick={() => Router.back()}
-            className="!ml-2 hover:!bg-[#ff320e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-4 !mx-auto"
+            className="!ml-2 hover:!bg-[#4a168e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#8036de] !text-white !font-semibold !py-3 !px-4 !mx-auto"
           >
             <BiSync size={22} className="mr-1" /> Try Again
           </Button>

@@ -493,7 +493,7 @@ const Onetime = () => {
                     height: 45,
                     marginLeft: "10px",
                     fontWeight: "bold",
-                    bgcolor: !Boolean(data.img) ? "#f57059" : undefined,
+                    bgcolor: !Boolean(data.img) ? "#8036de" : undefined,
                   }}
                 >
                   {data.username?.charAt(0).toUpperCase()}
@@ -536,7 +536,7 @@ const Onetime = () => {
                   justifyContent: "space-between",
                   maxWidth: "300px",
                   "& .Mui-selected": {
-                    backgroundColor: `#f57059 !important`,
+                    backgroundColor: `#8036de !important`,
                     color: `#fff !important`,
                   },
                   "& .MuiToggleButtonGroup-grouped": {
@@ -628,13 +628,13 @@ const Onetime = () => {
                 }}
                 className="mt-4 gridTemplate mx-auto transition-all delay-500 grid gap-6"
               >
-                <div className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                <div className="w-full col-span-full border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="p-6 relative">
                     <LineChart
                       label={[linkType]}
                       name="chart1"
                       prefix="$"
-                      color={["#f57059"]}
+                      color={["#8036de"]}
                       exportLabel={false}
                       dataList={[
                         sortData(
@@ -662,7 +662,7 @@ const Onetime = () => {
                   </div>
                 </div>
 
-                <div className="w-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                <div className="w-full border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="px-6 pt-6 relative pb-3">
                     <div className="flex justify-between mb-[16px] items-center">
                       <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -675,7 +675,7 @@ const Onetime = () => {
                           justifyContent: "space-between",
                           maxWidth: "270px",
                           "& .Mui-selected": {
-                            backgroundColor: `#f57059 !important`,
+                            backgroundColor: `#8036de !important`,
                             color: `#fff !important`,
                           },
                           "& .MuiToggleButtonGroup-grouped": {
@@ -807,14 +807,14 @@ const Onetime = () => {
                   </div>
 
                   {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
                 </div>
 
                 {linkType == "sub" && (
-                  <div className="w-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                  <div className="w-full border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
                     <div className="px-6 pt-6 relative pb-3">
                       <div className="flex justify-between mb-[16px] items-center">
                         <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -827,7 +827,7 @@ const Onetime = () => {
                             justifyContent: "space-between",
                             maxWidth: "270px",
                             "& .Mui-selected": {
-                              backgroundColor: `#f57059 !important`,
+                              backgroundColor: `#8036de !important`,
                               color: `#fff !important`,
                             },
                             "& .MuiToggleButtonGroup-grouped": {
@@ -955,14 +955,14 @@ const Onetime = () => {
                     </div>
 
                     {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] cursor-pointer text-[#f57059] block font-bold hover:bg-[#fff6f5] transition-all relative bg-white delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] cursor-pointer text-[#8036de] block font-bold hover:bg-[#f5f5ff] transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
                   </div>
                 )}
 
-                <div className="w-full border-[rgb(218,220,224)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
+                <div className="w-full border-[rgb(245,245,255)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
                   <div className="px-6 pt-6 relative pb-3">
                     <div className="flex justify-between mb-[16px] items-center">
                       <h2 className="font-[400] text-[1.375rem] leading-[1.75rem]">
@@ -974,7 +974,7 @@ const Onetime = () => {
                       <div className="absolute z-0 h-full w-[140px] bg-overlay"></div>
                       <MdOutlineSettingsSuggest
                         size={180}
-                        color={"#f5705933"}
+                        color={"#8036de33"}
                       />
                     </div>
 
@@ -983,18 +983,18 @@ const Onetime = () => {
                     </div>
                   </div>
                   <Link href={`/pay/${String(slug).toLowerCase()}/settings`}>
-                    <a className="border-t px-6 p-3 border-solid border-[rgb(218,220,224)] text-[#f57059] block font-bold hover:bg-[#fff6f5] cursor-pointer transition-all relative bg-white delay-150">
+                    <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                       Go To Settings
                     </a>
                   </Link>
                 </div>
 
-                <div className="w-full col-span-full border-[rgb(218,220,224)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                <div className="w-full col-span-full border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="p-6 relative">
                     <div className="flex justify-between mb-[16px] items-center">
                       <h2
                         data-value={(rows.length < 10 ? "0" : "") + rows.length}
-                        className="text-[1.3rem] text-[rgb(32,33,36)] leading-[1.6rem] font-[400] after:content-[attr(data-value)] after:absolute after:bg-[#f57059] after:w-fit after:text-white after:-right-[30px] after:font-bold after:text-[12px] after:rounded-md after:px-[5px] after:h-fit relative"
+                        className="text-[1.3rem] text-[rgb(32,33,36)] leading-[1.6rem] font-[400] after:content-[attr(data-value)] after:absolute after:bg-[#8036de] after:w-fit after:text-white after:-right-[30px] after:font-bold after:text-[12px] after:rounded-md after:px-[5px] after:h-fit relative"
                       >
                         {linkType == "onetime" ? "Payments" : "Subscribers"}
                       </h2>
@@ -1007,7 +1007,7 @@ const Onetime = () => {
                             justifyContent: "space-between",
                             maxWidth: "270px",
                             "& .Mui-selected": {
-                              backgroundColor: `#f57059 !important`,
+                              backgroundColor: `#8036de !important`,
                               color: `#fff !important`,
                             },
                             "& .MuiToggleButtonGroup-grouped": {
@@ -1065,7 +1065,7 @@ const Onetime = () => {
                             justifyContent: "space-between",
                             maxWidth: "270px",
                             "& .Mui-selected": {
-                              backgroundColor: `#f57059 !important`,
+                              backgroundColor: `#8036de !important`,
                               color: `#fff !important`,
                             },
                             "& .MuiToggleButtonGroup-grouped": {
@@ -1203,7 +1203,7 @@ const Onetime = () => {
                           <div className="flex mt-2 item-center justify-center">
                             <Button
                               onClick={() => toggleSocial(true)}
-                              className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                              className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                             >
                               <FiShare2 size={25} className="mr-1" /> Share Link
                             </Button>

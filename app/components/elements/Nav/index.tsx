@@ -18,7 +18,7 @@ function Nav() {
   //   if (!isAuthenticated) {
   //     setSupport(false);
   //     await authenticate({
-  //       signingMessage: "Welcome to Cryptea",
+  //       signingMessage: "Welcome to Breew",
   //       provider: "walletConnect",
   //     })
   //       .then(function (user) {
@@ -73,7 +73,7 @@ function Nav() {
             {isAuthenticated! ? (
               <Link href={"/dashboard"}>
                 <a
-                  className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] block text-white font-semibold py-4 px-4"
+                  className="hover:bg-[#4a168e] transition-all delay-200 text-sm rounded-lg bg-[#8036de] block text-white font-semibold py-4 px-4"
                 >
                   Dashboard
                 </a>
@@ -81,7 +81,7 @@ function Nav() {
             ) : (
               <div>
                 <button
-                  className="hover:bg-[#ff320e] transition-all delay-200 text-sm rounded-lg bg-[#F57059] text-white font-semibold py-4 px-4 mx-2"
+                  className="hover:bg-[#4a168e] transition-all delay-200 text-sm rounded-lg bg-[#8036de] text-white font-semibold py-4 px-4 mx-2"
                   type="button"
                   onClick={() => authenticate(true)}
                 >

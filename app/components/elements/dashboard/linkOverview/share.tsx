@@ -99,13 +99,13 @@ const ShareLink = ({
               </EmailShareButton>
               <TwitterShareButton
                 title={`${Boolean(data.desc) ? data.desc : ""} ${
-                  String(data.desc).toLowerCase().indexOf("@usecryptea") != -1
+                  String(data.desc).toLowerCase().indexOf("@useBreew") != -1
                     ? ""
-                    : "@usecryptea"
+                    : "@useBreew"
                 } ${
-                  String(data.desc).toLowerCase().indexOf("#cryptea") != -1
+                  String(data.desc).toLowerCase().indexOf("#breew") != -1
                     ? ""
-                    : "#cryptea"
+                    : "#breew"
                 } \n`}
                 url={data.userLk}
               >

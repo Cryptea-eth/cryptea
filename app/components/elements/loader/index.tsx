@@ -1,7 +1,6 @@
 import { Box, CircularProgress } from "@mui/material";
-import logo from "../../../../public/images/cryptea-full.png";
+import logo from "../../../../public/images/breew-full.png";
 import Image from 'next/image';
-import Head from 'next/head';
 
 const Loader = ({
   incLogo = true,
@@ -29,23 +28,24 @@ const Loader = ({
     >
       {/* {head && (
         <Head>
-          <title>Easily Receive Payments in Crypto | Cryptea </title>
+          <title>Easily Receive Payments in Crypto | Breew </title>
         </Head>
       )} */}
 
       {incLogo && (
         <div className="items-center flex justify-center">
-          <Image src={logo} alt="cryptea" width={136} height={37.5} />
+          <Image src={logo} alt="Breew" width={136} height={37.5} />
         </div>
       )}
+
       <Box
-        className="text-[#F57059] justify-center "
+        className="text-[#8036de] justify-center "
         sx={{ display: "flex", color, marginTop: incLogo ? "44px" : 0 }}
       >
         <CircularProgress size={text ? 80 : 60} color="inherit" />
       </Box>
       {text !== "" && (
-        <div style={{ color }} className="text-[#f57059] text-xl font-bold">
+        <div style={{ color }} className="text-[#8036de] text-xl font-bold">
           {text}
         </div>
       )}

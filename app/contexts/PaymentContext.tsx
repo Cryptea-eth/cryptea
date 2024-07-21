@@ -1310,7 +1310,7 @@ export const PaymentProvider = ({
                 <div className="flex items-center">
                   <Button
                     onClick={validSwitch}
-                    className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                    className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                   >
                     <TbPlugConnected
                       color={"inherit"}
@@ -1403,7 +1403,7 @@ export const PaymentProvider = ({
                         wallet: genAddr || "",
                       });
                   }}
-                  className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                  className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#8036de] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                 >
                   <BsCheck2 size={20} className="mr-1" /> I have sent the crypto
                 </Button>
@@ -1465,7 +1465,7 @@ export const PaymentProvider = ({
 
               <Button
                 onClick={() => closeModal()}
-                className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
               >
                 <RiCloseCircleLine size={22} className="mr-2" /> Dismiss
               </Button>
@@ -1485,9 +1485,9 @@ export const PaymentProvider = ({
                 <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
                   Although if you have sent the crypto to {genAddr}, Please{" "}
                   <Link
-                    href={`mailto:hello@cryptea.me?subject=Issue with transfer&body=Hello Cryptea, \n I made a payment to this address: ${genAddr}. However, I did not get a confirmation of successful payment.`}
+                    href={`mailto:hello@breew.co?subject=Issue with transfer&body=Hello Breew, \n I made a payment to this address: ${genAddr}. However, I did not get a confirmation of successful payment.`}
                   >
-                    <a className="text-[#F57059]" target="_blank">
+                    <a className="text-[#8036de]" target="_blank">
                       click me to contact us immediately
                     </a>
                   </Link>
@@ -1502,7 +1502,7 @@ export const PaymentProvider = ({
 
                     beginManual(amountMn, paymentType);
                   }}
-                  className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                  className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#8036de] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                 >
                   {Boolean(loadingText) ? (
                     <>
@@ -1541,9 +1541,9 @@ export const PaymentProvider = ({
                 <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
                   But no need to worry, Please{" "}
                   <Link
-                    href={`mailto:hello@cryptea.me?subject=Issue with transfer&body=Hello Cryptea, \n I made a payment to this address: ${genAddr}. However, I did not get a confirmation of successful payment.`}
+                    href={`mailto:hello@breew.co?subject=Issue with transfer&body=Hello Breew, \n I made a payment to this address: ${genAddr}. However, I did not get a confirmation of successful payment.`}
                   >
-                    <a className="text-[#F57059]" target="_blank">
+                    <a className="text-[#8036de]" target="_blank">
                       click me to contact us immediately
                     </a>
                   </Link>
@@ -1563,7 +1563,7 @@ export const PaymentProvider = ({
                       "Transaction possibly successful, please contact us"
                     );
                   }}
-                  className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                  className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#8036de] !min-w-fit !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                 >
                   Dismiss
                 </Button>

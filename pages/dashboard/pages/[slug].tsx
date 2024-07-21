@@ -304,7 +304,7 @@ useEffect(() => {
   return (
     <div>
       <Head>
-        <title>Editing {usern} | Cryptea</title>
+        <title>Editing {usern} | Breew</title>
         <meta name="description" content={`Updating User Page Template`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

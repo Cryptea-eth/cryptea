@@ -68,7 +68,7 @@ const TypePayment = ({
       <Head>
         <title>
           {whichM.charAt(0).toUpperCase() + whichM.substring(1)} Payments |{" "}
-          {data.slug} | Cryptea
+          {data.slug} | Breew
         </title>
       </Head>
 
@@ -90,7 +90,7 @@ const TypePayment = ({
                     width: 40,
                     height: 40,
                     marginRight: ".7pc",
-                    backgroundColor: !Boolean(data.src) ? "#f57059" : undefined,
+                    backgroundColor: !Boolean(data.src) ? "#8036de" : undefined,
                   }}
                   className="text-[17px] font-bold"
                   variant="circular"
@@ -154,7 +154,7 @@ const TypePayment = ({
                 <div className="flex item-center justify-center">
                   {Boolean(which != 'sub') && <Button
                     onClick={addSupport}
-                    className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                    className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                   >
                     {isSaving ? (
                       <>
@@ -177,7 +177,7 @@ const TypePayment = ({
                   {!isSaving && (
                     <Link href={`/pay/${data.slug}/overview`}>
                       <a>
-                        <Button className="!py-2 opacity-80 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
+                        <Button className="!py-2 opacity-80 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
                           {which == 'sub' ? "Go back" : "Maybe Later"}
                         </Button>
                       </a>

@@ -79,10 +79,10 @@ const Email = () => {
   ) : (
     <div className="h-screen">
       <Head>
-        <title>We Just Sent a Verification Mail | Cryptea</title>
+        <title>We Just Sent a Verification Mail | Breew</title>
         <meta
           name="description"
-          content="Cryptea - Receive Payments Instantly With Ease."
+          content="Breew - Receive Payments Instantly With Ease."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -92,7 +92,7 @@ const Email = () => {
       <div className="w-full h-fit flex flex-col justify-items-center px-5 my-8">
         <Image src={emailImg} width={130} height={152} alt={"Email Sent"} />
 
-        <h2 className="text-[#F57059] 2md:text-2xl font-[400] text-4xl mx-auto mt-9">
+        <h2 className="text-[#8036de] 2md:text-2xl font-[400] text-4xl mx-auto mt-9">
           We Sent a Verification Mail
         </h2>
 
@@ -123,7 +123,7 @@ const Email = () => {
                 });
               }
             }}
-            className="!mr-2 hover:!bg-[#ff320e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-4 !mx-auto"
+            className="!mr-2 hover:!bg-[#4a168e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#8036de] !text-white !font-semibold !py-3 !px-4 !mx-auto"
           >
             <BiSync size={22} className="mr-1" /> Resend
           </Button>

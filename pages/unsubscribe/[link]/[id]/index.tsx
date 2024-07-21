@@ -9,6 +9,7 @@ import { FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
 import { get_request } from "../../../../app/contexts/Cryptea/requests";
 
 const Unsubscribe = () => {
+
   const router = useRouter();
 
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -45,29 +46,29 @@ const Unsubscribe = () => {
   ) : (
     <div className="h-screen">
       <Head>
-        <title>Unsubscribe from link reminder | Cryptea</title>
+        <title>Unsubscribe from link reminder | Breew</title>
         <meta
           name="description"
-          content="Cryptea - Receive Payments Instantly With Ease."
+          content="Breew - Receive Payments Instantly With Ease."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Nav />
       {success ?
       (<div className="w-[400px] 4sm:w-[800px] 3md:w-[320px] items-center h-[calc(100vh-104px)] flex flex-col justify-center mx-auto text-center my-8">
-        <h2 className="text-[#F57059] text-center font-bold 2sm:text-2xl text-4xl mx-auto">
+        <h2 className="text-[#8036de] text-center font-bold 2sm:text-2xl text-4xl mx-auto">
           Successfully Unsubscribed 
         </h2>
 
         <div className="mt-3 mx-auto">
           <span className="text-[#7e7e7e] text-center font-semibold text-lg mx-auto mt-12">
-            If you have any troubles, please contact us <a href="mailto:hello@cryptea.me" className="underline">here</a>
+            If you have any troubles, please contact us <a href="mailto:hello@breew.co" className="underline">here</a>
           </span>
         </div>
 
       </div>) :
       <div className="w-[400px] 4sm:w-[800px] 3md:w-[320px] items-center h-[calc(100vh-104px)] flex flex-col justify-center mx-auto text-center my-8">
-        <h2 className="text-[#F57059] text-center font-[400] 2sm:text-2xl text-4xl mx-auto">
+        <h2 className="text-[#8036de] text-center font-[400] 2sm:text-2xl text-4xl mx-auto">
           Are you sure you want to unsubscribe??
         </h2>
 
@@ -76,7 +77,7 @@ const Unsubscribe = () => {
             This unsubscribes you from receiving mails reminding you to renew
             your current subscription to{" "}
             <span
-              onClick={() => router.push(`https://app.cryptea.me/pay/${link}`)}
+              onClick={() => router.push(`https://app.breew.co/pay/${link}`)}
               className="underline cursor-pointer"
             >
               {link}
@@ -98,7 +99,7 @@ const Unsubscribe = () => {
 
               setSuccess(true);
             }}
-            className="!ml-2 hover:!bg-[#ff320e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-4 !mx-auto"
+            className="!ml-2 hover:!bg-[#4a168e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#8036de] !text-white !font-semibold !py-3 !px-4 !mx-auto"
           >
             {mLoader ? (
               <>
@@ -118,8 +119,8 @@ const Unsubscribe = () => {
           </Button>
 
           <Button
-            onClick={() => router.push("https://cryptea.me")}
-            className="!ml-2 hover:!bg-[#ff320e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#F57059] !text-white !font-semibold !py-3 !px-4 !mx-auto"
+            onClick={() => router.push("https://breew.co")}
+            className="!ml-2 hover:!bg-[#4a168e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#8036de] !text-white !font-semibold !py-3 !px-4 !mx-auto"
           >
             <FiThumbsUp size={22} className="mr-1" /> No
           </Button>

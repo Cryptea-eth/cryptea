@@ -8,15 +8,15 @@ import { dash, DashContext } from "../../../contexts/GenContext";
 import Image from "next/image";
 import Link from "next/link";
 import { RiSettingsLine } from "react-icons/ri";
-import logo from "../../../../public/images/cryptea-logo.svg";
-import logo2 from "../../../../public/images/cryptea.png";
+import logo from "../../../../public/images/breew-logo.png";
+import logo2 from "../../../../public/images/breew1.png";
 import { useContext } from "react";
 
 const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
 
   const { sidebar }: dash = useContext(DashContext);
 
-  const active = "!border-l-[#F57059] !text-[#F57059]";
+  const active = "!border-l-[#8036de] !text-[#8036de]";
 
   let text: string = "transition-all delay-500 hidden";
 
@@ -36,28 +36,18 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
         <Link href="/">
           <a className="flex items-center absolute justify-center">
             <Image
-              src={logo}
-              alt="cryptea"
-              width={sidebar?.open ? 30 : 40}
-              height={sidebar?.open ? 30 : 40}
-              className={`min-w-[${
-                sidebar?.open ? 30 : 40
-              }px] transition-all delay-500`}
+              src={sidebar?.open ? logo2 : logo }
+              alt="Breew"
+              width={sidebar?.open ? 120 : 30}
+              height={sidebar?.open ? 32 : 30}
+              className={`transition-all delay-500`}
             />
-            <div className={text}>
-              <Image src={logo2} alt="cryptea" className="min-w-[30px]" />
-            </div>
-            {/* <img
-              src={logo1}
-              className={sidebar?.openDelay ? "" : "transition-all delay-500 hidden"}
-              alt="cryptea"
-            /> */}
           </a>
         </Link>
         {sidebar?.openDelay ? (
           <IoIosArrowDropleftCircle
             onClick={sidebar?.toggle}
-            className={`transition-all cursor-pointer delay-500 text-[#F57059] absolute right-[-15px] m-auto z-[101] top-0 bottom-0`}
+            className={`transition-all cursor-pointer delay-500 text-[#8036de] absolute right-[-15px] m-auto z-[101] top-0 bottom-0`}
             size={25}
             style={{
               backgroundColor: "#ffffff",
@@ -69,7 +59,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
         ) : (
           <IoIosArrowDroprightCircle
             onClick={sidebar?.toggle}
-            className={`transition-all cursor-pointer delay-500 text-[#F57059] absolute right-[-15px] m-auto z-[101] top-0 bottom-0`}
+            className={`transition-all cursor-pointer delay-500 text-[#8036de] absolute right-[-15px] m-auto z-[101] top-0 bottom-0`}
             size={25}
             style={{
               backgroundColor: "#ffffff",
@@ -86,7 +76,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
       >
         <div className={`pb-3 mb-1 border-b-[#E3E3E3] border-b-[1px]`}>
           <div
-            className={`rounded-tr-[4px] rounded-br-[4px] overflow-hidden flex-nowrap transition-all delay-200 hover:border-l-[#f89e8e] hover:text-[#F57059] hover:bg-[#d3d3d333] border-solid ${
+            className={`rounded-tr-[4px] rounded-br-[4px] overflow-hidden flex-nowrap transition-all delay-200 hover:border-l-[#8749d7] hover:text-[#8036de] hover:bg-[#d3d3d333] border-solid ${
               page === "home" || page === undefined ? active : ""
             } border-l-[3px] flex items-center transition-all delay-500 bg-[#d3d3d333] py-[9px]`}
           >
@@ -105,7 +95,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
         </div>
 
         <div
-          className={`rounded-tr-[4px] rounded-br-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#d3d3d333] flex items-center py-[9px] ${
+          className={`rounded-tr-[4px] rounded-br-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid hover:border-l-[3px] hover:border-l-[#8036de] border-l-transparent text-[#A9A9A9] hover:text-[#8036de] hover:bg-[#d3d3d333] flex items-center py-[9px] ${
             page == "links" || page == "link" ? active : ""
           }`}
         >
@@ -122,14 +112,12 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
           </Link>
         </div>
 
-
-
         <div
           className={`rounded-tr-[4px] rounded-br-[4px]  border-l-[3px] overflow-hidden flex-nowrap my-1 ${
             page === "settlements" || page === "settlement" || page === "settle"
               ? active
               : ""
-          } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#d3d3d333] flex cursor-pointer items-center py-[9px]`}
+          } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#8036de] hover:text-[#8036de] hover:bg-[#d3d3d333] flex cursor-pointer items-center py-[9px]`}
         >
           <Link href="/dashboard/settlements">
             <a className="text-inherit flex font-[600] w-full items-center text-[14px]">
@@ -147,7 +135,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
         <div
           className={`rounded-tr-[4px] rounded-br-[4px]  border-l-[3px] overflow-hidden flex-nowrap my-1 ${
             ["wallets", "wallet"].includes(page as string) ? active : ""
-          } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#F57059] hover:text-[#F57059] hover:bg-[#d3d3d333] flex cursor-pointer items-center py-[9px]`}
+          } border-solid hover:border-l-[3px] border-l-transparent text-[#A9A9A9] hover:border-l-[#8036de] hover:text-[#8036de] hover:bg-[#d3d3d333] flex cursor-pointer items-center py-[9px]`}
         >
           <Link href="/dashboard/wallets">
             <a className="text-inherit flex font-[600] w-full items-center text-[14px]">
@@ -163,7 +151,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
         </div>
 
         <div
-          className={`rounded-tr-[4px] rounded-br-[4px] cursor-pointer border-l-[3px] overflow-hidden flex-nowrap my-1 transition-all delay-200 border-solid hover:border-l-[3px] hover:border-l-[#F57059] hover:text-[#F57059] border-l-transparent text-[#A9A9A9] hover:bg-[#d3d3d333] flex items-center py-[9px] ${
+          className={`rounded-tr-[4px] rounded-br-[4px] cursor-pointer border-l-[3px] overflow-hidden flex-nowrap my-1 transition-all delay-200 border-solid hover:border-l-[3px] hover:border-l-[#8036de] hover:text-[#8036de] border-l-transparent text-[#A9A9A9] hover:bg-[#d3d3d333] flex items-center py-[9px] ${
             page === "settings" || page === "setting" ? active : ""
           }`}
         >
@@ -180,7 +168,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
           </Link>
         </div>
 
-        <div className="rounded-tr-[4px] rounded-br-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid flex items-center hover:border-l-[3px] hover:border-l-[#F57059] border-l-transparent text-[#A9A9A9] hover:text-[#F57059] hover:bg-[#d3d3d333] py-[9px]">
+        <div className="rounded-tr-[4px] rounded-br-[4px] border-l-[3px] cursor-pointer overflow-hidden flex-nowrap my-1 border-solid flex items-center hover:border-l-[3px] hover:border-l-[#8036de] border-l-transparent text-[#A9A9A9] hover:text-[#8036de] hover:bg-[#d3d3d333] py-[9px]">
           <Link href={"/dashboard/logout"}>
             <a className="text-inherit flex font-[600] w-full items-center text-[14px]">
               <BiLogOut

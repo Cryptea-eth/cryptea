@@ -7,10 +7,10 @@ const Working = () => {
   return (
     <div className="h-screen">
       <Head>
-        <title>Working it out | Cryptea</title>
+        <title>Working it out | Breew</title>
         <meta
           name="description"
-          content="Cryptea - Receive Tips on a whole new level."
+          content="Breew - Receive Tips on a whole new level."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

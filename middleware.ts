@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const allowed = ["http://localhost:3000", "http://localhost:3001"];
 
-const allowedProd = ["https://app.cryptea.me", "https://cryptea.me"];
+const allowedProd = ["https://app.cryptea.me", "https://cryptea.me", "https://breew.co", "https://app.breew.co"];
 
 export function middleware(req: NextRequest) {
 

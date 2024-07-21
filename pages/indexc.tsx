@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   return (
       <div>
         <Head>
-          <title>Cryptea</title>
+          <title>Breew</title>
           <meta
             name="description"
             content="Receive Payments Instantly With Ease"

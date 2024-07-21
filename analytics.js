@@ -2,7 +2,7 @@ import Analytics from 'analytics'
 import AmplitudePlugin from '@analytics/amplitude'
 
 const analytics = Analytics({
-  app: "Cryptea",
+  app: "Breew",
   plugins: [
     AmplitudePlugin({
       apiKey: "3cbdf284cf5493b776de55d22baa161f",

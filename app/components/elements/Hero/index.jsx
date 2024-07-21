@@ -40,7 +40,7 @@ const Hero = () => {
           </div>
           <div className="w-[73%] usm:text-center usm:w-full 2md:w-[92%]">
             <div className="text-[#757095] font-normal text-[17px] mt-6">
-              Cryptea is a payment infrastructure for businesses built on the
+              Breew is a payment infrastructure for businesses built on the
               blockchain. Our APIs and Product make it easy for any online
               business to accept cryptocurrency payments globally.
             </div>
@@ -71,7 +71,7 @@ const Hero = () => {
             src={desktop3}
             priority
             className="w-auto"
-            alt="Cryptea"
+            alt="Breew"
           />
         </div>
       </div>

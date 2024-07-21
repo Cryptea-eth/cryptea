@@ -45,7 +45,7 @@ interface TabPanelProps {
 
 const text = {
   "& .Mui-focused.MuiFormLabel-root": {
-    color: "#f57059",
+    color: "#8036de",
   },
   "& .MuiInputLabel-root": {
     fontWeight: "600",
@@ -53,7 +53,7 @@ const text = {
   },
   "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
     {
-      borderColor: `#f57059 !important`,
+      borderColor: `#8036de !important`,
     },
   "& .MuiInputBase-input": {
     color: "#666666",
@@ -298,7 +298,7 @@ const Links = () => {
     <Page>
       <Head>
         <title>
-         Links | Dashboard | Cryptea
+         Links | Dashboard | Breew
         </title>
         <meta
           name="description"
@@ -363,14 +363,14 @@ const Links = () => {
                   <div className="flex items-center">
                     <Button
                       onClick={deleteLink}
-                      className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] mr-1 !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                      className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] mr-1 !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                     >
                       <FiThumbsUp className={"mr-2"} size={23} /> Yes
                     </Button>
 
                     <Button
                       onClick={handleClose}
-                      className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] ml-1 !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                      className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !min-w-[100px] ml-1 !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                     >
                       <FiThumbsDown className={"mr-2"} size={23} /> No
                     </Button>
@@ -416,7 +416,7 @@ const Links = () => {
 
             <Button
               onClick={() => showLinkAdd(true)}
-              className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+              className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
             >
               <MdAddLink size={25} className="mr-1" /> Create Link
             </Button>
@@ -490,7 +490,7 @@ const Links = () => {
                               justifyContent: "space-between",
                               width: "100%",
                               "& .Mui-selected": {
-                                backgroundColor: `#f57059 !important`,
+                                backgroundColor: `#8036de !important`,
                                 color: `#fff !important`,
                               },
                               "& .MuiButtonBase-root:first-of-type": {
@@ -508,7 +508,7 @@ const Links = () => {
                                   "1px solid rgba(0, 0, 0, 0.12) !important",
                               },
                               "& .MuiToggleButtonGroup-grouped.Mui-selected": {
-                                borderColor: "#f57059 !important",
+                                borderColor: "#8036de !important",
                               },
                             }}
                             exclusive
@@ -766,7 +766,7 @@ const Links = () => {
 
                     <Button
                       onClick={validateForm}
-                      className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                      className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                     >
                       {linkLoading && (
                         <CircularProgress
@@ -809,7 +809,7 @@ const Links = () => {
               }}
               className="grid gap-6 mb-3 grid-flow-dense"
             >
-              <Button className="!w-full !rounded-md hover:!border-[#f5705982] hover:!bg-[#f5705982] !text-[#121212] !bg-transparent hover:!text-white !border !border-solid !border-[rgb(218,220,224)]">
+              <Button className="!w-full !rounded-md hover:!border-[#8036de82] hover:!bg-[#8036de82] !text-[#121212] !bg-transparent hover:!text-white !border !border-solid !border-[rgb(245,245,255)]">
                 <Link href="/dashboard/links/new">
                   <a className="flex-col p-4 w-full h-full flex justify-center items-center">
                     <MdAddLink size={50} className="mb-3" />
@@ -839,7 +839,7 @@ const Links = () => {
                 return (
                   <Link href={`/pay/${link}/overview`} key={i}>
                     <a>
-                      <div className="w-full border border-[rgb(218,220,224)] rounded-md border-solid p-2 hover:bg-[rgb(248,248,248)] transition-all delay-300 cursor-pointer">
+                      <div className="w-full border border-[rgb(245,245,255)] rounded-md border-solid p-2 hover:bg-[rgb(248,248,248)] transition-all delay-300 cursor-pointer">
                         <div className="mb-4">
                           <Avatar
                             sx={{
@@ -847,7 +847,7 @@ const Links = () => {
                               height: 183,
                               margin: "auto",
                               backgroundColor: !Boolean(src)
-                                ? "#f5705982"
+                                ? "#8036de82"
                                 : undefined,
                             }}
                             className="text-[50px] font-bold"
@@ -862,7 +862,7 @@ const Links = () => {
 
                         <div className="flex items-center mb-[10px] justify-between">
                           <div className="flex items-center w-[calc(100%-44px)]">
-                            <div className="text-white w-[40px] h-[40px] min-w-[40px] min-h-[40px] rounded-md mr-[.75rem] flex items-center justify-center bg-[#F57059]">
+                            <div className="text-white w-[40px] h-[40px] min-w-[40px] min-h-[40px] rounded-md mr-[.75rem] flex items-center justify-center bg-[#8036de]">
                               <MdLink size={21} />
                             </div>
                             <div className="truncate">

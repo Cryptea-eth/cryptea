@@ -28,7 +28,7 @@ ChartJS.register(
 
 const LineChart = ({
   styles = {},
-  color = ["#f57059", "#c5442e"],
+  color = ["#8036de", "#c5442e"],
   labels,
   prefix = "",
   y = false,
@@ -51,6 +51,7 @@ const LineChart = ({
   exportLabel?: boolean;
   noLabel ?: boolean;
 }) => {
+  
   const { chartData }: { chartData: Chartx } = useContext<dash>(DashContext);
 
   const processTooltipModel = (model: any) => {

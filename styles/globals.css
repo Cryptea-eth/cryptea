@@ -14,17 +14,17 @@
 
 
 ::-moz-selection {
-  background: rgb(255, 167, 151);
+  background: #cba3ff;
   color: #fff;
 }
 
 ::-webkit-selection {
-  background: rgb(255, 167, 151);
+  background: #cba3ff;
   color: #fff;
 }
 
 ::selection {
-  background: rgb(255, 167, 151);
+  background: #cba3ff;
   color: #fff;
 }
 

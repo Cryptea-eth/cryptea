@@ -41,7 +41,7 @@ const Home: NextPage = () => {
   return (
     isLoading ? <Loader /> : <div className="overflow-hidden">
       <Head>
-        <title>Launch App | Cryptea</title>
+        <title>Launch App | Breew</title>
         <meta
           name="description"
           content="Receive Payments Instantly With Ease"
@@ -49,7 +49,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-          <AuthModal blur={false} openM={true} message={"Welcome to Cryptea"} />
+          <AuthModal blur={false} openM={true} message={"Welcome to Breew"} />
        
       </div>
 

@@ -14,7 +14,7 @@ const CrypSwitch = styled((props: SwitchProps) => (
       transform: "translateX(16px)",
       color: "#fff",
       "& + .MuiSwitch-track": {
-        backgroundColor: theme.palette.mode === "dark" ? "#f57059" : "#f57059",
+        backgroundColor: theme.palette.mode === "dark" ? "#8036de" : "#8036de",
         opacity: 1,
         border: 0,
       },
@@ -23,7 +23,7 @@ const CrypSwitch = styled((props: SwitchProps) => (
       },
     },
     "&.Mui-focusVisible .MuiSwitch-thumb": {
-      color: "#f57059",
+      color: "#8036de",
       border: "6px solid #fff",
     },
     "&.Mui-disabled .MuiSwitch-thumb": {

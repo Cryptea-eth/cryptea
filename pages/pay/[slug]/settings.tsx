@@ -483,7 +483,7 @@ const Settings = () => {
   return (
     <>
       <Head>
-        <title>Settings | {slug} | Cryptea</title>
+        <title>Settings | {slug} | Breew</title>
       </Head>
 
       {isLoading && <Loader />}
@@ -535,7 +535,7 @@ const Settings = () => {
                     height: 45,
                     marginLeft: "10px",
                     fontWeight: "bold",
-                    bgcolor: !Boolean(data.img) ? "#f57059" : undefined,
+                    bgcolor: !Boolean(data.img) ? "#8036de" : undefined,
                   }}
                 >
                   {data.username?.charAt(0).toUpperCase()}
@@ -618,11 +618,11 @@ const Settings = () => {
                               className="bg-[white]"
                               sx={{
                                 "& .Mui-focused.MuiFormLabel-root": {
-                                  color: "#f57059",
+                                  color: "#8036de",
                                 },
                                 "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
-                                    borderColor: `#f57059 !important`,
+                                    borderColor: `#8036de !important`,
                                   },
                               }}
                               fullWidth
@@ -652,11 +652,11 @@ const Settings = () => {
                               className="bg-[white]"
                               sx={{
                                 "& .Mui-focused.MuiFormLabel-root": {
-                                  color: "#f57059",
+                                  color: "#8036de",
                                 },
                                 "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
-                                    borderColor: `#f57059 !important`,
+                                    borderColor: `#8036de !important`,
                                   },
                               }}
                               fullWidth
@@ -680,7 +680,7 @@ const Settings = () => {
                                 justifyContent: "space-between",
                                 width: "100%",
                                 "& .Mui-selected": {
-                                  backgroundColor: `rgba(245, 112, 89, 0.8) !important`,
+                                  backgroundColor: `rgba(128, 54, 222, 0.8) !important`,
                                   color: `#fff !important`,
                                 },
                                 "& .MuiButtonBase-root:first-of-type": {
@@ -764,17 +764,17 @@ const Settings = () => {
                                   return {
                                     ...provided,
                                     backgroundColor: state.isSelected
-                                      ? "#f57059"
+                                      ? "#8036de"
                                       : "transparent",
                                     zIndex: 1000,
                                     position: "relative",
                                     "&:active": {
-                                      backgroundColor: "#f57059",
+                                      backgroundColor: "#8036de",
                                     },
                                     "&:hover": {
                                       backgroundColor: state.isSelected
                                         ? undefined
-                                        : `#f5705929`,
+                                        : `#8036de29`,
                                     },
                                   };
                                 },
@@ -790,7 +790,7 @@ const Settings = () => {
                                   },
                                   "& .select__control--is-focused": {
                                     borderWidth: "2px",
-                                    borderColor: `#f57059 !important`,
+                                    borderColor: `#8036de !important`,
                                     boxShadow: "none",
                                   },
                                 }),
@@ -826,9 +826,9 @@ const Settings = () => {
                       <Tooltip
                         placement="bottom"
                         arrow
-                        title=
-                          {"Crypto accepted by link for payment, leaving this empty makes all supported crypto valid as payment.  Please note that if your account is live and only testnet tokens are selected, link would only be assessible by you."}
-                        
+                        title={
+                          "Crypto accepted by link for payment, leaving this empty makes all supported crypto valid as payment.  Please note that if your account is live and only testnet tokens are selected, link would only be assessible by you."
+                        }
                       >
                         <div className="font-semibold w-fit cursor-default mt-4 flex items-center mb-2 text-[#525252]">
                           <p className="block mr-1">Accepted Crypto</p>
@@ -853,17 +853,17 @@ const Settings = () => {
                                   return {
                                     ...provided,
                                     backgroundColor: state.isSelected
-                                      ? "#f57059"
+                                      ? "#8036de"
                                       : "transparent",
                                     zIndex: 1000,
                                     position: "relative",
                                     "&:active": {
-                                      backgroundColor: "#f57059",
+                                      backgroundColor: "#8036de",
                                     },
                                     "&:hover": {
                                       backgroundColor: state.isSelected
                                         ? undefined
-                                        : `#f5705929`,
+                                        : `#8036de29`,
                                     },
                                   };
                                 },
@@ -879,7 +879,7 @@ const Settings = () => {
                                   },
                                   "& .select__control--is-focused": {
                                     borderWidth: "2px",
-                                    borderColor: `#f57059 !important`,
+                                    borderColor: `#8036de !important`,
                                     boxShadow: "none",
                                   },
                                 }),
@@ -923,11 +923,11 @@ const Settings = () => {
                               }}
                               sx={{
                                 "& .Mui-focused.MuiFormLabel-root": {
-                                  color: "#f57059",
+                                  color: "#8036de",
                                 },
                                 "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
-                                    borderColor: `#f57059 !important`,
+                                    borderColor: `#8036de !important`,
                                   },
                               }}
                               fullWidth
@@ -979,7 +979,7 @@ const Settings = () => {
                                 }}
                                 sx={{
                                   "& .Mui-focused.MuiFormLabel-root": {
-                                    color: "#f57059",
+                                    color: "#8036de",
                                   },
                                   "& .MuiInputLabel-root": {
                                     fontWeight: "600",
@@ -987,7 +987,7 @@ const Settings = () => {
                                   },
                                   "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
                                     {
-                                      borderColor: `#f57059 !important`,
+                                      borderColor: `#8036de !important`,
                                     },
                                 }}
                                 fullWidth
@@ -1042,7 +1042,7 @@ const Settings = () => {
                                 }}
                                 sx={{
                                   "& .Mui-focused.MuiFormLabel-root": {
-                                    color: "#f57059",
+                                    color: "#8036de",
                                   },
                                   "& .MuiInputLabel-root": {
                                     fontWeight: "600",
@@ -1050,7 +1050,7 @@ const Settings = () => {
                                   },
                                   "& .Mui-focused .MuiOutlinedInput-notchedOutline, .MuiInput-underline::after":
                                     {
-                                      borderColor: `#f57059 !important`,
+                                      borderColor: `#8036de !important`,
                                     },
                                 }}
                                 fullWidth
@@ -1100,10 +1100,10 @@ const Settings = () => {
                       <TextField
                         sx={{
                           "& .Mui-focused.MuiFormLabel-root": {
-                            color: "#f57059",
+                            color: "#8036de",
                           },
                           "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: `#f57059 !important`,
+                            borderColor: `#8036de !important`,
                           },
                         }}
                         id="amountOptions"
@@ -1178,11 +1178,11 @@ const Settings = () => {
                               value={formdata.redirect}
                               sx={{
                                 "& .Mui-focused.MuiFormLabel-root": {
-                                  color: "#f57059",
+                                  color: "#8036de",
                                 },
                                 "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
-                                    borderColor: `#f57059 !important`,
+                                    borderColor: `#8036de !important`,
                                   },
                               }}
                               onChange={(txt) => {
@@ -1191,7 +1191,7 @@ const Settings = () => {
                                 setFormData({ redirect });
                               }}
                               fullWidth
-                              placeholder="https://cryptea.me"
+                              placeholder="https://breew.co"
                             />
                           </div>
                         </div>
@@ -1205,7 +1205,7 @@ const Settings = () => {
             <div className="button py-2 bg-white mt-2 bottom-0 w-full sticky flex items-center justify-center">
               <Button
                 onClick={validateFields}
-                className="!py-2 !font-bold !capitalize !flex !items-center !text-white !bg-[#F57059] !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                className="!py-2 !font-bold !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
               >
                 {saving ? (
                   <>
@@ -1225,8 +1225,6 @@ const Settings = () => {
                 )}
               </Button>
             </div>
-          
-            
           </div>
         </div>
       )}

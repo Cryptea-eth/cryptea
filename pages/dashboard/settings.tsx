@@ -424,7 +424,7 @@ const Settings = () => {
   return (
     <Page>
       <Head>
-        <title>Settings | Dashboard | Cryptea</title>
+        <title>Settings | Dashboard | Breew</title>
         <meta name="description" content={`Change User Settings Easily`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -609,7 +609,7 @@ const Settings = () => {
                       <div className="flex items-center">
                         <Button
                           onClick={savePin}
-                          className="!py-2 !font-bold !min-w-[220px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#F57059] !normal-case !border !border-solid !border-[rgb(218,220,224)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                          className="!py-2 !font-bold !min-w-[220px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#8036de] !normal-case !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                         >
                           {pinLoading ? (
                             <>
@@ -655,7 +655,7 @@ const Settings = () => {
                 className="text-center"
               >
                 {Boolean(isLoading["progress"][0]) && (
-                  <Box className="text-[#F57059] mb-1" sx={{ width: "100%" }}>
+                  <Box className="text-[#8036de] mb-1" sx={{ width: "100%" }}>
                     <LinearProgress
                       variant="buffer"
                       value={isLoading["progress"][0]}
@@ -696,7 +696,7 @@ const Settings = () => {
                 <div className="py-2 mt-4 flex justify-center">
                   <Button
                     variant="contained"
-                    className="!bg-[#F57059] !mr-2 !py-[13px] !font-medium !capitalize"
+                    className="!bg-[#8036de] !mr-2 !py-[13px] !font-medium !capitalize"
                     style={{
                       fontFamily: "inherit",
                     }}
@@ -709,7 +709,7 @@ const Settings = () => {
                   <Button
                     onClick={handleCloseM}
                     variant="contained"
-                    className="!bg-[#F57059] !max-w-[100px] !ml-2 !py-[13px] !font-medium !capitalize"
+                    className="!bg-[#8036de] !max-w-[100px] !ml-2 !py-[13px] !font-medium !capitalize"
                     style={{
                       fontFamily: "inherit",
                     }}
@@ -744,7 +744,7 @@ const Settings = () => {
                         </div>
                       </div>
                       {isLoading["account"] === true && (
-                        <Box className="text-[#F57059]" sx={{ width: "100%" }}>
+                        <Box className="text-[#8036de]" sx={{ width: "100%" }}>
                           <LinearProgress color="inherit" />
                         </Box>
                       )}
@@ -773,11 +773,11 @@ const Settings = () => {
                                     className="bg-[white]"
                                     sx={{
                                       "& .Mui-focused.MuiFormLabel-root": {
-                                        color: "#f57059",
+                                        color: "#8036de",
                                       },
                                       "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                         {
-                                          borderColor: `#f57059 !important`,
+                                          borderColor: `#8036de !important`,
                                         },
                                     }}
                                     value={userInfo || username}
@@ -812,11 +812,11 @@ const Settings = () => {
                                     className="bg-[white]"
                                     sx={{
                                       "& .Mui-focused.MuiFormLabel-root": {
-                                        color: "#f57059",
+                                        color: "#8036de",
                                       },
                                       "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                         {
-                                          borderColor: `#f57059 !important`,
+                                          borderColor: `#8036de !important`,
                                         },
                                     }}
                                     placeholder={email}
@@ -846,7 +846,7 @@ const Settings = () => {
                                 <Button
                                   variant="contained"
                                   type="submit"
-                                  className="!py-2 !min-w-[110px] !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                                  className="!py-2 !min-w-[110px] !font-[600] !capitalize !flex !items-center !text-white !bg-[#8036de] !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                                 >
                                   Save Info
                                 </Button>
@@ -864,7 +864,7 @@ const Settings = () => {
                               sx={{
                                 width: 190,
                                 height: 190,
-                                bgcolor: !Boolean(dp) ? "#f57059" : undefined,
+                                bgcolor: !Boolean(dp) ? "#8036de" : undefined,
                               }}
                               alt={username}
                             >
@@ -891,7 +891,7 @@ const Settings = () => {
                                   element.click();
                                 }}
                                 variant="contained"
-                                className="!py-2 !min-w-[110px] !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                                className="!py-2 !min-w-[110px] !font-[600] !capitalize !flex !items-center !text-white !bg-[#8036de] !border-none !transition-all !delay-500 !rounded-lg !px-3 !text-[14px] mr-[2px]"
                               >
                                 Update
                               </Button>
@@ -929,7 +929,7 @@ const Settings = () => {
                     <Button
                       onClick={() => updateSettlePin(true)}
                       variant="contained"
-                      className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#F57059] !border-none !transition-all !delay-500 !min-w-[110px] !rounded-lg !px-3 !text-[14px] mr-[2px]"
+                      className="!py-2 !font-[600] !capitalize !flex !items-center !text-white !bg-[#8036de] !border-none !transition-all !delay-500 !min-w-[110px] !rounded-lg !px-3 !text-[14px] mr-[2px]"
                     >
                       {Boolean(data.settlement.length)
                         ? "Change Pin"
