@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import analytics from "../../../../analytics";
 import Router from "next/router";
-import { useBreew } from "../../../contexts/Breew";
+import { useCryptea } from "../../../contexts/Cryptea";
 import Loader from "../loader";
 import LogoSpace from "../logo";
 import { BiEnvelope, BiUserCircle, BiWallet } from "react-icons/bi";
@@ -31,7 +31,7 @@ const SignupForm = () => {
     isAuthenticated,
     account,
     authenticate
-  } = useBreew();
+  } = useCryptea();
 
   const [userDescription, setUserDescription] = useState("");
   const [userEmail, setUserEmail] = useState("");
