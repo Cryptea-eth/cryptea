@@ -650,7 +650,6 @@ const NewLink = () => {
 
                 <SwipeableViews index={value}>
                   <TabPanel value={value} index={0}>
-                    
                     <form
                       encType="multipart/form-data"
                       action="#"
@@ -691,7 +690,7 @@ const NewLink = () => {
                             justifyContent: "space-between",
                             width: "100%",
                             "& .Mui-selected": {
-                              backgroundColor: `rgba(245, 112, 89, 0.8) !important`,
+                              backgroundColor: `rgba(128, 54, 222, 0.8) !important`,
                               color: `#fff !important`,
                             },
                             "& .MuiButtonBase-root:first-of-type": {
@@ -806,9 +805,7 @@ const NewLink = () => {
                   </TabPanel>
 
                   <TabPanel value={value} index={1}>
-                    <div
-                      className="mt-3 w-full overflow-hidden"
-                    >
+                    <div className="mt-3 w-full overflow-hidden">
                       <div className="flex flex-wrap items-center px-7 justify-between py-4 bg-[#8036de] text-white">
                         <span className="uppercase font-bold mr-3">Amount</span>
                         <div className="flex items-center">
@@ -1051,7 +1048,6 @@ const NewLink = () => {
                                   setAmountOpt(sval);
                                 }}
                                 onKeyUp={(e: any) => {
-                                  
                                   const val = e.target.value;
                                   const sval = val.replace(/[^\d.]/g, "");
                                   setAmountOpt(sval);

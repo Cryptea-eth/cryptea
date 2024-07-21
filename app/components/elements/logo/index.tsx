@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import logo from "../../../../public/images/cryptea-full.png";
+import logo from "../../../../public/images/breew1.png";
 
 const LogoSpace = ({style, className}: { style?: object, className?: string }) => {
         return (

@@ -30,7 +30,7 @@ const Footer = () => {
             <a className="mr-[5px]" href="https://messenger.com">
               <Image alt="Messenger" src={mess} />
             </a>
-            <a className="mr-[5px]" href="https://twitter.com/UseCryptea">
+            <a className="mr-[5px]" href="https://twitter.com/UseBreew">
               <Image alt="Twitter" src={twitt} />
             </a>
           </div>

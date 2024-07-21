@@ -77,7 +77,7 @@ const Unsubscribe = () => {
             This unsubscribes you from receiving mails reminding you to renew
             your current subscription to{" "}
             <span
-              onClick={() => router.push(`https://app.cryptea.me/pay/${link}`)}
+              onClick={() => router.push(`https://app.breew.co/pay/${link}`)}
               className="underline cursor-pointer"
             >
               {link}
@@ -119,7 +119,7 @@ const Unsubscribe = () => {
           </Button>
 
           <Button
-            onClick={() => router.push("https://cryptea.me")}
+            onClick={() => router.push("https://breew.co")}
             className="!ml-2 hover:!bg-[#4a168e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#8036de] !text-white !font-semibold !py-3 !px-4 !mx-auto"
           >
             <FiThumbsUp size={22} className="mr-1" /> No

@@ -680,7 +680,7 @@ const Settings = () => {
                                 justifyContent: "space-between",
                                 width: "100%",
                                 "& .Mui-selected": {
-                                  backgroundColor: `rgba(245, 112, 89, 0.8) !important`,
+                                  backgroundColor: `rgba(128, 54, 222, 0.8) !important`,
                                   color: `#fff !important`,
                                 },
                                 "& .MuiButtonBase-root:first-of-type": {
@@ -826,9 +826,9 @@ const Settings = () => {
                       <Tooltip
                         placement="bottom"
                         arrow
-                        title=
-                          {"Crypto accepted by link for payment, leaving this empty makes all supported crypto valid as payment.  Please note that if your account is live and only testnet tokens are selected, link would only be assessible by you."}
-                        
+                        title={
+                          "Crypto accepted by link for payment, leaving this empty makes all supported crypto valid as payment.  Please note that if your account is live and only testnet tokens are selected, link would only be assessible by you."
+                        }
                       >
                         <div className="font-semibold w-fit cursor-default mt-4 flex items-center mb-2 text-[#525252]">
                           <p className="block mr-1">Accepted Crypto</p>
@@ -1191,7 +1191,7 @@ const Settings = () => {
                                 setFormData({ redirect });
                               }}
                               fullWidth
-                              placeholder="https://cryptea.me"
+                              placeholder="https://breew.co"
                             />
                           </div>
                         </div>
@@ -1225,8 +1225,6 @@ const Settings = () => {
                 )}
               </Button>
             </div>
-          
-            
           </div>
         </div>
       )}

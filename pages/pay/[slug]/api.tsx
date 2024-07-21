@@ -31,7 +31,6 @@ import sortData, {
   totSub,
 } from "../../../app/components/elements/dashboard/linkOverview/generateData";
 import { TbApiApp } from "react-icons/tb";
-import { AiOutlineUser } from "react-icons/ai";
 import ShareLink from "../../../app/components/elements/dashboard/linkOverview/share";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 import { BsShieldLock } from "react-icons/bs";

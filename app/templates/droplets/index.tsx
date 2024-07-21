@@ -109,8 +109,6 @@ const Droplets = ({ className }: { className?: string }) => {
     setPemail?.([]);
   };
 
-  console.log(data, "xx");
-
   const { signer } = useCryptea();
 
 
