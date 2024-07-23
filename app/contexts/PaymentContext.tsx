@@ -9,7 +9,7 @@ import { initD } from "../components/elements/dashboard/link/data";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useSwitchNetwork } from "wagmi";
 import analytics from "../../analytics";
-import mainIx from "../functions/interval"
+import mainIx from "../functions/interval";
 
 import {
   PaymentContext as PaymentCont,
@@ -88,14 +88,13 @@ export const PaymentProvider = ({
 
   const { openConnectModal } = useConnectModal();
 
-
   const [is500, setIs500] = useState<boolean>(false);
 
   const [interval, setTinterval] = useState<string>("daily");
 
   const [paymentType, setPaymentType] = useState<"onetime" | "sub">("onetime");
 
-  useEffect(() => { }, [slug, router.isReady]);
+  useEffect(() => {}, [slug, router.isReady]);
 
   const [rnData, setRData] = useState<any>({
     renew: false,
@@ -105,7 +104,7 @@ export const PaymentProvider = ({
     raw: {},
   });
 
-  const sCallBack = useRef<(cc?: any) => Promise<any> | any>()
+  const sCallBack = useRef<(cc?: any) => Promise<any> | any>();
 
   const [paymentData, setPaymentData] = useState<{
     price: number;
@@ -121,7 +120,7 @@ export const PaymentProvider = ({
   const validSwitch = () => {
     setNullSwitch(false);
 
-    openConnectModal?.()
+    openConnectModal?.();
   };
 
   const [copied, mainCopy] = useState<boolean>(false);
@@ -159,7 +158,7 @@ export const PaymentProvider = ({
     account,
     disconnect,
     validator,
-  } = useCryptea()
+  } = useCryptea();
 
   const [signer, setSigner] = useState(nullSigner);
 
@@ -185,9 +184,7 @@ export const PaymentProvider = ({
   const [failMessage, setFailMessage] = useState<string>("");
   const [hash, setHash] = useState<string>("");
 
-  const [options, setOptions] = useState<
-   token[]
-  >(CryptoList);
+  const [options, setOptions] = useState<token[]>(CryptoList);
 
   const [token, setToken] = useState<any>(options[0]);
 
@@ -223,16 +220,13 @@ export const PaymentProvider = ({
     }
   };
 
-  const getPriceReq = (params: {
-    ids: string;
-    vs_currencies: string
-  }) => {
+  const getPriceReq = (params: { ids: string; vs_currencies: string }) => {
     return axios.get("/simple/price", {
       params,
       baseURL: "https://api.coingecko.com/api/v3",
       withCredentials: false,
     });
-  }
+  };
 
   const matic = async (price: number) => {
     const response = await getPriceReq({
@@ -248,52 +242,45 @@ export const PaymentProvider = ({
   };
 
   const solana = async (price: number) => {
-    
     const response = await getPriceReq({
-        ids: "solana",
-        vs_currencies: "usd",
-      });
+      ids: "solana",
+      vs_currencies: "usd",
+    });
 
     const e = response.data as { [index: string]: any };
 
     const priceCurrency = Number(e["solana"]["usd"]);
 
     return price / priceCurrency;
-  
-  }
-  
-  const tron = async (price: number) => {
-      
-      const response = await getPriceReq({
-        ids: "tron",
-        vs_currencies: "usd",
-      });
-  
-      const e = response.data as { [index: string]: any };
-  
-      const priceCurrency = Number(e["tron"]["usd"]);
-  
-      return price / priceCurrency;
+  };
 
-  }
+  const tron = async (price: number) => {
+    const response = await getPriceReq({
+      ids: "tron",
+      vs_currencies: "usd",
+    });
+
+    const e = response.data as { [index: string]: any };
+
+    const priceCurrency = Number(e["tron"]["usd"]);
+
+    return price / priceCurrency;
+  };
 
   const usdt = async (price: number) => {
-      
-      const response = await getPriceReq({
-        ids: "tether",
-        vs_currencies: "usd",
-      });
-  
-      const e = response.data as { [index: string]: any };
-  
-      const priceCurrency = Number(e["tether"]["usd"]);
-  
-      return price / priceCurrency;
+    const response = await getPriceReq({
+      ids: "tether",
+      vs_currencies: "usd",
+    });
 
-  }
+    const e = response.data as { [index: string]: any };
+
+    const priceCurrency = Number(e["tether"]["usd"]);
+
+    return price / priceCurrency;
+  };
 
   const ethereum = async (price: number) => {
-
     const response = await getPriceReq({
       ids: "ethereum",
       vs_currencies: "usd",
@@ -304,11 +291,9 @@ export const PaymentProvider = ({
     const priceCurrency = Number(e["ethereum"]["usd"]);
 
     return price / priceCurrency;
-
-  }
+  };
 
   const fantom = async (price: number) => {
-
     const response = await getPriceReq({
       ids: "fantom",
       vs_currencies: "usd",
@@ -316,12 +301,11 @@ export const PaymentProvider = ({
 
     const e = response.data as { [index: string]: any };
 
-    // console.log(e, 'Here');    
+    // console.log(e, 'Here');
 
     const priceCurrency = Number(e["fantom"]["usd"]);
 
     return price / priceCurrency;
-
   };
 
   const optimism = async (price: number) => {
@@ -342,7 +326,6 @@ export const PaymentProvider = ({
     chain: string | number | undefined = 80001
   ) => {
     let final: number = 0;
-
 
     setLoadingText("Loading price data...");
 
@@ -478,21 +461,16 @@ export const PaymentProvider = ({
           renew: renewInfo,
         } = await initD(String(slug).toLowerCase(), apiCode, renew);
 
-
         if (lQ["id"] !== undefined) {
           if (lQ.template_data !== undefined) {
             const { name, data: udata } = JSON.parse(lQ.template_data);
 
             if (!editMode) {
-
               setData(typeof udata == "string" ? JSON.parse(udata) : udata);
-
             } else {
-
               const { data: mdata } = await import(`../templates/${name}/data`);
 
               setData(mdata);
-              
             }
           }
 
@@ -526,7 +504,6 @@ export const PaymentProvider = ({
           let cOptions = [...options];
 
           if (cryptoData.length) {
-
             cOptions = cOptions.filter(
               (v: token) => cryptoData.indexOf(v.value) != -1
             );
@@ -544,14 +521,12 @@ export const PaymentProvider = ({
             if (cOptions.length) {
               setOptions(cOptions);
             } else {
-              
               if (userl.owner == undefined) router.replace("/404");
             }
 
             if (cOptions[0] !== undefined) {
               setToken(cOptions[0]);
             }
-
           } else {
             cOptions = [...cOptions].sort(
               (v, x) => Number(x.testnet) - Number(v.testnet)
@@ -605,8 +580,9 @@ export const PaymentProvider = ({
             title: lQ.title !== undefined ? lQ.title : userl.username,
             username: userl.username,
             email: userl.email,
-            slug, 
-            addresses: userl.address === null ? {'evm' : lQ.address } : userl.address,
+            slug,
+            addresses:
+              userl.address === null ? { evm: lQ.address } : userl.address,
             img: userl.img !== undefined ? userl.img : undefined,
             id: lQ.id,
             linktype: lQ.type,
@@ -657,7 +633,6 @@ export const PaymentProvider = ({
   const [subCheck, setSubCheck] = useState<boolean>(true);
 
   const [eSubscription, setESubscription] = useState<string[]>([]);
-
 
   const reset = () => {
     setTransferSuccess(false);
@@ -730,22 +705,19 @@ export const PaymentProvider = ({
         if (switchNet === undefined) {
           setNullSwitch(true);
         } else {
-          openConnectModal?.()
+          openConnectModal?.();
         }
       } else if (!connected || !signer) {
         if (!signer) {
           disconnect();
         }
 
-        openConnectModal?.()
+        openConnectModal?.();
       }
 
       setPaymentData({ price, type });
     } else {
-
       from = account || "";
-
-
 
       setLoadingText("Pending...");
 
@@ -762,8 +734,6 @@ export const PaymentProvider = ({
       );
 
       setLoadingText("Processing payment");
-
-
 
       initContract
         .transferNative(addresses?.[token.blocktype] || "", {
@@ -824,11 +794,7 @@ export const PaymentProvider = ({
             baseURL: window.origin,
           });
 
-          
-
           await sCallBack.current?.({ link: slug, linkId });
-
-      
 
           setTransferSuccess(true);
 
@@ -857,12 +823,11 @@ export const PaymentProvider = ({
           }
 
           setTimeout(reset, 12000);
-
         })
         .catch((err: any) => {
           const error = err as Error;
 
-          console.log(error)
+          console.log(error);
 
           if (error.message.length) {
             setTransferFail(true);
@@ -893,7 +858,6 @@ export const PaymentProvider = ({
   };
 
   useEffect(() => {
-
     const elem = document.querySelector(
       "button.ju367vf9.ju367va.ju367v26"
     ) as any;
@@ -924,7 +888,6 @@ export const PaymentProvider = ({
 
   const [manLoader, setManLoader] = useState<boolean>(false);
 
-
   const checkWallet = async ({
     price,
     type,
@@ -934,10 +897,7 @@ export const PaymentProvider = ({
     type: "onetime" | "sub";
     wallet: string;
   }) => {
-
     if (timeCounted <= 720 && timeCounted > 0) {
-
-
       const base = {
         initial: 0,
         rpc: token.rpc,
@@ -985,7 +945,6 @@ export const PaymentProvider = ({
       }
 
       try {
-
         setManLoader(true);
 
         const queryBalance = await http.post(
@@ -1051,7 +1010,6 @@ export const PaymentProvider = ({
 
           setTimeout(reset, 12000);
         } else {
-
           timerTimeout.current = setTimeout(
             () =>
               checkWallet({
@@ -1063,7 +1021,6 @@ export const PaymentProvider = ({
           );
         }
       } catch (err) {
-
         clearInterval(timer.current);
         clearTimeout(timerTimeout.current);
 
@@ -1073,7 +1030,6 @@ export const PaymentProvider = ({
 
         setTimeCounted(0);
         setFailMessage("");
-
       }
     } else {
       // maybe come back here
@@ -1081,23 +1037,19 @@ export const PaymentProvider = ({
   };
 
   useEffect(() => {
-    
     if (timeCounted >= 720) {
       clearInterval(timer.current);
       clearTimeout(timerTimeout.current);
-
 
       setManLoader(false);
       setManValue(1);
 
       setTimeCounted(0);
       setLoadingText("");
-
     }
   }, [timeCounted, timer]);
 
   const beginManual = async (amount: number, type: "onetime" | "sub") => {
-
     setLoadingText("Just a sec...");
     setMethod("manual");
 
@@ -1115,7 +1067,6 @@ export const PaymentProvider = ({
 
         setGenAddr(wallet);
 
-        
         const price = await getPrice(
           amount + (Number(amount) * 1) / 100,
           token.value
@@ -1136,21 +1087,21 @@ export const PaymentProvider = ({
         }, 1000);
 
         // await checkWallet({ type, price, wallet });
-
       })
       .catch((err) => {
-
         const error = err as any;
 
         console.log(error);
 
         beginManual(amount, type);
-
       });
   };
 
-  const begin = (type: "onetime" | "sub", auto: boolean, onSuccess?: () => Promise<any> | any) => {
-
+  const begin = (
+    type: "onetime" | "sub",
+    auto: boolean,
+    onSuccess?: () => Promise<any> | any
+  ) => {
     setFailMessage("");
     setTransferFail(false);
     setHash("");
@@ -1298,11 +1249,10 @@ export const PaymentProvider = ({
                 <span className="text-[#7c7c7c] mt-3 block font-[500] text-[15px]">
                   This popup came up, because you are using the wrong network on
                   your crypto wallet, kindly switch networks to{" "}
-                  <b>{token.network}</b> after which click the reconnect button,
+                  <b>{token.network}</b> and click reconnect,
                   <span className="block text-center w-full font-bold">or</span>
-                  Click reconnect and select <b>{token.network}</b> on your
-                  crypto wallet then connect. <br /> Based on your wallet
-                  configuration.
+                  Click reconnect and connect to <b>{token.network}</b> on your
+                  wallet.
                 </span>
               </div>
 
@@ -1488,7 +1438,7 @@ export const PaymentProvider = ({
                     href={`mailto:hello@breew.co?subject=Issue with transfer&body=Hello Breew, \n I made a payment to this address: ${genAddr}. However, I did not get a confirmation of successful payment.`}
                   >
                     <a className="text-[#8036de]" target="_blank">
-                      click me to contact us immediately
+                      contact us immediately
                     </a>
                   </Link>
                   , else cancel or retry the transaction
@@ -1539,16 +1489,16 @@ export const PaymentProvider = ({
 
               <div className="py-3 mb-2">
                 <span className="text-[rgb(113,114,116)] text-center block font-[500] text-[14px]">
-                  But no need to worry, Please{" "}
+                  No need to worry, Please{" "}
                   <Link
                     href={`mailto:hello@breew.co?subject=Issue with transfer&body=Hello Breew, \n I made a payment to this address: ${genAddr}. However, I did not get a confirmation of successful payment.`}
                   >
                     <a className="text-[#8036de]" target="_blank">
-                      click me to contact us immediately
+                      contact us immediately
                     </a>
                   </Link>
                   , so that we can resolve the issue if there is one. We
-                  apologize for any inconvenience this might have caused.
+                  apologize for any inconveniences.
                 </span>
               </div>
 

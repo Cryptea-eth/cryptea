@@ -1,4 +1,4 @@
-import { Chain } from 'wagmi';
+import { Chain } from "wagmi";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { LinkConnector, UDConnector } from "./connectors";
@@ -48,7 +48,7 @@ import {
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { PhantomWallet } from "./connectors/solana";
-import http from '../../../utils/http';
+import http from "../../../utils/http";
 
 let user: userData | undefined;
 
@@ -60,7 +60,7 @@ export const AuthAddress = async ({
   address,
   signature,
   message,
-  blocktype = 'evm'
+  blocktype = "evm",
 }: AuthAddressType) => {
   try {
     // const userx = await post_request(`/login/walletAuth`, {
@@ -120,9 +120,7 @@ export const AuthAddress = async ({
     const error = err as AxiosError;
     // console.log(err);
     if (error.response) {
-
       throw "Invalid Login Details";
-      
     }
   }
   return user;
@@ -289,49 +287,46 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
 
   const length = 7;
 
-  const solana =  () => {
+  const solana = () => {
+    const supported = ["phantom"];
 
-        const supported = ["phantom"];
+    const store: any[] = [];
 
-        const store: any[] = [];
+    for (let i = 0; i < length; i++) {
+      const conn = client.connectors.pop();
 
-        for (let i = 0; i < length; i++) {
-          const conn = client.connectors.pop();
-
-          if (conn !== undefined) {
-            if (supported.indexOf(conn.id) !== -1) {
-              store.push(conn);
-            }
-          }
-        }
-
-        store.forEach((v) => {
-          client.connectors.push(v);
-        });
-    };
-
-    const evm = () => {
-      const unsupported = ["phantom"];
-
-      const store: any[] = [];
-
-      for (let i = 0; i < length; i++) {
-        const conn = client.connectors.pop();
-
-        if (conn !== undefined) {
-          if (unsupported.indexOf(conn.id) === -1) {
-            store.push(conn);
-          }
+      if (conn !== undefined) {
+        if (supported.indexOf(conn.id) !== -1) {
+          store.push(conn);
         }
       }
+    }
 
-      store.forEach((v) => {
-        client.connectors.push(v);
-      });
-    };
+    store.forEach((v) => {
+      client.connectors.push(v);
+    });
+  };
 
+  const evm = () => {
+    const unsupported = ["phantom"];
 
-    
+    const store: any[] = [];
+
+    for (let i = 0; i < length; i++) {
+      const conn = client.connectors.pop();
+
+      if (conn !== undefined) {
+        if (unsupported.indexOf(conn.id) === -1) {
+          store.push(conn);
+        }
+      }
+    }
+
+    store.forEach((v) => {
+      client.connectors.push(v);
+    });
+  };
+
   return (
     <WagmiConfig client={client}>
       <RainbowKitProvider
@@ -351,7 +346,6 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
             update: (e: userData | undefined) => setContext(e),
           }}
         >
-
           {/* <button style={{ position: 'fixed', zIndex: 100000000000 }} onClick={solana}> Click me</button> */}
 
           {genLoader ? <Loader head={false} /> : children}

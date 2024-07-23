@@ -49,15 +49,12 @@ const Magic = () => {
       if (isAuthenticated) {
         router.push("/dashboard");
       } else {
-        if (localStorage.getItem('defaultAuth') !== null) {
-
-          if (localStorage.getItem("defaultAuth") == 'magicauth') {
-            
-            setDefault(true);   
-            
+        if (localStorage.getItem("defaultAuth") !== null) {
+          if (localStorage.getItem("defaultAuth") == "magicauth") {
+            setDefault(true);
           }
         }
-         setLoader(false);
+        setLoader(false);
       }
     }
   }, [isAuthenticated, router]);
@@ -178,7 +175,7 @@ const Magic = () => {
               fullWidth
               helperText={Boolean(error) ? error : ""}
               error={Boolean(error)}
-              placeholder="hello@Breew.me"
+              placeholder="hello@breew.me"
             />
 
             <Button

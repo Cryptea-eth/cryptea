@@ -31,16 +31,16 @@ const Usedkey = () => {
           <ul className="pl-8 my-3">
             <li className="text-[#888888] list-item mb-1">
               {" "}
-              - You would have to go back to original site/app that linked you
-              here <br /> and try clicking their pay button or re-querying
-              payment again.
+              - Return to the site/app that referred you here <br /> and retry
+              the payment or re-query the payment.
             </li>
 
             <li className="text-[#888888] list-item mb-1">
               {" "}
-              - Complain to the customer care of the site/app that linked you
+              - Complain to the customer care of the site/app that referred you
               here,
-              <br /> its most likely payment has been completed by you earlier.
+              <br />
+              as it's most likely the payment has been completed earlier.
             </li>
           </ul>
         </div>

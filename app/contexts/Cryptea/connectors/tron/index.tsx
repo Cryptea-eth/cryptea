@@ -15,10 +15,10 @@ export const TronCryptoList: token<{
             name="Tron"
             size={20}
             key={12}
-            alt={"Tron (mainnet)"}
+            alt={"Tron mainnet"}
           />
         </div>
-        <span className="text-[#121212]">Tron</span>
+        <span className="text-[#121212]">Tron Mainnet</span>
       </div>
     ),
     name: "Tron",
@@ -51,7 +51,7 @@ export const TronCryptoList: token<{
             alt={"Tron (testnet)"}
           />
         </div>
-        <span className="text-[#121212]">Tron</span>
+        <span className="text-[#121212]">Tron Testnet</span>
       </div>
     ),
     name: "Tron",

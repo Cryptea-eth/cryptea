@@ -1,8 +1,3 @@
-
-
-
-
-
 export const BreewCon = `                                                                               
 88888888ba                                                           
 88      "8b                                                          

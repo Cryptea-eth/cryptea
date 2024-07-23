@@ -1,7 +1,4 @@
-import {
-  configureChains,
-  Chain,
-} from "wagmi";
+import { configureChains, Chain } from "wagmi";
 import {
   avalanche,
   polygonMumbai,
@@ -25,7 +22,6 @@ import CustomImg from "../../../components/elements/customImg";
 import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi";
 import { explorer, token } from "../types";
 // import { SolanaCryptoList, solanatokenTrackers } from "./solana";
-
 
 export const OasisEmerald: Chain = {
   id: 42262,
@@ -75,7 +71,6 @@ export const OasisEmeraldTestnet: Chain = {
   },
   testnet: true,
 };
-
 
 export const Cronos: Chain = {
   id: 25,
@@ -180,9 +175,7 @@ export const CronosTest: Chain = {
   testnet: true,
 };
 
-
-
-export const { chains , provider, webSocketProvider } = configureChains(
+export const { chains, provider, webSocketProvider } = configureChains(
   [
     polygon,
     polygonZkEvmTestnet,
@@ -215,7 +208,6 @@ export const { chains , provider, webSocketProvider } = configureChains(
     publicProvider(),
   ]
 );
-
 
 export const tokenTrackers: explorer = {
   137: {
@@ -672,7 +664,6 @@ export const CryptoList: token[] = [
     rpc: auroraTestnet.rpcUrls.default.http[0],
   },
   {
-   
     value: 10,
     contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     testnet: false,
@@ -701,7 +692,6 @@ export const CryptoList: token[] = [
       auto: true,
     },
     rpc: optimism.rpcUrls.default.http[0],
-
   },
 
   {

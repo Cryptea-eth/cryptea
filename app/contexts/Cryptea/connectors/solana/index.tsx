@@ -1,15 +1,11 @@
 import { chains } from "../chains";
-import { explorer, token } from '../../types';
-import CustomImg from '../../../../components/elements/customImg';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import {
-  PhantomWalletAdapter
-} from "@solana/wallet-adapter-wallets";
-import { PhantomConnector } from './connectors';
-
+import { explorer, token } from "../../types";
+import CustomImg from "../../../../components/elements/customImg";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
+import { PhantomConnector } from "./connectors";
 
 const phantom = new PhantomWalletAdapter();
-
 
 export const PhantomWallet = ({ chains }: { chains: any }) => ({
   id: "phantom",
@@ -24,8 +20,6 @@ export const PhantomWallet = ({ chains }: { chains: any }) => ({
     };
   },
 });
- 
-
 
 export const SolanaCryptoList: token[] = [
   {
@@ -93,7 +87,7 @@ export const SolanaCryptoList: token[] = [
 export const solanatokenTrackers: explorer = {
   1122112211223: {
     name: "Solana Explorer",
-    link: (hash: string) => "https://solscan.io/tx/"+hash,
+    link: (hash: string) => "https://solscan.io/tx/" + hash,
   },
 
   1122112211224: {

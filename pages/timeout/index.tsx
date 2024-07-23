@@ -9,7 +9,7 @@ const Timeout = () => {
   return (
     <div className="h-screen">
       <Head>
-        <title>Seems Connection Timed out | Breew</title>
+        <title>Connection Timed out | Breew</title>
         <meta
           name="description"
           content="Breew - Receive Payments Instantly With Ease."
@@ -31,7 +31,7 @@ const Timeout = () => {
           <ul className="pl-8 my-3">
             <li className="text-[#888888] list-item mb-1">
               {" "}
-               - Check your internet connection, as no internet connectivity{" "}
+              - Check your internet connection, as no internet connectivity{" "}
               <br />
               might prevent some content from loading.
             </li>
@@ -41,10 +41,7 @@ const Timeout = () => {
               - Try again in a few minutes.
             </li>
 
-            <li className="text-[#888888] list-item mb-1">
-              {" "}
-             - or Contact us.
-            </li>
+            <li className="text-[#888888] list-item mb-1"> - or Contact us.</li>
           </ul>
         </div>
 

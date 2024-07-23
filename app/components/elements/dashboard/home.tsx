@@ -1,4 +1,14 @@
-import { Avatar, Box, Button, CircularProgress, FormControlLabel, IconButton, Modal, Skeleton, Tooltip } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  FormControlLabel,
+  IconButton,
+  Modal,
+  Skeleton,
+  Tooltip,
+} from "@mui/material";
 import Link from "next/link";
 import NumberFormat from "react-number-format";
 import LineChart from "../Extras/Rep/lineChart";
@@ -8,7 +18,7 @@ import { get_request } from "../../../contexts/Cryptea/requests";
 import { useEffect, useRef, useState } from "react";
 import { cryptoDeets } from "../../../functions/crypto";
 import axios, { AxiosError } from "axios";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import CustomImg from "../customImg";
 import CrypSwitch from "../CrypSwitch";
 import {
@@ -23,7 +33,6 @@ import { blockchains } from "../../../contexts/Cryptea/blockchains";
 import http from "../../../../utils/http";
 
 const DashHome = () => {
-
   const router = useRouter();
 
   const [dashBal, setDashBal] = useState<any>(0);
@@ -43,7 +52,7 @@ const DashHome = () => {
 
   const [blurBal, removeBlurBal] = useState<boolean>(true);
 
-  const once = useRef<boolean>(true)
+  const once = useRef<boolean>(true);
 
   const [data, setData] = useState<any>({});
 
@@ -53,44 +62,41 @@ const DashHome = () => {
 
   const [checked, setChecked] = useState<boolean>(false);
 
-
   const [refresh, setRefresh] = useState<boolean>(false);
 
   const changeChecked = async () => {
-      setChecked(!checked);
+    setChecked(!checked);
 
-      removeBlur(true);
+    removeBlur(true);
 
-      removeBlurBal(true);
-      
-      try {
+    removeBlurBal(true);
 
-      await 'user'.update({ live: !checked ? 'Yes' : 'No' }); 
+    try {
+      await "user".update({ live: !checked ? "Yes" : "No" });
 
       once.current = true;
-      onceBal.current = true
-    
-      setRefresh(!refresh)
+      onceBal.current = true;
 
-      }catch (err) {
-          setChecked(!checked);
-          removeBlur(false);
-          removeBlurBal(false);
-      }
-  }
+      setRefresh(!refresh);
+    } catch (err) {
+      setChecked(!checked);
+      removeBlur(false);
+      removeBlurBal(false);
+    }
+  };
 
   const [settlePin, setSettlePin] = useState<boolean>(false);
 
-  const closeSettleModal = () => setSettlePin(false)
+  const closeSettleModal = () => setSettlePin(false);
 
-  const [genSetError, setGenSetError] = useState<string>('');
+  const [genSetError, setGenSetError] = useState<string>("");
 
-    const [pins, setPin] = useState<{ [index: string]: string }>({
-      newpin: "",
-      renewpin: "",
-    });
+  const [pins, setPin] = useState<{ [index: string]: string }>({
+    newpin: "",
+    renewpin: "",
+  });
 
-    const [pinsVisibility, setPinVisibility] = useState<{
+  const [pinsVisibility, setPinVisibility] = useState<{
     [index: string]: boolean;
   }>({
     newpin: true,
@@ -99,10 +105,9 @@ const DashHome = () => {
 
   const [pinLoading, setPinLoading] = useState<boolean>(false);
 
-
   const savePin = async () => {
     setGenSetError("");
-    
+
     if (pinLoading) {
       return;
     }
@@ -150,9 +155,7 @@ const DashHome = () => {
         window.scroll(0, 0);
 
         router.reload();
-
       } catch (err) {
-
         const erro = err as AxiosError;
 
         if (erro.response) {
@@ -174,10 +177,9 @@ const DashHome = () => {
   useEffect(() => {
     setRand(Math.floor(Math.random() * 4));
 
-    let address: string;    
-   
-    const init = async () => {
+    let address: string;
 
+    const init = async () => {
       const dashmain = await get_request(
         "/dashboard/home",
         {},
@@ -215,9 +217,7 @@ const DashHome = () => {
 
           fees[metadata["chainId"]] = Number(metadata["discount"]);
         }
-
       });
-
 
       const sortBreak = Object.values(breakdown)
         .map((a: { created_at: number; amount: number; token: string }[]) => {
@@ -263,7 +263,6 @@ const DashHome = () => {
 
       const tsort = links.sort((a: any, b: any) => b.totalViews - a.totalViews);
 
-
       setDashData({
         payments,
         views,
@@ -277,44 +276,32 @@ const DashHome = () => {
       setTimeout(init, 6000);
     };
 
-    if(once.current){
-
+    if (once.current) {
       once.current = false;
 
-      'user'.get('*', true).then(async (e: any) => {
-    
+      "user".get("*", true).then(async (e: any) => {
         setData(e);
 
-        setChecked(e.live == 'Yes');
+        setChecked(e.live == "Yes");
 
         setSettlePin(!Boolean(e.settlement ? e.settlement.length : 0));
 
         if (!Boolean(e.settlement ? e.settlement.length : 0)) {
           return;
         }
-               
 
         await init();
-
-    })
-
-  }
-
+      });
+    }
   }, [refresh]);
 
-
   useEffect(() => {
-
     const initBal = async () => {
-     
+      const sAddresses: any = {};
 
-
-     const sAddresses: any = {};
-
-     data.settlement.forEach((v: any) => {
-       sAddresses[v.type] = v.address;
-     });
-
+      data.settlement.forEach((v: any) => {
+        sAddresses[v.type] = v.address;
+      });
 
       setDashBal(() => {
         const cache = JSON.parse(localStorage.getItem("cryptoCache") || "{}");
@@ -322,15 +309,14 @@ const DashHome = () => {
         let totlCache = 0;
 
         if (cache && Object.keys(cache).length > 0) {
-
-        Object.values(sAddresses).forEach((e: any) => {
-          if (cache[e]) {
-            Object.values(cache[e]).forEach((value: any) => {
-              totlCache += Number(value.amtFiat);
-            });
-          }
-        });
-      }
+          Object.values(sAddresses).forEach((e: any) => {
+            if (cache[e]) {
+              Object.values(cache[e]).forEach((value: any) => {
+                totlCache += Number(value.amtFiat);
+              });
+            }
+          });
+        }
 
         return totlCache;
       });
@@ -349,7 +335,6 @@ const DashHome = () => {
       const cacheNew: any = {};
 
       Object.keys(breakdown).forEach((index: any) => {
-
         const dax = breakdown[index];
 
         const { blocktype, amount, token } = dax;
@@ -371,23 +356,16 @@ const DashHome = () => {
       localStorage.setItem("tokenVal", JSON.stringify(valCache));
 
       setDashBal(total);
-        
 
       if (blurBal) removeBlurBal(false);
-
-    }
-    
+    };
 
     if (payments.length && onceBal.current) {
-
       onceBal.current = false;
 
       initBal();
-
     }
-
-  }, [refresh, payments])
-
+  }, [refresh, payments]);
 
   const change = (data: any[]): { value: number; direction: "up" | "down" } => {
     const [current, initial = 0] = data;
@@ -437,7 +415,6 @@ const DashHome = () => {
                 margin: "auto",
               }}
             >
-              
               <div className="py-4 px-6 bg-white -mb-[1px] rounded-t-[.9rem]">
                 <div className="mb-2 flex items-start justify-between">
                   <div>
@@ -711,11 +688,7 @@ const DashHome = () => {
                 ) : (
                   <>
                     <NumberFormat
-                      value={
-                        String(
-                          dashBal
-                        ).split(".")[0]
-                      }
+                      value={String(dashBal).split(".")[0]}
                       style={{
                         fontSize: "1.95rem",
                         color: "#121212",
@@ -725,12 +698,7 @@ const DashHome = () => {
                       prefix={"$"}
                     />
                     <span className="leading-[2.38rem] text-[20px] text-[#898989]">
-                      .
-                      {
-                        (dashBal)
-                          .toFixed(2)
-                          .split(".")[1]
-                      }
+                      .{dashBal.toFixed(2).split(".")[1]}
                     </span>
                   </>
                 )}
@@ -773,7 +741,6 @@ const DashHome = () => {
                         key={i}
                         className="border-solid w-[210px] h-[245px] text-[#6a6a6ab0] py-4 px-[15px] mr-2 bg-white border-[rgb(245,245,255)] rounded-[8px] border"
                       >
-                        
                         <div className="flex items-center mb-2">
                           <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
                             <CustomImg

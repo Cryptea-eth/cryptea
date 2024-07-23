@@ -1,4 +1,3 @@
-
 import {
   EmailShareButton,
   FacebookShareButton,
@@ -22,7 +21,7 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 import { Modal, IconButton, Tooltip, ClickAwayListener } from "@mui/material";
-import { useContext, useState } from 'react';
+import { useContext, useState } from "react";
 import { dash, DashContext } from "../../../../contexts/GenContext";
 import { MdClose } from "react-icons/md";
 import QrCode from "../../qrcode";
@@ -40,15 +39,13 @@ const ShareLink = ({
     desc: string;
     title: string;
     userLk: string;
-    slug: string
+    slug: string;
   };
 }) => {
-
   const { sidebar }: dash = useContext(DashContext);
 
   const [copied, mainCopy] = useState<boolean>(false);
 
- 
   return (
     <>
       <Modal
@@ -196,26 +193,27 @@ const ShareLink = ({
                 </div>
               </PinterestShareButton>
 
-              {navigator.share !== undefined && <div
-                onClick={() => {
-                  const shareData = {
-                    title: Boolean(data.title) ? data.title : "",
-                    text: Boolean(data.desc) ? data.desc : "",
-                    url: data.userLk,
-                  };
+              {navigator.share !== undefined && (
+                <div
+                  onClick={() => {
+                    const shareData = {
+                      title: Boolean(data.title) ? data.title : "",
+                      text: Boolean(data.desc) ? data.desc : "",
+                      url: data.userLk,
+                    };
 
-                  navigator.share(shareData);
-                }}
-                className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9"
-              >
-                <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
-                  <CgMore color={"#6a6a6a"} size={40} />
+                    navigator.share(shareData);
+                  }}
+                  className="flex h-[120px] justify-between items-center flex-col cursor-pointer pr-9"
+                >
+                  <div className="w-[80px] flex items-center justify-center h-[80px] bg-[#2020200e] rounded-[50%]">
+                    <CgMore color={"#6a6a6a"} size={40} />
+                  </div>
+
+                  <span className="font-semibold text-[#777]">More</span>
                 </div>
-
-                <span className="font-semibold text-[#777]">More</span>
-              </div>}
+              )}
             </div>
-
 
             <div>
               <h2 className="text-[18px] text-[#5a5a5a] mb-3 font-bold w-full">

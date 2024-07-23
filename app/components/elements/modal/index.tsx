@@ -1,6 +1,6 @@
 import { useCryptea } from "../../../contexts/Cryptea";
 import { useState, useContext, useEffect } from "react";
-import { Button } from '@mui/material';
+import { Button } from "@mui/material";
 import Image from "next/image";
 import LogoSpace from "../logo";
 import meta from "../../../../public/images/metamask.png";
@@ -18,7 +18,6 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { AuthContextMain } from "../../../contexts/Cryptea/Auth";
 import logo from "../../../../public/images/breew1.png";
 
-
 const AuthModal = ({
   message,
   blur = true,
@@ -30,7 +29,6 @@ const AuthModal = ({
   blur?: boolean;
   openM?: boolean;
 }) => {
-
   const router = useRouter();
 
   const auth = useContext(AuthContextMain);
@@ -38,10 +36,9 @@ const AuthModal = ({
   const { isConnected } = useAccount();
 
   const { openConnectModal } = useConnectModal();
-  
-  const [ isLoading, setLoading ] = useState<boolean>(true);
 
-  
+  const [isLoading, setLoading] = useState<boolean>(true);
+
   let timer: any;
 
   const updateHead = () => {
@@ -56,7 +53,6 @@ const AuthModal = ({
         }
       )?.classList.add("cusscroller");
 
-      
       clearTimeout(timer);
     } else {
       timer = setTimeout(updateHead, 50);
@@ -64,9 +60,6 @@ const AuthModal = ({
   };
 
   const [mobile, setMobile] = useState<boolean>(false);
-
-
-
 
   const {
     logout: { update: updateLogin },
@@ -87,7 +80,6 @@ const AuthModal = ({
 
   const { pathname } = router;
 
-
   const [authError, updAuthError] = useState<string>("");
   const [isNotSupported, setSupport] = useState<boolean>(false);
 
@@ -95,24 +87,24 @@ const AuthModal = ({
     metamask: false,
     uauth: true,
     coinbase: false,
-    walletconnect: false
+    walletconnect: false,
   };
 
   const actionAuth = (email?: string) => {
     updateLogin?.(false);
 
     if (pathname == "/") {
-        // console.log(router.isReady)
+      // console.log(router.isReady)
       if (!Boolean(email)) {
         // Router.push("/signup");
-        location.href = '/signup'
+        location.href = "/signup";
       } else {
         if (String(email).length) {
           // router.push("/dashboard");
-          location.href = "/dashboard"
+          location.href = "/dashboard";
         } else {
           // router.push("/signup");
-          location.href = '/signup'
+          location.href = "/signup";
         }
       }
     } else if (pathname == "/auth") {
@@ -128,92 +120,78 @@ const AuthModal = ({
         } else {
           // router.push("/dashboard");
 
-          location.href = '/dashboard';
+          location.href = "/dashboard";
         }
       } else {
         // router.push("/signup");
-        location.href = '/signup'
+        location.href = "/signup";
       }
     }
   };
 
+  const login = async () => {
+    updAuthError("");
 
-    const login = async () => {
+    setLoading(true);
 
-      updAuthError("");
+    const authenticated = localStorage.getItem("userToken");
 
-      setLoading(true);
+    if (!Boolean(authenticated)) {
+      try {
+        let isAuthing: any;
 
-      const authenticated = localStorage.getItem("userToken");
+        isAuthing = await authenticateUser({
+          signMessage: message ?? "Welcome to Breew",
+          type: connectors[2],
+        });
 
-      if (!Boolean(authenticated)) {
-        try {
+        if (isAuthing !== undefined) {
+          if (userAuth) {
+            // drop here - metamask
+            analytics.track("Auth");
 
-          let isAuthing: any;
-        
+            const email = await "user".get("email");
 
-          isAuthing = await authenticateUser({
-            signMessage: message ?? "Welcome to Breew",
-            type: connectors[2],
-          });
-
-          if (isAuthing !== undefined) {
-            if (userAuth) {
-              // drop here - metamask
-              analytics.track("Auth");
-
-              const email = await "user".get("email");
-
-
-              actionAuth(email as string);
-
-            }
-          } else {
-
-            console.log('ee')
-
-            setLoading(false);
-            updAuthError("Something went wrong please try again");
+            actionAuth(email as string);
           }
-        } catch (err) {
-          const error = err as Error;
-          console.log(error);
+        } else {
+          console.log("ee");
+
           setLoading(false);
           updAuthError("Something went wrong please try again");
         }
-      } else {
-        // router.push("/dashboard");
-        location.href = '/dashboard'
+      } catch (err) {
+        const error = err as Error;
+        console.log(error);
+        setLoading(false);
+        updAuthError("Something went wrong please try again");
       }
-    };
+    } else {
+      // router.push("/dashboard");
+      location.href = "/dashboard";
+    }
+  };
 
+  useEffect(() => {
+    setMobile(Boolean(auth.mobile));
 
-
-    useEffect(() => {
-      setMobile(Boolean(auth.mobile));
-
-      if (isConnected && Boolean(localStorage.getItem("userToken"))) {
-       
-        // router.push("/dashboard");
-        location.href = '/dashboard';
-
-      } else {
-
-        if (!isConnected) {
-          if (openConnectModal) {
-            setLoading(false);
-            openConnectModal();
-            updateHead();
-          }else{
-            setLoading(true)
-          }
-        } else if (localStorage.getItem("userToken") === null && !isLoading) {
-           login();
+    if (isConnected && Boolean(localStorage.getItem("userToken"))) {
+      // router.push("/dashboard");
+      location.href = "/dashboard";
+    } else {
+      if (!isConnected) {
+        if (openConnectModal) {
+          setLoading(false);
+          openConnectModal();
+          updateHead();
+        } else {
+          setLoading(true);
         }
+      } else if (localStorage.getItem("userToken") === null && !isLoading) {
+        login();
       }
-    }, [isConnected, router, openConnectModal, auth.mobile]);
-    
-
+    }
+  }, [isConnected, router, openConnectModal, auth.mobile]);
 
   return (
     <>

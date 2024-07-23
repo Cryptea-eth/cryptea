@@ -1,6 +1,6 @@
 import { Box, CircularProgress } from "@mui/material";
 import logo from "../../../../public/images/breew-full.png";
-import Image from 'next/image';
+import Image from "next/image";
 
 const Loader = ({
   incLogo = true,

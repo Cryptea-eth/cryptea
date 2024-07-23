@@ -14,54 +14,51 @@ const TypePayment = ({
   children,
   which,
   data,
-  support = false
+  support = false,
 }: {
   children: JSX.Element[] | JSX.Element;
   which: "sub" | "onetime";
-  support: boolean,
+  support: boolean;
   data: {
-    id: number,
-    src: string,
-    title: string,
-    slug: string
-  }
-}) => { 
-
+    id: number;
+    src: string;
+    title: string;
+    slug: string;
+  };
+}) => {
   const { sidebar }: dash = useContext(DashContext);
 
   const [isSaving, saving] = useState<boolean>(false);
 
-  const [genError, setGenError] = useState<string>('');
+  const [genError, setGenError] = useState<string>("");
 
   const whichM: string = which == "sub" ? "subscription" : "onetime";
 
-  const addSupport = async ( ) => {
+  const addSupport = async () => {
+    saving(true);
 
-      saving(true);
+    setGenError("");
 
-      setGenError('');
+    try {
+      await `links/${data.id}`.update({
+        type: "both",
+      });
 
-       try {
-         await `links/${data.id}`.update({
-           type: 'both'
-         });
+      Router.reload();
+    } catch (err) {
+      const error = err as any;
 
-         Router.reload()
+      saving(false);
 
-       } catch (err) {
-         const error = err as any;
+      // console.log(error, "oer");
 
-         saving(false)
-
-         // console.log(error, "oer");
-
-         if (error.response) {
-           setGenError(error.response?.data.message);
-         } else {
-           setGenError("Something went wrong please try again");
-         }
-       }
-  }; 
+      if (error.response) {
+        setGenError(error.response?.data.message);
+      } else {
+        setGenError("Something went wrong please try again");
+      }
+    }
+  };
 
   return (
     <>
@@ -96,9 +93,7 @@ const TypePayment = ({
                   variant="circular"
                   src={data.src}
                 >
-                  {(
-                    String(data.slug).substring(0, 2)
-                  ).toUpperCase()}
+                  {String(data.slug).substring(0, 2).toUpperCase()}
                 </Avatar>
 
                 <Link href={`/pay/${data.slug}/overview`}>
@@ -134,12 +129,16 @@ const TypePayment = ({
                   <h2 className="text-[22px] capitalize text-center font-bold">
                     {whichM} Support Required
                   </h2>
-                  {which != 'sub' ? <span className="mt-2 text-[17px] text-[#565656] block w-full text-center">
-                    This link does not support {whichM} payments, Click the
-                    button below to add support
-                  </span> : <span className="mt-2 text-[17px] text-[#565656] block w-full text-center">
-                    Subscriptions are coming soon, we are working on it
-                  </span>}
+                  {which != "sub" ? (
+                    <span className="mt-2 text-[17px] text-[#565656] block w-full text-center">
+                      This link does not support {whichM} payments, Click the
+                      button below to add support
+                    </span>
+                  ) : (
+                    <span className="mt-2 text-[17px] text-[#565656] block w-full text-center">
+                      Subscriptions are coming soon, we are working on it
+                    </span>
+                  )}
                 </div>
 
                 {Boolean(genError) && (
@@ -152,33 +151,35 @@ const TypePayment = ({
                 )}
 
                 <div className="flex item-center justify-center">
-                  {Boolean(which != 'sub') && <Button
-                    onClick={addSupport}
-                    className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
-                  >
-                    {isSaving ? (
-                      <>
-                        <div className="mr-3 h-[20px] text-[#fff]">
-                          <CircularProgress
-                            color={"inherit"}
-                            className="!w-[20px] !h-[20px]"
-                          />
-                        </div>{" "}
-                        <span>Saving...</span>
-                      </>
-                    ) : (
-                      <>
-                        <GiTwoCoins size={25} className="mr-1" />{" "}
-                        <span>Add Support</span>
-                      </>
-                    )}
-                  </Button>}
+                  {Boolean(which != "sub") && (
+                    <Button
+                      onClick={addSupport}
+                      className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                    >
+                      {isSaving ? (
+                        <>
+                          <div className="mr-3 h-[20px] text-[#fff]">
+                            <CircularProgress
+                              color={"inherit"}
+                              className="!w-[20px] !h-[20px]"
+                            />
+                          </div>{" "}
+                          <span>Saving...</span>
+                        </>
+                      ) : (
+                        <>
+                          <GiTwoCoins size={25} className="mr-1" />{" "}
+                          <span>Add Support</span>
+                        </>
+                      )}
+                    </Button>
+                  )}
 
                   {!isSaving && (
                     <Link href={`/pay/${data.slug}/overview`}>
                       <a>
                         <Button className="!py-2 opacity-80 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg">
-                          {which == 'sub' ? "Go back" : "Maybe Later"}
+                          {which == "sub" ? "Go back" : "Maybe Later"}
                         </Button>
                       </a>
                     </Link>

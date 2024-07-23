@@ -21,7 +21,7 @@ const Footer = () => {
           />
 
           <span className="text-[#757095] ">
-            Receive Payments Instantly With Ease.
+            Support Web3 With Ease.
           </span>
           <div className="flex items-center mb-4 justify-between mt-[3pc] w-[200px]">
             <a className="mr-[5px]" href="https://linkedin.com">
@@ -60,7 +60,7 @@ const Footer = () => {
               <a className="mr-[5px] mb-3" href="">
                 Careers
               </a>
-              <a className="mr-[5px] mb-3" href="">
+              <a className="mr-[5px] mb-3" href="/blog">
                 Blog
               </a>
             </div>
@@ -83,7 +83,7 @@ const Footer = () => {
         </div>
 
         <div className="w-[220px] 2sm:hidden">
-          <h3 className="font-bold text-[18px] mb-2">Join Us</h3>
+          <h3 className="font-bold text-[18px] mb-2">Use Cryptea</h3>
           <div className="flex items-center justify-between w-[200px]">
             <div className="mr-[5px]">
               <button

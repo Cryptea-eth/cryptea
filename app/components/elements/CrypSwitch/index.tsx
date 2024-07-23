@@ -51,5 +51,4 @@ const CrypSwitch = styled((props: SwitchProps) => (
   },
 }));
 
-
 export default CrypSwitch;

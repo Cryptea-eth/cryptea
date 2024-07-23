@@ -2,7 +2,7 @@ import {
   // BiSearch,
   BiBell,
 } from "react-icons/bi";
-import Sidebar from './sidebar'
+import Sidebar from "./sidebar";
 import { Avatar, Popover } from "@mui/material";
 import Loader from "../loader";
 import { useRouter } from "next/router";
@@ -12,55 +12,44 @@ import { useCryptea } from "../../../contexts/Cryptea";
 import DashHeader from "./header";
 
 const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
-
   const { user, isAuthenticated } = useCryptea();
 
   const router = useRouter();
 
-  const { sidebar }: dash = useContext(DashContext)
+  const { sidebar }: dash = useContext(DashContext);
 
-  const [data, setData] = useState<any>({ username: '', img: ''});
+  const [data, setData] = useState<any>({ username: "", img: "" });
 
-  const page = (router.pathname).split('/')[2];
+  const page = router.pathname.split("/")[2];
 
-
-  const [loading, isLoading] = useState<boolean>(true); 
-  
+  const [loading, isLoading] = useState<boolean>(true);
 
   useEffect(() => {
-
     if (isAuthenticated !== undefined) {
       if (!isAuthenticated) {
         router.push("/auth");
       } else {
-        ('user').get('*', true).then((e: any) => {
-          
-          
+        "user".get("*", true).then((e: any) => {
+          const acc = JSON.parse(e.accounts || "[]");
 
-            const acc = JSON.parse(e.accounts || '[]');
-
-            if (
-              !Boolean(e.email) ||
-              (!Boolean(e.settlement ? e.settlement.length : 0) &&
-                (acc[0] == "null" || acc[0] == "undefined"))
-            ) {
-              router.push("/signup");
-            } else {
-              setData(typeof e == "object" ? e : {});
-              // console.log('here')
-              isLoading(false);
-            }
+          if (
+            !Boolean(e.email) ||
+            (!Boolean(e.settlement ? e.settlement.length : 0) &&
+              (acc[0] == "null" || acc[0] == "undefined"))
+          ) {
+            router.push("/signup");
+          } else {
+            setData(typeof e == "object" ? e : {});
+            // console.log('here')
+            isLoading(false);
+          }
         });
-  
       }
-    }   
-    
+    }
   }, [router, isLoading, page, isAuthenticated]);
-
 
   const dp = data.img;
 
-  
   return (
     <>
       {/* <Head>
@@ -92,7 +81,7 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
               } w-full h-full 2sm:!pl-[77px]`}
             >
               <>
-                <DashHeader username={data.username} dp={dp}/>
+                <DashHeader username={data.username} dp={dp} />
 
                 {children}
               </>

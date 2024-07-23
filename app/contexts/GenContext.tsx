@@ -25,12 +25,12 @@ interface LinkError extends LinkBase {
   amount?: string;
   type?: string;
   amountType?: string;
-  [index:string]: any
+  [index: string]: any;
 }
 
 interface LinkErrors extends LinkError {
   update?: (e: object) => any;
-  refresh?: () => void
+  refresh?: () => void;
 }
 
 export type Link = {
@@ -75,7 +75,6 @@ export const DashContext = createContext<dash>({
 });
 
 export const GenProvider = ({ children }: { children: JSX.Element }) => {
-
   const [isOpen, close] = useState(true);
   const [isOpen2, close2] = useState(true);
   const [isOpen3, close3] = useState(true);
@@ -112,7 +111,7 @@ export const GenProvider = ({ children }: { children: JSX.Element }) => {
     amountType: "variable",
   });
 
-  const OriginalError:LinkError  = {
+  const OriginalError: LinkError = {
     desc: "",
     title: "",
     slug: "",
@@ -120,7 +119,7 @@ export const GenProvider = ({ children }: { children: JSX.Element }) => {
     redirect: "",
     amount: "",
     amountType: "",
-  }
+  };
 
   const [errorData, setErrorData] = useState<LinkError>({ ...OriginalError });
 
@@ -136,13 +135,13 @@ export const GenProvider = ({ children }: { children: JSX.Element }) => {
           },
           update: (typx: object) => {
             setLinkData({ ...linkData, ...typx });
-            const err: {[index: string]: string} = {};
+            const err: { [index: string]: string } = {};
 
-            Object.keys(typx).forEach(e => {
-                err[e] = '';
+            Object.keys(typx).forEach((e) => {
+              err[e] = "";
             });
 
-            setErrorData({ ...errorData, ...err});
+            setErrorData({ ...errorData, ...err });
           },
         },
         sidebar: {

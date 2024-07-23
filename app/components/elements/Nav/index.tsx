@@ -11,7 +11,6 @@ function Nav() {
 
   const { authenticate, user, isAuthenticated } = useCryptea();
 
-
   // const walletconnect = async () => {
   //   updAuthError("");
   //   setIsAuth({ ...isAuth, walletconnect: true });
@@ -70,25 +69,23 @@ function Nav() {
         {/* <AuthModal /> */}
 
         <div className="right mmd:hidden">
-            {isAuthenticated! ? (
-              <Link href={"/dashboard"}>
-                <a
-                  className="hover:bg-[#4a168e] transition-all delay-200 text-sm rounded-lg bg-[#8036de] block text-white font-semibold py-4 px-4"
-                >
-                  Dashboard
-                </a>
-              </Link>
-            ) : (
-              <div>
-                <button
-                  className="hover:bg-[#4a168e] transition-all delay-200 text-sm rounded-lg bg-[#8036de] text-white font-semibold py-4 px-4 mx-2"
-                  type="button"
-                  onClick={() => authenticate(true)}
-                >
-                  Launch App
-                </button>
-              </div>
-            )}
+          {isAuthenticated! ? (
+            <Link href={"/dashboard"}>
+              <a className="hover:bg-[#4a168e] transition-all delay-200 text-sm rounded-lg bg-[#8036de] block text-white font-semibold py-4 px-4">
+                Dashboard
+              </a>
+            </Link>
+          ) : (
+            <div>
+              <button
+                className="hover:bg-[#4a168e] transition-all delay-200 text-sm rounded-lg bg-[#8036de] text-white font-semibold py-4 px-4 mx-2"
+                type="button"
+                onClick={() => authenticate(true)}
+              >
+                Launch App
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

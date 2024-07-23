@@ -59,15 +59,14 @@ const generateData = ({
   const label = [];
 
   for (let z = 0; z <= hourx; z += hourly) {
-
     const i = z / hourx;
 
     const hrp = i * 60 * 60 * 24 * 1000 * mday;
 
-    const hr = hrp - (hourly * 3600000);
+    const hr = hrp - hourly * 3600000;
 
     const { day, hour, month } = eDate(time + hrp);
-  
+
     const hhour = h24
       ? String(hour).length < 2
         ? "0" + hour
@@ -83,18 +82,14 @@ const generateData = ({
     let count = 0;
 
     selected.forEach((v: number, ix: number) => {
+      if (v >= time + hr && v <= time + hrp) {
+        count += !addAmt ? 1 : selAmount[ix];
 
-        if (v >= time + hr && v <= time + hrp) {
-          
-            count += !addAmt ? 1 : selAmount[ix];
-        
-            delete selected[ix];
-
-        }
+        delete selected[ix];
+      }
     });
 
     edata.push(count);
-    
   }
 
   return { data: edata, label };

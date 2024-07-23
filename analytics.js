@@ -1,5 +1,5 @@
-import Analytics from 'analytics'
-import AmplitudePlugin from '@analytics/amplitude'
+import Analytics from "analytics";
+import AmplitudePlugin from "@analytics/amplitude";
 
 const analytics = Analytics({
   app: "Breew",
@@ -23,4 +23,4 @@ const analytics = Analytics({
   ],
 });
 
-export default analytics
+export default analytics;

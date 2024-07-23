@@ -13,7 +13,6 @@ import logo2 from "../../../../public/images/breew1.png";
 import { useContext } from "react";
 
 const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
-
   const { sidebar }: dash = useContext(DashContext);
 
   const active = "!border-l-[#8036de] !text-[#8036de]";
@@ -36,7 +35,7 @@ const Sidebar = ({ page }: { page: string | string[] | undefined }) => {
         <Link href="/">
           <a className="flex items-center absolute justify-center">
             <Image
-              src={sidebar?.open ? logo2 : logo }
+              src={sidebar?.open ? logo2 : logo}
               alt="Breew"
               width={sidebar?.open ? 120 : 30}
               height={sidebar?.open ? 32 : 30}

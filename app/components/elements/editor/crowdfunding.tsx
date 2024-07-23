@@ -5,7 +5,7 @@ import {
   IconButton,
   Tooltip,
   TextField,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -72,10 +72,10 @@ const Crowd = ({
     const {
       data: { date: date2, expire },
     } = await http.get("/api/droplets/init", {
-        params: {
-            time: date,
-        },
-        baseURL: window.origin,
+      params: {
+        time: date,
+      },
+      baseURL: window.origin,
     });
 
     const xx = {
@@ -91,7 +91,6 @@ const Crowd = ({
     await save();
 
     closeModal();
-
   };
 
   return (
@@ -223,7 +222,7 @@ const Crowd = ({
             )}
 
             {!isLoading && (
-              <Button 
+              <Button
                 onClick={submit}
                 className="!py-3 !font-bold !px-6 !normal-case !flex !items-center !text-white hover:!bg-[#8036de] !bg-[#8036de] !m-auto !rounded-lg"
               >

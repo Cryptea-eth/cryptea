@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { styled } from "@mui/material/styles";
 import { HiBadgeCheck as Check } from "react-icons/hi";
-import { BiError as ErrorIcon } from 'react-icons/bi';
+import { BiError as ErrorIcon } from "react-icons/bi";
 import Image from "next/image";
 import SwipeableViews from "react-swipeable-views";
 import {
@@ -46,7 +46,7 @@ import {
   Link as Linkx,
 } from "../../../../contexts/GenContext";
 import CrypSwitch from "../../CrypSwitch";
-import  analytics  from "../../../../../analytics";
+import analytics from "../../../../../analytics";
 
 const NewLink = () => {
   const StepperLine = styled(StepConnector)(({ theme }) => ({
@@ -103,7 +103,7 @@ const NewLink = () => {
     },
   }));
 
-  const [minMax, setMinMax] =useState<boolean>(false);
+  const [minMax, setMinMax] = useState<boolean>(false);
 
   const QontoStepIcon = (props: any) => {
     const { active, completed, className, icon } = props;
@@ -152,11 +152,9 @@ const NewLink = () => {
 
   const steps = ["Details", "Amount", "Link", "Templates"];
 
+  const { newLink: formLink }: dash = useContext(DashContext);
 
-    const { newLink: formLink }: dash = useContext(DashContext);
-
-    const { errors: LinkErr } = formLink as Linkx;
-  
+  const { errors: LinkErr } = formLink as Linkx;
 
   const [value, setValue] = useState<number>(Number(Boolean(formLink.title)));
 
@@ -232,15 +230,15 @@ const NewLink = () => {
   };
 
   const [data, udata] = useState<data>({
-    title: formLink.title || '',
-    amount: formLink.amount || '',
+    title: formLink.title || "",
+    amount: formLink.amount || "",
     range: ["", ""],
     multi: [0.1, 10, 50, 100],
-    amountType: formLink.amountType || 'variable',
-    desc: formLink.desc || '',
+    amountType: formLink.amountType || "variable",
+    desc: formLink.desc || "",
     type: "onetime",
-    slug: formLink.slug || '',
-    redirect: formLink.slug || '',
+    slug: formLink.slug || "",
+    redirect: formLink.slug || "",
     rdata: {
       sub: ["Email", "Name"],
       onetime: ["Name", "Email"],
@@ -313,7 +311,6 @@ const NewLink = () => {
     }
 
     if (value == 1 || value == 3) {
-
       if (data.amountType == "range" && minMax) {
         if (
           !Boolean(Number(data.range[0])) &&
@@ -330,7 +327,6 @@ const NewLink = () => {
           Number(data.range[0]) > Number(data.range[1]) &&
           data.range[1] !== undefined
         ) {
-
           init({
             amount: "Range Minimum should not be greater than maximum",
           });
@@ -411,7 +407,6 @@ const NewLink = () => {
 
       templateData["data"] = datax;
 
-
       let ix: string;
 
       const rinputs: {
@@ -435,8 +430,6 @@ const NewLink = () => {
         }
       }
 
-      
-
       const newData = {
         slug: data.slug.toLowerCase(),
         desc: data.desc,
@@ -450,10 +443,8 @@ const NewLink = () => {
       };
 
       try {
-
         // drop here - link creation
         analytics.track("Link creation");
-
 
         await "links".save(newData);
 
@@ -464,9 +455,7 @@ const NewLink = () => {
         // console.log(errorObject);
 
         if (errorObject.error) {
-
           setGenError(errorObject.message);
-
         } else {
           setGenError("Something went wrong, please try again");
         }
@@ -553,10 +542,7 @@ const NewLink = () => {
 
     if (Boolean(val)) {
       if (data["amountType"] == "range") {
-        if (
-          Boolean(data["range"][0]) &&
-          val < Number(data["range"][0])
-        ) {
+        if (Boolean(data["range"][0]) && val < Number(data["range"][0])) {
           uerror({
             ...error,
             amountMulti: "Amount cannot be lower than minimum amount",

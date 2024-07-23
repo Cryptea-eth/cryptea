@@ -1,23 +1,22 @@
-import { Box } from '@mui/material';
+import { Box } from "@mui/material";
 
 interface TabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
-    className?:string
-    padding?: number;
-  }
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+  className?: string;
+  padding?: number;
+}
 
 const TabPanel = (props: TabPanelProps) => {
-  const { children, padding, value, index, className = '', ...other } = props;
+  const { children, padding, value, index, className = "", ...other } = props;
 
   const pc = {
-      p: padding,
-      py: padding !== undefined ? undefined : 2
-  }
+    p: padding,
+    py: padding !== undefined ? undefined : 2,
+  };
 
   return (
-    
     <div
       role="tabpanel"
       hidden={value !== index}
@@ -32,7 +31,6 @@ const TabPanel = (props: TabPanelProps) => {
       )}
     </div>
   );
-}
-
+};
 
 export default TabPanel;
