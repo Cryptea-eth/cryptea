@@ -3,10 +3,9 @@ import { AuthContextMain, AuthAddress, AuthUser } from "./Auth";
 import { authenticateUserDefault, mainAppManager, userData } from "./types";
 import { HomeContext } from "../HomeContext";
 import validator from "validator";
-import { useAccount, useConnect, useDisconnect, useNetwork, useSignMessage, useSigner } from "wagmi";
+import { useAccount, useConnect, useDisconnect, useChainId, useSignMessage, useWalletClient } from "wagmi";
 import { get_request } from "./requests";
 import { DashContext, dash } from "../GenContext";
-import { uauth_connector } from "./connectors";
 
 export function useCryptea(): mainAppManager {
 
@@ -16,15 +15,14 @@ export function useCryptea(): mainAppManager {
  
   const { logout: { update: updateLogout } }: dash = useContext(DashContext);
 
-  const { chain: chainId , chains } = useNetwork();
-
   const { address, isConnected } = useAccount();
 
-  const { connectors, isLoading, connectAsync } = useConnect();
+  const { connectors, status, connectAsync } = useConnect();
 
   const { isSuccess, signMessageAsync } = useSignMessage()
 
-  const { data: signer } = useSigner();
+  const chainId = useChainId();
+  const { data: signer } = useWalletClient();
 
   let cache = useRef<null | string | undefined>();
   let altAddress = useRef<string | undefined>()
@@ -49,7 +47,7 @@ export function useCryptea(): mainAppManager {
     account: isAuthenticated ? altAddress.current : (address || altAddress.current),
     user,
     connected: isConnected,
-    connectors,
+    connectors: connectors as any,
     update,
     authenticate: (e?: boolean) => {
       if (e === undefined) {
@@ -67,14 +65,15 @@ export function useCryptea(): mainAppManager {
         address,
         isConnected,
         signMessageAsync,
+        type,
         signMessage,
         isSuccess,
         mainx: Boolean(cache.current),
       });
     },
     connectWall: async (type) => await connectAsync({ connector: type }),
-    chainId: chainId !== undefined ? chainId.id : undefined,
-    isAuthenticating: isLoading,
+    chainId: chainId || undefined,
+    isAuthenticating: status === 'pending',
     validator,
     isAuthenticated,
     isTokenAuthenticated: isAuthenticated && isConnected,
@@ -86,13 +85,6 @@ export function useCryptea(): mainAppManager {
 
       if (!Boolean(uaux)) {
         disconnect();
-      } else {
-
-        const userx = JSON.parse(uaux as string);
-
-        await uauth_connector.logout({
-          username: userx.value,
-        });
       }
 
       const remove = [
@@ -108,7 +100,7 @@ export function useCryptea(): mainAppManager {
         localStorage.removeItem(remove[i]);
       }
     },
-    signer,
+    signer: signer || undefined,
   };
 };
 

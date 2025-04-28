@@ -1,36 +1,20 @@
-import { Chain } from "wagmi";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import axios, { AxiosError } from "axios";
-import { LinkConnector, UDConnector } from "./connectors";
+import { createContext, useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import { LinkConnector } from "./connectors/link";
 import mimg from "../../../public/images/mglink.svg";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { clusterApiUrl } from "@solana/web3.js";
-import {
-  ConnectionProvider,
-  WalletProvider,
-} from "@solana/wallet-adapter-react";
-import unstop from "../../../public/images/unstoppable.svg";
-import { webSocketProvider, chains, provider } from "./connectors/chains";
-import * as ethers from "ethers";
 import {
   AuthAddressType,
   AuthContext,
-  authData,
-  authenticateUserDefault,
   authenticateUserExtended,
   configType,
-  userData,
+  userData
 } from "./types";
 import "./DB";
-import { post_request } from "./requests";
-import { createClient, useAccount, WagmiConfig } from "wagmi";
 import { useRouter } from "next/router";
 import Loader from "../../components/elements/loader";
 import {
   RainbowKitProvider,
   connectorsForWallets,
-  getDefaultWallets,
-  getWalletConnectConnector,
   lightTheme,
 } from "@rainbow-me/rainbowkit";
 import {
@@ -38,17 +22,17 @@ import {
   walletConnectWallet,
   rainbowWallet,
   injectedWallet,
-  braveWallet,
   coinbaseWallet,
   ledgerWallet,
-  trustWallet,
   argentWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
-import { InjectedConnector } from "wagmi/connectors/injected";
 import { PhantomWallet } from "./connectors/solana";
 import http from "../../../utils/http";
+import { WagmiConfig, createConfig, http as httpTransport, CreateConnectorFn } from "wagmi";
+import { mainnet } from "wagmi/chains";
+import { chains } from "./connectors/chains";
+import { createConnector } from '@wagmi/core'
+import { CreateWalletFn, Wallet } from "@rainbow-me/rainbowkit/dist/wallets/Wallet";
 
 let user: userData | undefined;
 
@@ -77,7 +61,6 @@ export const AuthAddress = async ({
         address,
         signature,
         message,
-        tz: window?.jstz?.determine?.()?.name?.(),
       },
       { baseURL: window.origin }
     );
@@ -171,13 +154,11 @@ export const AuthContextMain = createContext<AuthContext>({});
 
 export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
   const [isAuthenticated, setAuth] = useState<boolean | undefined>();
-
   const [context, setContext] = useState<userData | undefined>(user);
 
   const [mobile, setMobile] = useState<boolean>(false);
 
   const [genLoader, setGenLoader] = useState<boolean>(true);
-
   const router = useRouter();
 
   useEffect(() => {
@@ -192,7 +173,6 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
           Boolean(cacheUser?.email)
         ) {
           router.push("/verify/email");
-
           setGenLoader(false);
         } else {
           setGenLoader(false);
@@ -217,84 +197,119 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
     }
   }, []);
 
-  const mail = ({ chains }: { chains: any }) => ({
+  const mail = ({ chains }: { chains: any }): Wallet => ({
     id: "mail",
     name: "Email link",
     iconUrl: mimg.src,
     iconBackground: "#8036de",
-    createConnector: () => {
-      const connector = new LinkConnector({ chains, options: {} });
-
-      return {
-        connector,
-      };
+    downloadUrls: {
+      chrome: "https://cryptea.app",
+      ios: "https://cryptea.app",
+      android: "https://cryptea.app",
+      qrCode: "https://cryptea.app",
     },
-  });
-
-  const UD = ({ chains }: { chains: any }) => ({
-    id: "unstoppable",
-    name: "Login with unstoppable",
-    iconUrl: unstop.src,
-    iconBackground: "#0d67fe",
-    createConnector: () => {
-      const connector = new UDConnector({ chains, options: {} });
-      return {
-        connector,
-      };
+    mobile: {
+      getUri: (uri: string) => uri,
     },
+    qrCode: {
+      getUri: (uri: string) => uri,
+      instructions: {
+        learnMoreUrl: "https://cryptea.app",
+        steps: [
+          {
+            description: "We recommend using your email for a seamless experience.",
+            step: "install",
+            title: "Enter your email",
+          },
+          {
+            description: "After you enter your email, a magic link will be sent to you.",
+            step: "scan",
+            title: "Check your inbox",
+          },
+        ],
+      },
+    },
+    extension: {
+      instructions: {
+        learnMoreUrl: "https://cryptea.app",
+        steps: [
+          {
+            description: "We recommend using your email for a seamless experience.",
+            step: "install",
+            title: "Enter your email",
+          },
+          {
+            description: "After you enter your email, a magic link will be sent to you.",
+            step: "create",
+            title: "Check your inbox",
+          },
+          {
+            description: "Click the magic link in your email to sign in.",
+            step: "refresh",
+            title: "Click the magic link",
+          },
+        ],
+      },
+    },
+    createConnector: () => () => ({
+      id: "mail",
+      name: "Email link",
+      type: "email",
+      connect: async () => ({ accounts: [], chainId: 1 }),
+      disconnect: async () => {},
+      getAccounts: async () => [],
+      getChainId: async () => 1,
+      isAuthorized: async () => false,
+      switchChain: async () => mainnet,
+      onAccountsChanged: () => {},
+      onChainChanged: () => {},
+      onDisconnect: () => {},
+      getProvider: async () => null,
+    }),
   });
 
   const connectors = connectorsForWallets([
     {
       groupName: "Recommended",
-      wallets:
-        router.pathname.indexOf("/pay/[slug]") != -1
-          ? [
-              metaMaskWallet({ chains }),
-
-              walletConnectWallet({ chains }),
-
-              coinbaseWallet({ chains, appName: "Breew" }),
-
-              PhantomWallet({ chains }),
-            ]
-          : [
-              metaMaskWallet({ chains }),
-              mail({ chains }),
-              walletConnectWallet({ chains }),
-              PhantomWallet({ chains }),
-              UD({ chains }),
-              coinbaseWallet({ chains, appName: "Breew" }),
-            ],
+      wallets: [
+        () => metaMaskWallet({ projectId: process.env.WALLETCONNECT_PROJECT_ID || "" }),
+        () => walletConnectWallet({ projectId: process.env.WALLETCONNECT_PROJECT_ID || "" }),
+        () => coinbaseWallet({ appName: "Breew" }),
+        () => PhantomWallet({ chains }),
+        () => mail({ chains }),
+      ],
     },
     {
       groupName: "Other",
       wallets: [
-        rainbowWallet({ chains }),
-        ledgerWallet({ chains }),
-        injectedWallet({ chains }),
-        argentWallet({ chains }),
+        () => rainbowWallet({ projectId: process.env.WALLETCONNECT_PROJECT_ID || "" }),
+        () => ledgerWallet({ projectId: process.env.WALLETCONNECT_PROJECT_ID || "" }),
+        () => injectedWallet(),
+        () => argentWallet({ projectId: process.env.WALLETCONNECT_PROJECT_ID || "" }),
       ],
-    },
-  ]);
+    }
+  ], {
+    projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
+    appName: "Breew",
+  });
 
-  const client = createClient({
-    autoConnect: false,
+  const config = createConfig({
+    chains: chains as any,
     connectors,
-    webSocketProvider,
-    provider,
+    transports: {
+      [mainnet.id]: httpTransport(),
+    },
   });
 
   const length = 7;
 
   const solana = () => {
     const supported = ["phantom"];
-
     const store: any[] = [];
-
+    const allConnectors = [...config.connectors];
+    
     for (let i = 0; i < length; i++) {
-      const conn = client.connectors.pop();
-
+      const conn = allConnectors.pop();
       if (conn !== undefined) {
         if (supported.indexOf(conn.id) !== -1) {
           store.push(conn);
@@ -302,19 +317,26 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
       }
     }
 
-    store.forEach((v) => {
-      client.connectors.push(v);
+    // Create a new config with reordered connectors
+    const newConfig = createConfig({
+      chains: chains as any,
+      connectors: [...store, ...allConnectors],
+      transports: {
+        [mainnet.id]: httpTransport(),
+      },
     });
+    
+    // Update the config reference
+    Object.assign(config, newConfig);
   };
 
   const evm = () => {
     const unsupported = ["phantom"];
-
     const store: any[] = [];
-
+    const allConnectors = [...config.connectors];
+    
     for (let i = 0; i < length; i++) {
-      const conn = client.connectors.pop();
-
+      const conn = allConnectors.pop();
       if (conn !== undefined) {
         if (unsupported.indexOf(conn.id) === -1) {
           store.push(conn);
@@ -322,19 +344,26 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
       }
     }
 
-    store.forEach((v) => {
-      client.connectors.push(v);
+    // Create a new config with reordered connectors
+    const newConfig = createConfig({
+      chains: chains as any,
+      connectors: [...store, ...allConnectors],
+      transports: {
+        [mainnet.id]: httpTransport(),
+      },
     });
+    
+    // Update the config reference
+    Object.assign(config, newConfig);
   };
 
   return (
-    <WagmiConfig client={client}>
+    <WagmiConfig config={config}>
       <RainbowKitProvider
         coolMode
         theme={lightTheme({
           accentColor: "#8036de",
         })}
-        chains={chains}
       >
         <AuthContextMain.Provider
           value={{

@@ -144,7 +144,6 @@ const SignupForm = () => {
 
               const def = {
                 desc: userDescription,
-                tz: window?.jstz?.determine?.()?.name?.(),
                 username: userInfo,
               };
 

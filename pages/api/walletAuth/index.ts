@@ -56,8 +56,6 @@ export default function handler(
 
         const errx = err as any;
 
-        console.log(process.env.APP_KEY, 'sss', "ss");
-
         res.status(errx?.response?.status || 400).json({
           message:
             errx.response?.data?.message ||

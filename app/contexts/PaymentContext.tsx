@@ -7,7 +7,7 @@ import PAYMENT from "../../artifacts/contracts/payment.sol/Payment.json";
 import Link from "next/link";
 import { initD } from "../components/elements/dashboard/link/data";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useSwitchNetwork } from "wagmi";
+import { useSwitchAccount } from "wagmi";
 import analytics from "../../analytics";
 import mainIx from "../functions/interval";
 
@@ -677,8 +677,7 @@ export const PaymentProvider = ({
     return true;
   };
 
-  const { chains, error, pendingChainId, switchNetworkAsync } =
-    useSwitchNetwork();
+  const { error, switchAccountAsync: switchNetworkAsync } = useSwitchAccount();
 
   const beginPayment = async (
     price: number,
@@ -691,7 +690,7 @@ export const PaymentProvider = ({
     if (!connected || chainId != token.value || !signer) {
       setLoadingText("");
 
-      console.log(chainId, token.value, pendingChainId, chains);
+      console.log(chainId, token.value);
 
       if (chainId != token.value) {
         const switchNet = await switchNetworkAsync?.(token.value);

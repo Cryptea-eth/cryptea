@@ -324,7 +324,7 @@ const NewLink = () => {
 
           return;
         } else if (
-          Number(data.range[0]) > Number(data.range[1]) &&
+          (data.range[0] as number) > (data.range[1] as number) &&
           data.range[1] !== undefined
         ) {
           init({
@@ -542,14 +542,17 @@ const NewLink = () => {
 
     if (Boolean(val)) {
       if (data["amountType"] == "range") {
-        if (Boolean(data["range"][0]) && val < Number(data["range"][0])) {
+        if (
+          Boolean(data["range"][0]) &&
+          val < (data["range"][0] as number)
+        ) {
           uerror({
             ...error,
             amountMulti: "Amount cannot be lower than minimum amount",
           });
         } else if (
           Boolean(data["range"][1]) &&
-          val > Number(data["range"][1])
+          val > (data["range"][1] as number)
         ) {
           uerror({
             ...error,

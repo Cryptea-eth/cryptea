@@ -1,274 +1,115 @@
-import { configureChains, Chain } from "wagmi";
-import {
-  avalanche,
-  polygonMumbai,
+import { 
+  mainnet, 
+  sepolia,
+  aurora,
+  auroraTestnet, 
+  avalancheFuji, 
+  optimism, 
+  optimismSepolia, 
+  base, 
+  baseSepolia, 
+  arbitrum, 
+  arbitrumSepolia, 
+  polygon, 
+  polygonMumbai, 
+  optimismGoerli, 
+  cronosTestnet, 
+  cronos, 
+  filecoin, 
+  filecoinHyperspace, 
+  polygonZkEvmTestnet, 
+  avalanche, 
+  gnosis, 
+  fantom, 
+  fantomTestnet 
+} from 'wagmi/chains';
+import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi";
+import CustomImg from "../../../components/elements/customImg";
+import { explorer, token } from "../types";
+
+export const chains = [
+  mainnet,
+  sepolia,
+  aurora,
+  auroraTestnet,
   avalancheFuji,
+  optimism,
+  optimismSepolia,
+  base,
+  baseSepolia,
+  arbitrum,
+  arbitrumSepolia,
+  polygon,
+  polygonMumbai,
+  optimismGoerli,
+  cronosTestnet,
+  cronos,
+  filecoin,
+  filecoinHyperspace,
+  polygonZkEvmTestnet,
+  avalanche,
   gnosis,
   fantom,
-  fantomTestnet,
-  scrollTestnet,
-  polygon,
-  optimism,
-  auroraTestnet,
-  aurora,
-  filecoinHyperspace,
-  optimismGoerli,
-  polygonZkEvmTestnet,
-} from "wagmi/chains";
-
-import { publicProvider } from "wagmi/providers/public";
-import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import CustomImg from "../../../components/elements/customImg";
-import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi";
-import { explorer, token } from "../types";
-// import { SolanaCryptoList, solanatokenTrackers } from "./solana";
-
-export const OasisEmerald: Chain = {
-  id: 42262,
-  name: "Oasis",
-  network: "oasis",
-  nativeCurrency: {
-    name: "Oasis",
-    decimals: 18,
-    symbol: "ROSE",
-  },
-  rpcUrls: {
-    public: {
-      http: ["https://emerald.oasis.dev"],
-    },
-    default: {
-      http: ["https://emerald.oasis.dev"],
-    },
-  },
-  blockExplorers: {
-    default: { name: "Oasis", url: "https://explorer.emerald.oasis.dev" },
-  },
-  testnet: false,
-};
-
-export const OasisEmeraldTestnet: Chain = {
-  id: 42261,
-  name: "Oasis Testnet",
-  network: "oasis",
-  nativeCurrency: {
-    name: "Oasis",
-    decimals: 18,
-    symbol: "ROSE",
-  },
-  rpcUrls: {
-    public: {
-      http: ["https://testnet.emerald.oasis.dev/"],
-    },
-    default: {
-      http: ["https://testnet.emerald.oasis.dev/"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Oasis",
-      url: "https://testnet.explorer.emerald.oasis.dev",
-    },
-  },
-  testnet: true,
-};
-
-export const Cronos: Chain = {
-  id: 25,
-  name: "Cronos",
-  network: "cronos mainnet",
-  nativeCurrency: {
-    name: "cronos",
-    decimals: 18,
-    symbol: "CRO",
-  },
-  rpcUrls: {
-    public: {
-      http: ["https://evm.cronos.org"],
-    },
-    default: {
-      http: ["https://evm.cronos.org"],
-    },
-  },
-  blockExplorers: {
-    default: { name: "cronos", url: "https://cronos.org/explorer" },
-  },
-  testnet: false,
-};
-
-export const TaikoTest: Chain = {
-  id: 167002,
-  name: "Taiko",
-  network: "askja",
-  nativeCurrency: {
-    name: "Taiko Eth",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    public: {
-      http: ["https://l2rpc.hackathon.taiko.xyz"],
-    },
-    default: {
-      http: ["https://l2rpc.hackathon.taiko.xyz"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "L2 Explorer",
-      url: "https://l2explorer.hackathon.taiko.xyz",
-    },
-  },
-  testnet: true,
-};
-
-export const MantleTest: Chain = {
-  id: 5001,
-  name: "Mantle Testnet",
-  network: "mantle",
-  nativeCurrency: {
-    name: "mantle BIT",
-    decimals: 18,
-    symbol: "BIT",
-  },
-  rpcUrls: {
-    public: {
-      http: ["https://rpc.testnet.mantle.xyz"],
-    },
-    default: {
-      http: ["https://rpc.testnet.mantle.xyz"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "mantle testnet explorer",
-      url: "https://explorer.testnet.mantle.xyz",
-    },
-  },
-  testnet: true,
-};
-
-export const CronosTest: Chain = {
-  id: 338,
-  name: "Cronos Testnet",
-  network: "cronos",
-  nativeCurrency: {
-    name: "cronos",
-    decimals: 18,
-    symbol: "TCRO",
-  },
-  rpcUrls: {
-    public: {
-      http: ["https://evm-t3.cronos.org"],
-      webSocket: ["wss://cronos-testnet-3.crypto.org:8546"],
-    },
-    default: {
-      http: ["https://evm-t3.cronos.org"],
-      webSocket: ["wss://cronos-testnet-3.crypto.org:8546"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "cronos-test",
-      url: "https://cronos.org/explorer/testnet3",
-    },
-  },
-  testnet: true,
-};
-
-export const { chains, provider, webSocketProvider } = configureChains(
-  [
-    polygon,
-    polygonZkEvmTestnet,
-    polygonMumbai,
-    gnosis,
-    scrollTestnet,
-    avalanche,
-    avalancheFuji,
-    MantleTest,
-    CronosTest,
-    Cronos,
-    aurora,
-    auroraTestnet,
-    optimism,
-    optimismGoerli,
-    TaikoTest,
-    OasisEmerald,
-    OasisEmeraldTestnet,
-    filecoinHyperspace,
-    fantom,
-    fantomTestnet,
-  ],
-  [
-    jsonRpcProvider({
-      priority: 0,
-      rpc: (chain: Chain) => {
-        return { http: chain.rpcUrls.default.http[0] };
-      },
-    }),
-    publicProvider(),
-  ]
-);
+  fantomTestnet
+];
 
 export const tokenTrackers: explorer = {
   137: {
     name: "polygonscan",
-    link: (hash: string) => "https://polygonscan.com/tx/" + hash,
+    link: (hash: string) => `https://polygonscan.com/tx/${hash}`,
   },
   80001: {
     name: "polygonscan",
-    link: (hash: string) => "https://mumbai.polygonscan.com/tx/" + hash,
+    link: (hash: string) => `https://mumbai.polygonscan.com/tx/${hash}`,
   },
   338: {
     name: "Cronos Explorer",
-    link: (hash: string) => "https://cronos.org/explorer/testnet3/tx/" + hash,
+    link: (hash: string) => `https://cronos.org/explorer/testnet3/tx/${hash}`,
   },
   1313161555: {
     name: "Aurora Explorer",
-    link: (hash: string) => "https://explorer.testnet.aurora.dev/tx/" + hash,
+    link: (hash: string) => `https://explorer.testnet.aurora.dev/tx/${hash}`,
   },
   10: {
     name: "Optimism Explorer",
-    link: (hash: string) => "https://optimistic.etherscan.io/tx/" + hash,
+    link: (hash: string) => `https://optimistic.etherscan.io/tx/${hash}`,
   },
   420: {
     name: "Optimism Explorer",
-    link: (hash: string) => "https://goerli-optimistic.etherscan.io/tx/" + hash,
+    link: (hash: string) => `https://goerli-optimistic.etherscan.io/tx/${hash}`,
   },
   534353: {
     name: "Scroll Alpha Explorer",
-    link: (hash: string) => "https://blockscout.scroll.io/tx/" + hash,
+    link: (hash: string) => `https://blockscout.scroll.io/tx/${hash}`,
   },
   100: {
     name: "Gnosis Chain Explorer",
-    link: (hash: string) => "https://gnosisscan.io/tx/" + hash,
+    link: (hash: string) => `https://gnosisscan.io/tx/${hash}`,
   },
   42261: {
     name: "Oasis Explorer",
-    link: (hash: string) =>
-      "https://testnet.explorer.emerald.oasis.dev/tx/" + hash,
+    link: (hash: string) => `https://testnet.explorer.emerald.oasis.dev/tx/${hash}`,
   },
   3141: {
     name: "Hyperspace Explorer",
-    link: (hash: string) => "https://hyperspace.filfox.info/en/tx/" + hash,
+    link: (hash: string) => `https://hyperspace.filfox.info/en/tx/${hash}`,
   },
   250: {
     name: "Fantom Explorer",
-    link: (hash: string) =>
-      "https://explorer.testnet.fantom.network/tx/" + hash,
+    link: (hash: string) => `https://explorer.testnet.fantom.network/tx/${hash}`,
   },
   1442: {
     name: "Polygon zkEVM Explorer",
-    link: (hash: string) => "https://explorer.public.zkevm-test.net/tx/" + hash,
+    link: (hash: string) => `https://explorer.public.zkevm-test.net/tx/${hash}`,
   },
   167002: {
     name: "Taiko L2 Explorer",
-    link: (hash: string) => "https://l2explorer.hackathon.taiko.xyz/tx/" + hash,
+    link: (hash: string) => `https://l2explorer.hackathon.taiko.xyz/tx/${hash}`,
   },
   4002: {
     name: "Fantom Explorer",
-    link: (hash: string) => "https://testnet.fantom.com/tx/" + hash,
+    link: (hash: string) => `https://testnet.fantom.com/tx/${hash}`,
   },
-  // ...solanatokenTrackers,
 };
 
 export const inputsList = [
@@ -389,7 +230,6 @@ export const CryptoList: token[] = [
       auto: true,
     },
   },
-
   {
     value: 1442,
     type: "native",
@@ -409,8 +249,7 @@ export const CryptoList: token[] = [
     ),
     name: "Polygon zkEVM (Testnet)",
     symbol: "ETH",
-    useSymbol: true,
-    network: polygonZkEvmTestnet.network as string,
+    network: polygonZkEvmTestnet.nativeCurrency.name as string,
     tokenAddr: "",
     blocktype: "evm",
     contractAddr: "0xf766074626299B335A8C9694faED139Dc51BbaD3",
@@ -421,98 +260,6 @@ export const CryptoList: token[] = [
       auto: true,
     },
   },
-  {
-    value: 534353,
-    type: "native",
-    label: (
-      <div className="items-center flex">
-        <div className="h-[20px] mr-2 relative w-[20px]">
-          <CustomImg
-            name="scroll"
-            key={5}
-            symbol="ETH"
-            size={20}
-            alt={"Scroll Alpha"}
-          />
-        </div>
-        <span className="text-[#121212]">Scroll Alpha</span>
-      </div>
-    ),
-    name: "Scroll Alpha (Testnet)",
-    symbol: "ETH",
-    network: scrollTestnet.network as string,
-    tokenAddr: "",
-    useSymbol: true,
-    blocktype: "evm",
-    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
-    rpc: scrollTestnet.rpcUrls.default.http[0],
-    testnet: true,
-    payment: {
-      manual: true,
-      auto: true,
-    },
-  },
-  {
-    value: 167002,
-    type: "native",
-    label: (
-      <div className="items-center flex">
-        <div className="h-[20px] mr-2 relative w-[20px]">
-          <CustomImg
-            name="taiko"
-            key={6}
-            symbol="ETH"
-            size={20}
-            alt={"Taiko (testnet)"}
-          />
-        </div>
-        <span className="text-[#121212]">Taiko</span>
-      </div>
-    ),
-    name: "Taiko (Testnet)",
-    symbol: "ETH",
-    useSymbol: true,
-    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
-    network: "Taiko L2 testnet",
-    tokenAddr: "",
-    blocktype: "evm",
-    rpc: TaikoTest.rpcUrls.default.http[0],
-    testnet: true,
-    payment: {
-      manual: true,
-      auto: true,
-    },
-  },
-  // {
-  //   value: 5001,
-  //   type: "native",
-  //   label: (
-  //     <div className="items-center flex">
-  //       <div className="h-[20px] mr-2 relative w-[20px]">
-  //         <CustomImg
-  // key={7}
-  //           name="mantle"
-  //           symbol="BIT"
-  //           size={20}
-  //           alt={"Mantle (testnet)"}
-  //         />
-  //       </div>
-  //       <span className="text-[#121212]">Mantle</span>
-  //     </div>
-  //   ),
-  //   name: "Mantle (Testnet)",
-  //   symbol: "BIT",
-  //   contractAddr: "",
-  //   network: "Mantle testnet",
-  //   tokenAddr: "",
-  //   blocktype: "evm",
-  //   rpc: MantleTest.rpcUrls.default.http[0],
-  //   testnet: true,
-  //   payment: {
-  //     manual: true,
-  //     auto: true,
-  //   },
-  // },
   {
     value: 250,
     type: "native",
@@ -591,12 +338,12 @@ export const CryptoList: token[] = [
     ),
     name: "Filecoin Hyperspace (Testnet)",
     symbol: "TFIL",
-    network: filecoinHyperspace.network as string,
+    network: filecoinHyperspace.nativeCurrency.name as string,
     tokenAddr: "",
-    blocktype: "evm",
-    contractAddr: "0xcC23191FA4C294ca9E32702fB8eab6191d4E85f9",
+    contractAddr: "0x2d9E5Cd304A84DC15Bb28749Cf0769A0bdc2CD6F",
     rpc: filecoinHyperspace.rpcUrls.default.http[0],
     testnet: true,
+    blocktype: "evm",
     payment: {
       manual: true,
       auto: true,
@@ -622,17 +369,16 @@ export const CryptoList: token[] = [
     name: "Cronos (Testnet)",
     contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     symbol: "tcro",
-    blocktype: "evm",
-    network: CronosTest.network as string,
+    network: cronosTestnet.nativeCurrency.name as string,
     tokenAddr: "",
-    rpc: CronosTest.rpcUrls.default.http[0],
+    rpc: cronosTestnet.rpcUrls.default.http[0],
     testnet: true,
+    blocktype: "evm",
     payment: {
       manual: true,
       auto: true,
     },
   },
-  // ...SolanaCryptoList,
   {
     value: 1313161555,
     type: "native",
@@ -653,15 +399,15 @@ export const CryptoList: token[] = [
     name: "Aurora (Testnet)",
     contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
     symbol: "aurora",
-    network: auroraTestnet.network as string,
+    network: auroraTestnet.nativeCurrency.name as string,
     tokenAddr: "",
+    rpc: auroraTestnet.rpcUrls.default.http[0],
     testnet: true,
     blocktype: "evm",
     payment: {
       manual: true,
       auto: true,
     },
-    rpc: auroraTestnet.rpcUrls.default.http[0],
   },
   {
     value: 10,
@@ -685,7 +431,7 @@ export const CryptoList: token[] = [
     ),
     name: "Optimism",
     symbol: "op",
-    network: optimism.network as string,
+    network: optimism.nativeCurrency.name as string,
     tokenAddr: "",
     payment: {
       manual: true,
@@ -693,7 +439,6 @@ export const CryptoList: token[] = [
     },
     rpc: optimism.rpcUrls.default.http[0],
   },
-
   {
     value: 420,
     contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
@@ -716,43 +461,13 @@ export const CryptoList: token[] = [
     ),
     name: "Optimism (Testnet)",
     symbol: "op",
-    network: optimismGoerli.network as string,
+    network: optimismGoerli.nativeCurrency.name as string,
     tokenAddr: "",
-    payment: {
-      manual: true,
-      auto: true,
-    },
     rpc: optimismGoerli.rpcUrls.default.http[0],
-  },
-  {
-    value: 42261,
-    type: "native",
-    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
-    testnet: true,
-    label: (
-      <div className="items-center flex">
-        <div className="h-[20px] mr-2 relative w-[20px]">
-          <CustomImg
-            symbol="rose"
-            name="oasis"
-            size={20}
-            key={16}
-            alt={"Oasis (Testnet)"}
-          />
-        </div>
-        <span className="text-[#121212]">Oasis (Testnet)</span>
-      </div>
-    ),
-    name: "Oasis (Testnet)",
-    blocktype: "evm",
-    symbol: "rose",
-    network: OasisEmeraldTestnet.network as string,
-    tokenAddr: "",
     payment: {
       manual: true,
       auto: true,
     },
-    rpc: OasisEmeraldTestnet.rpcUrls.default.http[0],
   },
 ];
 
@@ -763,7 +478,6 @@ export {
   gnosis,
   fantom,
   fantomTestnet,
-  scrollTestnet,
   polygon,
   optimism,
   auroraTestnet,
