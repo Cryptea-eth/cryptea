@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as ethers from "ethers";
-import axios from "axios";
 import { decryptData, encryptData } from "../../../app/functions/crypto-data";
 import { Keypair } from "@solana/web3.js";
 import logger from "../../../app/functions/logger";
@@ -29,8 +28,8 @@ export default function handler(
 
         try{
 
-         const rx = await axios
-            .get("https://ab.cryptea.me/user", {
+         const rx = await http
+            .get("/user", {
               headers: {
                 Authorization: `Bearer ${data.token}`,
               },

@@ -39,7 +39,7 @@ export class PhantomConnector extends Connector<any, any, any> {
 
     const account = phantom.publicKey?.toBase58() || "";
 
-    const signature = await phantom.signMessage(Buffer.from(message));
+    const signature = await phantom.signMessage(new Uint8Array(Buffer.from(message)));
 
     const encodeSign = bs58.encode(signature);
 

@@ -1,14 +1,16 @@
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "../../app/components/elements/loader";
 import Head from 'next/head';
 import Nav from "../../app/components/elements/Nav";
 import Image from "next/image";
 import emailImg from "../../public/images/email_fail.svg";
-import Link from 'next/link'
+import Link from 'next/link';
 import { Button } from '@mui/material';
 import { BiSync } from "react-icons/bi";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import type { IconType } from 'react-icons';
+import http from "../../utils/http";
 
 const VerifyHash = () => {
 
@@ -21,9 +23,9 @@ const VerifyHash = () => {
     useEffect(() => {
       
       if (hash !== undefined) {
-        axios
+        http
           .post(
-            `https://ab.cryptea.me/login/magic?tz=${window.jstz
+            `/login/magic?tz=${window.jstz
               .determine()
               .name()}`,
             {
@@ -116,7 +118,7 @@ return isLoading ? (
         <Button
             className="hover:!bg-[#4a168e] !transition-all !delay-500 !text-sm !capitalize !rounded-lg !bg-[#8036de] !text-white !font-semibold !py-3 !px-4"
           >
-            <BiSync size={22} className="mr-1" /> Request Link
+            {(BiSync as IconType)({ size: 22, className: "mr-1" })} Request Link
           </Button>
         </a>
       </Link>

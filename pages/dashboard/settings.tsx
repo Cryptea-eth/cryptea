@@ -3,7 +3,7 @@ import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { IoMdClose } from "react-icons/io";
 import { makeStorageClient } from "../../app/functions/clients";
-import { MdVisibilityOff, MdVisibility, MdOutlineVisibility, MdOutlineVisibilityOff, MdClose } from "react-icons/md";
+import { MdOutlineVisibility, MdOutlineVisibilityOff, MdClose } from "react-icons/md";
 import PinField from "react-pin-field";
 import {
   Button,

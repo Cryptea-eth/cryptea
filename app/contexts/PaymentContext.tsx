@@ -481,7 +481,7 @@ export const PaymentProvider = ({
 
         if (lQ["id"] !== undefined) {
           if (lQ.template_data !== undefined) {
-            const { name, data: udata } = JSON.parse(lQ.template_data);
+            const { name, data: udata } = JSON.parse(lQ?.template_data);
 
             if (!editMode) {
 

@@ -647,7 +647,7 @@ const NewLink = () => {
                     {genError.length ? genError : "Incorrect input data"}
                   </Alert>
                 )}
-
+                {/* @ts-ignore */}
                 <SwipeableViews index={value}>
                   <TabPanel value={value} index={0}>
                     <form

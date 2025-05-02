@@ -265,7 +265,6 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
               mail({ chains }),
               walletConnectWallet({ chains }),
               PhantomWallet({ chains }),
-              UD({ chains }),
               coinbaseWallet({ chains, appName: "Breew" }),
             ],
     },

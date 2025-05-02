@@ -18,26 +18,24 @@ export const get_request = async (
   redirect: boolean | undefined = true
 ): Promise<AxiosResponse<any, any> | undefined> => {
   
-  const token: string = localStorage.getItem("userToken") ?? "";
-      try {
-        
-        return await http.get(url, {
-          ...config,
-          headers: { ...headers },
-        });
-      } catch (ee) {
+  try {
+    return await http.get(url, {
+      ...config,
+      headers: { ...headers },
+    });
+  } catch (ee) {
 
-        if (key <= 6) {
-          return get_request(url, config, key + 1, redirect);
-        } else {
-          if (redirect) {
-            Router.push("/timeout");
-          }else{
-            console.log(ee)
-             throw "Something went wrong, please try again";
-          }
-        }
+    if (key <= 6) {
+      return get_request(url, config, key + 1, redirect);
+    } else {
+      if (redirect) {
+        Router.push("/timeout");
+      }else{
+        console.log(ee)
+          throw "Something went wrong, please try again";
       }
+    }
+  }
 };
 
 export const post_request = async (
@@ -45,12 +43,9 @@ export const post_request = async (
   data: object,
   config: AxiosRequestConfig<any> = {} 
 ): Promise<AxiosResponse<any, any>> => {
-  return http.get("/sanctum/csrf-cookie").then(async (e) => {
-
-    return await http.post(url, data, {
+  return await http.post(url, data, {
       ...config,
       headers: { ...headers },
-    });
   });
 };
 
@@ -59,12 +54,9 @@ export const patch_request = async (
   data: object,
   config: AxiosRequestConfig<any> = {}
 ): Promise<AxiosResponse<any, any>> => {
-  return http.get("/sanctum/csrf-cookie").then(async (e) => {
-
-    return await http.patch(url, data, {
+  return await http.patch(url, data, {
       ...config,
       headers: { ...headers },
-    });
   });
 };
 
@@ -72,11 +64,8 @@ export const del_request = async (
   url: string,
   config: AxiosRequestConfig<any> = {}
 ): Promise<AxiosResponse<any, any>> => {
-  return http.get("/sanctum/csrf-cookie").then(async (e) => {
-   
-    return await http.delete(url, {
-      ...config,
-      headers: { ...headers },
-    });
+  return await http.delete(url, {
+    ...config,
+    headers: { ...headers },
   });
 };

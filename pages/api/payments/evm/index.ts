@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as ethers from "ethers";
-import axios from "axios";
 import { tokenTrackers } from "../../../../app/contexts/Cryptea/connectors/chains";
 import mainIx from "../../../../app/functions/interval";
 import logger from "../../../../app/functions/logger";
@@ -80,9 +79,9 @@ export default function handler(
           };
         }
 
-        const { data } = await axios
+        const { data } = await http
           .post(
-            `https://ab.cryptea.me/link/pay/accounts/${body.account}`,
+            `/link/pay/accounts/${body.account}`,
             {
               data: JSON.stringify(trxData),
               amount: ethers.utils.formatEther(mbalance),

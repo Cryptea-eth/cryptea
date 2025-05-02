@@ -678,12 +678,7 @@ const Settlements = () => {
               [vv.type]: vv.address,
             };
 
-        });       
-
-
-        const userAddresses = JSON.parse(e.accounts || "[]");
-        
-        
+        });
 
         init();
 

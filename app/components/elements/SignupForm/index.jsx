@@ -112,9 +112,8 @@ const SignupForm = () => {
           const Authorization = localStorage.getItem("userToken");
 
           const e =  Authorization === null ? { accounts: '[]', settlements: [], emails: false } : await "user".get("*", true);
-          
 
-          const acc = JSON.parse(e.accounts || '[]');
+          const acc = typeof e.accounts === 'string' ? JSON.parse(e.accounts) : e?.accounts;
 
           if (!Boolean(e.email) || (!Boolean(e.settlement ? e.settlement.length : 0) && (acc[0] == "null" || acc[0] == "undefined"))) {
 
@@ -240,7 +239,7 @@ useEffect(() => {
         // console.log('erre')
       ('user').get('*', true).then(e => {
 
-        const addresses = JSON.parse(e.accounts || '[]');
+        const addresses = typeof e.accounts === 'string' ? JSON.parse(e.accounts) : e?.accounts;
 
         if (!Boolean(e.settlement ? e.settlement.length : 0) && (addresses[0] == "null" || addresses[0] == "undefined")) {
           setAoa(false);

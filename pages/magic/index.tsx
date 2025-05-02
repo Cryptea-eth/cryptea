@@ -5,7 +5,6 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import Link from "next/link";
 import LogoSpace from "../../app/components/elements/logo";
 import { useState, useEffect } from "react";
 import Head from "next/head";

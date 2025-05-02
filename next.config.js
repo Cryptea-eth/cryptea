@@ -44,6 +44,7 @@ const nextConfig = {
     TRON_MAINNET: process.env.TRON_MAINNET,
     TRON_MAINNET_SOLIDITY: process.env.TRON_MAINNET_SOLIDITY,
     TRON: process.env.TRON,
+    WALLETCONNECT_PROJECT_ID: process.env.WALLETCONNECT_PROJECT_ID,
   },
   images: {
     domains: ['assets.coingecko.com', 'coingecko.com']

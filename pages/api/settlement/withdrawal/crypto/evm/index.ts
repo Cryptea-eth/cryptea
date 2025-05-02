@@ -56,8 +56,8 @@ export default function handler(
 
       try {
 
-        await axios
-          .get("https://ab.cryptea.me/user", {
+        await http
+          .get("/user", {
             headers: {
               Authorization: authorization as string,
             },

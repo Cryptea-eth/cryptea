@@ -467,7 +467,7 @@ const Links = () => {
                       {genError}
                     </div>
                   )}
-
+                  {/* @ts-ignore */}
                   <SwipeableViews index={stage}>
                     <TabPanel index={0} value={stage}>
                       <form

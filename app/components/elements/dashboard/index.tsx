@@ -37,7 +37,7 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
           
           
 
-            const acc = JSON.parse(e.accounts || '[]');
+            const acc = typeof e.accounts === 'string' ? JSON.parse(e.accounts) : e.accounts;
 
             if (
               !Boolean(e.email) ||

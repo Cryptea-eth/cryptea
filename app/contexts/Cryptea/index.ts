@@ -35,7 +35,7 @@ export function useCryptea(): mainAppManager {
     if (localStorage.getItem('userToken') !== null) {
         ('user').get('accounts').then((e: any) => {
           if(e !== undefined){
-          const acct = JSON.parse(e)
+          const acct = typeof e === 'string' ? JSON.parse(e) : e;
             altAddress.current = acct[0];
           }
         });
@@ -88,7 +88,7 @@ export function useCryptea(): mainAppManager {
         disconnect();
       } else {
 
-        const userx = JSON.parse(uaux as string);
+        const userx = typeof uaux === 'string' ? JSON.parse(uaux) : uaux;
 
         await uauth_connector.logout({
           username: userx.value,

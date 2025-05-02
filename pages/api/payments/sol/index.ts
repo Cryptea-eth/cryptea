@@ -138,7 +138,6 @@ export default function handler(
            
           
              if (Boolean(data.private)) {
-
               
                  const secretKey = await decryptData(
                    JSON.parse(data.private),

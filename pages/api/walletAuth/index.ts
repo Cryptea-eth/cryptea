@@ -91,7 +91,7 @@ export default function handler(
         }else if (blocktype == 'sol') {
 
           const verified = nacl.sign.detached.verify(
-            Buffer.from(message),
+            new Uint8Array(Buffer.from(message)),
             bs58.decode(signature),
             bs58.decode(address)
           );

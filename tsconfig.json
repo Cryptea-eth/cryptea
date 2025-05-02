@@ -13,7 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/auth/index.jsx", "pages/_error.js", "app/components/elements/SignupForm/index.jsx", "pages/middleware.js"],
   "exclude": ["node_modules"]
