@@ -28,12 +28,13 @@ export function useCryptea(): mainAppManager {
   let altAddress = useRef<string | undefined>()
 
   useEffect(() => {
+
     cache.current = localStorage.getItem('userToken');
 
     if (localStorage.getItem('userToken') !== null) {
         ('user').get('accounts').then((e: any) => {
           if(e !== undefined){
-          const acct = JSON.parse(e)
+          const acct = typeof e === 'string' ? JSON.parse(e) : e
             altAddress.current = acct[0];
           }
         });

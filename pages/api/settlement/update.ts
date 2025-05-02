@@ -29,8 +29,8 @@ export default function handler(
 
         try{
 
-         const rx = await axios
-            .get("https://ab.cryptea.me/user", {
+         const rx = await http
+            .get("/user", {
               headers: {
                 Authorization: `Bearer ${data.token}`,
               },

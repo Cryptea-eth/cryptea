@@ -6,7 +6,6 @@ import axios from 'axios';
 
 
   http.interceptors.request.use((config) => {
-
     
     try {
         const token = localStorage?.getItem("userToken");

@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { Button } from '@mui/material';
 import { BiSync } from "react-icons/bi";
 import axios, { AxiosError } from "axios";
+import http from "../../utils/http";
 
 const VerifyHash = () => {
 
@@ -21,9 +22,9 @@ const VerifyHash = () => {
     useEffect(() => {
       
       if (hash !== undefined) {
-        axios
+        http
           .post(
-            `https://ab.cryptea.me/login/magic?tz=${window.jstz
+            `/login/magic?tz=${window.jstz
               .determine()
               .name()}`,
             {

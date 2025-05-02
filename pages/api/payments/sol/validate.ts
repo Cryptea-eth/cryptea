@@ -63,8 +63,8 @@ export {
 //           }
 
 //           if (valid) {
-//             const resMain = await axios.post(
-//               `https://ab.cryptea.me/link/payments/${data.linkId}`,
+//             const resMain = await http.post(
+//               `/link/payments/${data.linkId}`,
 //               data,
 //               {
 //                 headers: {

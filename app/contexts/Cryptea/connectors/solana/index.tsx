@@ -1,13 +1,13 @@
-import { Wallet } from '@rainbow-me/rainbowkit';
-import { chains } from "../chains";
+import { getWalletConnectConnector, Wallet, WalletDetailsParams } from '@rainbow-me/rainbowkit';
 import { explorer, token } from "../../types";
 import CustomImg from "../../../../components/elements/customImg";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { getPhantomConnector } from "./connectors";
+import { createConnector } from 'wagmi';
 
 const phantom = new PhantomWalletAdapter();
 
-export const PhantomWallet = ({ chains }: { chains: any }): Wallet => ({
+export const PhantomWallet = (): Wallet => ({
   id: "phantom",
   name: phantom.name,
   iconUrl: phantom.icon,
@@ -61,7 +61,12 @@ export const PhantomWallet = ({ chains }: { chains: any }): Wallet => ({
       ],
     },
   },
-  createConnector: () => () => getPhantomConnector({ chains }),
+  createConnector: (walletDetails: WalletDetailsParams) => {
+    return createConnector((config) => ({
+      ...getPhantomConnector()(config),
+      ...walletDetails,
+    }))
+  },
 });
 
 export const SolanaCryptoList: token[] = [

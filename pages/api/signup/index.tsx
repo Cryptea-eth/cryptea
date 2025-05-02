@@ -43,8 +43,8 @@ export default function handler(
             }
             
 
-            axios
-              .post("https://ab.cryptea.me/link", link, {
+            http
+              .post("/link", link, {
                 headers: {
                   Authorization: `Bearer ${
                     authorization == 'null' ? rel["token"] : authorization
@@ -52,8 +52,8 @@ export default function handler(
                 },
               })
               .then(() => {
-                axios
-                  .post(`${host}/api/settlement/new`, pins, {
+                http
+                  .post(`/api/settlement/new`, pins, {
                     headers: {
                       Authorization: `Bearer ${
                         authorization == 'null' ? rel["token"] : authorization

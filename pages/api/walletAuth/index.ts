@@ -1,13 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import axios from 'axios';
 import nacl from "tweetnacl";
 import * as ethers from 'ethers';
 import http from '../../../utils/http';
 
 // authentication for wallets from different blockchains
-
-
 type Data = {
   data?: any;
   token?: string; 
@@ -26,7 +23,7 @@ export default function handler(
 
   const getToken = async (address: string, tz?: any) => {
 
-    try {
+  try {
 
     const rs = await http
       .post(

@@ -59,9 +59,9 @@ export default function handler(
           },
         ];
 
-        // await axios
+        // await http
         //     .post(
-        //       "https://ab.cryptea.me/update/settlement/pin",
+        //       "/update/settlement/pin",
         //       {
         //         pin,
         //         address,

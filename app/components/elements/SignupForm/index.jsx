@@ -114,7 +114,7 @@ const SignupForm = () => {
           const e =  Authorization === null ? { accounts: '[]', settlements: [], emails: false } : await "user".get("*", true);
           
 
-          const acc = JSON.parse(e.accounts || '[]');
+          const acc = typeof e?.accounts === 'string' ? JSON.parse(e.accounts || '[]') : e.accounts;
 
           if (!Boolean(e.email) || (!Boolean(e.settlement ? e.settlement.length : 0) && (acc[0] == "null" || acc[0] == "undefined"))) {
 

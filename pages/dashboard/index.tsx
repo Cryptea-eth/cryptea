@@ -2,10 +2,7 @@ import {
   // BiSearch,
   BiBell,
 } from "react-icons/bi";
-import { RiSettingsLine } from "react-icons/ri";
-import { Avatar, Popover } from "@mui/material";
 import DashHome from "../../app/components/elements/dashboard/home";
-import Link from "next/link";
 import Loader from "../../app/components/elements/loader";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -44,7 +41,7 @@ const DashboardIndex = () => {
 
          "user".get("*", true).then((e: any) => {
             
-            const acc = JSON.parse(e.accounts || '[]');
+            const acc = typeof e?.accounts === 'string' ? JSON.parse(e.accounts || '[]') : e.accounts || [];
 
             if (!Boolean(e.email) || (!Boolean(e.settlement ? e.settlement.length : 0) && (acc[0] == "null" || acc[0] == "undefined"))) {
   

@@ -1,12 +1,9 @@
 import { createContext, useEffect, useState } from "react";
 import { AxiosError } from "axios";
-import { LinkConnector } from "./connectors/link";
-import mimg from "../../../public/images/mglink.svg";
 import {
   AuthAddressType,
   AuthContext,
   authenticateUserExtended,
-  configType,
   userData
 } from "./types";
 import "./DB";
@@ -25,15 +22,35 @@ import {
   coinbaseWallet,
   ledgerWallet,
   argentWallet,
+  phantomWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { PhantomWallet } from "./connectors/solana";
 import http from "../../../utils/http";
-import { WagmiConfig, createConfig, http as httpTransport, CreateConnectorFn } from "wagmi";
-import { mainnet } from "wagmi/chains";
-import { chains } from "./connectors/chains";
-import { createConnector } from '@wagmi/core'
-import { CreateWalletFn, Wallet } from "@rainbow-me/rainbowkit/dist/wallets/Wallet";
+import { createConfig, WagmiProvider, http as wagmiHttp } from "wagmi";
+import {
+  mainnet,
+  sepolia,
+  aurora,
+  auroraTestnet,
+  avalancheFuji,
+  optimism,
+  optimismSepolia,
+  base,
+  baseSepolia,
+  arbitrum,
+  arbitrumSepolia,
+  polygon,
+  polygonMumbai,
+  optimismGoerli,
+  cronosTestnet,
+  cronos,
+  filecoin,
+  filecoinHyperspace,
+} from "wagmi/chains";
 
+import { chains } from "./connectors/chains";
+import { CreateWalletFn, Wallet } from "@rainbow-me/rainbowkit/dist/wallets/Wallet";
+import mimg from "../../../public/images/mglink.svg";
 let user: userData | undefined;
 
 export let message = "Welcome to Breew";
@@ -108,8 +125,6 @@ export const AuthAddress = async ({
   }
   return user;
 };
-
-let config: undefined | configType;
 
 export const AuthUser = async ({
   signMessage,
@@ -197,7 +212,8 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
     }
   }, []);
 
-  const mail = ({ chains }: { chains: any }): Wallet => ({
+
+  const mail = (): Wallet => ({
     id: "mail",
     name: "Email link",
     iconUrl: mimg.src,
@@ -267,39 +283,93 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
       getProvider: async () => null,
     }),
   });
+  
 
-  const connectors = connectorsForWallets([
-    {
-      groupName: "Recommended",
-      wallets: [
-        () => metaMaskWallet({ projectId: process.env.WALLETCONNECT_PROJECT_ID || "" }),
-        () => walletConnectWallet({ projectId: process.env.WALLETCONNECT_PROJECT_ID || "" }),
-        () => coinbaseWallet({ appName: "Breew" }),
-        () => PhantomWallet({ chains }),
-        () => mail({ chains }),
-      ],
-    },
-    {
-      groupName: "Other",
-      wallets: [
-        () => rainbowWallet({ projectId: process.env.WALLETCONNECT_PROJECT_ID || "" }),
-        () => ledgerWallet({ projectId: process.env.WALLETCONNECT_PROJECT_ID || "" }),
-        () => injectedWallet(),
-        () => argentWallet({ projectId: process.env.WALLETCONNECT_PROJECT_ID || "" }),
-      ],
-    }
-  ], {
-    projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
+  const connectors = (connectorsForWallets([
+      {
+        groupName: "Recommended",
+        wallets:
+          router.pathname.indexOf("/pay/[slug]") != -1
+            ? [
+                metaMaskWallet,
+                walletConnectWallet,
+                coinbaseWallet,
+                PhantomWallet,
+                injectedWallet,
+              ]
+            : [
+                metaMaskWallet,
+                mail,
+                walletConnectWallet,
+                PhantomWallet,
+                coinbaseWallet,
+              ],
+      },
+      {
+        groupName: "Other",
+        wallets: [
+          rainbowWallet,
+          ledgerWallet,
+          injectedWallet,
+          argentWallet,
+          injectedWallet,
+        ],
+      },
+    ], {
+    projectId: process.env.WALLETCONNECT_PROJECT_ID || "",
     appName: "Breew",
+  }))
+
+
+  
+   const config = createConfig({
+    ssr: true,
+    chains: [
+      mainnet,
+      sepolia,
+      avalancheFuji,
+      optimism,
+      optimismSepolia,
+      filecoin,
+      filecoinHyperspace,
+      base,
+      baseSepolia,
+      arbitrum,
+      arbitrumSepolia,
+      polygon,
+      polygonMumbai,
+      optimismGoerli,
+      baseSepolia,
+      arbitrumSepolia,
+      cronos,
+      cronosTestnet,
+      polygonMumbai,
+      aurora,
+      auroraTestnet,
+    ],
+    transports: {
+      [mainnet.id]: wagmiHttp(),
+      [sepolia.id]: wagmiHttp(),
+      [avalancheFuji.id]: wagmiHttp(),
+      [optimism.id]: wagmiHttp(),
+      [optimismSepolia.id]: wagmiHttp(),
+      [base.id]: wagmiHttp(),
+      [baseSepolia.id]: wagmiHttp(),
+      [arbitrum.id]: wagmiHttp(),
+      [arbitrumSepolia.id]: wagmiHttp(),
+      [polygon.id]: wagmiHttp(),
+      [polygonMumbai.id]: wagmiHttp(),
+      [optimismGoerli.id]: wagmiHttp(),
+      [aurora.id]: wagmiHttp(),
+      [auroraTestnet.id]: wagmiHttp(),
+      [cronos.id]: wagmiHttp(),
+      [cronosTestnet.id]: wagmiHttp(),
+      [filecoin.id]: wagmiHttp(),
+      [filecoinHyperspace.id]: wagmiHttp(),
+    },
+    connectors,
   });
 
-  const config = createConfig({
-    chains: chains as any,
-    connectors,
-    transports: {
-      [mainnet.id]: httpTransport(),
-    },
-  });
 
   const length = 7;
 
@@ -317,17 +387,6 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
       }
     }
 
-    // Create a new config with reordered connectors
-    const newConfig = createConfig({
-      chains: chains as any,
-      connectors: [...store, ...allConnectors],
-      transports: {
-        [mainnet.id]: httpTransport(),
-      },
-    });
-    
-    // Update the config reference
-    Object.assign(config, newConfig);
   };
 
   const evm = () => {
@@ -343,24 +402,11 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
         }
       }
     }
-
-    // Create a new config with reordered connectors
-    const newConfig = createConfig({
-      chains: chains as any,
-      connectors: [...store, ...allConnectors],
-      transports: {
-        [mainnet.id]: httpTransport(),
-      },
-    });
-    
-    // Update the config reference
-    Object.assign(config, newConfig);
   };
 
   return (
-    <WagmiConfig config={config}>
+    <WagmiProvider config={config}>
       <RainbowKitProvider
-        coolMode
         theme={lightTheme({
           accentColor: "#8036de",
         })}
@@ -380,6 +426,6 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
           {genLoader ? <Loader head={false} /> : children}
         </AuthContextMain.Provider>
       </RainbowKitProvider>
-    </WagmiConfig>
+    </WagmiProvider>
   );
 };
