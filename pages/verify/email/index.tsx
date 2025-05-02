@@ -16,6 +16,8 @@ const Email = () => {
 
   const [timer, setTimer] = useState<number>(0);
 
+  const [resend, setResend] = useState<boolean>(false);
+
   const [mail, setEmail] = useState('');
 
   let count = useRef<any>();
@@ -69,7 +71,7 @@ const Email = () => {
     
     if (timer >= 300) {
       clearInterval(count.current);
-      
+      setResend(true);
     }
 
   }, [timer]);
@@ -88,7 +90,7 @@ const Email = () => {
       </Head>
 
       <Nav />
-
+      <div className="flex flex-col justify-center items-center h-[calc(100vh-75px)]">
       <div className="w-full h-fit flex flex-col justify-items-center px-5 my-8">
         <Image src={emailImg} width={130} height={152} alt={"Email Sent"} />
 
@@ -119,6 +121,8 @@ const Email = () => {
 
                   startTimer();
 
+                  setResend(false);
+
                   setLoading(false);
                 });
               }
@@ -128,12 +132,13 @@ const Email = () => {
             <BiSync size={22} className="mr-1" /> Resend
           </Button>
 
-          <span className="text-[18px] font-semibold text-[#7e7e7e]">
+          {resend ? <></> : <span className="text-[18px] font-semibold text-[#7e7e7e]">
             {String((300 - timer) / 60).split(".")[0] +
               ":" +
               `${(300 - timer) % 60 <= 9 ? 0 : ""}${(300 - timer) % 60}`}
-          </span>
+          </span>}
         </div>
+      </div>
       </div>
     </div>
   );

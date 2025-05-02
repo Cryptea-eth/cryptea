@@ -40,9 +40,9 @@ const Loader = ({
 
       <Box
         className="text-[#8036de] justify-center "
-        sx={{ display: "flex", color, marginTop: incLogo ? "44px" : 0 }}
+        sx={{ display: "flex", color, marginTop: incLogo ? "30px" : 0 }}
       >
-        <CircularProgress size={text ? 80 : 60} color="inherit" />
+        <CircularProgress size={text ? 80 : 30} color="inherit" />
       </Box>
       {text !== "" && (
         <div style={{ color }} className="text-[#8036de] text-xl font-bold">

@@ -60,6 +60,7 @@ return isLoading ? (
 
     <Nav />
 
+    <div className="flex flex-col justify-center items-center h-[calc(100vh-75px)]">
     <div className="w-full h-fit flex flex-col justify-items-center px-5 my-8">
       <Image src={emailImg} width={200} height={222} alt={"Email error"} />
 
@@ -71,6 +72,7 @@ return isLoading ? (
         Something went wrong, try resending the link or checking your internet
         access, if all doesnt work, contact us.
       </span>
+    </div>
     </div>
   </div>
 );
