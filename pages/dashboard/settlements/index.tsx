@@ -1432,7 +1432,7 @@ const Settlements = () => {
               <div className="flex items-center">
                 <Button
                   onClick={() => setSoon(false)}
-                  className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                  className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#8036de] !border !border-solid !border-[rgb(200,200,220)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                 >
                   Thank you
                 </Button>
@@ -1564,7 +1564,7 @@ const Settlements = () => {
                   <div className="flex items-center">
                     <Button
                       onClick={savePin}
-                      className="!py-2 !font-bold !min-w-[250px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#8036de] !normal-case !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                      className="!py-2 !font-bold !min-w-[250px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#8036de] !normal-case !border !border-solid !border-[rgb(200,200,220)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                     >
                       {pinLoading ? (
                         <>
@@ -1815,7 +1815,7 @@ const Settlements = () => {
                           </Tooltip>
                         )}
 
-                        <div className="border-solid flex items-center w-[350px] justify-between text-[#6a6a6ab0] p-4 mr-2 bg-white border-[rgb(245,245,255)] rounded-[8px] border">
+                        <div className="border-solid flex items-center w-[350px] justify-between text-[#6a6a6ab0] p-4 mr-2 bg-white border-[rgb(200,200,220)] rounded-[8px] border">
                           <div className="flex items-center">
                             <div className="h-[40px] w-[40px] rounded-[.4rem] relative flex items-center justify-center">
                               <CustomImg
@@ -1878,7 +1878,7 @@ const Settlements = () => {
           ) : Boolean(settlementsTrx.data) &&
             Boolean(settlementsTrx.data.length) ? (
             <>
-              <div className="max-w-[650px] border border-solid border-[rgb(245,245,255)] rounded-lg py-3 flex flex-col w-full">
+              <div className="max-w-[650px] border border-solid border-[rgb(200,200,220)] rounded-lg py-3 flex flex-col w-full">
                 {settlementsTrx.data.map((val: any, key: number) =>
                   trx(val, key)
                 )}
@@ -1936,7 +1936,7 @@ const Settlements = () => {
             </>
           ) : (
             <div
-              className="empty border border-solid border-[rgb(245,245,255)] rounded-lg py-3"
+              className="empty border border-solid border-[rgb(200,200,220)] rounded-lg py-3"
               style={{
                 display: "flex",
                 width: "100%",

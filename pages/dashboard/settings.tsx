@@ -21,7 +21,7 @@ import {
   Alert,
 } from "@mui/material";
 import Image from "next/image";
-import { get_request, post_request } from "../../app/contexts/Cryptea/requests";
+import { get_request, patch_request } from "../../app/contexts/Cryptea/requests";
 import axios, { AxiosError } from "axios";
 import Router from "next/router";
 import { useCryptea } from "../../app/contexts/Cryptea";
@@ -110,6 +110,8 @@ const Settings = () => {
         "user".get("*", true).then((e: any) => {
           setData(e);
           setDp(e.img);
+          setuserInfo(e.username);
+          setUserEmail(e.email);
           if(!Boolean(e.settlement.length)) setPin({ ...pins, oldpin: '00000' });
           loading(false);
         });
@@ -161,10 +163,9 @@ const Settings = () => {
 
       if (!error["account"].length) {
         try {
-          await post_request("/user/update", {
+          await patch_request("/user", {
             username: userInfo,
             email: validator.normalizeEmail(userEmail),
-            tz: window?.jstz?.determine?.()?.name?.(),
           });
 
           await logout();
@@ -609,7 +610,7 @@ const Settings = () => {
                       <div className="flex items-center">
                         <Button
                           onClick={savePin}
-                          className="!py-2 !font-bold !min-w-[220px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#8036de] !normal-case !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                          className="!py-2 !font-bold !min-w-[220px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#8036de] !normal-case !border !border-solid !border-[rgb(200,200,220)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                         >
                           {pinLoading ? (
                             <>

@@ -22,7 +22,7 @@ const EmailHash = () => {
 
           "user".get("*", true).then(async (e: any) => {
             
-            if (!Boolean(e.email_verified_at) && Boolean(e.email)) {
+            if (!Boolean(e.isEmailVerified) && Boolean(e.email)) {
 
             get_request(`/verify/mail/${hash}`, {}, undefined, false)
               .then((e) => {
@@ -62,13 +62,13 @@ return isLoading ? (
 
     <div className="flex flex-col justify-center items-center h-[calc(100vh-75px)]">
     <div className="w-full h-fit flex flex-col justify-items-center px-5 my-8">
-      <Image src={emailImg} width={200} height={222} alt={"Email error"} />
+      <Image src={emailImg} width={70} height={82} alt={"Email error"} />
 
-      <h2 className="text-[#8036de] font-[400] 2md:text-2xl text-4xl mx-auto mt-24">
+      <h2 className="text-[#8036de] font-[400] 2md:text-2xl text-4xl mx-auto mt-8">
         Verification Failed, please try again
       </h2>
 
-      <span className="text-[#7e7e7e] block font-semibold text-lg mx-auto mt-12">
+      <span className="text-[#7e7e7e] block font-semibold text-lg mx-auto mt-6">
         Something went wrong, try resending the link or checking your internet
         access, if all doesnt work, contact us.
       </span>

@@ -89,14 +89,14 @@ export const AuthAddress = async ({
         accounts,
         username,
         id,
-        email_verified_at,
+        isEmailVerified,
       }: {
         username: string;
         img: string;
         email: string;
         accounts: string[];
         id: number | string;
-        email_verified_at: any;
+        isEmailVerified: boolean;
       } = userx.data.data;
 
       user = {
@@ -105,7 +105,7 @@ export const AuthAddress = async ({
         username,
         accounts,
         img,
-        email_verified_at,
+        isEmailVerified,
       };
 
       localStorage.setItem("user", JSON.stringify(user));
@@ -190,7 +190,7 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
     ) {
       "user".get("*").then((cacheUser: any) => {
         if (
-          !Boolean(cacheUser?.email_verified_at) &&
+          !Boolean(cacheUser?.isEmailVerified) &&
           Boolean(cacheUser?.email)
         ) {
           router.push("/verify/email");

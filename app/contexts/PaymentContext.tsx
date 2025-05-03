@@ -1310,7 +1310,7 @@ export const PaymentProvider = ({
                 <div className="flex items-center">
                   <Button
                     onClick={validSwitch}
-                    className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                    className="!py-2 !font-bold !px-3 !capitalize !flex !items-center !text-white !fill-white !bg-[#8036de] !border !border-solid !border-[rgb(200,200,220)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                   >
                     <TbPlugConnected
                       color={"inherit"}
@@ -1465,7 +1465,7 @@ export const PaymentProvider = ({
 
               <Button
                 onClick={() => closeModal()}
-                className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                className="!py-2 !font-bold !px-5 !mx-auto !capitalize !flex !items-center !text-white !bg-[#aaaaaa] !border !border-solid !border-[rgb(200,200,220)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
               >
                 <RiCloseCircleLine size={22} className="mr-2" /> Dismiss
               </Button>

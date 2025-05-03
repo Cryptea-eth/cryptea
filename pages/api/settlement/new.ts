@@ -106,6 +106,11 @@ export default function handler(
                 {
                    data: ethObj,
                    pin
+                },
+                {
+                  headers: {
+                    Authorization: authorization as string,
+                  },
                 }
               )
             

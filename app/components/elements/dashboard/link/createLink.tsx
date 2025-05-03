@@ -195,6 +195,7 @@ const NewLink = () => {
         Router.push("/auth");
       } else {
         "templates".get("data", cache.current).then((e: any) => {
+          
           setList(
             e.map(({ name }: any) => ({ name, selected: linkTemplate == name }))
           );

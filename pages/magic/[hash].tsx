@@ -39,7 +39,7 @@ const VerifyHash = () => {
               accounts,
               username,
               id,
-              email_verified_at,
+              isEmailVerified,
               settlement
             }: {
               username: string;
@@ -48,7 +48,7 @@ const VerifyHash = () => {
               accounts: string[];
               id: number | string;
               settlement: any[];
-              email_verified_at: any;
+              isEmailVerified: boolean;
             } = userx.data.data;
 
             let user = {
@@ -58,7 +58,7 @@ const VerifyHash = () => {
               accounts,
               settlement,
               img,
-              email_verified_at,
+              isEmailVerified,
             };
 
             localStorage.setItem("user", JSON.stringify(user));

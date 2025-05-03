@@ -39,7 +39,7 @@ const Email = () => {
         
         "user".get("*", true).then(async (e: any) => {
             
-            if (!Boolean(e.email_verified_at) && Boolean(e.email)) {
+            if (!Boolean(e.isEmailVerified) && Boolean(e.email)) {
             
                 setEmail(e.email);
 
@@ -92,7 +92,7 @@ const Email = () => {
       <Nav />
       <div className="flex flex-col justify-center items-center h-[calc(100vh-75px)]">
       <div className="w-full h-fit flex flex-col justify-items-center px-5 my-8">
-        <Image src={emailImg} width={130} height={152} alt={"Email Sent"} />
+        <Image src={emailImg} width={70} height={82} alt={"Email Sent"} />
 
         <h2 className="text-[#8036de] 2md:text-2xl font-[400] text-4xl mx-auto mt-9">
           We Sent a Verification Mail

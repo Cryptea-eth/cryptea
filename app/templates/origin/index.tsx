@@ -342,7 +342,7 @@ const Origin = ({ className }: { className?: string }) => {
                       )}
 
                     {/* paymentbox */}
-                    <div className="rounded-lg bg-white ausm:shadow-sm ausm:border shadow-lg ausm:border-[#e2e2e2] ausm:mb-2 shadow-[#cccccc]">
+                    <div className="rounded-lg bg-white w-full ausm:shadow-sm ausm:border shadow-lg ausm:border-[#e2e2e2] ausm:mb-2 shadow-[#cccccc]">
                       <div className="border-b items-center flex py-[14px] px-[17px] text-xl font-bold">
                         {userD!.rdata[!value ? "onetime" : "sub"].length >= 1 &&
                           !apiState &&

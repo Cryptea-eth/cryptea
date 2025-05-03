@@ -628,7 +628,7 @@ const Onetime = () => {
                 }}
                 className="mt-4 gridTemplate mx-auto transition-all delay-500 grid gap-6"
               >
-                <div className="w-full col-span-full border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                <div className="w-full col-span-full border-[rgb(200,200,220)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="p-6 relative">
                     <LineChart
                       label={[linkType]}
@@ -662,7 +662,7 @@ const Onetime = () => {
                   </div>
                 </div>
 
-                <div className="w-full border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                <div className="w-full border-[rgb(200,200,220)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="px-6 pt-6 relative pb-3">
                     <div className="flex justify-between mb-[16px] items-center">
                       <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -807,14 +807,14 @@ const Onetime = () => {
                   </div>
 
                   {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(200,200,220)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
                 </div>
 
                 {linkType == "sub" && (
-                  <div className="w-full border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                  <div className="w-full border-[rgb(200,200,220)] rounded-[8px] border bg-white overflow-hidden border-solid">
                     <div className="px-6 pt-6 relative pb-3">
                       <div className="flex justify-between mb-[16px] items-center">
                         <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -955,14 +955,14 @@ const Onetime = () => {
                     </div>
 
                     {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] cursor-pointer text-[#8036de] block font-bold hover:bg-[#f5f5ff] transition-all relative bg-white delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(200,200,220)] cursor-pointer text-[#8036de] block font-bold hover:bg-[#f5f5ff] transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
                   </div>
                 )}
 
-                <div className="w-full border-[rgb(245,245,255)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
+                <div className="w-full border-[rgb(200,200,220)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
                   <div className="px-6 pt-6 relative pb-3">
                     <div className="flex justify-between mb-[16px] items-center">
                       <h2 className="font-[400] text-[1.375rem] leading-[1.75rem]">
@@ -983,13 +983,13 @@ const Onetime = () => {
                     </div>
                   </div>
                   <Link href={`/pay/${String(slug).toLowerCase()}/settings`}>
-                    <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
+                    <a className="border-t px-6 p-3 border-solid border-[rgb(200,200,220)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                       Go To Settings
                     </a>
                   </Link>
                 </div>
 
-                <div className="w-full col-span-full border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                <div className="w-full col-span-full border-[rgb(200,200,220)] rounded-[8px] border bg-white overflow-hidden border-solid">
                   <div className="p-6 relative">
                     <div className="flex justify-between mb-[16px] items-center">
                       <h2
@@ -1203,7 +1203,7 @@ const Onetime = () => {
                           <div className="flex mt-2 item-center justify-center">
                             <Button
                               onClick={() => toggleSocial(true)}
-                              className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                              className="!py-2 !font-bold !px-5 !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(200,200,220)] !transition-all mr-2 !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                             >
                               <FiShare2 size={25} className="mr-1" /> Share Link
                             </Button>

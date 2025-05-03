@@ -47,7 +47,7 @@ const nextConfig = {
     WALLETCONNECT_PROJECT_ID: process.env.WALLETCONNECT_PROJECT_ID,
   },
   images: {
-    domains: ['assets.coingecko.com', 'coingecko.com']
+    domains: ['assets.coingecko.com', 'coingecko.com', 'coin-images.coingecko.com']
   },
   async headers() {
     return [

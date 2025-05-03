@@ -268,7 +268,7 @@ const DashHome = () => {
         payments,
         views,
         breakdown,
-        links: (psort[0].prevViews > 0 ? psort : tsort).slice(0, 5),
+        links: (psort?.[0]?.prevViews > 0 ? psort : tsort).slice(0, 5),
         sortBreakdown: sortBreak,
       });
 
@@ -533,7 +533,7 @@ const DashHome = () => {
                 <div className="flex items-center">
                   <Button
                     onClick={savePin}
-                    className="!py-2 !font-bold !min-w-[250px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#8036de] !border !normal-case !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                    className="!py-2 !font-bold !min-w-[250px] !text-[16px] !px-3 !flex !items-center !text-white !fill-white !bg-[#8036de] !border !normal-case !border-solid !border-[rgb(200,200,220)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
                   >
                     {pinLoading ? (
                       <>
@@ -771,7 +771,7 @@ const DashHome = () => {
                     return (
                       <div
                         key={i}
-                        className="border-solid w-[210px] h-[245px] text-[#6a6a6ab0] py-4 px-[15px] mr-2 bg-white border-[rgb(245,245,255)] rounded-[8px] border"
+                        className="border-solid w-[210px] h-[245px] text-[#6a6a6ab0] py-4 px-[15px] mr-2 bg-white border-[rgb(200,200,220)] rounded-[8px] border"
                       >
                         
                         <div className="flex items-center mb-2">
@@ -1010,7 +1010,7 @@ const DashHome = () => {
             className={"col-span-2 mb-2 rounded-[8px] min-h-[200px]"}
           />
         ) : (
-          <div className="border-[rgb(245,245,255)] mb-2 w-full mr-2 col-span-2 rounded-[8px] border bg-white overflow-hidden border-solid">
+          <div className="border-[rgb(200,200,220)] mb-2 w-full mr-2 col-span-2 rounded-[8px] border bg-white overflow-hidden border-solid">
             <div className="px-6 pt-6 relative pb-3 h-full flex flex-col justify-between">
               <div className="flex justify-between mb-[16px] items-center">
                 <h2 className="font-bold text-[.8rem] text-[#818181] leading-[1.75rem] ">
@@ -1098,7 +1098,7 @@ const DashHome = () => {
             className={"col-span-2 rounded-[8px] min-h-[200px]"}
           />
         ) : (
-          <div className="border-[rgb(245,245,255)] w-full rounded-[8px] border bg-white overflow-hidden border-solid mb-2">
+          <div className="border-[rgb(200,200,220)] w-full rounded-[8px] border bg-white overflow-hidden border-solid mb-2">
             <div className="px-6 pt-6 relative pb-3 h-full flex flex-col justify-between">
               <div className="flex justify-between mb-[16px] items-center">
                 <h2 className="font-bold text-[.8rem] text-[#818181] leading-[1.75rem] ">

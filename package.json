@@ -57,6 +57,7 @@
     "laravel-echo": "^1.15.3",
     "log4js": "^6.9.1",
     "magic-sdk": "^8.1.1",
+    "moment-timezone": "^0.5.48",
     "next": "12.2.5",
     "nft.storage": "^7.0.3",
     "pusher-js": "^8.4.0-rc2",

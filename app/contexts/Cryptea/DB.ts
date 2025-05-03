@@ -6,6 +6,7 @@ import {
   patch_request,
 } from "./requests";
 import { CrypteaDBS, CrypteaSub } from "./types";
+import moment from "moment-timezone";
 
 const getKey = (
   key: string,
@@ -22,17 +23,11 @@ const getKey = (
   }
 };
 
-export const time = async () =>
-  await (
-    ((await get_request(
-      `/time`,
-      {
-        params: { timezone: window?.jstz?.determine?.()?.name?.() },
-      },
-      undefined,
-      false
-    )) as any) || { data: undefined }
-  ).data;
+export const time = async (date?: string) => {
+  return moment(date)
+    .tz(moment.tz.guess())
+    .format("DD MMM YYYY");
+}
 
 const allowed: CrypteaDBS = {
   links: {

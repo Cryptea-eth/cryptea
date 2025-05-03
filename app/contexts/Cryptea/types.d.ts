@@ -34,7 +34,7 @@ export interface userData {
   username: userDataTypes;
   accounts: userDataTypes[];
   img: userDataTypes;
-  email_verified_at: any;
+  isEmailVerified: boolean;
 }
 
 export interface authData {

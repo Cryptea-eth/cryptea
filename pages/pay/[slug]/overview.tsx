@@ -209,7 +209,7 @@ const Overview = () => {
                     }}
                     className="m-auto gridTemplate transition-all delay-500 grid gap-6 grid-flow-dense"
                   >
-                    <div className="col-span-full border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                    <div className="col-span-full border-[rgb(200,200,220)] rounded-[8px] border bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -280,13 +280,13 @@ const Overview = () => {
                       </div>
 
                       <Link href={`/pay/${slug}/onetime`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] transition-all cursor-pointer relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(200,200,220)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] transition-all cursor-pointer relative bg-white delay-150">
                           View more payment data
                         </a>
                       </Link>
                     </div>
 
-                    <div className="border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                    <div className="border-[rgb(200,200,220)] rounded-[8px] border bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-bold text-[.8rem] leading-[1.75rem] ">
@@ -336,13 +336,13 @@ const Overview = () => {
                       </div>
 
                       {/* <Link href="/working">
-                          <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
+                          <a className="border-t px-6 p-3 border-solid border-[rgb(200,200,220)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                             View more data
                           </a>
                         </Link> */}
                     </div>
 
-                    <div className="border-[rgb(245,245,255)] rounded-[8px] border bg-white overflow-hidden border-solid">
+                    <div className="border-[rgb(200,200,220)] rounded-[8px] border bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         {data.type == "both" || data.type == "sub" ? (
                           <>
@@ -420,7 +420,7 @@ const Overview = () => {
                       </div>
 
                       <Link href={`/pay/${slug}/multiple`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(200,200,220)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                           {data.type == "sub" || data.type == "both"
                             ? "View more subscription data"
                             : "Add subscription support to link"}
@@ -428,7 +428,7 @@ const Overview = () => {
                       </Link> 
                     </div>
 
-                    <div className="border-[rgb(245,245,255)] rounded-[8px] border relative bg-white overflow-hidden border-solid">
+                    <div className="border-[rgb(200,200,220)] rounded-[8px] border relative bg-white overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-[400] z-[1] text-[1.375rem] leading-[1.75rem] ">
@@ -449,13 +449,13 @@ const Overview = () => {
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/edit`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(200,200,220)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                           Edit Template
                         </a>
                       </Link>
                     </div>
 
-                    <div className="border-[rgb(245,245,255)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
+                    <div className="border-[rgb(200,200,220)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-[400] text-[1.375rem] leading-[1.75rem] z-[1]">
@@ -477,13 +477,13 @@ const Overview = () => {
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/api`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(200,200,220)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                           Lookup SDK/API
                         </a>
                       </Link>
                     </div>
 
-                    <div className="w-full col-span-full border-[rgb(245,245,255)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
+                    <div className="w-full col-span-full border-[rgb(200,200,220)] rounded-[8px] border bg-white relative overflow-hidden border-solid">
                       <div className="px-6 pt-6 relative pb-3">
                         <div className="flex justify-between mb-[16px] items-center">
                           <h2 className="font-[400] text-[1.375rem] leading-[1.75rem]">
@@ -504,7 +504,7 @@ const Overview = () => {
                         </div>
                       </div>
                       <Link href={`/pay/${slug}/settings`}>
-                        <a className="border-t px-6 p-3 border-solid border-[rgb(245,245,255)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
+                        <a className="border-t px-6 p-3 border-solid border-[rgb(200,200,220)] text-[#8036de] block font-bold hover:bg-[#f5f5ff] cursor-pointer transition-all relative bg-white delay-150">
                           Go To Settings
                         </a>
                       </Link>

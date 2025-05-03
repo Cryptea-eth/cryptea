@@ -1205,7 +1205,7 @@ const Settings = () => {
             <div className="button py-2 bg-white mt-2 bottom-0 w-full sticky flex items-center justify-center">
               <Button
                 onClick={validateFields}
-                className="!py-2 !font-bold !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(245,245,255)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
+                className="!py-2 !font-bold !capitalize !flex !items-center !text-white !bg-[#8036de] !border !border-solid !border-[rgb(200,200,220)] !transition-all !delay-500 hover:!text-[#f0f0f0] !rounded-lg"
               >
                 {saving ? (
                   <>
