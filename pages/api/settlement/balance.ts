@@ -113,7 +113,12 @@ export default function handler(
                      if (!price) {
 
                       const res = await http.get(
-                        `/token/price/${useSymbol ? symbol : name}`
+                        `/token/price/${useSymbol ? symbol : name}`,
+                        {
+                          headers: {
+                            'Authorization': `${process.env.APP_KEY}`
+                          }
+                        }
                       );
                    
                       prices[value] = price = res?.data.price;
@@ -168,7 +173,12 @@ export default function handler(
 
                     if (!price) {
                       const res = await http.get(
-                        `/token/price/${tObj?.useSymbol ? tObj.symbol : token.toLowerCase()}`
+                        `/token/price/${tObj?.useSymbol ? tObj.symbol : token.toLowerCase()}`,
+                        {
+                          headers: {
+                            'Authorization': `${process.env.APP_KEY}`
+                          }
+                        }
                       );
 
                       prices[data.chainId] = price = res?.data.price;

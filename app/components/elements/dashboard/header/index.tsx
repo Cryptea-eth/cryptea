@@ -73,7 +73,7 @@ const DashHeader = ({
         }
       }
 
-      setTimeout(itx, 5000);
+      // setTimeout(itx, 5000);
     };
 
     if (once.current) {

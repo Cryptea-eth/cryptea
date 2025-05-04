@@ -528,7 +528,7 @@ const Settlements = () => {
       });
     }
 
-    const userAddresses = JSON.parse(user.accounts || "[]");
+    const userAddresses = typeof user.accounts === "string" ? JSON.parse(user.accounts) : user.accounts;
 
     if (Boolean(userAddresses[0]) && userAddresses[0] != "null") {
       if (!settlement_acct.includes(userAddresses[0])) {
@@ -798,7 +798,7 @@ const Settlements = () => {
                     action="#"
                   >
                     <div className="flex mb-5 bg-white items-center">
-                      <div className="bg-[#ebebeb] px-2 font-[600] truncate mr-3 rounded py-2 w-full text-[#7a7a7a]">
+                      <div className="bg-[#ebebeb] px-2 font-[600] capitalize truncate mr-3 rounded py-2 w-full text-[#7a7a7a]">
                         {Boolean(data.username) ? data.username : ""}{" "}
                         {"Breew Wallets"}
                       </div>
@@ -1046,7 +1046,7 @@ const Settlements = () => {
 
                       <Alert className="mt-1" severity="warning">
                         Ensure the address you are sending to supports{" "}
-                        {withdrawToken.name} on the {withdrawToken.network}{" "}
+                        {withdrawToken?.name} on the {withdrawToken?.network}{" "}
                         network
                       </Alert>
                     </div>
@@ -1082,7 +1082,7 @@ const Settlements = () => {
                               </Button>
 
                               <p className="text-[#565656] cursor-default uppercase text-[14px] font-[500] block">
-                                {withdrawToken.symbol}
+                                {withdrawToken?.symbol}
                               </p>
                             </InputAdornment>
                           ),
