@@ -24,7 +24,7 @@ import { useCryptea } from "../../contexts/Cryptea";
 import TabPanel from "../../components/elements/dashboard/link/TabPanel";
 import Secured from "../../components/elements/secured";
 import { subValueType } from "../../contexts/Cryptea/types";
-import { MdChevronLeft } from "react-icons/md";
+import { MdChevronLeft } from "react-icons/md/index.js";
 import NumberFormat from "react-number-format";
 
 const Carbon = ({ className }: { className?: string }) => {
@@ -613,15 +613,15 @@ const Carbon = ({ className }: { className?: string }) => {
                             isClearable={false}
                             value={token}
                             filterOption={createFilter({
-                              stringify: (option) =>
-                                `${option.value} ${option.data.name}`,
+                              stringify: (option: any) =>
+                                `${option.value} ${option?.data?.name}`,
                             })}
-                            onChange={(e) => setToken?.(e!)}
+                            onChange={(e: any) => setToken?.(e!)}
                             name="Tokens"
                             placeholder={"Tokens..."}
                             options={options}
                             styles={{
-                              option: (provided, state) => {
+                              option: (provided: any, state: any) => {
                                 return {
                                   ...provided,
                                   backgroundColor: state.isSelected
@@ -640,7 +640,7 @@ const Carbon = ({ className }: { className?: string }) => {
                                   },
                                 };
                               },
-                              container: (provided, state) => ({
+                              container: (provided: any, state: any) => ({
                                 ...provided,
                                 "& .select__control": {
                                   borderWidth: "0px",

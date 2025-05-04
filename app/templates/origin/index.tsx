@@ -6,7 +6,7 @@ import {
   FaFacebook,
   FaTwitter,
   FaLinkedinIn,
-} from "react-icons/fa";
+} from "react-icons/fa/index.js";
 import Link from "next/link";
 import {
   Box,
@@ -28,7 +28,7 @@ import { useState, useEffect, useContext } from "react";
 import { PaymentContext } from "../../contexts/PaymentContext";
 import { useCryptea } from "../../contexts/Cryptea";
 import Secured from "../../components/elements/secured";
-import { MdChevronLeft } from "react-icons/md";
+import { MdChevronLeft } from "react-icons/md/index.js";
 import { subValueType } from "../../contexts/Cryptea/types";
 import NumberFormat from "react-number-format";
 
@@ -704,13 +704,13 @@ const Origin = ({ className }: { className?: string }) => {
                                       isClearable={false}
                                       name="Tokens"
                                       filterOption={createFilter({
-                                        stringify: (option) =>
-                                          `${option.value} ${option.data.name}`,
+                                        stringify: (option: any) =>
+                                          `${option.value} ${option?.data?.name}`,
                                       })}
                                       placeholder={"Tokens..."}
                                       options={options!}
                                       styles={{
-                                        option: (provided, state) => {
+                                        option: (provided: any, state: any) => {
                                           return {
                                             ...provided,
                                             backgroundColor: state.isSelected
@@ -729,7 +729,7 @@ const Origin = ({ className }: { className?: string }) => {
                                             },
                                           };
                                         },
-                                        container: (provided, state) => ({
+                                        container: (provided: any, state: any) => ({
                                           ...provided,
                                           "& .select__control": {
                                             borderWidth: "0px",
@@ -753,7 +753,7 @@ const Origin = ({ className }: { className?: string }) => {
                                         }),
                                       }}
                                       value={token}
-                                      onChange={(e) => {
+                                      onChange={(e: any) => {
                                         setToken?.(e!);
                                         setFailMessage?.("");
                                       }}

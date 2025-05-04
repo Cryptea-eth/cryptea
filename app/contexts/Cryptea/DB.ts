@@ -26,7 +26,7 @@ const getKey = (
 export const time = async (date?: string) => {
   return moment(date)
     .tz(moment.tz.guess())
-    .format("DD MMM YYYY");
+    .unix();
 }
 
 const allowed: CrypteaDBS = {

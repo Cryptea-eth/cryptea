@@ -1,7 +1,7 @@
 import {
   // BiSearch,
   BiBell,
-} from "react-icons/bi";
+} from "react-icons/bi/index.js";
 import Sidebar from './sidebar'
 import { Avatar, Popover } from "@mui/material";
 import Loader from "../loader";

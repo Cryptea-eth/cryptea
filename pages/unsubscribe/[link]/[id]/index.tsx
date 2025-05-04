@@ -5,7 +5,7 @@ import { Button, CircularProgress } from "@mui/material";
 import Nav from "../../../../app/components/elements/Nav";
 import { initD } from "../../../../app/components/elements/dashboard/link/data";
 import Loader from "../../../../app/components/elements/loader";
-import { FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
+import { FiThumbsUp, FiThumbsDown } from 'react-icons/fi/index.js';
 import { get_request } from "../../../../app/contexts/Cryptea/requests";
 
 const Unsubscribe = () => {

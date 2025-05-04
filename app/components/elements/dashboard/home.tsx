@@ -16,7 +16,7 @@ import {
   MdOutlineRefresh,
   MdOutlineVisibility,
   MdOutlineVisibilityOff,
-} from "react-icons/md";
+} from "react-icons/md/index.js";
 import { PinField } from "react-pin-field";
 import { CryptoList } from "../../../contexts/Cryptea/connectors/chains";
 import { blockchains } from "../../../contexts/Cryptea/blockchains";

@@ -13,7 +13,7 @@ import {
   ToggleButtonGroup,
   TextField,
 } from "@mui/material";
-import { MdClose } from "react-icons/md";
+import { MdClose } from "react-icons/md/index.js";
 import Head from "next/head";
 import Nav from "../../components/elements/Nav";
 import TabPanel from "../../components/elements/dashboard/link/TabPanel";
@@ -22,7 +22,7 @@ import {
   FaFacebook,
   FaTwitter,
   FaLinkedinIn,
-} from "react-icons/fa";
+} from "react-icons/fa/index.js";
 import Link from "next/link";
 import Select, { createFilter } from "react-select";
 import { useRouter } from "next/router";
@@ -30,7 +30,7 @@ import Loader from "../../components/elements/loader";
 import { PaymentContext } from "../../contexts/PaymentContext";
 import { useCryptea } from "../../contexts/Cryptea";
 import Secured from "../../components/elements/secured";
-import { MdChevronLeft } from "react-icons/md";
+import { MdChevronLeft } from "react-icons/md/index.js";
 import { subValueType } from "../../contexts/Cryptea/types";
 import NumberFormat from "react-number-format";
 import axios from "axios";
@@ -759,13 +759,13 @@ const Droplets = ({ className }: { className?: string }) => {
                                   isClearable={false}
                                   name="Tokens"
                                   filterOption={createFilter({
-                                    stringify: (option) =>
-                                      `${option.value} ${option.data.name}`,
+                                    stringify: (option: any) =>
+                                      `${option.value} ${option?.data?.name}`,
                                   })}
                                   placeholder={"Tokens..."}
                                   options={options!}
                                   styles={{
-                                    option: (provided, state) => {
+                                    option: (provided: any, state: any) => {
                                       return {
                                         ...provided,
                                         backgroundColor: state.isSelected
@@ -784,7 +784,7 @@ const Droplets = ({ className }: { className?: string }) => {
                                         },
                                       };
                                     },
-                                    container: (provided, state) => ({
+                                    container: (provided: any, state: any) => ({
                                       ...provided,
                                       "& .select__control": {
                                         borderWidth: "0px",
@@ -808,7 +808,7 @@ const Droplets = ({ className }: { className?: string }) => {
                                     }),
                                   }}
                                   value={token}
-                                  onChange={(e) => {
+                                  onChange={(e: any) => {
                                     setToken?.(e!);
                                     setFailMessage?.("");
                                   }}
@@ -851,7 +851,7 @@ const Droplets = ({ className }: { className?: string }) => {
                                       }}
                                       exclusive
                                       className="w-full cusscroller overflow-y-hidden justify-between mb-2 pb-1"
-                                      onChange={(e: any) => {
+                                        onChange={(e: any) => {
                                         setTransferFail?.(false);
                                         setFailMessage?.("");
                                         setLoadingText?.("");

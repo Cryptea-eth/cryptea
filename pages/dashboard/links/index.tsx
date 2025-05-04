@@ -20,15 +20,15 @@ import {
   MdClose,
   MdInfo,
   MdLink,
-} from "react-icons/md";
-import { FaCoins } from "react-icons/fa";
+} from "react-icons/md/index.js";
+import { FaCoins } from "react-icons/fa/index.js";
 import Link from "next/link";
 import Loader from "../../../app/components/elements/loader";
-import { FiThumbsDown, FiThumbsUp, FiTrash2 } from "react-icons/fi";
+import { FiThumbsDown, FiThumbsUp, FiTrash2 } from "react-icons/fi/index.js";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 import { useRouter } from "next/router";
 import Page from "../../../app/components/elements/dashboard";
-import { GiTwoCoins } from "react-icons/gi";
+import { GiTwoCoins } from "react-icons/gi/index.js";
 import {
   DashContext,
   dash,

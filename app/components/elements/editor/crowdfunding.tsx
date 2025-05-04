@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { MdClose, MdInfo } from "react-icons/md";
+import { MdClose, MdInfo } from "react-icons/md/index.js";
 import http from "../../../../utils/http";
 
 const Crowd = ({

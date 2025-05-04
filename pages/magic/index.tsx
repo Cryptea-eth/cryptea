@@ -11,13 +11,13 @@ import Head from "next/head";
 import { post_request } from "../../app/contexts/Cryptea/requests";
 import { AxiosError } from "axios";
 import { useCryptea } from "../../app/contexts/Cryptea";
-import { BiEnvelope } from "react-icons/bi";
+import { BiEnvelope } from "react-icons/bi/index.js";
 import Image from "next/image";
 import emailImg from "../../public/images/email_success.svg";
 import { useRouter } from "next/router";
 import Loader from "../../app/components/elements/loader";
 import analytics from "../../analytics";
-import { MdInfo } from "react-icons/md";
+import { MdInfo } from "react-icons/md/index.js";
 import CrypSwitch from "../../app/components/elements/CrypSwitch";
 
 const Magic = () => {

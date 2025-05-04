@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { styled } from "@mui/material/styles";
-import { HiBadgeCheck as Check } from "react-icons/hi";
-import { BiError as ErrorIcon } from 'react-icons/bi';
+import { HiBadgeCheck as Check } from "react-icons/hi/index.js";
+import { BiError as ErrorIcon } from 'react-icons/bi/index.js';
 import Image from "next/image";
 import SwipeableViews from "react-swipeable-views";
 import {
@@ -31,9 +31,9 @@ import {
   FormHelperText,
   Switch,
 } from "@mui/material";
-import { MdInfo, MdAddLink, MdInsertLink, MdClose } from "react-icons/md";
-import { GiTwoCoins } from "react-icons/gi";
-import { FaCoins } from "react-icons/fa";
+import { MdInfo, MdAddLink, MdInsertLink, MdClose } from "react-icons/md/index.js";
+import { GiTwoCoins } from "react-icons/gi/index.js";
+import { FaCoins } from "react-icons/fa/index.js";
 import LogoSpace from "../../logo";
 import { useEffect, useState, useRef, useContext } from "react";
 import Loader from "../../loader";

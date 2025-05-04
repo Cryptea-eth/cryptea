@@ -1,13 +1,13 @@
-import { BiHomeAlt, BiLinkAlt, BiCreditCard, BiLogOut } from "react-icons/bi";
+import { BiHomeAlt, BiLinkAlt, BiCreditCard, BiLogOut } from "react-icons/bi/index.js";
 import {
   IoIosArrowDropleftCircle,
   IoIosArrowDroprightCircle,
-} from "react-icons/io";
-import { PiWalletBold } from "react-icons/pi";
+} from "react-icons/io/index.js";
+import { PiWalletBold } from "react-icons/pi/index.js";
 import { dash, DashContext } from "../../../contexts/GenContext";
 import Image from "next/image";
 import Link from "next/link";
-import { RiSettingsLine } from "react-icons/ri";
+import { RiSettingsLine } from "react-icons/ri/index.js";
 import logo from "../../../../public/images/breew-logo.png";
 import logo2 from "../../../../public/images/breew1.png";
 import { useContext } from "react";

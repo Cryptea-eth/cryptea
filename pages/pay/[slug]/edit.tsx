@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md/index.js";
 import {
   TextField,
   IconButton,
@@ -17,12 +17,12 @@ import {
   FiAlignJustify,
   FiAlignLeft,
   FiAlignRight,
-} from "react-icons/fi";
+} from "react-icons/fi/index.js";
 import Color from "@uiw/react-color-colorful";
 import Image from "next/image";
 import React, { useState, useEffect, Suspense } from "react";
 import style from "../../../styles/custom.module.css";
-import { RiDeleteBin5Line } from "react-icons/ri";
+import { RiDeleteBin5Line } from "react-icons/ri/index.js";
 import ReactCrop, { PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { makeStorageClient } from "../../../app/functions/clients";

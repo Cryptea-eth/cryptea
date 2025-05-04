@@ -27,16 +27,16 @@ import {
   MdSubscriptions,
   MdClose,
   MdOutlinePermContactCalendar,
-} from "react-icons/md";
+} from "react-icons/md/index.js";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { FaCoins, FaCopy } from "react-icons/fa";
+import { FaCoins, FaCopy } from "react-icons/fa/index.js";
 import CustomImg from "../../../app/components/elements/customImg";
-import { BiChevronRight, BiCopy } from "react-icons/bi";
+import { BiChevronRight, BiCopy } from "react-icons/bi/index.js";
 import copy from "copy-to-clipboard";
-import { BsCoin } from "react-icons/bs";
-import { HiCurrencyDollar } from "react-icons/hi";
-import { RiCoinFill } from "react-icons/ri";
+import { BsCoin } from "react-icons/bs/index.js";
+import { HiCurrencyDollar } from "react-icons/hi/index.js";
+import { RiCoinFill } from "react-icons/ri/index.js";
 import Link from "next/link";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 import { PinField } from "react-pin-field";
@@ -50,7 +50,7 @@ import TabPanel from "../../../app/components/elements/dashboard/link/TabPanel";
 import { token } from "../../../app/contexts/Cryptea/types";
 import { ValueContainer } from "react-select/dist/declarations/src/components/containers";
 import { blockchains } from "../../../app/contexts/Cryptea/blockchains";
-import { TbPoint, TbPointOff } from "react-icons/tb";
+import { TbPoint, TbPointOff } from "react-icons/tb/index.js";
 import { SolanaCryptoList } from "../../../app/contexts/Cryptea/connectors/solana";
 import { TronCryptoList } from "../../../app/contexts/Cryptea/connectors/tron";
 import http from "../../../utils/http";
@@ -825,8 +825,8 @@ const Settlements = () => {
                         isClearable={false}
                         name="Tokens"
                         filterOption={createFilter({
-                          stringify: (option) =>
-                            `${option.value} ${option.data.name}`,
+                          stringify: (option:any) =>
+                            `${option?.value} ${option?.data?.name}`,
                         })}
                         placeholder={"Tokens..."}
                         options={Object.keys(dashData["breakDownObj"])
@@ -839,7 +839,7 @@ const Settlements = () => {
                             ),
                           }))}
                         styles={{
-                          option: (provided, state) => {
+                          option: (provided: any, state: any) => {
                             return {
                               ...provided,
                               backgroundColor: state.isSelected
@@ -857,7 +857,7 @@ const Settlements = () => {
                               },
                             };
                           },
-                          container: (provided, state) => ({
+                          container: (provided: any, state: any) => ({
                             ...provided,
                             "& .select__control": {
                               borderWidth: "0px",
@@ -881,7 +881,7 @@ const Settlements = () => {
                           }),
                         }}
                         value={withdrawToken}
-                        onChange={async (e) => {
+                        onChange={async (e: any) => {
                           setWithdrawToken(e);
 
                           getBalance(e, sAddresses.current[e.blocktype]);
@@ -934,7 +934,7 @@ const Settlements = () => {
                               placeholder={"Address..."}
                               options={dashData["settlement_acct"]}
                               styles={{
-                                option: (provided, state) => {
+                                option: (provided: any, state: any) => {
                                   return {
                                     ...provided,
                                     backgroundColor: state.isSelected
@@ -955,7 +955,7 @@ const Settlements = () => {
                                     },
                                   };
                                 },
-                                container: (provided, state) => ({
+                                container: (provided: any, state: any) => ({
                                   ...provided,
                                   "& .select__control": {
                                     borderWidth: "1px",
@@ -971,7 +971,7 @@ const Settlements = () => {
                                 }),
                               }}
                               value={addresses}
-                              onChange={async (e) => {
+                              onChange={async (e: any) => {
                                 setAddresses(e);
 
                                 setAddressTo(e.label);

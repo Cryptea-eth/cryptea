@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { BiBell } from "react-icons/bi";
+import { BiBell } from "react-icons/bi/index.js";
 import { get_request } from "../../../../contexts/Cryptea/requests";
 import { dash, DashContext } from "../../../../contexts/GenContext";
 

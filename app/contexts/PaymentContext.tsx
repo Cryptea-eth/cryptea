@@ -25,12 +25,12 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-import { MdClose } from "react-icons/md";
+import { MdClose } from "react-icons/md/index.js";
 import copy from "copy-to-clipboard";
 import LogoSpace from "../components/elements/logo";
 import QrCode from "../components/elements/qrcode";
-import { FaRegClone } from "react-icons/fa";
-import { RiCloseCircleLine } from "react-icons/ri";
+import { FaRegClone } from "react-icons/fa/index.js";
+import { RiCloseCircleLine } from "react-icons/ri/index.js";
 import {
   CryptoList,
   inputsList,
@@ -38,11 +38,11 @@ import {
 } from "./Cryptea/connectors/chains";
 import Loader from "../components/elements/loader";
 import axios, { AxiosError } from "axios";
-import { TbPlugConnected } from "react-icons/tb";
-import { BsCheck, BsCheck2, BsMailbox } from "react-icons/bs";
+import { TbPlugConnected } from "react-icons/tb/index.js";
+import { BsCheck, BsCheck2, BsMailbox } from "react-icons/bs/index.js";
 
 import TabPanel from "../components/elements/dashboard/link/TabPanel";
-import { BiMailSend, BiSync, BiX } from "react-icons/bi";
+import { BiMailSend, BiSync, BiX } from "react-icons/bi/index.js";
 import http from "../../utils/http";
 
 export const PaymentContext = createContext<PaymentCont>({});
@@ -105,7 +105,7 @@ export const PaymentProvider = ({
     raw: {},
   });
 
-  const sCallBack = useRef<(cc?: any) => Promise<any> | any>()
+  const sCallBack = useRef<((cc?: any) => Promise<any> | any) | undefined>(undefined)
 
   const [paymentData, setPaymentData] = useState<{
     price: number;
@@ -918,7 +918,7 @@ export const PaymentProvider = ({
 
   const [genAddr, setGenAddr] = useState<string | undefined>();
 
-  const timer: any = useRef();
+  const timer: any = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const [timeCounted, setTimeCounted] = useState<number>(0);
 

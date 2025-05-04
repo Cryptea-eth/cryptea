@@ -7,7 +7,7 @@ import empty from "../../../../../public/images/coming-soon.svg";
 import { dash, DashContext } from "../../../../contexts/GenContext";
 import Sidebar from "../sidebar";
 import Image from "next/image";
-import { GiTwoCoins } from "react-icons/gi";
+import { GiTwoCoins } from "react-icons/gi/index.js";
 import Router from "next/router";
 
 const TypePayment = ({

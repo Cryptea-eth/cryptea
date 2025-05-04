@@ -9,7 +9,7 @@ import {
   WhatsappShareButton,
 } from "react-share";
 import bigimg from "../../../../../public/images/logobig.png";
-import { CgMore } from "react-icons/cg";
+import { CgMore } from "react-icons/cg/index.js";
 import copy from "copy-to-clipboard";
 import {
   FaFacebookF,
@@ -20,11 +20,11 @@ import {
   FaTelegramPlane,
   FaTwitter,
   FaWhatsapp,
-} from "react-icons/fa";
+} from "react-icons/fa/index.js";
 import { Modal, IconButton, Tooltip, ClickAwayListener } from "@mui/material";
 import { useContext, useState } from 'react';
 import { dash, DashContext } from "../../../../contexts/GenContext";
-import { MdClose } from "react-icons/md";
+import { MdClose } from "react-icons/md/index.js";
 import QrCode from "../../qrcode";
 
 const ShareLink = ({

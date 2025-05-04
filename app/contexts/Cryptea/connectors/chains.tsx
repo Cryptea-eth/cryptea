@@ -22,7 +22,7 @@ import {
 import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import CustomImg from "../../../components/elements/customImg";
-import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi";
+import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi/index.js";
 import { explorer, token } from "../types";
 // import { SolanaCryptoList, solanatokenTrackers } from "./solana";
 

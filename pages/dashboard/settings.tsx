@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose } from "react-icons/io/index.js";
 import { makeStorageClient } from "../../app/functions/clients";
-import { MdOutlineVisibility, MdOutlineVisibilityOff, MdClose } from "react-icons/md";
+import { MdOutlineVisibility, MdOutlineVisibilityOff, MdClose } from "react-icons/md/index.js";
 import PinField from "react-pin-field";
 import {
   Button,

@@ -4,7 +4,7 @@ import { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import Loader from "../../../app/components/elements/loader";
 import { dash, DashContext } from "../../../app/contexts/GenContext";
-import { IoWalletOutline } from "react-icons/io5";
+import { IoWalletOutline } from "react-icons/io5/index.js";
 import {
   Modal,
   Avatar,
@@ -17,12 +17,12 @@ import {
   Tooltip,
 } from "@mui/material";
 import NumberFormat from "react-number-format";
-import { FiThumbsDown, FiThumbsUp, FiTrash2 } from "react-icons/fi";
-import { BiBook, BiCopy } from "react-icons/bi";
+import { FiThumbsDown, FiThumbsUp, FiTrash2 } from "react-icons/fi/index.js";
+import { BiBook, BiCopy } from "react-icons/bi/index.js";
 import Link from "next/link";
 import {
   MdClose,
-} from "react-icons/md";
+} from "react-icons/md/index.js";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 import {
   get_request,

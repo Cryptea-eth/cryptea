@@ -2,7 +2,7 @@ import Nav from "../../../app/components/elements/Nav";
 import Link from "next/link";
 import Head from "next/head";
 import { Button } from "@mui/material";
-import { BiSync } from "react-icons/bi";
+import { BiSync } from "react-icons/bi/index.js";
 import Router from "next/router";
 import Loader from "../../../app/components/elements/loader";
 import { useState, useEffect, useRef } from "react";
@@ -20,7 +20,7 @@ const Email = () => {
 
   const [mail, setEmail] = useState('');
 
-  let count = useRef<any>();
+  let count = useRef<any>(null);
 
   const startTimer = () => {
     

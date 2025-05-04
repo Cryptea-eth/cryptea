@@ -16,8 +16,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import NumberFormat from "react-number-format";
-import { FiShare2, FiThumbsDown, FiThumbsUp, FiTrash2 } from "react-icons/fi";
-import { BiBook, BiCopy } from "react-icons/bi";
+import { FiShare2, FiThumbsDown, FiThumbsUp, FiTrash2 } from "react-icons/fi/index.js";
+import { BiBook, BiCopy } from "react-icons/bi/index.js";
 import { initD } from "../../../app/components/elements/dashboard/link/data";
 import Link from "next/link";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
@@ -26,14 +26,14 @@ import {
   MdClose,
   MdLink,
   MdOutlineSettingsSuggest,
-} from "react-icons/md";
+} from "react-icons/md/index.js";
 import sortData, {
   totSub,
 } from "../../../app/components/elements/dashboard/linkOverview/generateData";
-import { TbApiApp } from "react-icons/tb";
+import { TbApiApp } from "react-icons/tb/index.js";
 import ShareLink from "../../../app/components/elements/dashboard/linkOverview/share";
 import { useCryptea } from "../../../app/contexts/Cryptea";
-import { BsShieldLock } from "react-icons/bs";
+import { BsShieldLock } from "react-icons/bs/index.js";
 import { get_request, post_request } from "../../../app/contexts/Cryptea/requests";
 import copy from "copy-to-clipboard";
 

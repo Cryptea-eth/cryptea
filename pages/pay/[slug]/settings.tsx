@@ -11,27 +11,27 @@ import {
 import Head from "next/head";
 import Sidebar from "../../../app/components/elements/dashboard/sidebar";
 import { Avatar, IconButton, Button } from "@mui/material";
-import { FiSettings, FiShare2, FiTrash2 } from "react-icons/fi";
+import { FiSettings, FiShare2, FiTrash2 } from "react-icons/fi/index.js";
 import Link from "next/link";
-import { MdArrowBackIos, MdClose, MdInfo, MdLink } from "react-icons/md";
+import { MdArrowBackIos, MdClose, MdInfo, MdLink } from "react-icons/md/index.js";
 import Select, { createFilter } from "react-select";
-import { TbApiApp } from "react-icons/tb";
+import { TbApiApp } from "react-icons/tb/index.js";
 import { dash, DashContext } from "../../../app/contexts/GenContext";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 import { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import { initD } from "../../../app/components/elements/dashboard/link/data";
 import ShareLink from "../../../app/components/elements/dashboard/linkOverview/share";
-import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi";
+import { BiEnvelope, BiPhoneCall, BiUserCircle } from "react-icons/bi/index.js";
 import {
   CryptoList,
   inputsList,
 } from "../../../app/contexts/Cryptea/connectors/chains";
 import { token } from "../../../app/contexts/Cryptea/types";
 import { AxiosError } from "axios";
-import { GiTwoCoins } from "react-icons/gi";
-import { FaCoins } from "react-icons/fa";
-import { RiCoinLine } from 'react-icons/ri'
+import { GiTwoCoins } from "react-icons/gi/index.js";
+import { FaCoins } from "react-icons/fa/index.js";
+import { RiCoinLine } from 'react-icons/ri/index.js'
 import Loader from "../../../app/components/elements/loader";
 import CrypSwitch from "../../../app/components/elements/CrypSwitch";
 

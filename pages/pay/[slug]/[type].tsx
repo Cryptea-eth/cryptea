@@ -26,14 +26,14 @@ import sortData, { months, totSub } from "../../../app/components/elements/dashb
 import { initD } from "../../../app/components/elements/dashboard/link/data";
 import { dash, DashContext } from "../../../app/contexts/GenContext";
 import TypePayment from "../../../app/components/elements/dashboard/link/typePayment";
-import { FiSettings, FiShare2 } from "react-icons/fi";
-import { RiCoinLine } from "react-icons/ri";
+import { FiSettings, FiShare2 } from "react-icons/fi/index.js";
+import { RiCoinLine } from "react-icons/ri/index.js";
 import NumberFormat from "react-number-format";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
-import { MdContentCopy, MdOutlineSettingsSuggest } from "react-icons/md";
+import { MdContentCopy, MdOutlineSettingsSuggest } from "react-icons/md/index.js";
 import ShareLink from "../../../app/components/elements/dashboard/linkOverview/share";
 import { defineType, types } from "../../../app/components/elements/dashboard/linkOverview/linkTypes";
-import { BiCoinStack } from "react-icons/bi";
+import { BiCoinStack } from "react-icons/bi/index.js";
 import Image from "next/image";
 import { useCryptea } from '../../../app/contexts/Cryptea';
 import { time } from '../../../app/contexts/Cryptea/DB';

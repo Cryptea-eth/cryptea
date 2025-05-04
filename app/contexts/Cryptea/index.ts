@@ -26,8 +26,8 @@ export function useCryptea(): mainAppManager {
 
   const { data: signer } = useSigner();
 
-  let cache = useRef<null | string | undefined>();
-  let altAddress = useRef<string | undefined>()
+  let cache = useRef<null | string | undefined>(null);
+  let altAddress = useRef<string | undefined>(undefined)
 
   useEffect(() => {
     cache.current = localStorage.getItem('userToken');

@@ -7,7 +7,7 @@ import Image from "next/image";
 import emailImg from "../../public/images/email_fail.svg";
 import Link from 'next/link';
 import { Button } from '@mui/material';
-import { BiSync } from "react-icons/bi";
+import { BiSync } from "react-icons/bi/index.js";
 import { AxiosError } from "axios";
 import type { IconType } from 'react-icons';
 import http from "../../utils/http";

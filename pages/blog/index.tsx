@@ -3,7 +3,7 @@ import Footer from "../../app/components/elements/Footer";
 import Link from "next/link";
 import Image from "next/image";
 import donation from "../../public/images/donation.png";
-import { FaArrowCircleRight } from "react-icons/fa";
+import { FaArrowCircleRight } from "react-icons/fa/index.js";
 
 const Blog = () => {
   return (

@@ -2,7 +2,7 @@ import Nav from "../../app/components/elements/Nav";
 import Link from "next/link";
 import Head from "next/head";
 import { Button } from "@mui/material";
-import { BiSync } from "react-icons/bi";
+import { BiSync } from "react-icons/bi/index.js";
 import Router from "next/router";
 
 const Timeout = () => {

@@ -1,8 +1,8 @@
 import {
   // BiSearch,
   BiBell,
-} from "react-icons/bi";
-import { RiSettingsLine } from "react-icons/ri";
+} from "react-icons/bi/index.js";
+import { RiSettingsLine } from "react-icons/ri/index.js";
 import { Avatar, Popover } from "@mui/material";
 import DashHome from "../../app/components/elements/dashboard/home";
 import Link from "next/link";

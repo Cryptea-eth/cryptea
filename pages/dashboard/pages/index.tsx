@@ -14,9 +14,9 @@ import {
   MdDeleteOutline,
   MdInfo,
   MdModeEditOutline,
-} from "react-icons/md";
+} from "react-icons/md/index.js";
 import Link from "next/link";
-import { RiDeleteBin2Line, RiPagesLine } from "react-icons/ri";
+import { RiDeleteBin2Line, RiPagesLine } from "react-icons/ri/index.js";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 import Router from "next/router";
 import Head from 'next/head';

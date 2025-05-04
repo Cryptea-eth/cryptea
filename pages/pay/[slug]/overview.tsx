@@ -6,16 +6,16 @@ import { dash, DashContext } from "../../../app/contexts/GenContext";
 import Sidebar from "../../../app/components/elements/dashboard/sidebar";
 import { Avatar, IconButton } from "@mui/material";
 import NumberFormat from 'react-number-format';
-import { FiShare2, FiTrash2 } from "react-icons/fi";
+import { FiShare2, FiTrash2 } from "react-icons/fi/index.js";
 import {
   initD
 } from "../../../app/components/elements/dashboard/link/data";
 import Link from "next/link";
 import LineChart from "../../../app/components/elements/Extras/Rep/lineChart";
-import { MdArrowBackIos, MdLink, MdOutlineSettingsSuggest } from "react-icons/md";
+import { MdArrowBackIos, MdLink, MdOutlineSettingsSuggest } from "react-icons/md/index.js";
 import sortData, { totSub } from "../../../app/components/elements/dashboard/linkOverview/generateData";
-import { TbApiApp } from 'react-icons/tb';
-import { AiOutlineUser } from 'react-icons/ai'
+import { TbApiApp } from 'react-icons/tb/index.js';
+import { AiOutlineUser } from 'react-icons/ai/index.js'
 import ShareLink from "../../../app/components/elements/dashboard/linkOverview/share";
 import { useCryptea } from "../../../app/contexts/Cryptea";
 
