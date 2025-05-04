@@ -29,8 +29,6 @@ import Loader from "../../components/elements/loader";
 import {
   RainbowKitProvider,
   connectorsForWallets,
-  getDefaultWallets,
-  getWalletConnectConnector,
   lightTheme,
 } from "@rainbow-me/rainbowkit";
 import {
@@ -44,9 +42,6 @@ import {
   trustWallet,
   argentWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
-import { InjectedConnector } from "wagmi/connectors/injected";
 import { PhantomWallet } from "./connectors/solana";
 import http from '../../../utils/http';
 
@@ -171,7 +166,7 @@ export const AuthUser = async ({
 
 export const AuthContextMain = createContext<AuthContext>({});
 
-export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
+export const CrypteaProvider = ({ children }: { children: React.ReactElement }) => {
   const [isAuthenticated, setAuth] = useState<boolean | undefined>();
 
   const [context, setContext] = useState<userData | undefined>(user);
@@ -227,19 +222,6 @@ export const CrypteaProvider = ({ children }: { children: JSX.Element }) => {
     createConnector: () => {
       const connector = new LinkConnector({ chains, options: {} });
 
-      return {
-        connector,
-      };
-    },
-  });
-
-  const UD = ({ chains }: { chains: any }) => ({
-    id: "unstoppable",
-    name: "Login with unstoppable",
-    iconUrl: unstop.src,
-    iconBackground: "#0d67fe",
-    createConnector: () => {
-      const connector = new UDConnector({ chains, options: {} });
       return {
         connector,
       };

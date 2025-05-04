@@ -7,7 +7,7 @@ export const HomeContext = createContext<{
   close?: () => any;
 }>({}); 
 
-export const HomeProvider = ({ children }: { children: JSX.Element }) => {
+export const HomeProvider = ({ children }: { children: React.ReactElement }) => {
 
 
     const [showModal, setShowModal] = useState(false);

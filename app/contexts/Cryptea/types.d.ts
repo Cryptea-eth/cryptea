@@ -109,7 +109,7 @@ export interface mainAppManager extends AuthContext {
 
 export type token<T = string> = {
   value: number;
-  label: string | JSX.Element;
+  label: string | React.ReactElement;
   symbol: string;
   useSymbol?: boolean;
   blocktype: "evm" | "sol" | "trx";

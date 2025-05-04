@@ -742,7 +742,7 @@ const Settlements = () => {
             sx={{
               "&& .MuiBackdrop-root": {
                 backdropFilter: "blur(5px)",
-                width: "calc(100% - 8px)",
+                width: "calc(100% - 8px)"
               },
             }}
             onClose={() => setCryptoW(false)}

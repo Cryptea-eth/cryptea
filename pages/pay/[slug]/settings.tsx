@@ -63,7 +63,7 @@ const Settings = () => {
   interface formData {
     title: string;
     desc: string;
-    rdata: { label: JSX.Element; value: string }[];
+    rdata: { label: React.ReactElement; value: string }[];
     acceptedCrypto: token[];
     amountOption: number[];
     redirect: string;
@@ -90,7 +90,7 @@ const Settings = () => {
     [index: string]: string;
   }
 
-  const dataimg: { [index: string]: JSX.Element } = {
+  const dataimg: { [index: string]: React.ReactElement } = {
     name: <BiUserCircle className="mr-[6px]" size={20} />,
     email: <BiEnvelope className="mr-[6px]" size={20} />,
     phone: <BiPhoneCall className="mr-[6px]" size={20} />,
@@ -760,7 +760,7 @@ const Settings = () => {
                               placeholder={"Inputs..."}
                               options={options}
                               styles={{
-                                option: (provided, state) => {
+                                option: (provided: any, state: any) => {
                                   return {
                                     ...provided,
                                     backgroundColor: state.isSelected
@@ -778,7 +778,7 @@ const Settings = () => {
                                     },
                                   };
                                 },
-                                container: (provided, state) => ({
+                                container: (provided: any, state: any) => ({
                                   ...provided,
                                   minHeight: "58px",
                                   width: "100%",
@@ -842,14 +842,14 @@ const Settings = () => {
                             <Select
                               isClearable={true}
                               filterOption={createFilter({
-                                stringify: (option) =>
+                                stringify: (option: any) =>
                                   `${option.value} ${option.data.name}`,
                               })}
                               name="Accepted Crypto"
                               placeholder={"Crypto..."}
                               options={acceptOptions}
                               styles={{
-                                option: (provided, state) => {
+                                option: (provided: any, state: any) => {
                                   return {
                                     ...provided,
                                     backgroundColor: state.isSelected
@@ -867,7 +867,7 @@ const Settings = () => {
                                     },
                                   };
                                 },
-                                container: (provided, state) => ({
+                                container: (provided: any, state: any) => ({
                                   ...provided,
                                   minHeight: "58px",
                                   width: "100%",

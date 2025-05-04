@@ -74,7 +74,7 @@ export const DashContext = createContext<dash>({
   },
 });
 
-export const GenProvider = ({ children }: { children: JSX.Element }) => {
+export const GenProvider = ({ children }: { children: React.ReactElement }) => {
 
   const [isOpen, close] = useState(true);
   const [isOpen2, close2] = useState(true);

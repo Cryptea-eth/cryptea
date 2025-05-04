@@ -131,7 +131,7 @@ const Onetime = () => {
 
   const [linkType, setLinkType] = useState<'onetime' | 'sub' | ''>('');
 
-  const [rows, setRows] = useState<{[index: string]: JSX.Element | string | number}[]>([]);
+  const [rows, setRows] = useState<{[index: string]: React.ReactElement | string | number}[]>([]);
 
   useEffect(() => {
     const init = async () => {

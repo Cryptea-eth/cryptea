@@ -16,7 +16,7 @@ const TypePayment = ({
   data,
   support = false
 }: {
-  children: JSX.Element[] | JSX.Element;
+  children: React.ReactElement[] | React.ReactElement;
   which: "sub" | "onetime";
   support: boolean,
   data: {

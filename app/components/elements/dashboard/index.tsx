@@ -11,7 +11,7 @@ import { dash, DashContext } from "../../../contexts/GenContext";
 import { useCryptea } from "../../../contexts/Cryptea";
 import DashHeader from "./header";
 
-const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
+const Page = ({ children }: { children: React.ReactElement[] | React.ReactElement }) => {
 
   const { user, isAuthenticated } = useCryptea();
 

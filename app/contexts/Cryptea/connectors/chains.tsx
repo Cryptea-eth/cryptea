@@ -76,6 +76,31 @@ export const OasisEmeraldTestnet: Chain = {
   testnet: true,
 };
 
+export const PolkadotTestnet: Chain = {
+  id: 420420421,
+  name: "Polkadot Testnet",
+  network: "polkadot",
+  nativeCurrency: {
+    name: "Polkadot",
+    decimals: 18,
+    symbol: "WND",
+  },
+  rpcUrls: {
+    public: {
+      http: ["https://westend-asset-hub-eth-rpc.polkadot.io"],
+    },
+    default: {
+      http: ["https://westend-asset-hub-eth-rpc.polkadot.io"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Polkadot",
+      url: "https://assethub-westend.subscan.io",
+    },
+  },
+  testnet: true,
+};
 
 export const Cronos: Chain = {
   id: 25,
@@ -201,6 +226,7 @@ export const { chains , provider, webSocketProvider } = configureChains(
     TaikoTest,
     OasisEmerald,
     OasisEmeraldTestnet,
+    PolkadotTestnet,
     filecoinHyperspace,
     fantom,
     fantomTestnet,
@@ -267,6 +293,10 @@ export const tokenTrackers: explorer = {
   1442: {
     name: "Polygon zkEVM Explorer",
     link: (hash: string) => "https://explorer.public.zkevm-test.net/tx/" + hash,
+  },
+  420420421: {
+    name: "Polkadot Explorer",
+    link: (hash: string) => "https://assethub-westend.subscan.io/tx/" + hash,
   },
   167002: {
     name: "Taiko L2 Explorer",
@@ -397,7 +427,35 @@ export const CryptoList: token[] = [
       auto: true,
     },
   },
-
+  {
+    value: 420420421,
+    type: "native",
+    label: (
+      <div className="items-center flex">
+        <div className="h-[20px] mr-2 relative w-[20px]">
+          <CustomImg
+            name="Polkadot"
+            symbol="DOT"
+            size={20}
+            alt={"Polkadot"}
+          />
+        </div>
+        <span className="text-[#121212]">Polkadot AssetHub Westend</span>
+      </div>
+    ),
+    name: "Polkadot AssetHub Westend",
+    symbol: "WND",
+    network: "polkadot",
+    blocktype: "evm",
+    tokenAddr: "",
+    rpc: PolkadotTestnet.rpcUrls.default.http[0],
+    testnet: true,
+    payment: {
+      manual: true,
+      auto: true,
+    },
+    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
+  },
   {
     value: 1442,
     type: "native",
@@ -703,7 +761,6 @@ export const CryptoList: token[] = [
     rpc: optimism.rpcUrls.default.http[0],
 
   },
-
   {
     value: 420,
     contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",

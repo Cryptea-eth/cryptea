@@ -96,7 +96,7 @@ const DashHeader = ({
     "before:content-[''] before:bottom-[25px] before:left-[28px] before:bg-[#8036de] before:h-[7px] before:rounded-[50%] before:w-[7px]";
 
   const noteValues = (d: any, i: number) => {
-    let text: JSX.Element = <></>;
+    let text: React.ReactElement = <></>;
 
     const data = JSON.parse(d.data || "{}");
 

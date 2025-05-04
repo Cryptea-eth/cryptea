@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -14,7 +18,20 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "paths": {
+      "react": [ "./node_modules/@types/react" ]
+    }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/auth/index.jsx", "pages/_error.js", "app/components/elements/SignupForm/index.jsx", "pages/middleware.js"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/auth/index.jsx",
+    "pages/_error.js",
+    "app/components/elements/SignupForm/index.jsx",
+    "pages/middleware.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

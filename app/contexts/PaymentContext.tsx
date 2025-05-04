@@ -75,7 +75,7 @@ export const PaymentProvider = ({
   children,
   editMode,
 }: {
-  children: JSX.Element;
+  children: React.ReactElement;
   editMode: boolean;
 }) => {
   const router = useRouter();
