@@ -15,6 +15,7 @@ import {
   scrollTestnet,
   MantleTest,
   optimism,
+  PolkadotTestnet,
 } from "../../../../app/contexts/Cryptea/connectors/chains";
 import http from "../../../../utils/http";
 
@@ -49,6 +50,7 @@ const providers: { [index: string]: string } = {
   167002: TaikoTest.rpcUrls.default.http[0],
   5001: MantleTest.rpcUrls.default.http[0],
   10: optimism.rpcUrls.default.http[0],
+  420420421: PolkadotTestnet.rpcUrls.default.http[0],
 };
 
 export default function handler(
@@ -76,7 +78,7 @@ export default function handler(
         .then(async (trx: ethers.ethers.providers.TransactionResponse) => {
           const amt = data.amountCrypto;
 
-          const fullAmt = Number(ethers.utils.formatEther(trx.value));
+          // const fullAmt = Number(ethers.utils.formatEther(trx.value));
 
           let valid = true;
 
