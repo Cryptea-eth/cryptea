@@ -454,7 +454,7 @@ export const CryptoList: token[] = [
       manual: true,
       auto: true,
     },
-    contractAddr: "0xfABBC18bDA50D1CA3fC1c3343A0EF26C453eAf32",
+    contractAddr: "0x519f1c1d1e815aae364c12fc6f9a4fcaf67a51eb",
   },
   {
     value: 1442,

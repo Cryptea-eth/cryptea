@@ -337,6 +337,20 @@ export const PaymentProvider = ({
     return price / priceCurrency;
   };
 
+  const polkadot = async (price: number) => {
+    const response = await getPriceReq({
+      ids: "polkadot",
+      vs_currencies: "usd",
+    });
+
+    const e = response.data as { [index: string]: any };
+
+    const priceCurrency = Number(e["polkadot"]["usd"]);
+
+    return price / priceCurrency;
+
+  }
+
   const getPrice = async (
     price: number,
     chain: string | number | undefined = 80001
@@ -425,6 +439,7 @@ export const PaymentProvider = ({
       },
       "420": async () => optimism(price),
       "10": async () => optimism(price),
+      "420420421": async () => polkadot(price),
     };
 
     final = await prices[chain]();
@@ -745,8 +760,6 @@ export const PaymentProvider = ({
 
       from = account || "";
 
-
-
       setLoadingText("Pending...");
 
       const feesPrice = price + (price * 1) / 100;
@@ -762,8 +775,6 @@ export const PaymentProvider = ({
       );
 
       setLoadingText("Processing payment");
-
-
 
       initContract
         .transferNative(addresses?.[token.blocktype] || "", {
