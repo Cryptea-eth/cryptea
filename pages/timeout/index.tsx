@@ -12,7 +12,7 @@ const Timeout = () => {
         <title>Connection Timed out | Breew</title>
         <meta
           name="description"
-          content="Breew - Receive Payments Instantly With Ease."
+          content="Breew - Breew the best web3 experience for your users."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

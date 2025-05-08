@@ -11,67 +11,54 @@ import Image from "next/image";
 import { post_request } from "../../../app/contexts/Cryptea/requests";
 
 const Email = () => {
-
   const [isLoading, setLoading] = useState<boolean>(true);
 
   const [timer, setTimer] = useState<number>(0);
 
-  const [mail, setEmail] = useState('');
+  const [mail, setEmail] = useState("");
 
   let count = useRef<any>();
 
   const startTimer = () => {
-    
-   count.current = setInterval(() => {
+    count.current = setInterval(() => {
       setTimer((timer) => timer + 1);
     }, 1000);
-
   };
 
   const runOnce = useRef<boolean>(false);
 
   useEffect(() => {
     if (!runOnce.current) {
+      runOnce.current = true;
 
-        runOnce.current = true;
-        
-        "user".get("*", true).then(async (e: any) => {
-            
-            if (!Boolean(e.email_verified_at) && Boolean(e.email)) {
-            
-                setEmail(e.email);
+      "user".get("*", true).then(async (e: any) => {
+        if (!Boolean(e.email_verified_at) && Boolean(e.email)) {
+          setEmail(e.email);
 
-            const mx = await post_request("/verify/mail", {
-              mail: e.email,
-            });
+          const mx = await post_request("/verify/mail", {
+            mail: e.email,
+          });
 
-            if (Boolean(mx.data.time)) {
-              
-              setTimer(mx.data.time);
-            }
-
-            setTimer(0);
-
-            startTimer();
-
-            setLoading(false);
-
-          } else {
-            
-            Router.push("/dashboard");
-
+          if (Boolean(mx.data.time)) {
+            setTimer(mx.data.time);
           }
-        });
+
+          setTimer(0);
+
+          startTimer();
+
+          setLoading(false);
+        } else {
+          Router.push("/dashboard");
+        }
+      });
     }
   }, []);
 
   useEffect(() => {
-    
     if (timer >= 300) {
       clearInterval(count.current);
-      
     }
-
   }, [timer]);
 
   return isLoading ? (
@@ -82,7 +69,7 @@ const Email = () => {
         <title>We Just Sent a Verification Mail | Breew</title>
         <meta
           name="description"
-          content="Breew - Receive Payments Instantly With Ease."
+          content="Breew - Breew the best web3 experience for your users."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

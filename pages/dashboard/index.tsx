@@ -7,68 +7,63 @@ import Loader from "../../app/components/elements/loader";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { DashContext, dash } from "../../app/contexts/GenContext";
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from "react";
 import Sidebar from "../../app/components/elements/dashboard/sidebar";
 import { useCryptea } from "../../app/contexts/Cryptea";
 import DashHeader from "../../app/components/elements/dashboard/header";
 
 const DashboardIndex = () => {
-
-  const { 
-    user,
-    connected,
-    isAuthenticated,
-    signer
-  } = useCryptea();
+  const { user, connected, isAuthenticated, signer } = useCryptea();
 
   const router = useRouter();
 
-  const { sidebar, logout: { active } }: dash = useContext(DashContext);
-  
+  const {
+    sidebar,
+    logout: { active },
+  }: dash = useContext(DashContext);
+
   const [loading, isLoading] = useState<Boolean>(true);
 
   const [data, setData] = useState<any>({ username: "", img: "" });
-  
 
   useEffect(() => {
-
-    if(isAuthenticated !== undefined){
-      if(!isAuthenticated && !active && localStorage.getItem('userToken') === null){
-
-          router.push('/auth')
-        
+    if (isAuthenticated !== undefined) {
+      if (
+        !isAuthenticated &&
+        !active &&
+        localStorage.getItem("userToken") === null
+      ) {
+        router.push("/auth");
       } else {
+        "user".get("*", true).then((e: any) => {
+          const acc =
+            typeof e?.accounts === "string"
+              ? JSON.parse(e.accounts || "[]")
+              : e.accounts || [];
 
-         "user".get("*", true).then((e: any) => {
-            
-            const acc = typeof e?.accounts === 'string' ? JSON.parse(e.accounts || '[]') : e.accounts || [];
+          if (
+            !Boolean(e.email) ||
+            (!Boolean(e.settlement ? e.settlement.length : 0) &&
+              (acc[0] == "null" || acc[0] == "undefined"))
+          ) {
+            if (!Boolean(e.error)) {
+              router.push("/signup");
+            }
+          } else {
+            if (e !== null) {
+              setData(typeof e == "object" ? e : { username: "", img: "" });
+            }
 
-            if (!Boolean(e.email) || (!Boolean(e.settlement ? e.settlement.length : 0) && (acc[0] == "null" || acc[0] == "undefined"))) {
-  
-              if (!Boolean(e.error)) {
-                router.push("/signup");
-              }
-           }else{
-           if (e !== null) {
-             setData(typeof e == "object" ? e : { username: "", img: "" });
-           }
-
-           if (document.body.clientWidth < 976 && sidebar?.open) {
+            if (document.body.clientWidth < 976 && sidebar?.open) {
               sidebar?.toggle?.();
             }
 
             isLoading(false);
           }
-         });
+        });
       }
     }
-  }, [
-    user,
-    router,
-    isLoading,
-    isAuthenticated
-  ]);
-
+  }, [user, router, isLoading, isAuthenticated]);
 
   return (
     <>
@@ -78,7 +73,7 @@ const DashboardIndex = () => {
         </title>
         <meta
           name="description"
-          content={`Receive Payments Instantly With Ease`}
+          content={`Breew the best web3 experience for your users`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

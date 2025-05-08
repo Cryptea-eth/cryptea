@@ -1,17 +1,16 @@
 import Nav from "../../app/components/elements/Nav";
 import Link from "next/link";
-import Router from 'next/router'
+import Router from "next/router";
 import Head from "next/head";
 import { Button } from "@mui/material";
 const Notfound = () => {
-
   return (
     <div className="h-screen">
       <Head>
         <title>404 page not found | Breew</title>
         <meta
           name="description"
-          content="Breew - Receive Payments Instantly With Ease."
+          content="Breew - Breew the best web3 experience for your users."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

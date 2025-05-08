@@ -1,59 +1,50 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import { useEffect, useState } from 'react';
-import Loader from '../app/components/elements/loader';
+import type { NextPage } from "next";
+import Head from "next/head";
+import { useEffect, useState } from "react";
+import Loader from "../app/components/elements/loader";
 import AuthModal from "../app/components/elements/modal";
-import { useCryptea } from '../app/contexts/Cryptea';
-import Router, { useRouter } from 'next/router';
+import { useCryptea } from "../app/contexts/Cryptea";
+import Router, { useRouter } from "next/router";
 
 const Home: NextPage = () => {
-
   const { isAuthenticated } = useCryptea();
 
   const [isLoading, setLoading] = useState(true);
 
-  
   useEffect(() => {
-
     if (isAuthenticated !== undefined) {
       if (isAuthenticated && localStorage.getItem("userToken") !== null) {
         Router.push("/dashboard");
       } else {
-
-        if (localStorage.getItem('defaultAuth') !== null) {
-
-          if (localStorage.getItem("defaultAuth") == 'magicauth') {
-            
-              Router.push('/magic')
-            
-          }else{
+        if (localStorage.getItem("defaultAuth") !== null) {
+          if (localStorage.getItem("defaultAuth") == "magicauth") {
+            Router.push("/magic");
+          } else {
             setLoading(false);
           }
-          
-        }else{
+        } else {
           setLoading(false);
         }
       }
-  }
+    }
+  }, [isAuthenticated]);
 
-  }, [isAuthenticated])
-
-  return (
-    isLoading ? <Loader /> : <div className="overflow-hidden">
+  return isLoading ? (
+    <Loader />
+  ) : (
+    <div className="overflow-hidden">
       <Head>
         <title>Launch App | Breew</title>
         <meta
           name="description"
-          content="Receive Payments Instantly With Ease"
+          content="Breew the best web3 experience for your users"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-          <AuthModal blur={false} openM={true} message={"Welcome to Breew"} />
-       
-      </div>
-
+      <AuthModal blur={false} openM={true} message={"Welcome to Breew"} />
+    </div>
   );
-}
+};
 
-export default Home
+export default Home;

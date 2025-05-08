@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import Nav from "../../../app/components/elements/Nav";
-import Head from 'next/head';
+import Head from "next/head";
 import Loader from "../../../app/components/elements/loader";
 import Image from "next/image";
 import emailImg from "../../../public/images/email_fail.svg";
@@ -10,27 +10,21 @@ import { useCryptea } from "../../../app/contexts/Cryptea";
 import http from "../../../utils/http";
 
 const VerifyHash = () => {
+  const router = useRouter();
 
-    const router = useRouter();
+  const [isLoading, setLoading] = useState<boolean>(true);
 
-    const [isLoading, setLoading] = useState<boolean>(true);
+  const hash = router.query["hash"];
 
-    const hash = router.query['hash'];
+  const { isAuthenticated } = useCryptea();
 
-    const { isAuthenticated } = useCryptea();
-
-    useEffect(() => {
-      
-      if (hash !== undefined && isAuthenticated !== undefined) {
-        if(!isAuthenticated){
-        http.post(
-            `/verify/user?tz=${window.jstz
-              .determine()
-              .name()}`,
-            {
-              hash: String(hash),
-            }
-          )
+  useEffect(() => {
+    if (hash !== undefined && isAuthenticated !== undefined) {
+      if (!isAuthenticated) {
+        http
+          .post(`/verify/user?tz=${window.jstz.determine().name()}`, {
+            hash: String(hash),
+          })
           .then((userx) => {
             const {
               email,
@@ -64,7 +58,10 @@ const VerifyHash = () => {
 
             localStorage.setItem("userToken", userx.data.token);
 
-            if (accounts[0] == "null" && !Boolean(settlement ? settlement.length : 0)) {
+            if (
+              accounts[0] == "null" &&
+              !Boolean(settlement ? settlement.length : 0)
+            ) {
               router.push("/signup");
             } else {
               router.push("/dashboard/settings");
@@ -75,46 +72,41 @@ const VerifyHash = () => {
 
             setLoading(false);
           });
-
-        }else{
-            router.push('/dashboard/settings')
-        }
+      } else {
+        router.push("/dashboard/settings");
+      }
     }
+  }, [hash, isAuthenticated]);
 
-    }, [hash, isAuthenticated])
+  return isLoading ? (
+    <Loader />
+  ) : (
+    <div className="h-screen">
+      <Head>
+        <title>Something&rsquo;s wrong with verification link | Breew</title>
+        <meta
+          name="description"
+          content="Breew - Breew the best web3 experience for your users."
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
 
+      <Nav />
 
-return isLoading ? (
-  <Loader />
-) : (
-  <div className="h-screen">
-    <Head>
-      <title>Something&rsquo;s wrong with verification link | Breew</title>
-      <meta
-        name="description"
-        content="Breew - Receive Payments Instantly With Ease."
-      />
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
+      <div className="w-full h-[calc(100vh-100px)] flex flex-col justify-center items-center px-5 my-8">
+        <Image src={emailImg} width={100} height={122} alt={"Email error"} />
 
-    <Nav />
+        <h2 className="text-[#8036de] font-[400] 2md:text-2xl text-4xl mx-auto mt-10">
+          Link validation Failed, please try again
+        </h2>
 
-    <div className="w-full h-[calc(100vh-100px)] flex flex-col justify-center items-center px-5 my-8">
-      <Image src={emailImg} width={100} height={122} alt={"Email error"} />
-
-      <h2 className="text-[#8036de] font-[400] 2md:text-2xl text-4xl mx-auto mt-10">
-        Link validation Failed, please try again
-      </h2>
-
-      <span className="text-[#7e7e7e] block px-4 font-semibold text-lg mx-auto mt-5">
-        Something went wrong it could be the link is expired or incorrect, try checking your internet access and reload the page
-      </span>
-
-      
+        <span className="text-[#7e7e7e] block px-4 font-semibold text-lg mx-auto mt-5">
+          Something went wrong it could be the link is expired or incorrect, try
+          checking your internet access and reload the page
+        </span>
+      </div>
     </div>
-  </div>
-);
-
-}
+  );
+};
 
 export default VerifyHash;

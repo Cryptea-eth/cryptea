@@ -63,7 +63,7 @@ const Page = ({ children }: { children: JSX.Element[] | JSX.Element }) => {
         </title>
         <meta
           name="description"
-          content={`Receive Payments Instantly With Ease`}
+          content={`Breew the best web3 experience for your users`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head> */}

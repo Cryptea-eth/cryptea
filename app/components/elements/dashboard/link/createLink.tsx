@@ -586,7 +586,8 @@ const NewLink = () => {
     <>
       <Head>
         <title>
-          Create New Link | Receive Payments Instantly With Ease | Breew
+          Create New Link | Breew the best web3 experience for your users |
+          Breew
         </title>
       </Head>
 
